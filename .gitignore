@@ -13,6 +13,15 @@ data-draft/*
 # R package stuff
 man/*
 
+# generated files
+*.pdf
+*.rds
+*.png
+*.rdata
+*.csv
+!data-final/**/*.rds
+!data-final/**/*.csv
+
 # misc and  LaTeX
 *.tmp
 *.swp

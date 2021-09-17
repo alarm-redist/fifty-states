@@ -19,11 +19,16 @@ Imports:
     sf,
     stringr,
     tigris,
+    ggplot2,
     httr,
     cli,
     here
+Suggests: 
+    rmapshaper,
+    devtools
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
+

@@ -6,24 +6,22 @@
 #' @param overwrite whether to overwrite an existing analysis
 #'
 #' @returns nothing
-init_analysis = function(state, type="cd", year=2020L, overwrite=F) {
+init_analysis = function(state, type="cd", year=2020, overwrite=F) {
+    state = str_to_upper(state)
+    year = as.character(as.integer(year))
     slug = str_glue("{state}_{type}_{year}")
     copyright = format(Sys.Date(), "\u00A9 ALARM Project, %B %Y")
 
-    path_r <- str_glue("R/{slug}/")
+    path_r <- str_glue("analyses/{slug}/")
     if (dir.exists(path_r) & !overwrite)
         stop("Analysis `", slug, "` already exists.\n",
              "  Pass `overwrite=TRUE` to overwrite.")
     dir.create(path_r, showWarnings=F)
-    cli_alert_success("Creating '{path_r}'")
+    cli_alert_success("Creating {.file {path_r}}")
     dir.create(path_data <- str_glue("data-draft/{slug}/"), showWarnings=F)
-    cli_alert_success("Creating '{path_data}'")
+    cli_alert_success("Creating {.file {path_data}}")
     dir.create(path_raw <- str_glue("data-raw/{state}/"), showWarnings=F)
-    cli_alert_success("Creating '{path_raw}'")
-
-    write_file(as.character(Sys.Date()),
-               path_ip <- str_glue("R/{slug}/in_progress"))
-    cli_alert_success("Creating '{path_ip}'")
+    cli_alert_success("Creating {.file {path_raw}}")
 
     templates = Sys.glob(here("R/template/*.R"))
 
@@ -33,10 +31,11 @@ init_analysis = function(state, type="cd", year=2020L, overwrite=F) {
         read_file(path) %>%
             str_replace_all("``SLUG``", slug) %>%
             str_replace_all("``STATE``", state) %>%
+            str_replace_all("``YEAR``", year) %>%
             str_replace_all("``state``", str_to_lower(state)) %>%
             str_replace_all("``COPYRIGHT``", copyright) %>%
             write_file(new_path)
-        cli_li("Creating '{path_r}{new_basename}'")
+        cli_li("Creating {.file {path_r}{new_basename}}'")
         new_path
     }
 
@@ -45,11 +44,25 @@ init_analysis = function(state, type="cd", year=2020L, overwrite=F) {
     new_paths = purrr::map(templates, proc_template)
     cli_end()
 
+    doc_path = str_c(path_r, "doc_", slug, ".md")
+    usa = distinct(select(tigris::fips_codes, state, state_name))
+    read_file(here("R/template/documentation.md")) %>%
+            str_replace_all("``SLUG``", slug) %>%
+            str_replace_all("``STATE``", state) %>%
+            str_replace_all("``STATE NAME``", usa$state_name[usa$state == "IA"]) %>%
+            str_replace_all("``STATE``", state) %>%
+            str_replace_all("``YEAR``", year) %>%
+            str_replace_all("``TYPE``", str_c(c(cd="Congressional", ssd="State Senate",
+                                                shd="State House")[type], " Districts")) %>%
+            str_replace_all("``state``", str_to_lower(state)) %>%
+            write_file(here(doc_path))
+    cli_alert_success("Creating {.file {doc_path}}")
+
     cli_alert_success("Initialization complete.")
 
     if (requireNamespace("rstudioapi", quietly=TRUE) && rstudioapi::isAvailable()) {
         purrr::map(new_paths, rstudioapi::navigateToFile)
-        rstudioapi::navigateToFile(new_paths[[1]])
+        rstudioapi::navigateToFile(doc_path)
     }
     invisible(NULL)
 }
@@ -60,4 +73,5 @@ init_analysis = function(state, type="cd", year=2020L, overwrite=F) {
 #' @import dplyr
 #' @import readr
 #' @import stringr
+#' @importFrom here here
 NULL

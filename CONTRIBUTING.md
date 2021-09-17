@@ -8,7 +8,7 @@
     automatically. See `?init_analysis` for more information.
 1. Doing your analysis:
     1. Update the [tracker](https://docs.google.com/spreadsheets/d/1k_tYLoE49W_DCK1tcWbouoYZFI9WD76oayEt5TOmJg4/edit#gid=453387933) 
-    to "In progress"
+    to "In progress".
     1. Research the [legal requirements](https://www.ncsl.org/research/redistricting/redistricting-criteria.aspx) for your state.
     1. Edit the provided template to create and run your analysis.
     1. Document your analysis in the provided documentation file, including
@@ -27,12 +27,12 @@
     1. Tag the graduate student assigned to your state for review. If you are a
     graduate student, tag another.
     1. Update the [tracker](https://docs.google.com/spreadsheets/d/1k_tYLoE49W_DCK1tcWbouoYZFI9WD76oayEt5TOmJg4/edit#gid=453387933) 
-    to "Draft"
+    to "Draft".
 1. Finalizing your analysis
     1. Once your PR has been signed off, it may be merged into the main branch.
     1. In the main branch, run `finalize_analysis("WA", "cd", 2020)` (with your
     details) to finalize your analysis. This will add your generated files to
     the repository.
     1. Update the [tracker](https://docs.google.com/spreadsheets/d/1k_tYLoE49W_DCK1tcWbouoYZFI9WD76oayEt5TOmJg4/edit#gid=453387933) 
-    to "Validated"
+    to "Validated".
     
