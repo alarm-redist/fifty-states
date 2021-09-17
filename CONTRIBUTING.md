@@ -1,7 +1,7 @@
 # Contributing an Analysis
 
 1. Setting up:
-    1. Fork the repository, or create a branch named for your analysis (e.g. `WA-congress-2020`).
+    1. Fork the repository, or create a branch named for your analysis (e.g. `WA_cd_2020`).
     1. Open RStudio and press `Ctrl+Shift+L` or run `devtools::load_all(".")`.
     1. Run `init_analysis("WA", "cd", 2020)` (with your details) to start your
     analysis. Analysis files will be created from the templates and opened
