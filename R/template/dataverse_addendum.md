@@ -13,11 +13,11 @@ Both the `redist_plans` and `redist_map` object are intended to be used with the
 * `district`: a district identifier. District numbers are functionally assigned at random and do not correspond to real-world plans.
 * `total_pop`: the total population of each district.
 * `total_vap`: the total voting-aged population of each district.
+* `pop_*`, `vap_*`: total (voting-aged) population within racial and ethnic groups for each district. Variable codes documented [here](https://github.com/alarm-redist/census-2020#data-format).
 * `plan_dev`: the maximum population deviation among districts in the plan. Computed as `max(abs(distr_pop - target_pop)/target_pop)`.
 * `comp_edge`: compactness, as measured by the fraction of internal edges kept. Higher values indicate more compactness.
 * `comp_polsby`: compactness, as measured by the Polsby-Popper score. Higher values indicate more compactness.
 * `county_splits`: the number of counties which belong to more than one district.
 * `muni_splits`: the number of Census Designated Places which belong to more than one district.
-* `pop_*`, `vap_*`: total (voting-aged) population within racial and ethnic groups for each district. Variable codes documented [here](https://github.com/alarm-redist/census-2020#data-format).
 * `adv_##`, `arv_##`: average vote counts for statewide Democratic and Republican candidates in a certain year. More information [here](https://github.com/alarm-redist/census-2020#data-format).
 * `ndv`, `nrv`: averages of the `adv_##` and `arv_##` variables across all available elections.
