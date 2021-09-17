@@ -36,3 +36,8 @@
     1. Update the [tracker](https://docs.google.com/spreadsheets/d/1k_tYLoE49W_DCK1tcWbouoYZFI9WD76oayEt5TOmJg4/edit#gid=453387933) 
     to "Validated".
     
+# Project-Wide Guidelines
+1. Any processed data saved as an `.rds`, should be compressed with option "xz". (e.g. `readr::write_rds(object, "path.rds", compress = "xz")`)
+1. Any _common_ functions to multiple analyses should be in the file `R/common.R` and should be fully documented using [roxygen](https://cran.r-project.org/web/packages/roxygen2/vignettes/roxygen2.html). Additions to this file should be in their own Pull Request and reviewed by a grad student. If you are a grad student, please have a different grad student review your PR.
+1. We will utilize the [tidyverse style guide](https://style.tidyverse.org/) for this project due to the large number of contributors. This will keep commits clean across original authors and subsequent changes. You can utilize [styler](https://styler.r-lib.org/) to do this automatically.
+1. Please identify the sections of your code with comments that look like `# Clean Data ----`. This creates a section in RStudio and help sign post what you did for that section for the reviewer.
