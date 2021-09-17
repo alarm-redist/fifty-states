@@ -29,7 +29,8 @@ if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong ``STATE``} shapefile")
     # read in redistricting data
     ``state``_shp = read_csv(here(path_data), col_types = cols(GEOID20="c")) %>%
-        join_vtd_shapefile()
+        join_vtd_shapefile() %>%
+        st_transform(EPSG$``STATE``)
 
     <ADD CODE TO GET CDPs>
 

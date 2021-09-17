@@ -21,6 +21,7 @@ man/*
 *.csv
 !data-final/**/*.rds
 !data-final/**/*.csv
+!R/epsg.rds
 
 # misc and  LaTeX
 *.tmp
