@@ -1,0 +1,19 @@
+# Rproject
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+# Raw and draft data
+data-raw/*
+!data-raw/README.md
+data-draft/*
+!data-draft/README.md
+
+# misc and  LaTeX
+*.tmp
+*.swp
+*.bak
+*.log
+.DS_store
+
