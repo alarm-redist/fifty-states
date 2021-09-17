@@ -10,6 +10,9 @@ data-raw/*
 data-draft/*
 !data-draft/README.md
 
+# R package stuff
+man/*
+
 # misc and  LaTeX
 *.tmp
 *.swp
