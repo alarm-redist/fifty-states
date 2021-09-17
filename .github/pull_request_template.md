@@ -9,6 +9,7 @@
 - [ ] I have followed the [instructions](https://github.com/alarm-redist/fifty-states/blob/main/CONTRIBUTING.md)
 - [ ] I have updated the [tracker](https://docs.google.com/spreadsheets/d/1k_tYLoE49W_DCK1tcWbouoYZFI9WD76oayEt5TOmJg4/edit#gid=453387933)
 - [ ] All `TODO` lines from the template code have been removed
+- [ ] I have run `enforce_style()` to format my code
 - [ ] The documentation copied above is up-to-date 
 - [ ] There are no data files in this pull request
 - [ ] None of the file output paths (for the `redist_map` and `redist_plans` objects, and summary statistics) have been edited

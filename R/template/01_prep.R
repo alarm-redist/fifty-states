@@ -23,12 +23,12 @@ path_data = download_redistricting_file("``STATE``", "data-raw/``STATE``")
 cli_process_done()
 
 # Compile raw data into a final shapefile for analysis -----
-shp_path = "data-draft/``STATE``_``YEAR``/shp_vtd.rds"
+shp_path = "data-out/``STATE``_``YEAR``/shp_vtd.rds"
 
 if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong ``STATE``} shapefile")
     # read in redistricting data
-    ``state``_shp = read_csv(here(path_data), col_types=cols(GEOID20="c")) %>%
+    ``state``_shp = read_csv(here(path_data), col_types = cols(GEOID20="c")) %>%
         join_vtd_shapefile()
 
     <ADD CODE TO GET CDPs>
@@ -37,8 +37,9 @@ if (!file.exists(here(shp_path))) {
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles.
     # TODO feel free to delete if this dependency isn't available
-    if (requireNamespace("rmapshaper", quietly=TRUE)) {
-        ``state``_shp = rmapshaper::ms_simplify(``state``_shp, keep=0.05, keep_shapes=TRUE)
+    if (requireNamespace("rmapshaper", quietly = TRUE)) {
+        ``state``_shp = rmapshaper::ms_simplify(``state``_shp, keep = 0.05,
+                                                keep_shapes = TRUE)
     }
 
     # create adjacency graph
@@ -46,7 +47,7 @@ if (!file.exists(here(shp_path))) {
 
     # TODO any custom adjacency graph edits here
 
-    write_rds(``state``_shp, here(shp_path), compress="gz")
+    write_rds(``state``_shp, here(shp_path), compress = "gz")
     cli_process_done()
 } else {
     ``state``_shp = read_rds(here(shp_path))
