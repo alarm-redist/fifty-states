@@ -24,6 +24,7 @@ download = function(url, path) {
 #' @param overwrite if TRUE, download even if a file exists
 #'
 #' @returns the path to file
+#' @export
 download_redistricting_file = function(abbr, folder, type="vtd", overwrite=FALSE) {
     abbr = tolower(abbr)
     url = str_glue("https://raw.githubusercontent.com/alarm-redist/census-2020/",
@@ -40,7 +41,11 @@ download_redistricting_file = function(abbr, folder, type="vtd", overwrite=FALSE
 }
 
 #' Add precinct shapefile geometry to downloaded data
+#'
 #' @param data the output of e.g. [download_redistricting_file]
+#'
+#' @returns the joined data
+#' @export
 join_vtd_shapefile = function(data) {
     geom_d = PL94171::pl_get_vtd(data$state[1]) %>%
         select(GEOID20, area_land=ALAND20, area_water=AWATER20, geometry)
