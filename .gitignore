@@ -7,8 +7,8 @@
 # Raw and draft data
 data-raw/*
 !data-raw/README.md
-data-draft/*
-!data-draft/README.md
+data-out/*
+!data-out/README.md
 
 # R package stuff
 man/*

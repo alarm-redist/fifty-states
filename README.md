@@ -8,11 +8,19 @@
 [![License: MIT](https://img.shields.io/badge/Software%20License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 This repository contains code to sample districting plans for all 50 U.S.
-states, along with the sampled plans and accompanying summary statistics.
+states, according to relevant legal requirements.
+
+The sampled plans and accompanying summary statistics may be downloaded from
+the [dataverse](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi%3A10.7910%2FDVN%2FSLCD3E)
+for this project. These consist of four files for each analysis:
+- a documentation file describing data formats, analysis decisions, and data sources
+- a CSV file of summary statistics for each of the generated plans
+- two `.rds` files containing `redist_map` and `redist_plans` objects, which
+contain the actual shapefiles and district assignment matrices and may be used
+for further analysis.
 
 ## Repository Structure
 
-- `data-final/` contains validated redistricting samples
 - `analyses/` contains the code for each self-contained analysis
 - `R/` contains common analysis and repository management code
 
