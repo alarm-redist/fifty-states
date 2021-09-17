@@ -25,5 +25,8 @@ from the [Voting and Election Science Team](https://dataverse.harvard.edu/datave
 which is licensed  under a [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) license.  
 In these cases, shapefiles are also taken from the U.S. Census Bureau.
 
-Exceptions to these data sources are listed here:
+Exceptions to these data sources are listed in the individual documentation files 
+in the `analyses/` folder.
 
+## Contributing an Analysis
+Please read the [contribution guidelines](https://github.com/alarm-redist/fifty-states/blob/main/CONTRIBUTING.md).
