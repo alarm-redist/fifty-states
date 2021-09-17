@@ -13,8 +13,7 @@ In ``STATE NAME``, districts must:
 We enforce a maximum population deviation of X.X%.
 
 ## Data Sources
-Data for ``STATE NAME`` comes from the ALARM Project's
-[2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
+Data for ``STATE NAME`` comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
 
 ## Pre-processing Notes
 No manual pre-processing decisions were necessary.

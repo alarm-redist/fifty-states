@@ -22,7 +22,7 @@
 1. Completing your analysis:
     1. Make sure you have removed all `TODO` lines from the template code.
     1. Make sure your documentation is up-to-date and correct.
-    1. Create a pull request on GitHub. The PR be based off of a provided template.
+    1. Create a pull request on GitHub, following the provided template.
     1. As part of the PR template, you will paste in diagnostic plots.
     1. Tag the graduate student assigned to your state for review. If you are a
     graduate student, tag another.
