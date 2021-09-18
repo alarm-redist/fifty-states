@@ -3,6 +3,7 @@
 # ``COPYRIGHT``
 ###############################################################################
 
+suppressMessages({
 library(dplyr)
 library(readr)
 library(sf)
@@ -10,7 +11,8 @@ library(redist)
 library(geomander)
 library(cli)
 library(here)
-lapply(Sys.glob(here("R/*.R")), source) # load utilities
+devtools::load_all(".") # load utilities
+})
 
 # Download necessary files for analysis -----
 cli_process_start("Downloading files for {.pkg ``SLUG``}")
@@ -33,8 +35,15 @@ if (!file.exists(here(shp_path))) {
         st_transform(EPSG$``STATE``)
 
     # add municipalities
-    d_muni = make_from_baf("``STATE``", "INPLACE_CDP", "VTD")
-    ``state``_shp = left_join(``state``_shp, d_muni, by="vtd")
+    d_muni = make_from_baf("``STATE``", "INCPLACE_CDP", "VTD") %>%
+        mutate(vtd = str_sub(vtd, 4)) # TODO delete this line depending on how `vtd` variable is constructed / is unique
+    d_cd = make_from_baf("``STATE``", "CD", "VTD") %>%
+        transmute(vtd = str_sub(vtd, 4), # TODO delete this line, maybe
+                  cd_2010 = as.integer(cd))
+    ``state``_shp = left_join(``state``_shp, d_muni, by="vtd") %>%
+        left_join(d_cd, by="vtd") %>%
+        mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
+        relocate(muni, county_muni, cd_2010, .after=county)
 
     # TODO any additional columns or data you want to add should go here
 
@@ -42,13 +51,17 @@ if (!file.exists(here(shp_path))) {
     # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         ``state``_shp = rmapshaper::ms_simplify(``state``_shp, keep = 0.05,
-                                                keep_shapes = TRUE)
+                                         keep_shapes = TRUE) %>%
+            suppressWarnings()
     }
 
     # create adjacency graph
     ``state``_shp$adj = redist.adjacency(``state``_shp)
 
     # TODO any custom adjacency graph edits here
+
+    ``state``_shp = ``state``_shp %>%
+        fix_geo_assignment(muni)
 
     write_rds(``state``_shp, here(shp_path), compress = "gz")
     cli_process_done()

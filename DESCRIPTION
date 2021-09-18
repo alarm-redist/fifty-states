@@ -24,10 +24,10 @@ Imports:
     patchwork,
     httr,
     cli,
+    devtools,
     here
 Suggests: 
     rmapshaper,
-    devtools,
     styler
 License: MIT + file LICENSE
 Encoding: UTF-8
