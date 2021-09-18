@@ -14,6 +14,7 @@ In Iowa, districts must:
 ### Interpretation of requirements
 We enforce a maximum population deviation of 0.01%, given strict historical deviation standards.
 We also merge VTDs into counties and run the simulation at the county level.
+For compactness, we increase the `compactness` parameter to 1.1, which does not create too much inefficiency.
 
 ## Data Sources
 Data for Iowa comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
@@ -23,4 +24,4 @@ No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
 We sample 5,000 districting plans for Iowa.
-No special techniques were needed to produce the sample.
+As noted above, we set `compactness=1.1`. This also required setting `seq_alpha=0.5` to ensure maximum efficiency across all iterations of the algorithm.

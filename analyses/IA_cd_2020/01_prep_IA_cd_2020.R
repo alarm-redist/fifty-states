@@ -19,8 +19,12 @@ cli_process_start("Downloading files for {.pkg IA_cd_2020}")
 
 path_data <- download_redistricting_file("IA", "data-raw/IA")
 
-# TODO other files here (as necessary). All paths should start with `path_`
-# If large, consider checking to see if these files exist before downloading
+# first LSA plan BAF
+lsa_zip <- "data-raw/IA/lsa1.zip"
+download("https://gis.legis.iowa.gov/Plan1/SHP/Plan1_EquivalencyFiles.zip", here(lsa_zip))
+unzip(lsa_zip, exdir = here("data-raw/IA/lsa1/"))
+unlink(lsa_zip)
+path_lsa1 <- here("data-raw/IA/lsa1/Plan1-Congress-FINAL.csv")
 
 cli_process_done()
 
@@ -34,15 +38,17 @@ if (!file.exists(here(shp_path))) {
         join_vtd_shapefile() %>%
         st_transform(EPSG$IA)
 
-    d_cd <- make_from_baf("IA", "CD", "VTD") %>%
+    baf_lsa1 <- read_csv(here(path_lsa1), col_names = c("BLOCKID", "CD"), col_types = "ci")
+    d_cd <- make_from_baf("IA", baf_lsa1, "VTD") %>%
         transmute(vtd = str_sub(vtd, 4),
-            cd_2010 = as.integer(cd))
+            cd_lsa1 = as.integer(cd))
+
     ia_shp <- left_join(ia_shp, d_cd, by = "vtd") %>%
-        relocate(cd_2010, .after = county)
+        relocate(cd_lsa1, .after = county)
 
     ia_shp <- ia_shp %>%
         group_by(state, county) %>%
-        summarize(cd_2010 = cd_2010[1],
+        summarize(cd_lsa1 = cd_lsa1[1],
             across(pop:area_water, sum))
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles.
