@@ -17,7 +17,7 @@ cli_process_start("Running simulations for {.pkg ``SLUG``}")
 #  - If the sampler freezes, try turning off the county split constraint to see
 #  if that's the problem.
 #  - Ask for help!
-plans = redist_smc(map, nsims = 5e3, counties = county_muni)
+plans <- redist_smc(map, nsims = 5e3, counties = county_muni)
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
@@ -31,7 +31,7 @@ cli_process_done()
 # Compute summary statistics -----
 cli_process_start("Computing summary statistics for {.pkg ``SLUG``}")
 
-plans = add_summary_stats(plans, map)
+plans <- add_summary_stats(plans, map)
 
 # Output the summary statistics. Do not edit this path.
 save_summary_stats(plans, "data-out/``STATE``_``YEAR``/``SLUG``_stats.csv")

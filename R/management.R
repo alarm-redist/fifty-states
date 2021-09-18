@@ -6,11 +6,11 @@
 #' @param overwrite whether to overwrite an existing analysis
 #'
 #' @returns nothing
-init_analysis = function(state, type = "cd", year = 2020, overwrite = F) {
-    state = str_to_upper(state)
-    year = as.character(as.integer(year))
-    slug = str_glue("{state}_{type}_{year}")
-    copyright = format(Sys.Date(), "\u00A9 ALARM Project, %B %Y")
+init_analysis <- function(state, type = "cd", year = 2020, overwrite = F) {
+    state <- str_to_upper(state)
+    year <- as.character(as.integer(year))
+    slug <- str_glue("{state}_{type}_{year}")
+    copyright <- format(Sys.Date(), "\u00A9 ALARM Project, %B %Y")
 
     path_r <- str_glue("analyses/{slug}/")
     if (dir.exists(path_r) & !overwrite)
@@ -23,11 +23,11 @@ init_analysis = function(state, type = "cd", year = 2020, overwrite = F) {
     dir.create(path_raw <- str_glue("data-raw/{state}/"), showWarnings = F)
     cli_alert_success("Creating {.file {path_raw}}")
 
-    templates = Sys.glob(here("R/template/*.R"))
+    templates <- Sys.glob(here("R/template/*.R"))
 
-    proc_template = function(path) {
-        new_basename = str_replace(basename(path), ".R", str_c("_", slug, ".R"))
-        new_path = here(path_r, new_basename)
+    proc_template <- function(path) {
+        new_basename <- str_replace(basename(path), ".R", str_c("_", slug, ".R"))
+        new_path <- here(path_r, new_basename)
         read_file(path) %>%
             str_replace_all("``SLUG``", slug) %>%
             str_replace_all("``STATE``", state) %>%
@@ -41,11 +41,11 @@ init_analysis = function(state, type = "cd", year = 2020, overwrite = F) {
 
     cli_alert_info("Copying scripts from templates...")
     cli_ul()
-    new_paths = purrr::map(templates, proc_template)
+    new_paths <- purrr::map(templates, proc_template)
     cli_end()
 
-    doc_path = str_c(path_r, "doc_", slug, ".md")
-    usa = distinct(select(tigris::fips_codes, state, state_name))
+    doc_path <- str_c(path_r, "doc_", slug, ".md")
+    usa <- distinct(select(tigris::fips_codes, state, state_name))
     read_file(here("R/template/documentation.md")) %>%
         str_replace_all("``SLUG``", slug) %>%
         str_replace_all("``STATE``", state) %>%
@@ -74,21 +74,20 @@ init_analysis = function(state, type = "cd", year = 2020, overwrite = F) {
 #' @param year the analysis year
 #'
 #' @returns nothing
-enforce_style = function(state, type = "cd", year = 2020) {
-    state = str_to_upper(state)
-    year = as.character(as.integer(year))
-    slug = str_glue("{state}_{type}_{year}")
-    path_r = str_glue("analyses/{slug}/")
+enforce_style <- function(state, type = "cd", year = 2020) {
+    state <- str_to_upper(state)
+    year <- as.character(as.integer(year))
+    slug <- str_glue("{state}_{type}_{year}")
+    path_r <- str_glue("analyses/{slug}/")
     if (!dir.exists(path_r)) stop("Analysis `", slug, "` not found.")
 
-    R_style = function(...) {
-        x = styler::tidyverse_style(scope = "tokens",
+    R_style <- function(...) {
+        x <- styler::tidyverse_style(scope = "tokens",
             indent_by = 4,
             strict = FALSE,
             math_token_spacing = styler::specify_math_token_spacing(
                 zero = c("'^'", "'*'", "'/'"),
                 one = c("'+'", "'-'")))
-        x$token$force_assignment_op = NULL
         x
     }
 

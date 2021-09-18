@@ -28,6 +28,9 @@
     1. Run `enforce_style()` one more time.
     1. Create a pull request on GitHub, following the provided template.
     1. As part of the PR template, you will paste in diagnostic plots.
+    1. If your state has additional or unusual constraints, provide figures
+    justifying your choice of constraint strength and showing that the constraints
+    are binding properly.
     1. Tag the graduate student assigned to your state for review. If you are a
     graduate student, tag another.
     1. Update the [tracker](https://docs.google.com/spreadsheets/d/1k_tYLoE49W_DCK1tcWbouoYZFI9WD76oayEt5TOmJg4/edit#gid=453387933) 
