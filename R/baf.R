@@ -9,8 +9,12 @@
 #' @export
 make_from_baf <- function(state, from = "INCPLACE_CDP", to = "VTD") {
     baf <- PL94171::pl_get_baf(state, cache_to = here(str_glue("data-raw/{state}/{state}_baf.rds")))
-    if (is.character(from)) d_from <- baf[[from]]
-    else d_from <- from
+    if (is.character(from)) {
+        d_from <- baf[[from]]
+    } else {
+        d_from <- from
+        from = names(from)[2]
+    }
     d_to <- baf[[to]]
     if (is.null(from)) cli_abort("{.arg from} not found in {state} BAF.")
     if (is.null(to)) cli_abort("{.arg to} not found in {state} BAF.")

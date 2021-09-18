@@ -37,3 +37,11 @@ plans <- add_summary_stats(plans, map)
 save_summary_stats(plans, "data-out/``STATE``_``YEAR``/``SLUG``_stats.csv")
 
 cli_process_done()
+
+# Extra validation plots for custom constraints -----
+# TODO remove this section if no custom constraints
+if (interactive()) {
+    library(ggplot2)
+    library(patchwork)
+
+}
