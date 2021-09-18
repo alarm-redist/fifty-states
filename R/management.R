@@ -18,7 +18,7 @@ init_analysis = function(state, type = "cd", year = 2020, overwrite = F) {
                    Pass {.code overwrite=TRUE} to overwrite.")
     dir.create(path_r, showWarnings = F)
     cli_alert_success("Creating {.file {path_r}}")
-    dir.create(path_data <- str_glue("data-out/{slug}/"), showWarnings = F)
+    dir.create(path_data <- str_glue("data-out/{state}_{year}/"), showWarnings = F)
     cli_alert_success("Creating {.file {path_data}}")
     dir.create(path_raw <- str_glue("data-raw/{state}/"), showWarnings = F)
     cli_alert_success("Creating {.file {path_raw}}")

@@ -18,7 +18,7 @@ make_from_baf = function(state, from="INCPLACE_CDP", to="VTD") {
     state_fp = str_sub(d_to$BLOCKID[1], 1, 2)
     fmt_baf = function(x, nm) {
         tidyr::unite(x, {{ nm }}, -BLOCKID, sep="") %>%
-            mutate({{ nm }} := str_c(state_fp, na_if(.[[nm]], "NA")))
+            mutate({{ nm }} := na_if(.[[nm]], "NA"))
     }
 
     d_to = fmt_baf(d_to, "to")

@@ -18,20 +18,23 @@ tally_var = function(map, pop, .data = redist:::cur_plans()) {
 #' @export
 add_summary_stats = function(plans, map, ...) {
     perim_df = redist.prep.polsbypopper(map)
-    plans %>%
+    plans = plans %>%
         mutate(total_vap = tally_var(map, vap),
             across(starts_with("pop_"), ~ tally_var(map, .)),
             across(starts_with("vap_"), ~ tally_var(map, .)),
             plan_dev =  plan_parity(map),
             comp_edge = distr_compactness(map),
             comp_polsby = distr_compactness(map, measure = "PolsbyPopper", perim_df = perim_df),
-            county_splits = county_splits(map, county),
-            muni_splits = county_splits(map, muni),
             ndv = tally_var(map, ndv),
             nrv = tally_var(map, ndv),
             across(starts_with("adv_"), ~ tally_var(map, .)),
             across(starts_with("arv_"), ~ tally_var(map, .)),
             ...)
+    split_cols = names(map)[tidyselect::eval_select(any_of(c("county", "muni")), map)]
+    for (col in split_cols) {
+        plans = mutate(plans, "{col}_splits" := county_splits(map, map[[col]]), .before=ndv)
+    }
+    plans
 }
 
 #' Export `redist_plans` summary statistics to a file
