@@ -2,7 +2,9 @@
 
 export(add_summary_stats)
 export(download_redistricting_file)
+export(fix_geo_assignment)
 export(join_vtd_shapefile)
+export(make_from_baf)
 export(save_summary_stats)
 import(cli)
 import(dplyr)

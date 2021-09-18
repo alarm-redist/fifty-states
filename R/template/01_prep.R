@@ -32,7 +32,9 @@ if (!file.exists(here(shp_path))) {
         join_vtd_shapefile() %>%
         st_transform(EPSG$``STATE``)
 
-    <ADD CODE TO GET CDPs>
+    # add municipalities
+    d_muni = make_from_baf("``STATE``", "INPLACE_CDP", "VTD")
+    ``state``_shp = left_join(``state``_shp, d_muni, by="vtd")
 
     # TODO any additional columns or data you want to add should go here
 
