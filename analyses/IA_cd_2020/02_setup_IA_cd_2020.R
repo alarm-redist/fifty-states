@@ -4,7 +4,7 @@
 ###############################################################################
 cli_process_start("Creating {.cls redist_map} object for {.pkg IA_cd_2020}")
 
-map = redist_map(ia_shp, pop_tol = 0.0001,
+map <- redist_map(ia_shp, pop_tol = 0.0001,
     existing_plan = cd_2010, adj = ia_shp$adj)
 
 # Output the redist_map object. Do not edit this path.
