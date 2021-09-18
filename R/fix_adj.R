@@ -6,25 +6,25 @@
 #'
 #' @return An updated data frame with corrected geographic codes
 #' @export
-fix_geo_assignment <- function(data, col, adj=data$adj) {
+fix_geo_assignment <- function(data, col, adj = data$adj) {
     # get populations of geo units
     geo_pops <- data %>%
         sf::st_drop_geometry() %>%
         count({{ col }}, wt = pop, name = "pop")
 
-    col_val = rlang::eval_tidy(rlang::enquo(col), data)
+    col_val <- rlang::eval_tidy(rlang::enquo(col), data)
     if (!is.character(col_val) && !is.factor(col_val) && !is.integer(col_val))
         cli_abort("Column must be a {.cls character}, {.cls factor}, or {.cls integer}.")
     if (is.character(col_val)) {
-        col_type = "chr"
-        lev = unique(col_val)
-        col_val = match(col_val, lev)
+        col_type <- "chr"
+        lev <- unique(col_val)
+        col_val <- match(col_val, lev)
     } else if (is.factor(col_val)) {
-        col_type = "fct"
-        lev = levels(col_val)
-        col_val = as.integer(col_val)
+        col_type <- "fct"
+        lev <- levels(col_val)
+        col_val <- as.integer(col_val)
     } else {
-        col_type = "int"
+        col_type <- "int"
     }
 
     # map to internal function
@@ -32,10 +32,10 @@ fix_geo_assignment <- function(data, col, adj=data$adj) {
         .f = ~ assign_geo(.x, col_val, adj, col, geo_pops))
 
     if (col_type == "chr")
-        updated_geos = lev[updated_geos]
+        updated_geos <- lev[updated_geos]
     if (col_type == "fct")
-        updated_geos = factor(lev[updated_geos], levels = lev,
-                              ordered = is.ordered(col_val))
+        updated_geos <- factor(lev[updated_geos], levels = lev,
+            ordered = is.ordered(col_val))
 
     mutate(data, {{ col }} := updated_geos)
 }
