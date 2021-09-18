@@ -8,7 +8,7 @@
 #' @return a data from of `to` units, with `from` columns added, ready to be joined
 #' @export
 make_from_baf = function(state, from="INCPLACE_CDP", to="VTD") {
-    baf = PL94171::pl_get_baf(state, cache_to=here(str_glue("data-raw/{state}/MA_baf.rds")))
+    baf = PL94171::pl_get_baf(state, cache_to=here(str_glue("data-raw/{state}/{state}_baf.rds")))
     if (is.character(from)) d_from = baf[[from]]
     else d_from = from
     d_to = baf[[to]]
