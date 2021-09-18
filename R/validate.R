@@ -24,6 +24,12 @@ validate_analysis <- function(plans, map) {
         p_split2 <- hist(plans, county_splits) + labs(title = "Municipality splits") + theme_bw()
     } else p_split2 <- patchwork::plot_spacer()
 
+    p_vra = plans %>%
+        mutate(minority = (total_vap - vap_white) / total_vap) %>%
+        plot(minority, geom="boxplot") +
+        labs(title = "Minority VAP share") +
+        theme_bw()
+
     draws <- sample(ncol(as.matrix(subset_sampled(plans))), 3)
     p_ex1 <- redist.plot.plans(plans, draws[1], map)
     p_ex2 <- redist.plot.plans(plans, draws[2], map)
@@ -34,11 +40,12 @@ AAABBB
 CCCDDD
 EEEEEE
 FFFGGG
-HHIIJJ
-HHIIJJ"
+HHHHHH
+IIJJKK
+IIJJKK"
     p <- patchwork::wrap_plots(A = p_wgts, B = p_div, C = p_dev, D = p_comp1,
         E = p_comp2, F = p_split1, G = p_split2,
-        H = p_ex1, I = p_ex2, J = p_ex3, design = layout) +
+        H = p_vra, I = p_ex1, J = p_ex2, K = p_ex3, design = layout) +
         patchwork::plot_annotation(title = str_c(map$state[1], " Validation")) +
         patchwork::plot_layout(guides = "collect")
     out_path <- here(str_glue("data-raw/{map$state[1]}/validation_{format(Sys.time(), '%Y%m%d_%H%M')}.png"))
