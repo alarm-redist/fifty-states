@@ -4,14 +4,14 @@
 ###############################################################################
 
 suppressMessages({
-library(dplyr)
-library(readr)
-library(sf)
-library(redist)
-library(geomander)
-library(cli)
-library(here)
-devtools::load_all(".") # load utilities
+    library(dplyr)
+    library(readr)
+    library(sf)
+    library(redist)
+    library(geomander)
+    library(cli)
+    library(here)
+    devtools::load_all(".") # load utilities
 })
 
 # Download necessary files for analysis -----
@@ -30,7 +30,7 @@ shp_path = "data-out/``STATE``_``YEAR``/shp_vtd.rds"
 if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong ``STATE``} shapefile")
     # read in redistricting data
-    ``state``_shp = read_csv(here(path_data), col_types = cols(GEOID20="c")) %>%
+    ``state``_shp = read_csv(here(path_data), col_types = cols(GEOID20 = "c")) %>%
         join_vtd_shapefile() %>%
         st_transform(EPSG$``STATE``)
 
@@ -40,10 +40,10 @@ if (!file.exists(here(shp_path))) {
     d_cd = make_from_baf("``STATE``", "CD", "VTD") %>%
         transmute(vtd = str_sub(vtd, 4), # TODO delete this line, maybe
                   cd_2010 = as.integer(cd))
-    ``state``_shp = left_join(``state``_shp, d_muni, by="vtd") %>%
+    ``state``_shp = left_join(``state``_shp, d_muni, by = "vtd") %>%
         left_join(d_cd, by="vtd") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
-        relocate(muni, county_muni, cd_2010, .after=county)
+        relocate(muni, county_muni, cd_2010, .after = county)
 
     # TODO any additional columns or data you want to add should go here
 
