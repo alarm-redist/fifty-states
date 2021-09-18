@@ -1,4 +1,11 @@
-# tally a variable
+#' Tally a variable by district
+#'
+#' @param map a `redist_map` object
+#' @param pop a variable to tally. Tidy-evaluated.
+#' @param .data a `redist_plans` object
+#'
+#' @return a vector containing the tallied values by district and plan (column-major)
+#' @export
 tally_var <- function(map, pop, .data = redist:::cur_plans()) {
     redist:::check_tidy_types(map, .data)
     if (length(unique(diff(as.integer(.data$district)))) > 2)
@@ -20,20 +27,26 @@ add_summary_stats <- function(plans, map, ...) {
     perim_df <- redist.prep.polsbypopper(map)
     plans <- plans %>%
         mutate(total_vap = tally_var(map, vap),
-            across(starts_with("pop_"), ~ tally_var(map, .)),
-            across(starts_with("vap_"), ~ tally_var(map, .)),
             plan_dev =  plan_parity(map),
             comp_edge = distr_compactness(map),
             comp_polsby = distr_compactness(map, measure = "PolsbyPopper", perim_df = perim_df),
             ndv = tally_var(map, ndv),
             nrv = tally_var(map, ndv),
-            across(starts_with("adv_"), ~ tally_var(map, .)),
-            across(starts_with("arv_"), ~ tally_var(map, .)),
             ...)
+
+    tally_cols <- names(map)[c(tidyselect::eval_select(starts_with("pop_"), map),
+                              tidyselect::eval_select(starts_with("vap_"), map),
+                              tidyselect::eval_select(starts_with("adv_"), map),
+                              tidyselect::eval_select(starts_with("arv_"), map))]
+    for (col in tally_cols) {
+        plans <- mutate(plans, {{ col }} := tally_var(map, map[[col]]), .before = ndv)
+    }
+
     split_cols <- names(map)[tidyselect::eval_select(any_of(c("county", "muni")), map)]
     for (col in split_cols) {
         plans <- mutate(plans, "{col}_splits" := county_splits(map, map[[col]]), .before = ndv)
     }
+
     plans
 }
 
