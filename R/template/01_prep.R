@@ -26,6 +26,7 @@ cli_process_done()
 
 # Compile raw data into a final shapefile for analysis -----
 shp_path <- "data-out/``STATE``_``YEAR``/shp_vtd.rds"
+perim_path <- "data-out/``STATE``_``YEAR``/perim.rds"
 
 if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong ``STATE``} shapefile")
@@ -47,7 +48,11 @@ if (!file.exists(here(shp_path))) {
 
     # TODO any additional columns or data you want to add should go here
 
-    # simplifies geometry for faster processing, plotting, and smaller shapefiles.
+    # Create perimeters in case shapes are simplified
+    redist.prep.polsbypopper(shp = ``state``_shp,
+                             perim_path = here(perim_path))
+
+    # simplifies geometry for faster processing, plotting, and smaller shapefiles
     # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         ``state``_shp <- rmapshaper::ms_simplify(``state``_shp, keep = 0.05,
