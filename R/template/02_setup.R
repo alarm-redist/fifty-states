@@ -11,6 +11,9 @@ map <- redist_map(``state``_shp, pop_tol = 0.005,
 
 # TODO any filtering, cores, merging, etc.
 
+# Add an analysis name attribute ----
+attr(map, "analysis_name") <- "``STATE``_``YEAR``"
+
 # Output the redist_map object. Do not edit this path.
 write_rds(map, "data-out/``STATE``_``YEAR``/``SLUG``_map.rds", compress = "xz")
 cli_process_done()

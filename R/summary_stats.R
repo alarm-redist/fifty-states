@@ -25,12 +25,13 @@ tally_var <- function(map, pop, .data = redist:::cur_plans()) {
 #' @return a modified `redist_plans` object
 #' @export
 add_summary_stats <- function(plans, map, ...) {
+    perim_path <- here("data-out", attr(map, "analysis_name"), "perim.rds")
 
-    if (file.exists(here("data-out/"))) {
+    if (file.exists(perim_path)) {
         state <- map$state[1]
-        perim_df <- read_rds(paste0("data-out/", toupper(state), "_2020/perim.rds"))
+        perim_df <- read_rds(perim_path)
     } else {
-        perim_df <- redist.prep.polsbypopper(map)
+        perim_df <- redist.prep.polsbypopper(map, perim_path = perim_path)
     }
     plans <- plans %>%
         mutate(total_vap = tally_var(map, vap),
