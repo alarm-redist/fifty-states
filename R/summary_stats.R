@@ -19,17 +19,27 @@ tally_var <- function(map, pop, .data = redist:::cur_plans()) {
 #' Add summary statistics to sampled plans
 #'
 #' @param plans a `redist_plans` object
+#' @param map a `redist_map` object
 #' @param ... additional summary statistics to compute
 #'
 #' @return a modified `redist_plans` object
 #' @export
 add_summary_stats <- function(plans, map, ...) {
-    perim_df <- redist.prep.polsbypopper(map)
+    perim_path <- here("data-out", attr(map, "analysis_name"), "perim.rds")
+
+    if (file.exists(perim_path)) {
+        state <- map$state[1]
+        perim_df <- read_rds(perim_path)
+    } else {
+        perim_df <- redist.prep.polsbypopper(map, perim_path = perim_path)
+    }
     plans <- plans %>%
         mutate(total_vap = tally_var(map, vap),
             plan_dev =  plan_parity(map),
             comp_edge = distr_compactness(map),
-            comp_polsby = distr_compactness(map, measure = "PolsbyPopper", perim_df = perim_df),
+            comp_polsby = distr_compactness(map,
+                                            measure = "PolsbyPopper",
+                                            perim_df = perim_df),
             ndv = tally_var(map, ndv),
             nrv = tally_var(map, ndv),
             ...)
