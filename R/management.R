@@ -45,11 +45,10 @@ init_analysis <- function(state, type = "cd", year = 2020, overwrite = FALSE) {
     cli_end()
 
     doc_path <- str_c(path_r, "doc_", slug, ".md")
-    usa <- distinct(select(tigris::fips_codes, state, state_name))
     read_file(here("R/template/documentation.md")) %>%
         str_replace_all("``SLUG``", slug) %>%
         str_replace_all("``STATE``", state) %>%
-        str_replace_all("``STATE NAME``", usa$state_name[usa$state == "IA"]) %>%
+        str_replace_all("``STATE NAME``", censable::match_name(state)) %>%
         str_replace_all("``STATE``", state) %>%
         str_replace_all("``YEAR``", year) %>%
         str_replace_all("``TYPE``", str_c(c(cd = "Congressional", ssd = "State Senate",
