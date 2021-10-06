@@ -49,7 +49,7 @@ init_analysis <- function(state, type = "cd", year = 2020, overwrite = F) {
     read_file(here("R/template/documentation.md")) %>%
         str_replace_all("``SLUG``", slug) %>%
         str_replace_all("``STATE``", state) %>%
-        str_replace_all("``STATE NAME``", usa$state_name[usa$state == "IA"]) %>%
+        str_replace_all("``STATE NAME``", censable::match_name(state)) %>%
         str_replace_all("``STATE``", state) %>%
         str_replace_all("``YEAR``", year) %>%
         str_replace_all("``TYPE``", str_c(c(cd = "Congressional", ssd = "State Senate",

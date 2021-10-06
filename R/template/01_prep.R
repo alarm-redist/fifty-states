@@ -11,7 +11,7 @@ suppressMessages({
     library(geomander)
     library(cli)
     library(here)
-    devtools::load_all(".") # load utilities
+    devtools::load_all() # load utilities
 })
 
 # Download necessary files for analysis -----
