@@ -13,6 +13,7 @@ Imports:
     dplyr (>= 1.0.7),
     geomander (>= 1.1.0.9000),
     PL94171 (>= 1.0.0),
+    censable,
     purrr,
     tidyr,
     readr,
