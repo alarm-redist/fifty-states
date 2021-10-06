@@ -6,7 +6,7 @@
 #' @param overwrite whether to overwrite an existing analysis
 #'
 #' @returns nothing
-init_analysis <- function(state, type = "cd", year = 2020, overwrite = F) {
+init_analysis <- function(state, type = "cd", year = 2020, overwrite = FALSE) {
     state <- str_to_upper(state)
     year <- as.character(as.integer(year))
     slug <- str_glue("{state}_{type}_{year}")
@@ -16,11 +16,11 @@ init_analysis <- function(state, type = "cd", year = 2020, overwrite = F) {
     if (dir.exists(path_r) & !overwrite)
         cli_abort("Analysis {.pkg {slug}} already exists.
                    Pass {.code overwrite=TRUE} to overwrite.")
-    dir.create(path_r, showWarnings = F)
+    dir.create(path_r, showWarnings = FALSE)
     cli_alert_success("Creating {.file {path_r}}")
-    dir.create(path_data <- str_glue("data-out/{state}_{year}/"), showWarnings = F)
+    dir.create(path_data <- str_glue("data-out/{state}_{year}/"), showWarnings = FALSE)
     cli_alert_success("Creating {.file {path_data}}")
-    dir.create(path_raw <- str_glue("data-raw/{state}/"), showWarnings = F)
+    dir.create(path_raw <- str_glue("data-raw/{state}/"), showWarnings = FALSE)
     cli_alert_success("Creating {.file {path_raw}}")
 
     templates <- Sys.glob(here("R/template/*.R"))
