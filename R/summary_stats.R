@@ -54,7 +54,13 @@ add_summary_stats <- function(plans, map, ...) {
 
     split_cols <- names(map)[tidyselect::eval_select(any_of(c("county", "muni")), map)]
     for (col in split_cols) {
-        plans <- mutate(plans, "{col}_splits" := county_splits(map, map[[col]]), .before = ndv)
+        if (col == "county") {
+            plans <- mutate(plans, county_splits = county_splits(map, county), .before = ndv)
+        } else if (col == "muni") {
+            plans <- mutate(plans, muni_splits = muni_splits(map, muni), .before = ndv)
+        } else {
+            plans <- mutate(plans, "{col}_splits" := county_splits(map, map[[col]]), .before = ndv)
+        }
     }
 
     plans
