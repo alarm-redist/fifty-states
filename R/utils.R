@@ -89,7 +89,7 @@ EPSG <- read_rds(here("R/epsg.rds"))
 #' @export
 #' @md
 #' @examples
-#' cvap <- cvap_distribute_censable("DE") %>% select(GEOID, starts_with("cvap"))
+#' cvap <- cvap::cvap_distribute_censable("DE") %>% select(GEOID, starts_with("cvap"))
 #' vtd <- vest_crosswalk(cvap, "DE")
 vest_crosswalk <- function(cvap, state) {
     cw_zip <- dataverse::get_file_by_name("block10block20_crosswalks.zip", "10.7910/DVN/T9VMJO")
