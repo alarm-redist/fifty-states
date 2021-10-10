@@ -34,7 +34,7 @@ if (!file.exists(here(shp_path))) {
     ``state``_shp <- read_csv(here(path_data), col_types = cols(GEOID20 = "c")) %>%
         join_vtd_shapefile() %>%
         st_transform(EPSG$``STATE``)  %>%
-        rename_with(\(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
+        rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
 
     # add municipalities
     d_muni <- make_from_baf("``STATE``", "INCPLACE_CDP", "VTD")  %>%
