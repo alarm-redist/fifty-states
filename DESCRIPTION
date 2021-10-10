@@ -26,7 +26,8 @@ Imports:
     httr,
     cli,
     devtools,
-    here
+    here,
+    cvap
 Suggests: 
     rmapshaper,
     styler
