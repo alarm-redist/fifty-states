@@ -21,7 +21,7 @@ validate_analysis <- function(plans, map) {
         p_split1 <- hist(plans, county_splits) + labs(title = "County splits") + theme_bw()
     } else p_split1 <- patchwork::plot_spacer()
     if ("muni_splits" %in% names(plans)) {
-        p_split2 <- hist(plans, county_splits) + labs(title = "Municipality splits") + theme_bw()
+        p_split2 <- hist(plans, muni_splits) + labs(title = "Municipality splits") + theme_bw()
     } else p_split2 <- patchwork::plot_spacer()
 
     p_vra = plans %>%
