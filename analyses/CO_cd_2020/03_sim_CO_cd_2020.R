@@ -36,4 +36,5 @@ if (interactive()) {
 
     plans <- plans %>% mutate(dvs_20 = group_frac(map, adv_20, adv_20 + arv_20))
     redist.plot.distr_qtys(plans, qty = dvs_20, geom = "boxplot") + theme_bw()
+    ggsave('data-raw/CO/competitiveness_20211010_2001.png')
 }
