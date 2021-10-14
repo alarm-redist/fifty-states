@@ -52,7 +52,8 @@ if (!file.exists(here(shp_path))) {
 
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = ``state``_shp,
-                             perim_path = here(perim_path))
+                             perim_path = here(perim_path)) %>%
+        invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     # TODO feel free to delete if this dependency isn't available
