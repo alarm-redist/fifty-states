@@ -25,7 +25,8 @@ if (sum(vra_ok) < 5e3) {
     stop("Not enough VRA-compliant plans")
 } else {
     vra_idx <- sample(which(vra_ok), 5e3, replace = FALSE)
-    plans <- filter(plans, as.integer(draw) %in% vra_idx)
+    plans <- filter(plans, as.integer(draw) %in% vra_idx) %>%
+        mutate(draw = as.factor(as.integer(draw)))
 }
 
 # Output the redist_map object. Do not edit this path.
