@@ -42,23 +42,23 @@ if (!file.exists(here(shp_path))) {
         select(-vtd)
     d_cd <- make_from_baf("MI", "CD", "VTD")  %>%
         transmute(GEOID = paste0(censable::match_fips("MI"), vtd),
-                  cd_2010 = as.integer(cd)) %>%
+            cd_2010 = as.integer(cd)) %>%
         suppressWarnings()
     mi_shp <- left_join(mi_shp, d_muni, by = "GEOID") %>%
-        left_join(d_cd, by="GEOID") %>%
+        left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2010, .after = county)
 
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = mi_shp,
-                             perim_path = here(perim_path)) %>%
+        perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         mi_shp <- rmapshaper::ms_simplify(mi_shp, keep = 0.05,
-                                         keep_shapes = TRUE) %>%
+            keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 
@@ -69,28 +69,28 @@ if (!file.exists(here(shp_path))) {
     # helper plots to zoom in for manual connections
     if (FALSE) {
         filter(mi_shp, str_detect(county, "Mackinac") | str_detect(county, "Emmet")) %>%
-        ggplot(aes(label=GEOID, fill=vtd)) +
-            geom_sf(size=0.3) +
-            geom_sf_label(size=2.3) +
-            guides(fill="none") +
+            ggplot(aes(label = GEOID, fill = vtd)) +
+            geom_sf(size = 0.3) +
+            geom_sf_label(size = 2.3) +
+            guides(fill = "none") +
             theme_void()
-        ggplot(mi_shp, aes(fill=county)) +
-            geom_sf(size=0.3) +
-            guides(fill="none") +
+        ggplot(mi_shp, aes(fill = county)) +
+            geom_sf(size = 0.3) +
+            guides(fill = "none") +
             theme_void()
     }
 
     # Keweenaw (Isle Royale) already connected
 
     # Connect Charlevoix
-    idx_1 = which(mi_shp$GEOID == "26029029017")
-    idx_2 = which(mi_shp$GEOID == "26029029016")
-    mi_shp$adj = add_edge(mi_shp$adj, idx_1, idx_2)
+    idx_1 <- which(mi_shp$GEOID == "26029029017")
+    idx_2 <- which(mi_shp$GEOID == "26029029016")
+    mi_shp$adj <- add_edge(mi_shp$adj, idx_1, idx_2)
 
     # Connect UP
-    idx_1 = which(mi_shp$GEOID == "26047047022")
-    idx_2 = which(mi_shp$GEOID == "26097097010")
-    mi_shp$adj = add_edge(mi_shp$adj, idx_1, idx_2)
+    idx_1 <- which(mi_shp$GEOID == "26047047022")
+    idx_2 <- which(mi_shp$GEOID == "26097097010")
+    mi_shp$adj <- add_edge(mi_shp$adj, idx_1, idx_2)
 
     mi_shp <- mi_shp %>%
         fix_geo_assignment(muni)
@@ -101,4 +101,3 @@ if (!file.exists(here(shp_path))) {
     mi_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong MI} shapefile")
 }
-

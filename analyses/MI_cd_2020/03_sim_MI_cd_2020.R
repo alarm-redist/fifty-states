@@ -7,10 +7,10 @@
 cli_process_start("Running simulations for {.pkg MI_cd_2020}")
 
 plans <- redist_smc(map, nsims = 8e3, counties = pseudocounty,
-                    constraints = list(hinge = list(strength = 50, tgts_min = 0.60,
-                                                    min_pop = vap - vap_white,
-                                                    tot_pop = vap)),
-                    seq_alpha=0.4, verbose = FALSE)
+    constraints = list(hinge = list(strength = 50, tgts_min = 0.60,
+        min_pop = vap - vap_white,
+        tot_pop = vap)),
+    seq_alpha = 0.4, verbose = FALSE)
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
@@ -18,14 +18,14 @@ cli_process_start("Saving {.cls redist_plans} object")
 # TODO add any reference plans that aren't already included
 
 # filter to ≥ 2 VRA districts
-vra_ok = redist.group.percent(as.matrix(plans), map$vap - map$vap_white, map$vap) %>%
+vra_ok <- redist.group.percent(as.matrix(plans), map$vap - map$vap_white, map$vap) %>%
     apply(2, function(x) sort(x)[12]) %>%
     `>`(0.5)
 if (sum(vra_ok) < 5e3) {
     stop("Not enough VRA-compliant plans")
 } else {
-    vra_idx = sample(which(vra_ok), 5e3, replace=FALSE)
-    plans = filter(plans, as.integer(draw) %in% vra_idx)
+    vra_idx <- sample(which(vra_ok), 5e3, replace = FALSE)
+    plans <- filter(plans, as.integer(draw) %in% vra_idx)
 }
 
 # Output the redist_map object. Do not edit this path.
