@@ -33,5 +33,5 @@ pick_county_muni <- function(map, counties, munis, pop_muni = sum(map[[attr(map,
 
     counties[counties %in% names(cty_pop)] <- munis[counties %in% names(cty_pop)]
 
-    dplyr::mutate(map, county_muni = redist::redist.county.id(counties))
+    redist::redist.county.id(counties)
 }
