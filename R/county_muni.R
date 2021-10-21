@@ -32,16 +32,13 @@ pick_county_muni <- function(map, counties, munis,
         cli::cli_abort('`map` must be a `redist_map` object.')
     }
 
-    if (any(is.na(counties))) {
-        cli::cli_abort('`counties` may not contain `NA`.')
-    }
-
     pop <- map[[attr(map, 'pop_col')]]
 
     counties <- redist::redist.county.id(counties)
-    munis <- redist::redist.county.id(munis)
-    munis <- munis + max(counties)
+    munis[!is.na(munis)] <- redist::redist.county.id(munis[!is.na(munis)]) + max(counties)
     munis[is.na(munis)] <- counties[is.na(munis)]
+    munis <- redist::redist.county.id(munis)
+
 
     cty_pop <- tapply(pop, counties, sum)
     cty_pop <- cty_pop[cty_pop > pop_muni]
