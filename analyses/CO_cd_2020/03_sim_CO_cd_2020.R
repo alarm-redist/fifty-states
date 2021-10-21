@@ -10,8 +10,11 @@ cli_process_start("Running simulations for {.pkg CO_cd_2020}")
 cons <- list(party = list(strength = 700, rvote = map$nrv,
     dvote = map$ndv, tgts_party = 0.50))
 
-plans <- redist_smc(map, nsims = 5e3, counties = county_muni, constraints = cons)
-plans2 <- redist_smc(map, nsims = 5e3, counties = county_muni)
+plans <- redist_smc(map, nsims = 5e3,
+                    counties = pseudo_county,
+                    constraints = cons)
+plans2 <- redist_smc(map, nsims = 5e3,
+                     counties = pseudo_county)
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
