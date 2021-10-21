@@ -3,7 +3,7 @@
 #' Substantive geographic boundaries are sometimes municipalities within large
 #' counties rather than the entire county. This function takes two geography
 #' indicators and creates an unique identifier for the smaller subgeography,
-#' when the size of the county is greater than one district (by default or a manual
+#' when the size of the county is greater than one district (by default) or a manual
 #' input to `pop_muni`. This tries to balance the goals of keeping both
 #' municipalities and counties together without a more involved spanning-tree change.
 #'
@@ -41,7 +41,7 @@ pick_county_muni <- function(map, counties, munis,
     counties <- redist::redist.county.id(counties)
     munis <- redist::redist.county.id(munis)
     munis <- munis + max(counties)
-    munis[is.na(munis)] <- couties[is.na(munis)]
+    munis[is.na(munis)] <- counties[is.na(munis)]
 
     cty_pop <- tapply(pop, counties, sum)
     cty_pop <- cty_pop[cty_pop > pop_muni]
