@@ -38,6 +38,16 @@ if (interactive()) {
     library(patchwork)
 
     plans <- plans %>% mutate(dvs_20 = group_frac(map, adv_20, adv_20 + arv_20))
-    redist.plot.distr_qtys(plans, qty = dvs_20, geom = "boxplot") + theme_bw()
-    ggsave('data-raw/CO/competitiveness_20211010_2001.png')
+    redist.plot.distr_qtys(plans, qty = dvs_20, geom = "boxplot") +
+        theme_bw() +
+        lims(y = c(0,1)) +
+        labs(title = 'With Competitive Constraint')
+    ggsave('data-raw/CO/competitiveness_plans.png')
+    plans2 <- plans2 %>% mutate(dvs_20 = group_frac(map, adv_20, adv_20 + arv_20))
+    redist.plot.distr_qtys(plans2, qty = dvs_20, geom = "boxplot") + theme_bw() +
+        lims(y = c(0,1)) +
+        labs(title = 'No Competitive Constraint')
+    ggsave('data-raw/CO/competitiveness_plans_no_const.png')
+
+
 }
