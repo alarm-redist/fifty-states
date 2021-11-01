@@ -28,5 +28,5 @@ The full list of these counties can be found in the `01_prep_OR_cd_2020.R` file.
 ## Simulation Notes
 We sample 5,000 districting plans for Oregon.
 To balance county and municipality splits, we create pseudocounties for use in the county constraint.
-These are counties, outside of Wayne, Macomb, and Oakland counties. Within these counties, municipalities are each their own pseudocounty as well.
+These are counties, outside of Multnomah county. Within these counties, municipalities are each their own pseudocounty as well.
 These counties were chosen since they are necessarily split by congressional districts.
