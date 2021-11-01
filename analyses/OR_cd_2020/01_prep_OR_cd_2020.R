@@ -64,7 +64,7 @@ if (!file.exists(here(shp_path))) {
         group_by(GEOID) %>%
         summarize(state = state[1], county = county[1],
             cd = cd[1], muni = muni[1],
-            across(pop:arv_16, sum),
+            across(pop:arv_16, sum, na.rm = TRUE),
             across(area_land:area_water, sum),
             is_coverage = TRUE) %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
@@ -82,22 +82,25 @@ if (!file.exists(here(shp_path))) {
             suppressWarnings()
     }
 
+    # Highway plot for geographical links constraint
+    if (FALSE) {
+        d_roads <- tigris::primary_secondary_roads("OR", 2020) %>%
+            st_transform(EPSG$OR)
+
+        ggplot(or_shp, aes(fill = county)) +
+            geom_sf(size = 0.2, color = "white") +
+            geom_sf(size = 0.7, color = "red", fill = NA, inherit.aes = FALSE,
+                data = summarize(group_by(or_shp, cd), is_coverage = TRUE)) +
+            geom_sf(size = 0.4, color = "black", inherit.aes = FALSE,
+                data = filter(d_roads, RTTYP %in% c("I", "U", "S"))) +
+            geom_sf_text(aes(label = county), size = 2.2, color = "black",
+                data = filter(or_shp, area_land >= 1e8)) +
+            scale_fill_manual(values = sf.colors(36, categorical = TRUE), guide = "none") +
+            theme_void()
+    }
+
     # create adjacency graph
     or_shp$adj <- redist.adjacency(or_shp)
-
-    d_roads <- tigris::primary_secondary_roads("OR", 2020) %>%
-        st_transform(EPSG$OR)
-
-    ggplot(or_shp, aes(fill = county)) +
-        geom_sf(size = 0.2, color = "white") +
-        geom_sf(size = 0.7, color = "red", fill = NA, inherit.aes = FALSE,
-            data = summarize(group_by(or_shp, cd), is_coverage = TRUE)) +
-        geom_sf(size = 0.4, color = "black", inherit.aes = FALSE,
-            data = filter(d_roads, RTTYP %in% c("I", "U", "S"))) +
-        geom_sf_text(aes(label = county), size = 2.2, color = "black",
-            data = filter(or_shp, area_land >= 1e8)) +
-        scale_fill_manual(values = sf.colors(36, categorical = TRUE), guide = "none") +
-        theme_void()
 
     # Disconnect counties not connected by state or federal highways
     disconn_cty <- function(adj, cty1, cty2) {
