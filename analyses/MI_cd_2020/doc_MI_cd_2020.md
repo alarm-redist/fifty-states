@@ -22,7 +22,8 @@ We target 60% minority share in two districts, and discard any simulations which
 Data for Michigan comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
 
 ## Pre-processing Notes
-No manual pre-processing decisions were necessary.
+To meet contiguity requirements, we removed precincts with more water area than land area and no population.
+We then manually connected any disconnected islands with the nearest precinct on the mainland and in the same county: precincts 26029029017 and 26029029016 in Charlevoix county, and precincts 26047047022 and 26097097010 for the Upper Peninsula.
 
 ## Simulation Notes
 We sample 5,000 districting plans for Michigan.
