@@ -17,7 +17,7 @@ cli_process_start("Running simulations for {.pkg ``SLUG``}")
 #  - If the sampler freezes, try turning off the county split constraint to see
 #  if that's the problem.
 #  - Ask for help!
-plans <- redist_smc(map, nsims = 5e3, counties = county_muni)
+plans <- redist_smc(map, nsims = 5e3, counties = county)
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
