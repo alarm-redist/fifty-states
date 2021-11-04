@@ -7,7 +7,7 @@
 cli_process_start("Running simulations for {.pkg CO_cd_2020}")
 
 # Set up competitiveness targets ----
-cons <- list(party = list(strength = 700, rvote = map$nrv,
+cons <- list(party = list(strength = 600, rvote = map$nrv,
     dvote = map$ndv, tgts_party = 0.50))
 
 plans <- redist_smc(map, nsims = 5e3,

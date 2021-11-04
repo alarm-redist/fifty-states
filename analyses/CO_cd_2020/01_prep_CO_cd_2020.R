@@ -19,6 +19,14 @@ cli_process_start("Downloading files for {.pkg CO_cd_2020}")
 
 path_data <- download_redistricting_file("CO", "data-raw/CO")
 
+path_baf_zip <- "data-raw/CO/baf.zip"
+path_baf <- "data-raw/CO/2021_Final_Approved_Congressional_Plan.txt"
+if (!file.exists(path_baf_zip)) {
+    url <- "https://redistrict2020.org/files/CO-2021-09-ushouse-coleman/CO-2021-09-ushouse-coleman-block-assignment.zip"
+    download(url, path_baf_zip)
+    unzip(path_baf, exdir = dirname(path_baf))
+}
+
 cli_process_done()
 
 # Compile raw data into a final shapefile for analysis -----
@@ -44,6 +52,15 @@ if (!file.exists(here(shp_path))) {
         left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2010, .after = county)
+
+    # Add enacted ----
+    baf <- read_csv(path_baf, col_names = c("GEOID", "district"))
+    baf_vtd <- PL94171::pl_get_baf("CO", geographies = "VTD")$VTD %>%
+        rename(GEOID = BLOCKID, county = COUNTYFP, vtd = DISTRICT)
+    baf <- baf %>% left_join(baf_vtd, by = "GEOID")
+    baf <- baf %>% select(-GEOID) %>%
+        mutate(GEOID = paste0("08", county, vtd)) %>%
+        select(-county, vtd)
 
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = co_shp,
