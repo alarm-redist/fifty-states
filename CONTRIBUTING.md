@@ -33,6 +33,7 @@
     are binding properly.
     1. Tag the graduate student assigned to your state for review. If you are a
     graduate student, tag another.
+    1. Add appropriate [labels](https://github.com/alarm-redist/fifty-states/labels) and milestones to your PR, so that it stays organized.
     1. Update the [tracker](https://docs.google.com/spreadsheets/d/1k_tYLoE49W_DCK1tcWbouoYZFI9WD76oayEt5TOmJg4/edit#gid=453387933) 
     to "Draft".
 1. Finalizing your analysis

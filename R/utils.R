@@ -77,3 +77,87 @@ make_epsg_table <- function() {
 }
 
 EPSG <- read_rds(here("R/epsg.rds"))
+
+
+#' Remove an edge
+#'
+#' @param adj an adjacency graph
+#' @param v1 numeric indices of the first vertex in each edge
+#' @param v2 numeric indices of the second vertex in each edge
+#' @param zero if `TRUE`, the entries of `adj` are zero-indexed
+remove_edge = function(adj, v1, v2, zero = TRUE) {
+    if (length(v1) != length(v2)) {
+        stop("v1 and v2 lengths are different.")
+    }
+    for (i in 1:length(v1)) {
+        adj[[v1[i]]] <- setdiff(adj[[v1[i]]], v2[i] - zero)
+        adj[[v2[i]]] <- setdiff(adj[[v2[i]]], v1[i] - zero)
+    }
+    adj
+}
+
+#' Retally with VEST
+#'
+#' Uses VEST crosswalk. Code mostly copied from [census-2020](https://github.com/alarm-redist/census-2020/blob/main/R/00_build_vest.R)
+#'
+#' @param cvap cvap data at 2010 block level
+#' @param state state abbreviation
+#'
+#' @return tibble with vtd level data
+#' @export
+#' @md
+#' @examples
+#' cvap <- cvap::cvap_distribute_censable("DE") %>% select(GEOID, starts_with("cvap"))
+#' vtd <- vest_crosswalk(cvap, "DE")
+vest_crosswalk <- function(cvap, state) {
+    cw_zip <- dataverse::get_file_by_name("block10block20_crosswalks.zip", "10.7910/DVN/T9VMJO")
+    cw_zip_path <- withr::local_tempfile(fileext = ".zip")
+    writeBin(cw_zip, cw_zip_path)
+    unz_path <- file.path(dirname(cw_zip_path), "block1020_crosswalks")
+    utils::unzip(cw_zip_path, exdir = unz_path, overwrite = TRUE)
+
+    proc_raw_cw <- function(raw) {
+        fields <- str_split(raw, ",")
+        map_dfr(fields, function(x) {
+            if (length(x) <= 1) {
+                return(tibble())
+            }
+            tibble(
+                GEOID_to = x[1],
+                GEOID = x[seq(2, length(x), by = 2L)],
+                int_land = parse_number(x[seq(3, length(x), by = 2L)])
+            )
+        })
+    }
+
+    vest_cw_raw <- read_lines(glue::glue("{unz_path}/block1020_crosswalk_{match_fips(state)}.csv"))
+    vest_cw <- proc_raw_cw(vest_cw_raw)
+    cw <- pl_crosswalk(toupper(state))
+    vest_cw <- left_join(vest_cw, select(cw, -int_land), by = c("GEOID", "GEOID_to"))
+    rt <- pl_retally(cvap, crosswalk = vest_cw)
+
+    baf <- pl_get_baf(toupper(state), "VTD") %>%
+        .[[1]] %>%
+        rename(GEOID = BLOCKID) %>%
+        mutate(
+            STATEFP = match_fips(state),
+            GEOID20 = paste0(STATEFP, COUNTYFP, DISTRICT)
+        )
+
+    rt <- rt %>% left_join(baf, by = "GEOID")
+
+    # agg
+    vtd <- rt %>%
+        select(-GEOID, -area_land, -area_water) %>%
+        group_by(GEOID20) %>%
+        summarize(
+            across(where(is.character), .fns = unique),
+            across(where(is.numeric), .fns = sum)
+        ) %>%
+        relocate(GEOID20, .before = everything()) %>%
+        relocate(STATEFP, .before = COUNTYFP) %>%
+        mutate(across(where(is.numeric), round, 2))
+
+    vtd
+}
+

@@ -7,16 +7,17 @@ Authors@R: c(
     person("Tyler", "Simko", role = "aut", email = "tsimko@g.harvard.edu"),
     person("Shiro", "Kuriwaki", role = "aut", email = "kuriwaki@g.harvard.edu"),
     person("Kosuke", "Imai", role = "drt", email = "imai@harvard.edu"),
-    person("George", "Garcia III", role = "aut", email = ""))
+    person("George", "Garcia III", role = "aut", email = "grg3@law.stanford.edu"))
 Description: Redistricting analysis for all 50 U.S. states.
 Imports: 
     dplyr (>= 1.0.7),
-    geomander (>= 1.1.0),
-    PL94171,
+    geomander (>= 1.1.0.9000),
+    PL94171 (>= 1.0.0),
+    censable,
     purrr,
     tidyr,
     readr,
-    redist (>= 1.3.1),
+    redist (>= 3.1.6),
     sf (>= 1.0.0),
     stringr,
     tigris,
@@ -25,7 +26,8 @@ Imports:
     httr,
     cli,
     devtools,
-    here
+    here,
+    cvap
 Suggests: 
     rmapshaper,
     styler

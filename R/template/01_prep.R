@@ -11,7 +11,7 @@ suppressMessages({
     library(geomander)
     library(cli)
     library(here)
-    devtools::load_all(".") # load utilities
+    devtools::load_all() # load utilities
 })
 
 # Download necessary files for analysis -----
@@ -26,28 +26,36 @@ cli_process_done()
 
 # Compile raw data into a final shapefile for analysis -----
 shp_path <- "data-out/``STATE``_``YEAR``/shp_vtd.rds"
+perim_path <- "data-out/``STATE``_``YEAR``/perim.rds"
 
 if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong ``STATE``} shapefile")
     # read in redistricting data
     ``state``_shp <- read_csv(here(path_data), col_types = cols(GEOID20 = "c")) %>%
         join_vtd_shapefile() %>%
-        st_transform(EPSG$``STATE``)
+        st_transform(EPSG$``STATE``)  %>%
+        rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
 
     # add municipalities
-    d_muni <- make_from_baf("``STATE``", "INCPLACE_CDP", "VTD") %>%
-        mutate(vtd = str_sub(vtd, 4)) # TODO delete this line depending on how `vtd` variable is constructed / is unique
-    d_cd <- make_from_baf("``STATE``", "CD", "VTD") %>%
-        transmute(vtd = str_sub(vtd, 4), # TODO delete this line, maybe
+    d_muni <- make_from_baf("``STATE``", "INCPLACE_CDP", "VTD")  %>%
+        mutate(GEOID = paste0(censable::match_fips("``STATE``"), vtd)) %>%
+        select(-vtd)
+    d_cd <- make_from_baf("``STATE``", "CD", "VTD")  %>%
+        transmute(GEOID = paste0(censable::match_fips("``STATE``"), vtd),
                   cd_2010 = as.integer(cd))
-    ``state``_shp <- left_join(``state``_shp, d_muni, by = "vtd") %>%
-        left_join(d_cd, by="vtd") %>%
+    ``state``_shp <- left_join(``state``_shp, d_muni, by = "GEOID") %>%
+        left_join(d_cd, by="GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2010, .after = county)
 
     # TODO any additional columns or data you want to add should go here
 
-    # simplifies geometry for faster processing, plotting, and smaller shapefiles.
+    # Create perimeters in case shapes are simplified
+    redist.prep.polsbypopper(shp = ``state``_shp,
+                             perim_path = here(perim_path)) %>%
+        invisible()
+
+    # simplifies geometry for faster processing, plotting, and smaller shapefiles
     # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         ``state``_shp <- rmapshaper::ms_simplify(``state``_shp, keep = 0.05,
