@@ -60,8 +60,13 @@ add_summary_stats <- function(plans, map, ...) {
         unique()
 
     elect_tb <- purrr::map_dfr(elecs, function(el) {
-        dvote <- pull(select(as_tibble(map), starts_with(paste0(el, "_dem_"))))
-        rvote <- pull(select(as_tibble(map), starts_with(paste0(el, "_rep_"))))
+        vote_d = select(as_tibble(map),
+                        starts_with(paste0(el, "_dem_")),
+                        starts_with(paste0(el, "_rep_")))
+        if (ncol(vote_d) != 2) return(tibble())
+        dvote <- pull(vote_d, 1)
+        rvote <- pull(vote_d, 2)
+
         plans %>%
             mutate(dem = group_frac(map, dvote, dvote + rvote),
                    egap = partisan_metrics(map, "EffGap", rvote, dvote),
