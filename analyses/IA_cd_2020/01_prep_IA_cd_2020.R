@@ -42,7 +42,7 @@ if (!file.exists(here(shp_path))) {
     baf_lsa2 <- read_csv(here(path_lsa2), col_names = c("BLOCKID", "CD"), col_types = "ci")
     d_cd <- make_from_baf("IA", baf_lsa2, "VTD") %>%
         transmute(vtd = str_sub(vtd, 4),
-                  cd = as.integer(cd))
+            cd = as.integer(cd))
 
     ia_shp <- left_join(ia_shp, d_cd, by = "vtd") %>%
         relocate(cd, .after = county)
@@ -55,7 +55,7 @@ if (!file.exists(here(shp_path))) {
 
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = ia_shp,
-                             perim_path = here(perim_path)) %>%
+        perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles.
