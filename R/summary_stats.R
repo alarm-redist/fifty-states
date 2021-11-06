@@ -48,8 +48,8 @@ add_summary_stats <- function(plans, map, ...) {
 
     tally_cols <- names(map)[c(tidyselect::eval_select(starts_with("pop_"), map),
                               tidyselect::eval_select(starts_with("vap_"), map),
-                              tidyselect::eval_select(contains("_(dem|rep)_"), map),
-                              tidyselect::eval_select(starts_with("a[dr]v_"), map))]
+                              tidyselect::eval_select(matches("_(dem|rep)_"), map),
+                              tidyselect::eval_select(matches("^a[dr]v_"), map))]
     for (col in tally_cols) {
         plans <- mutate(plans, {{ col }} := tally_var(map, map[[col]]), .before = ndv)
     }
