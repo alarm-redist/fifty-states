@@ -64,7 +64,7 @@ if (!file.exists(here(shp_path))) {
         group_by(GEOID) %>%
         summarize(state = state[1], county = county[1],
             cd = cd[1], muni = muni[1],
-            across(pop:arv_16, sum, na.rm = TRUE),
+            across(pop:ndv, sum, na.rm = TRUE),
             across(area_land:area_water, sum),
             is_coverage = TRUE) %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
