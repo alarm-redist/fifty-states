@@ -20,16 +20,17 @@ cli_process_start("Downloading files for {.pkg IA_cd_2020}")
 path_data <- download_redistricting_file("IA", "data-raw/IA")
 
 # first LSA plan BAF
-lsa_zip <- "data-raw/IA/lsa1.zip"
-download("https://gis.legis.iowa.gov/Plan1/SHP/Plan1_EquivalencyFiles.zip", here(lsa_zip))
-unzip(lsa_zip, exdir = here("data-raw/IA/lsa1/"))
+lsa_zip <- "data-raw/IA/lsa2.zip"
+download("https://gis.legis.iowa.gov/Plan2/SHP/Plan2_EquivalencyFiles.zip", here(lsa_zip))
+unzip(lsa_zip, exdir = here("data-raw/IA/lsa2/"))
 unlink(lsa_zip)
-path_lsa1 <- here("data-raw/IA/lsa1/Plan1-Congress-FINAL.csv")
+path_lsa2 <- here("data-raw/IA/lsa2/Plan2-Congress-FINAL.csv")
 
 cli_process_done()
 
 # Compile raw data into a final shapefile for analysis -----
 shp_path <- "data-out/IA_2020/shp_vtd.rds"
+perim_path <- "data-out/IA_2020/perim.rds"
 
 if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong IA} shapefile")
@@ -38,18 +39,24 @@ if (!file.exists(here(shp_path))) {
         join_vtd_shapefile() %>%
         st_transform(EPSG$IA)
 
-    baf_lsa1 <- read_csv(here(path_lsa1), col_names = c("BLOCKID", "CD"), col_types = "ci")
-    d_cd <- make_from_baf("IA", baf_lsa1, "VTD") %>%
+    baf_lsa2 <- read_csv(here(path_lsa2), col_names = c("BLOCKID", "CD"), col_types = "ci")
+    d_cd <- make_from_baf("IA", baf_lsa2, "VTD") %>%
         transmute(vtd = str_sub(vtd, 4),
-            cd_lsa1 = as.integer(cd))
+                  cd = as.integer(cd))
 
     ia_shp <- left_join(ia_shp, d_cd, by = "vtd") %>%
-        relocate(cd_lsa1, .after = county)
+        relocate(cd, .after = county)
 
     ia_shp <- ia_shp %>%
         group_by(state, county) %>%
-        summarize(cd_lsa1 = cd_lsa1[1],
-            across(pop:area_water, sum))
+        summarize(cd = cd[1],
+            across(pop:area_water, sum)) %>%
+        ungroup()
+
+    # Create perimeters in case shapes are simplified
+    redist.prep.polsbypopper(shp = ia_shp,
+                             perim_path = here(perim_path)) %>%
+        invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles.
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
