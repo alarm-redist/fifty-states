@@ -42,16 +42,44 @@ add_summary_stats <- function(plans, map, ...) {
                                             measure = "PolsbyPopper",
                                             perim_df = perim_df),
             ndv = tally_var(map, ndv),
-            nrv = tally_var(map, ndv),
+            nrv = tally_var(map, nrv),
+            ndshare = ndv / (ndv + nrv),
             ...)
 
     tally_cols <- names(map)[c(tidyselect::eval_select(starts_with("pop_"), map),
                               tidyselect::eval_select(starts_with("vap_"), map),
-                              tidyselect::eval_select(starts_with("adv_"), map),
-                              tidyselect::eval_select(starts_with("arv_"), map))]
+                              tidyselect::eval_select(matches("_(dem|rep)_"), map),
+                              tidyselect::eval_select(matches("^a[dr]v_"), map))]
     for (col in tally_cols) {
         plans <- mutate(plans, {{ col }} := tally_var(map, map[[col]]), .before = ndv)
     }
+
+    elecs <- select(as_tibble(map), contains("_dem_")) %>%
+        names() %>%
+        str_sub(1, 6) %>%
+        unique()
+
+    elect_tb <- purrr::map_dfr(elecs, function(el) {
+        dvote <- pull(select(as_tibble(map), starts_with(paste0(el, "_dem_"))))
+        rvote <- pull(select(as_tibble(map), starts_with(paste0(el, "_rep_"))))
+        plans %>%
+            mutate(dem = group_frac(map, dvote, dvote + rvote),
+                   egap = partisan_metrics(map, "EffGap", rvote, dvote),
+                   pbias = partisan_metrics(map, "Bias", rvote, dvote)) %>%
+            as_tibble() %>%
+            group_by(draw) %>%
+            transmute(draw = draw,
+                      district = district,
+                      pr_dem = dem > 0.5,
+                      e_dem = sum(dem > 0.5, na.rm=T),
+                      pbias = -pbias[1], # flip so dem = negative
+                      egap = egap[1])
+    })
+
+    elect_tb <- elect_tb %>%
+        group_by(draw, district) %>%
+        summarize(across(everything(), mean))
+    plans <- left_join(plans, elect_tb, by = c("draw", "district"))
 
     split_cols <- names(map)[tidyselect::eval_select(any_of(c("county", "muni")), map)]
     for (col in split_cols) {
