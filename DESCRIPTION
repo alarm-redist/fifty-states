@@ -26,6 +26,7 @@ Imports:
     httr,
     cli,
     devtools,
+    dataverse,
     here,
     cvap
 Suggests: 
