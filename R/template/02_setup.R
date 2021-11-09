@@ -11,7 +11,11 @@ map <- redist_map(``state``_shp, pop_tol = 0.005,
 
 # TODO any filtering, cores, merging, etc.
 
-# Add an analysis name attribute ----
+# make pseudo counties with default settings
+map <- map %>%
+    mutate(pseudo_county = pick_county_muni(map, counties = county, munis = muni))
+
+# Add an analysis name attribute
 attr(map, "analysis_name") <- "``STATE``_``YEAR``"
 
 # Output the redist_map object. Do not edit this path.
