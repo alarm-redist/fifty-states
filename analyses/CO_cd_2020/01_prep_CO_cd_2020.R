@@ -62,10 +62,23 @@ if (!file.exists(here(shp_path))) {
         mutate(GEOID = paste0("08", county, vtd)) %>%
         select(-county, vtd)
 
+    baf <- baf %>%
+        group_by(GEOID) %>%
+        count(district) %>%
+        filter(n == max(n)) %>%
+        ungroup()
+
+    baf <- baf %>% select(GEOID, cd_2020 = district)
+
+    co_shp <- co_shp %>% left_join(baf, by = "GEOID")
+
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = co_shp,
         perim_path = here(perim_path),
         ncores = 8)
+
+    # create adjacency graph
+    co_shp$adj <- redist.adjacency(co_shp)
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
@@ -73,9 +86,6 @@ if (!file.exists(here(shp_path))) {
             keep_shapes = TRUE) %>%
             suppressWarnings()
     }
-
-    # create adjacency graph
-    co_shp$adj <- redist.adjacency(co_shp)
 
     co_shp <- co_shp %>%
         fix_geo_assignment(muni)

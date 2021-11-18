@@ -5,7 +5,7 @@
 cli_process_start("Creating {.cls redist_map} object for {.pkg CO_cd_2020}")
 
 map <- redist_map(co_shp, pop_tol = 0.005,
-    ndists = 8, adj = co_shp$adj) %>%
+    existing_plan = cd_2020, adj = co_shp$adj) %>%
     mutate(pseudo_county = pick_county_muni(., counties = county, munis = muni))
 
 # Add an analysis name attribute ----
