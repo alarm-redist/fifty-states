@@ -8,7 +8,7 @@ cli_process_start("Running simulations for {.pkg CO_cd_2020}")
 
 # Set up competitiveness targets ----
 cons <- redist_constr(map) %>%
-    add_constr_compet(400, ndv, nrv, pow = 1)
+    add_constr_compet(300, ndv, nrv, pow = 1)
 
 plans <- redist_smc(map, nsims = 5e3,
                     counties = pseudo_county,
@@ -42,12 +42,12 @@ if (interactive()) {
         theme_bw() +
         lims(y = c(0,1)) +
         labs(title = 'With Competitive Constraint')
-    ggsave('data-raw/CO/competitiveness_plans.png')
+    ggsave('data-raw/CO/competitiveness_plans.png', width = 6.5, height = 3)
     plans2 <- plans2 %>% mutate(dvs_20 = group_frac(map, adv_20, adv_20 + arv_20))
     redist.plot.distr_qtys(plans2, qty = dvs_20, geom = "boxplot") + theme_bw() +
         lims(y = c(0,1)) +
         labs(title = 'No Competitive Constraint')
-    ggsave('data-raw/CO/competitiveness_plans_no_const.png')
+    ggsave('data-raw/CO/competitiveness_plans_no_const.png', width = 6.5, height = 3)
 
 
 }
