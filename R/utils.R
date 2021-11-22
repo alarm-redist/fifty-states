@@ -161,3 +161,7 @@ vest_crosswalk <- function(cvap, state) {
     vtd
 }
 
+Mode <- function(v) {
+    uv <- unique(v)
+    uv[which.max(tabulate(match(v, uv)))][1]
+}
