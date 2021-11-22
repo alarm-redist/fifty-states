@@ -96,8 +96,8 @@ if (!file.exists(here(shp_path))) {
 
     baf <- baf %>%
         group_by(GEOID) %>%
-        summarize(rep_irc = DescTools::Mode(rep_irc),
-                  dem_irc = DescTools::Mode(dem_irc)
+        summarize(rep_irc = Mode(rep_irc),
+                  dem_irc = Mode(dem_irc)
                   )
 
     baf <- baf %>% select(GEOID, rep_irc, dem_irc)
@@ -123,11 +123,32 @@ if (!file.exists(here(shp_path))) {
             suppressWarnings()
     }
 
-
     # TODO any custom adjacency graph edits here
-
     ny_shp <- ny_shp %>%
         fix_geo_assignment(muni)
+
+    # takes a long time
+    if (FALSE) {
+        nbr <- geomander::suggest_neighbors(ny_shp, adjacency = ny_shp$adj)
+    } else {
+        nbr <- structure(list(x = 7042L, y = 7040L),
+                         class = c("tbl_df", "tbl", "data.frame"),
+                         row.names = c(NA, -1L))
+    }
+
+    ny_shp$adj <- geomander::add_edge(ny_shp$adj, nbr$x, nbr$y)
+
+    if (FALSE) {
+        conn <- geomander::suggest_component_connection(ny_shp, adjacency = ny_shp$adj, group = ny_shp$rep_irc)
+    } else {
+        conn <- structure(list(x = c(8925L, 1078L, 889L, 10461L, 7040L),
+                               y = c(13272L, 7714L, 892L, 10467L, 7042L)),
+                          row.names = c(NA, -5L),
+                          class = c("tbl_df", "tbl", "data.frame"))
+    }
+
+    ny_shp$adj <- geomander::add_edge(ny_shp$adj, conn$x, conn$y)
+
 
     write_rds(ny_shp, here(shp_path), compress = "gz")
     cli_process_done()
