@@ -20,7 +20,6 @@ cli_process_done()
 cli_process_start("Computing summary statistics for {.pkg VA_cd_2020}")
 
 plans <- add_summary_stats(plans, map)
-plans_county <- add_summary_stats(plans_county, map)
 
 # Output the summary statistics. Do not edit this path.
 save_summary_stats(plans, "data-out/VA_2020/VA_cd_2020_stats.csv")
