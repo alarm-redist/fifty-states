@@ -7,7 +7,7 @@
 1. have equal populations (C.1.c.i.)
 1. be geographically compact (C.1.a.iv.)
 1. preserve county and municipality boundaries as much as possible (C.1.a.iii.)
-1. not consider incumbent or partisan informat (C.1.b.i., C.1.b.ii.)
+1. not consider incumbent or partisan information (C.1.b.i., C.1.b.ii.)
 
 
 ### Interpretation of requirements
