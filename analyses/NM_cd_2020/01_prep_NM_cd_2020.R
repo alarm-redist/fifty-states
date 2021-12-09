@@ -19,9 +19,6 @@ cli_process_start("Downloading files for {.pkg NM_cd_2020}")
 
 path_data <- download_redistricting_file("NM", "data-raw/NM")
 
-# TODO other files here (as necessary). All paths should start with `path_`
-# If large, consider checking to see if these files exist before downloading
-
 cli_process_done()
 
 # Compile raw data into a final shapefile for analysis -----
@@ -48,15 +45,12 @@ if (!file.exists(here(shp_path))) {
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2010, .after = county)
 
-    # TODO any additional columns or data you want to add should go here
-
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = nm_shp,
                              perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         nm_shp <- rmapshaper::ms_simplify(nm_shp, keep = 0.05,
                                          keep_shapes = TRUE) %>%
@@ -65,8 +59,6 @@ if (!file.exists(here(shp_path))) {
 
     # create adjacency graph
     nm_shp$adj <- redist.adjacency(nm_shp)
-
-    # TODO any custom adjacency graph edits here
 
     nm_shp <- nm_shp %>%
         fix_geo_assignment(muni)
