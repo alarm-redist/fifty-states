@@ -63,9 +63,7 @@ if (!file.exists(here(shp_path))) {
 
     baf <- baf %>%
         group_by(GEOID) %>%
-        count(district) %>%
-        filter(n == max(n)) %>%
-        ungroup()
+        summarize(district = Mode(district))
 
     baf <- baf %>% select(GEOID, cd_2020 = district)
 
