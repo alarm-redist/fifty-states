@@ -77,15 +77,15 @@ if (!file.exists(here(shp_path))) {
         perim_path = here(perim_path),
         ncores = 8)
 
-    # create adjacency graph
-    co_shp$adj <- redist.adjacency(co_shp)
-
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         co_shp <- rmapshaper::ms_simplify(co_shp, keep = 0.05,
             keep_shapes = TRUE) %>%
             suppressWarnings()
     }
+
+    # create adjacency graph
+    co_shp$adj <- redist.adjacency(co_shp)
 
     co_shp <- co_shp %>%
         fix_geo_assignment(muni)
