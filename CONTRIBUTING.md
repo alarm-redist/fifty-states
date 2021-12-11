@@ -25,10 +25,11 @@
 1. Completing your analysis:
     1. Make sure you have removed all `TODO` lines from the template code.
     1. Make sure your documentation is up-to-date and correct.
-    1. Run `enforce_style()` one more time.
-    1. Create a pull request on GitHub, following the provided template.
-    1. As part of the PR template, you will paste in diagnostic plots.
-    1. If your state has additional or unusual constraints, provide figures
+    1. Run `git fetch --all` and `git merge origin/main` at the terminal. Rerun the final lines of your `03_sim_` file, which calculates summary statistics.
+    3. Run `enforce_style()` one more time.
+    4. Create a pull request on GitHub, following the provided template.
+    5. As part of the PR template, you will paste in diagnostic plots.
+    6. If your state has additional or unusual constraints, provide figures
     justifying your choice of constraint strength and showing that the constraints
     are binding properly.
     1. Tag the graduate student assigned to your state for review. If you are a
