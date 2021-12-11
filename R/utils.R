@@ -4,15 +4,18 @@
 #'
 #' @param url a URL
 #' @param path a file path
+#' @param overwrite should the file at path be overwritten if it already exists? Default is FALSE.
 #'
 #' @returns the `httr` request
-download <- function(url, path) {
+download <- function(url, path, overwrite = FALSE) {
     dir <- dirname(path)
     if (!dir.exists(dir)) dir.create(dir, recursive = TRUE)
-    if (!file.exists(path))
-        httr::GET(url = url, httr::write_disk(path))
-    else
+    if (!file.exists(path) || overwrite) {
+        httr::GET(url = url, httr::write_disk(path, overwrite = overwrite))
+    } else {
+        cli::cli_alert_info(paste0("File already downloaded at", path, ". Set `overwrite = TRUE` to overwrite."))
         list(status_code = 200)
+    }
 }
 
 #' Download redistricting data file
@@ -32,7 +35,7 @@ download_redistricting_file <- function(abbr, folder, type = "vtd", overwrite = 
     path <- paste0(folder, "/", basename(url))
 
     if (!file.exists(path) || overwrite) {
-        resp <- download(url, path)
+        resp <- download(url, path, overwrite)
         if (resp$status_code == "404") {
             stop("No files available for ", abbr)
         }
