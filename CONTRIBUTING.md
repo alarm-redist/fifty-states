@@ -17,6 +17,8 @@
     1. Document your analysis in the provided documentation file, including
     decisions on how to incorporate constraints, data sources, and simulation
     techniques.
+    1. The 2010-cycle final plan should be saved in the `cd_2010` column.
+    The 2020-cycle enacted plan should be saved in the `cd_2020` column and added as a reference plan to the `redist_plans` object.
     1. Any data you need to import into your analysis should be added under `data-raw/`.
     1. Any data you create over the course of your analysis should go under `data-out/`.
     1. No data in either folder should be added to the GitHub.
