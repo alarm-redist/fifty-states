@@ -5,11 +5,12 @@
 cli_process_start("Creating {.cls redist_map} object for {.pkg NM_cd_2020}")
 
 # Define map
-map <- redist_map(nm_shp, pop_tol = 0.01,
-                  existing_plan = cd_2010, adj = nm_shp$adj)
+map <- redist_map(nm_shp, pop_tol = 0.0005,
+    existing_plan = cd_2010, adj = nm_shp$adj)
 
 # Set up pseudo-counties
-map <- map %>% mutate(pseudo_county = pick_county_muni(map, counties = county, munis = muni))
+map <- map %>%
+    mutate(pseudo_county = pick_county_muni(map, counties = county, munis = muni))
 
 # Set up cores objects
 map <- map %>%
