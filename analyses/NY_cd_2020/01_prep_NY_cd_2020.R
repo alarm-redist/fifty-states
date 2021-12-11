@@ -111,8 +111,6 @@ if (!file.exists(here(shp_path))) {
     ) %>%
         invisible()
 
-    # create adjacency graph
-    ny_shp$adj <- redist.adjacency(ny_shp)
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
@@ -123,14 +121,14 @@ if (!file.exists(here(shp_path))) {
             suppressWarnings()
     }
 
-    ny_shp <- ny_shp %>%
-        fix_geo_assignment(muni)
+    # create adjacency graph
+    ny_shp$adj <- redist.adjacency(ny_shp)
 
     nbr <- geomander::suggest_neighbors(ny_shp, adj = ny_shp$adj)
     ny_shp$adj <- geomander::add_edge(ny_shp$adj, nbr$x, nbr$y)
 
-    conn <- geomander::suggest_component_connection(ny_shp, adj = ny_shp$adj, group = ny_shp$rep_irc)
-    ny_shp$adj <- geomander::add_edge(ny_shp$adj, conn$x, conn$y)
+    ny_shp <- ny_shp %>%
+        fix_geo_assignment(muni)
 
 
     write_rds(ny_shp, here(shp_path), compress = "gz")
