@@ -1,0 +1,23 @@
+###############################################################################
+# Set up redistricting simulation for `WV_cd_2020`
+# © ALARM Project, December 2021
+###############################################################################
+cli_process_start("Creating {.cls redist_map} object for {.pkg WV_cd_2020}")
+
+# TODO any pre-computation (usually not necessary)
+
+map <- redist_map(wv_shp, pop_tol = 0.005,
+                 existing_plan = cd_2010, adj = wv_shp$adj)
+
+# TODO any filtering, cores, merging, etc.
+
+# make pseudo counties with default settings
+map <- map %>%
+    mutate(pseudo_county = pick_county_muni(map, counties = county, munis = muni))
+
+# Add an analysis name attribute
+attr(map, "analysis_name") <- "WV_2020"
+
+# Output the redist_map object. Do not edit this path.
+write_rds(map, "data-out/WV_2020/WV_cd_2020_map.rds", compress = "xz")
+cli_process_done()
