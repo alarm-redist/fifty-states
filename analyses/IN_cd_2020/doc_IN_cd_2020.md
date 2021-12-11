@@ -17,5 +17,5 @@ No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
 We sample 5,000 districting plans for Indiana.
-We use counties, as the enacted generally follows county boundaries.
+We use counties, despite the lack of requirements, as the enacted does generally follow county lines.
 No special techniques were needed to produce the sample.
