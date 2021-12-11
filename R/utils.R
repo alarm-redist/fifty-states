@@ -164,6 +164,20 @@ vest_crosswalk <- function(cvap, state) {
     vtd
 }
 
+
+load_plans = function(state) {
+    plans <<- read_rds(here(str_glue("data-out/{state}_2020/{state}_cd_2020_plans.rds")))
+}
+rename_cd = function(plans) {
+    m = as.matrix(plans)
+    new_names = colnames(m)
+    new_names[1] = "cd_2020"
+    colnames(m) <- new_names
+    plans$draw = forcats::fct_recode(plans$draw, cd_2020="cd")
+    plans
+}
+
+
 Mode <- function(v) {
     uv <- unique(v)
     uv[which.max(tabulate(match(v, uv)))][1]
