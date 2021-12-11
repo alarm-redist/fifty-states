@@ -7,11 +7,17 @@ cli_process_start("Creating {.cls redist_map} object for {.pkg ``SLUG``}")
 # TODO any pre-computation (usually not necessary)
 
 map <- redist_map(``state``_shp, pop_tol = 0.005,
-                 existing_plan = cd_2010, adj = ``state``_shp$adj)
+    existing_plan = cd_2020, adj = ``state``_shp$adj)
 
 # TODO any filtering, cores, merging, etc.
 
-# Add an analysis name attribute ----
+# TODO remove if not necessary. Adjust pop_muni as needed to balance county/muni splits
+# make pseudo counties with default settings
+map <- map %>%
+    mutate(pseudo_county = pick_county_muni(map, counties = county, munis = muni,
+                                            pop_muni = get_target(map)))
+
+# Add an analysis name attribute
 attr(map, "analysis_name") <- "``STATE``_``YEAR``"
 
 # Output the redist_map object. Do not edit this path.
