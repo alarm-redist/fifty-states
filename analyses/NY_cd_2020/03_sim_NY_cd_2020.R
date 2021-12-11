@@ -17,12 +17,13 @@ cli_process_start("Running simulations for {.pkg NY_cd_2020}")
 #  - If the sampler freezes, try turning off the county split constraint to see
 #  if that's the problem.
 #  - Ask for help!
-plans <- redist_smc(map, nsims = 5e3, counties = county)
+plans <- redist_smc(map, nsims = 5e3, counties = pseudo_county)
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
 
-# TODO add any reference plans that aren't already included
+plans <- plans %>% add_reference(map$rep_irc, "RepIRC") %>%
+    add_reference(map$dem_irc, "DemIRC")
 
 # Output the redist_map object. Do not edit this path.
 write_rds(plans, here("data-out/NY_2020/NY_cd_2020_plans.rds"), compress = "xz")
