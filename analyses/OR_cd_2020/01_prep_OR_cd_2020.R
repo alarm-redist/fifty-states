@@ -70,11 +70,11 @@ if (!file.exists(here(shp_path))) {
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(county_muni, .after = muni)
 
-    d_cd_2010 = tigris::congressional_districts("OR")
+    d_cd_2010 <- tigris::congressional_districts("OR")
     or_shp <- or_shp %>%
         mutate(cd_2010 = as.integer(d_cd_2010$CD116FP)[
             geo_match(or_shp, d_cd_2010, method = "area")],
-            .before = cd_2020)
+        .before = cd_2020)
 
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = or_shp,
