@@ -7,7 +7,7 @@ cli_process_start("Creating {.cls redist_map} object for {.pkg ``SLUG``}")
 # TODO any pre-computation (usually not necessary)
 
 map <- redist_map(``state``_shp, pop_tol = 0.005,
-                 existing_plan = cd_2020, adj = ``state``_shp$adj)
+    existing_plan = cd_2020, adj = ``state``_shp$adj)
 
 # TODO any filtering, cores, merging, etc.
 
