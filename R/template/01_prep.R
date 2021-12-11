@@ -59,7 +59,8 @@ if (!file.exists(here(shp_path))) {
 
     # add the enacted plan
     cd_shp <- st_read(here(path_enacted))
-    ``state``_shp$cd <- as.integer(cd_shp$DISTRICT)[geo_match(``state``_shp, cd_shp)]
+    ``state``_shp$cd <- as.integer(cd_shp$DISTRICT)[
+        geo_match(``state``_shp, cd_shp, method = "area")]
 
     # TODO any additional columns or data you want to add should go here
 
