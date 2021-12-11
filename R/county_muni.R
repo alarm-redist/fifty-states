@@ -22,8 +22,7 @@
 #' data(iowa)
 #' ia_map <- redist_map(iowa, existing_plan = cd_2010, pop_tol = 0.01)
 #' pick_county_muni(map = ia_map, counties = region, munis = name)
-pick_county_muni <- function(map, counties, munis,
-                             pop_muni = sum(map[[attr(map, 'pop_col')]])/attr(map, 'ndists')) {
+pick_county_muni <- function(map, counties, munis, pop_muni = get_target(map)) {
 
     counties <- rlang::eval_tidy(rlang::enquo(counties), map)
     munis <- rlang::eval_tidy(rlang::enquo(munis), map)
@@ -34,16 +33,18 @@ pick_county_muni <- function(map, counties, munis,
 
     pop <- map[[attr(map, 'pop_col')]]
 
-    counties <- redist::redist.county.id(counties)
-    munis[!is.na(munis)] <- redist::redist.county.id(munis[!is.na(munis)]) + max(counties)
-    munis[is.na(munis)] <- counties[is.na(munis)]
+    county_ids <- redist::redist.county.id(counties)
+    munis[!is.na(munis)] <- redist::redist.county.id(munis[!is.na(munis)]) + max(county_ids)
+    munis[is.na(munis)] <- county_ids[is.na(munis)]
     munis <- redist::redist.county.id(munis)
 
 
-    cty_pop <- tapply(pop, counties, sum)
+    cty_pop <- tapply(pop, county_ids, sum)
     cty_pop <- cty_pop[cty_pop > pop_muni]
+    cty_exc = unique(counties)[as.integer(names(cty_pop))]
+    cli::cli_alert_info("{?No counties//}{cty_exc} {?is/are} larger than the target population.")
 
-    counties[counties %in% names(cty_pop)] <- munis[counties %in% names(cty_pop)]
+    county_ids[county_ids %in% names(cty_pop)] <- munis[county_ids %in% names(cty_pop)]
 
-    redist::redist.county.id(counties)
+    redist::redist.county.id(county_ids)
 }
