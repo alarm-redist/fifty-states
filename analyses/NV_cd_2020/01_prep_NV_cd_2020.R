@@ -23,8 +23,8 @@ path_data <- download_redistricting_file("NV", "data-raw/NV")
 path_shp <- here("data-raw", "NV", "2021Congressional_Final_SB1_Amd2.shp")
 if (!file.exists(path_shp)) {
     url <- "https://www.leg.state.nv.us/Division/Research/Documents/2021Congressional_Final_SB1_Amd2.zip"
-    download(url, paste0(dirname(path_shp), "/nv.shp"))
-    unzip(paste0(dirname(path_shp), "/nv.shp"), exdir = dirname(path_shp))
+    download(url, paste0(dirname(path_shp), "/nv.zip"))
+    unzip(paste0(dirname(path_shp), "/nv.zip"), exdir = dirname(path_shp))
 }
 
 cli_process_done()
