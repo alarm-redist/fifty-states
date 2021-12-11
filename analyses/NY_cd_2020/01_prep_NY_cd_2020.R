@@ -60,13 +60,13 @@ if (!file.exists(here(shp_path))) {
         unzip(temp_dem_irc, exdir = "data-raw/NY")
     }
     dem_irc_baf <- read_csv(here(path_dem_irc),
-                            col_names = c("GEOID", "dem_irc"),
-                            col_types = 'cc'
+        col_names = c("GEOID", "dem_irc"),
+        col_types = "cc"
     )
     dem_irc_baf <- dem_irc_baf %>%
         rowwise() %>%
         mutate(dem_irc = tolower(dem_irc),
-               dem_irc = which(dem_irc == letters)) %>%
+            dem_irc = which(dem_irc == letters)) %>%
         ungroup()
 
     if (!file.exists(path_rep_irc)) {
@@ -97,8 +97,8 @@ if (!file.exists(here(shp_path))) {
     baf <- baf %>%
         group_by(GEOID) %>%
         summarize(rep_irc = Mode(rep_irc),
-                  dem_irc = Mode(dem_irc)
-                  )
+            dem_irc = Mode(dem_irc)
+        )
 
     baf <- baf %>% select(GEOID, rep_irc, dem_irc)
 
@@ -115,8 +115,8 @@ if (!file.exists(here(shp_path))) {
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         ny_shp <- rmapshaper::ms_simplify(ny_shp,
-                                          keep = 0.05,
-                                          keep_shapes = TRUE
+            keep = 0.05,
+            keep_shapes = TRUE
         ) %>%
             suppressWarnings()
     }
