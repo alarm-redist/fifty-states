@@ -6,14 +6,14 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg NE_cd_2020}")
 
-merge_idx = attr(map_cores, "merge_idx")
+merge_idx <- attr(map_cores, "merge_idx")
 constr <- redist_constr(map_cores) %>%
     add_constr_custom(2.0, function(plan, i) {
         sum(tapply(map$county, plan[merge_idx] == i, n_distinct) - 1L)
     })
 
 plans <- redist_smc(map_cores, nsims = 5e3, counties = county,
-                    constraints = constr) %>%
+    constraints = constr) %>%
     pullback(map)
 attr(plans, "prec_pop") <- map$pop
 

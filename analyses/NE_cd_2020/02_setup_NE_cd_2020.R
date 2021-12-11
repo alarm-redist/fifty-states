@@ -8,7 +8,7 @@ map <- redist_map(ne_shp, pop_tol = 0.005, existing_plan = cd, adj = ne_shp$adj)
 
 # add cores
 map <- mutate(map,
-              core_id = redist.identify.cores(map$adj, map$cd_2010, boundary = 2))
+    core_id = redist.identify.cores(map$adj, map$cd_2010, boundary = 2))
 map_cores <- merge_by(map, core_id)
 
 # Add an analysis name attribute

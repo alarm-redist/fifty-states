@@ -46,26 +46,26 @@ if (!file.exists(here(shp_path))) {
         select(-vtd)
     d_cd <- make_from_baf("NE", "CD", "VTD")  %>%
         transmute(GEOID = paste0(censable::match_fips("NE"), vtd),
-                  cd_2010 = as.integer(cd))
+            cd_2010 = as.integer(cd))
     ne_shp <- left_join(ne_shp, d_muni, by = "GEOID") %>%
-        left_join(d_cd, by="GEOID") %>%
+        left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2010, .after = county)
 
     cd_shp <- st_read(here(path_enacted))
     ne_shp <- mutate(ne_shp,
-                     cd = geo_match(ne_shp, cd_shp),
-                     .after = cd_2010)
+        cd = geo_match(ne_shp, cd_shp),
+        .after = cd_2010)
 
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = ne_shp,
-                             perim_path = here(perim_path)) %>%
+        perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         ne_shp <- rmapshaper::ms_simplify(ne_shp, keep = 0.05,
-                                         keep_shapes = TRUE) %>%
+            keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 
@@ -81,4 +81,3 @@ if (!file.exists(here(shp_path))) {
     ne_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong NE} shapefile")
 }
-
