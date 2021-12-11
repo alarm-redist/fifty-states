@@ -19,6 +19,15 @@ cli_process_start("Downloading files for {.pkg ``SLUG``}")
 
 path_data <- download_redistricting_file("``STATE``", "data-raw/``STATE``")
 
+# download the enacted plan.
+# TODO try to find a download URL at <https://redistricting.lls.edu/state/``state_name``/>
+url <- "https://redistricting.lls.edu/wp-content/uploads/`state`_2020_congress_XXXXX.zip"
+path_enacted <- "data-raw/``STATE``/``STATE``_enacted.zip"
+download(url, here(path_enacted))
+unzip(here(path_enacted), exdir = here(dirname(path_enacted), "``STATE``_enacted"))
+file.remove(path_enacted)
+path_enacted <- "data-raw/``STATE``/``STATE``_enacted/XXXXXXX.shp" # TODO use actual SHP
+
 # TODO other files here (as necessary). All paths should start with `path_`
 # If large, consider checking to see if these files exist before downloading
 
@@ -47,6 +56,11 @@ if (!file.exists(here(shp_path))) {
         left_join(d_cd, by="GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2010, .after = county)
+
+    # add the enacted plan
+    cd_shp <- st_read(here(path_enacted))
+    ``state``_shp$cd <- as.integer(cd_shp$DISTRICT)[
+        geo_match(``state``_shp, cd_shp, method = "area")]
 
     # TODO any additional columns or data you want to add should go here
 
