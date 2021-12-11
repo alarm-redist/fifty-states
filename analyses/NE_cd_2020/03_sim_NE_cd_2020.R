@@ -34,10 +34,3 @@ save_summary_stats(plans, "data-out/NE_2020/NE_cd_2020_stats.csv")
 
 cli_process_done()
 
-# Extra validation plots for custom constraints -----
-# TODO remove this section if no custom constraints
-if (interactive()) {
-    library(ggplot2)
-    library(patchwork)
-
-}
