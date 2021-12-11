@@ -47,9 +47,9 @@ if (!file.exists(here(shp_path))) {
         select(-vtd)
     d_cd <- make_from_baf("OK", "CD", "VTD")  %>%
         transmute(GEOID = paste0(censable::match_fips("OK"), vtd),
-                  cd_2010 = as.integer(cd))
+            cd_2010 = as.integer(cd))
     ok_shp <- left_join(ok_shp, d_muni, by = "GEOID") %>%
-        left_join(d_cd, by="GEOID") %>%
+        left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2010, .after = county)
 
@@ -58,17 +58,17 @@ if (!file.exists(here(shp_path))) {
 
 
     ok_shp <- ok_shp %>%
-        mutate(across(contains(c('_16', '_18', '_20', 'nrv', 'ndv')), tidyr::replace_na, 0))
+        mutate(across(contains(c("_16", "_18", "_20", "nrv", "ndv")), tidyr::replace_na, 0))
 
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = ok_shp,
-                             perim_path = here(perim_path)) %>%
+        perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         ok_shp <- rmapshaper::ms_simplify(ok_shp, keep = 0.05,
-                                         keep_shapes = TRUE) %>%
+            keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 
@@ -84,4 +84,3 @@ if (!file.exists(here(shp_path))) {
     ok_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong OK} shapefile")
 }
-
