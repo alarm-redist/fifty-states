@@ -40,9 +40,9 @@ if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong OR} shapefile")
     # read in redistricting data
     or_shp <- read_csv(here(path_data), col_types = cols(GEOID20 = "c"))
-    or_enacted <-  read_csv(here(path_baf), col_types = "ci", col_names = c("GEOID20", "cd"))
+    or_enacted <-  read_csv(here(path_baf), col_types = "ci", col_names = c("GEOID20", "cd_2020"))
     or_shp <- left_join(or_shp, or_enacted, by = "GEOID20") %>%
-        relocate(cd, .after = county)
+        relocate(cd_2020, .after = county)
     # add shapefile
     geom_d <- tigris::blocks("OR", year = 2020) %>%
         select(GEOID20 = GEOID20, area_land = ALAND20, area_water = AWATER20, geometry)
@@ -60,15 +60,21 @@ if (!file.exists(here(shp_path))) {
         sf::st_as_sf() %>%
         st_transform(EPSG$OR) %>%
         rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID")) %>%
-        mutate(GEOID = str_c(str_sub(GEOID, 1, 11), "-", cd)) %>% # trim to tracts, but allow splits
+        mutate(GEOID = str_c(str_sub(GEOID, 1, 11), "-", cd_2020)) %>% # trim to tracts, but allow splits
         group_by(GEOID) %>%
         summarize(state = state[1], county = county[1],
-            cd = cd[1], muni = muni[1],
+            cd_2020 = cd_2020[1], muni = muni[1],
             across(pop:ndv, sum, na.rm = TRUE),
             across(area_land:area_water, sum),
             is_coverage = TRUE) %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(county_muni, .after = muni)
+
+    d_cd_2010 = tigris::congressional_districts("OR")
+    or_shp <- or_shp %>%
+        mutate(cd_2010 = as.integer(d_cd_2010$CD116FP)[
+            geo_match(or_shp, d_cd_2010, method = "area")],
+            .before = cd_2020)
 
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = or_shp,
