@@ -42,14 +42,19 @@ if (!file.exists(here(shp_path))) {
     baf_lsa2 <- read_csv(here(path_lsa2), col_names = c("BLOCKID", "CD"), col_types = "ci")
     d_cd <- make_from_baf("IA", baf_lsa2, "VTD") %>%
         transmute(vtd = str_sub(vtd, 4),
-            cd = as.integer(cd))
+            cd_2020 = as.integer(cd))
+    d_cd_2010 <- make_from_baf("IA", "CD", "VTD") %>%
+        transmute(vtd = str_sub(vtd, 4),
+            cd_2010 = as.integer(cd))
 
     ia_shp <- left_join(ia_shp, d_cd, by = "vtd") %>%
-        relocate(cd, .after = county)
+        left_join(d_cd_2010, by = "vtd") %>%
+        relocate(cd_2010, cd_2020, .after = county)
 
     ia_shp <- ia_shp %>%
         group_by(state, county) %>%
-        summarize(cd = cd[1],
+        summarize(cd_2010 = cd_2010[1],
+            cd_2020 = cd_2020[1],
             across(pop:area_water, sum)) %>%
         ungroup()
 
