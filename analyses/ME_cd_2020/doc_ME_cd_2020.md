@@ -21,4 +21,4 @@ Islands tracts were connected to the nearest tract within the same district.
 ## Simulation Notes
 We sample 5,000 districting plans for Maine.
 We use the standard county constraint.
-No special techniques were needed to produce the sample.
+We weaken the compactness parameter to 0.8 due to the relatively small state size and total number of tracts to encourage more diversity in the sample.
