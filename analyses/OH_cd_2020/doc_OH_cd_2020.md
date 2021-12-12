@@ -19,6 +19,7 @@ Ohio also has one VRA district in Cuyahoga county.
 
 ## Data Sources
 Data for Ohio comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
+Ohio has many precincts which are not geographically contiguous, especially in and around Franklin County (Columbus). We do not attempt to split or otherwise correct these precincts, which may lead some simulated districts to be geographically noncontiguous, despite being contiguous according to the precinct adjacency graph.
 
 ## Pre-processing Notes
 We merge the precincts all counties which are not split by the enacted plan.
