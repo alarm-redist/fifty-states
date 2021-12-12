@@ -77,7 +77,7 @@ if (!file.exists(here(shp_path))) {
     wv_shp <- wv_shp %>% mutate(
         cd_2020 = as.integer(dists$DISTRICT)[geo_match(from = wv_shp, to = dists, method = "area")],
         .after = cd_2010
-        )
+    )
 
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = wv_shp,
