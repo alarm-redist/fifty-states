@@ -15,7 +15,7 @@ We enforce a maximum population deviation of 0.5%.
 We ensure that there is a majority minority district with at least 55% VAP.
 
 ## Data Sources
-Data for Mississippi comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
+Data for Mississippi comes from the [The Upshot Presidential Precinct Map data](https://github.com/TheUpshot/presidential-precinct-map-2020) and are estimated to 2020 Census tracts.
 
 ## Pre-processing Notes
 No manual pre-processing decisions were necessary.
