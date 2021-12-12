@@ -37,7 +37,7 @@ m_cleve <- pl_cleve %>%
 N_valid <- ncol(m_cleve)
 m_init <- matrix(0L, nrow = nrow(map_2020), ncol = N)
 m_init[idxs, seq_len(N_valid)] <- m_cleve
-m_init[idxs, seq(N_valid + 1, N)] <- m_cleve[, sample(N_valid, N - N_valid, replace = T)]
+m_init[idxs, seq(N_valid + 1, N)] <- m_cleve[, sample(N_valid, N - N_valid, replace = TRUE)]
 m_init[m_init != 2] <- 0L
 m_init[m_init == 2] <- 1L
 
