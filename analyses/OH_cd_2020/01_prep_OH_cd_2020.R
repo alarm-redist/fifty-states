@@ -47,32 +47,32 @@ if (!file.exists(here(shp_path))) {
         select(-vtd)
     d_cd <- make_from_baf("OH", "CD", "VTD")  %>%
         transmute(GEOID = paste0(censable::match_fips("OH"), vtd),
-                  cd_2010 = as.integer(cd))
+            cd_2010 = as.integer(cd))
     oh_shp <- left_join(oh_shp, d_muni, by = "GEOID") %>%
-        left_join(d_cd, by="GEOID") %>%
+        left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2010, .after = county)
 
     # add the enacted plan
     cd_shp <- st_read(here(path_enacted)) %>%
         st_transform(st_crs(oh_shp))
-    oh_shp = oh_shp %>%
+    oh_shp <- oh_shp %>%
         mutate(cd_2020 = as.integer(cd_shp$Districts)[
             geo_match(oh_shp, cd_shp, method = "area")],
-            .after = cd_2010)
+        .after = cd_2010)
 
     water_precs <- "39(093|035|007|085)ZZZZZZ"
     oh_shp <- filter(oh_shp, !str_starts(GEOID, water_precs))
 
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = oh_shp,
-                             perim_path = here(perim_path)) %>%
+        perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         oh_shp <- rmapshaper::ms_simplify(oh_shp, keep = 0.05,
-                                         keep_shapes = TRUE) %>%
+            keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 
@@ -88,4 +88,3 @@ if (!file.exists(here(shp_path))) {
     oh_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong OH} shapefile")
 }
-

@@ -28,5 +28,5 @@ We merge the cities of Cincinnati and Cleveland.
 We sample 5,000 districting plans for Ohio.
 We begin by sampling plans in Cuyahoga county to generate a VRA district with BVAP at least 40%. Then we sample the remaining districts.
 We apply a Gibbs constraint to discourage multiple splits (a penalty of 100.0 for 3 splits, and 3.0 for 2 splits)
-We apply a Gibbs constraint to discourage splitting Columbus (a penalty of 0.5 per spliting district)
+We apply a Gibbs constraint to discourage splitting Columbus (a penalty of 0.5 per splitting district)
 We use population tempering of 0.01 to encourage efficiency.
