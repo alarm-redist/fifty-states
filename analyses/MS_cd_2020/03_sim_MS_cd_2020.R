@@ -7,7 +7,7 @@
 cli_process_start("Running simulations for {.pkg MS_cd_2020}")
 
 cons <- redist_constr(map) %>%
-    add_constr_grp_hinge(25, vap - vap_white, vap)
+    add_constr_grp_hinge(25, vap_black, vap, tgts_group = c(0.55, 0.1))
 
 plans <- redist_smc(map, nsims = 5e3, counties = county, constraints = cons)
 
@@ -31,9 +31,13 @@ save_summary_stats(plans, "data-out/MS_2020/MS_cd_2020_stats.csv")
 cli_process_done()
 
 # Extra validation plots for custom constraints -----
-# TODO remove this section if no custom constraints
 if (interactive()) {
     library(ggplot2)
     library(patchwork)
+
+    redist.plot.distr_qtys(plans, vap_black / total_vap,
+                           color_thresh = NULL,
+                           color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, '#3D77BB', '#B25D4C')) +
+        theme_bw()
 
 }
