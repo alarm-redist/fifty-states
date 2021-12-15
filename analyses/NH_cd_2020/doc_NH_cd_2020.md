@@ -17,4 +17,5 @@ No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
 We sample 5,000 districting plans for New Hampshire.
+We use a standard county split algorithmic constraint.
 No special techniques were needed to produce the sample.
