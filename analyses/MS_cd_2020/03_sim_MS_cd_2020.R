@@ -7,7 +7,7 @@
 cli_process_start("Running simulations for {.pkg MS_cd_2020}")
 
 cons <- redist_constr(map) %>%
-    add_constr_grp_hinge(25, vap_black, vap, tgts_group = c(0.55, 0.1))
+    add_constr_grp_hinge(30, vap_black, vap, tgts_group = c(0.55, 0.1))
 
 plans <- redist_smc(map, nsims = 5e3, counties = county, constraints = cons)
 
@@ -37,7 +37,11 @@ if (interactive()) {
 
     redist.plot.distr_qtys(plans, vap_black / total_vap,
                            color_thresh = NULL,
-                           color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, '#3D77BB', '#B25D4C')) +
-        theme_bw()
+                           color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, '#3D77BB', '#B25D4C'),
+                           size = 0.5, alpha = 0.5) +
+        scale_y_continuous('Percent Black by VAP') +
+        labs(title = 'Mississippi Proposed Plan versus Simulations') +
+        scale_color_manual(values = c(cd_2020_prop = 'black')) +
+        ggredist::theme_r21()
 
 }
