@@ -47,7 +47,7 @@ if (!file.exists(here(shp_path))) {
 
     # add proposed ----
     # built from hand from this pdf:
-    #
+    # http://gencourt.state.nh.us/house/committees/committee_websites/Redistricting_2021/plans/HB%2052%20-%20Congressional%20Districts%20%20Adopted.pdf
     r <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 29,
         33, 35, 113, 152, 157, 163, 164, 166, 167, 168, 169, 170, 171, 172,
         173, 174, 175, 176, 177, 179, 191, 193, 197, 201, 205, 206, 217,
@@ -56,7 +56,7 @@ if (!file.exists(here(shp_path))) {
         253, 254, 255, 256, 257, 258, 259, 260, 262, 263, 264, 265, 266,
         267, 269, 275, 276, 277, 278, 279, 280, 281, 282, 296, 309)
     # built from hand from this pdf:
-    #
+    # http://gencourt.state.nh.us/house/committees/committee_websites/Redistricting_2021/plans/Congressional%20Maps.pdf
     d <- c(1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
         19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34,
         35, 115, 152, 157, 166, 167, 168, 169, 170, 171, 172, 173, 174,
