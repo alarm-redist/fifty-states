@@ -4,8 +4,6 @@
 ###############################################################################
 cli_process_start("Creating {.cls redist_map} object for {.pkg NH_cd_2020}")
 
-# TODO any pre-computation (usually not necessary)
-
 map <- redist_map(nh_shp, pop_tol = 0.005,
     existing_plan = rep_prop, adj = nh_shp$adj)
 

@@ -72,8 +72,6 @@ if (!file.exists(here(shp_path))) {
             dem_prop = if_else(rn %in% d, 1L, 2L),
             .after = cd_2010)
 
-    # TODO any additional columns or data you want to add should go here
-
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = nh_shp,
         perim_path = here(perim_path)) %>%
