@@ -4,7 +4,8 @@
 ###############################################################################
 cli_process_start("Creating {.cls redist_map} object for {.pkg NE_cd_2020}")
 
-map <- redist_map(ne_shp, pop_tol = 0.005, existing_plan = cd, adj = ne_shp$adj)
+map <- redist_map(ne_shp, pop_tol = 0.005,
+    existing_plan = cd_2020, adj = ne_shp$adj)
 
 # add cores
 map <- mutate(map,

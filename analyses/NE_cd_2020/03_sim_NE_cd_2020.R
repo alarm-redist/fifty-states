@@ -33,4 +33,3 @@ plans <- add_summary_stats(plans, map)
 save_summary_stats(plans, "data-out/NE_2020/NE_cd_2020_stats.csv")
 
 cli_process_done()
-
