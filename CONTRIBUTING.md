@@ -17,6 +17,8 @@
     1. Document your analysis in the provided documentation file, including
     decisions on how to incorporate constraints, data sources, and simulation
     techniques.
+    1. The 2010-cycle final plan should be saved in the `cd_2010` column.
+    The 2020-cycle enacted plan should be saved in the `cd_2020` column and added as a reference plan to the `redist_plans` object.
     1. Any data you need to import into your analysis should be added under `data-raw/`.
     1. Any data you create over the course of your analysis should go under `data-out/`.
     1. No data in either folder should be added to the GitHub.
@@ -25,10 +27,11 @@
 1. Completing your analysis:
     1. Make sure you have removed all `TODO` lines from the template code.
     1. Make sure your documentation is up-to-date and correct.
-    1. Run `enforce_style()` one more time.
-    1. Create a pull request on GitHub, following the provided template.
-    1. As part of the PR template, you will paste in diagnostic plots.
-    1. If your state has additional or unusual constraints, provide figures
+    1. Run `git fetch --all` and `git merge origin/main` at the terminal. Rerun the final lines of your `03_sim_` file, which calculates summary statistics.
+    3. Run `enforce_style()` one more time.
+    4. Create a pull request on GitHub, following the provided template.
+    5. As part of the PR template, you will paste in diagnostic plots.
+    6. If your state has additional or unusual constraints, provide figures
     justifying your choice of constraint strength and showing that the constraints
     are binding properly.
     1. Tag the graduate student assigned to your state for review. If you are a
