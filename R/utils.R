@@ -121,7 +121,7 @@ vest_crosswalk <- function(cvap, state) {
 
     proc_raw_cw <- function(raw) {
         fields <- str_split(raw, ",")
-        map_dfr(fields, function(x) {
+        purrr::map_dfr(fields, function(x) {
             if (length(x) <= 1) {
                 return(tibble())
             }
@@ -133,7 +133,7 @@ vest_crosswalk <- function(cvap, state) {
         })
     }
 
-    vest_cw_raw <- read_lines(glue::glue("{unz_path}/block1020_crosswalk_{match_fips(state)}.csv"))
+    vest_cw_raw <- read_lines(glue::glue("{unz_path}/block1020_crosswalk_{censable::match_fips(state)}.csv"))
     vest_cw <- proc_raw_cw(vest_cw_raw)
     cw <- pl_crosswalk(toupper(state))
     vest_cw <- left_join(vest_cw, select(cw, -int_land), by = c("GEOID", "GEOID_to"))
@@ -143,7 +143,7 @@ vest_crosswalk <- function(cvap, state) {
         .[[1]] %>%
         rename(GEOID = BLOCKID) %>%
         mutate(
-            STATEFP = match_fips(state),
+            STATEFP = censable::match_fips(state),
             GEOID20 = paste0(STATEFP, COUNTYFP, DISTRICT)
         )
 
