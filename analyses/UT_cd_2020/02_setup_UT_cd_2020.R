@@ -5,7 +5,7 @@
 cli_process_start("Creating {.cls redist_map} object for {.pkg UT_cd_2020}")
 
 # Define map
-map <- redist_map(ut_shp, pop_tol = 0.01,
+map <- redist_map(ut_shp, pop_tol = 0.005,
     existing_plan = cd_2020, adj = ut_shp$adj)
 
 # Set up pseudo-counties
