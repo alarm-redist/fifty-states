@@ -59,7 +59,7 @@ if (!file.exists(here(shp_path))) {
 
     # add the enacted plan
     cd_shp <- st_read(here(path_enacted))
-    ``state``_shp = ``state``_shp %>%
+    ``state``_shp <- ``state``_shp %>%
         mutate(cd_2020 = as.integer(cd_shp$DISTRICT)[
             geo_match(``state``_shp, cd_shp, method = "area")],
             .after = cd_2010)

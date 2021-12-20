@@ -4,7 +4,7 @@
 ###############################################################################
 cli_process_start("Creating {.cls redist_map} object for {.pkg OR_cd_2020}")
 
-map <- redist_map(or_shp, pop_tol = 0.005, existing_plan = cd, adj = or_shp$adj) %>%
+map <- redist_map(or_shp, pop_tol = 0.005, existing_plan = cd_2020, adj = or_shp$adj) %>%
     mutate(pseudocounty = if_else(str_detect(county, "Multnomah"),
         county_muni, county))
 

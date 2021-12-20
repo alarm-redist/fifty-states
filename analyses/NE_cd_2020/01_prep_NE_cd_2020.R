@@ -54,7 +54,7 @@ if (!file.exists(here(shp_path))) {
 
     cd_shp <- st_read(here(path_enacted))
     ne_shp <- mutate(ne_shp,
-        cd = geo_match(ne_shp, cd_shp),
+        cd_2020 = geo_match(ne_shp, cd_shp, method = "area"),
         .after = cd_2010)
 
     # Create perimeters in case shapes are simplified
