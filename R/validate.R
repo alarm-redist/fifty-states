@@ -10,7 +10,7 @@ validate_analysis <- function(plans, map) {
     library(ggplot2)
     p_wgts <- plot(plans) + theme_bw()
 
-    plan_div <- plans_diversity(plans, n_max = 150)*log(attr(map, "ndists"))
+    plan_div <- plans_diversity(plans, n_max = 150)
     p_div <- qplot(plan_div, bins = I(40), xlab = "VI distance", main = "Plan diversity") + theme_bw()
 
     p_dev <- hist(plans, plan_dev, bins = 40) + labs(title = "Population deviation") + theme_bw()
