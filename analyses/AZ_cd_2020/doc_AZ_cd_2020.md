@@ -27,4 +27,4 @@ To balance county and municipality splits, we create pseudocounties for use in t
 These are counties outside Maricopa County and Pima County, which are larger than a congressional district in population.
 Within Maricopa County and Pima County, municipalities are each their own pseudocounty as well.
 Overall, this approach leads to much fewer county and municipality splits than using either a county or county/municipality constraint.
-We add a VRA constraint targeting districts with at least 55% HVAP, which is sufficient to create two majority-Hispanic districts.
+We add a VRA constraint targeting districts with 65% HVAP, which is sufficient to create two majority-Hispanic districts.
