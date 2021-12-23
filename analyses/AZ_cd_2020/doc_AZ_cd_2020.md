@@ -13,7 +13,8 @@ In Arizona, districts must, [under the state constitution](https://www.azleg.gov
 ### Interpretation of requirements
 We enforce a maximum population deviation of 0.5%.
 We add a county/municipality constraint, as described below.
-We add a VRA constraint to ensure the proper number of majority-minority districts.
+We add a VRA constraint targeting two majority-HVAP districts which are also substantially majority-minority.
+Not every plans is guaranteed to have two majority-HVAP districts, however.
 
 ## Data Sources
 Data for Arizona comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
@@ -27,4 +28,3 @@ To balance county and municipality splits, we create pseudocounties for use in t
 These are counties outside Maricopa County and Pima County, which are larger than a congressional district in population.
 Within Maricopa County and Pima County, municipalities are each their own pseudocounty as well.
 Overall, this approach leads to much fewer county and municipality splits than using either a county or county/municipality constraint.
-We add a VRA constraint targeting districts with 65% HVAP, which is sufficient to create two majority-Hispanic districts.
