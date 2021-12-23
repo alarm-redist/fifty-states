@@ -56,7 +56,7 @@ if (interactive()) {
     plans %>%
         mutate(min = vap_hisp/total_vap) %>%
         number_by(min) %>%
-        redist.plot.distr_qtys(ndshare, sort="none", geom="boxplot") +
-        labs(x="Districts, ordered by HVAP", y="Average Democratic share")
+        redist.plot.distr_qtys(ndshare, sort = "none", geom = "boxplot") +
+        labs(x = "Districts, ordered by HVAP", y = "Average Democratic share")
 
 }
