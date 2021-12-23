@@ -6,7 +6,12 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg NC_cd_2020}")
 
-plans <- redist_smc(map, nsims = 5e3, counties = county)
+constr <- redist_constr(map) %>%
+    add_constr_splits(1)
+
+plans <- redist_smc(map, nsims = 5e3,
+                    counties = pseudo_county,
+                    constraints = constr)
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")

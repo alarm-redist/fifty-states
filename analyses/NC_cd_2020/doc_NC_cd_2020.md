@@ -1,7 +1,5 @@
-# 2020 North Carolina Congressional Districts
-
 ## Redistricting requirements
-In North Carolina, districts must:
+In North Carolina, under [North Carolina State Constitution Article II Sections 3 & 5](https://www.ncleg.gov/Laws/Constitution/Article2), districts must:
 
 1. be contiguous
 2. have equal populations
