@@ -14,6 +14,10 @@ map <- redist_map(ga_shp, pop_tol = 0.005,
 # Add an analysis name attribute ----
 attr(map, "analysis_name") <- "GA_2020"
 
+# Make pseudo counties with default settings ----
+map <- map %>%
+    mutate(pseudo_county = pick_county_muni(map, counties = county, munis = muni))
+
 # Output the redist_map object. Do not edit this path.
 write_rds(map, "data-out/GA_2020/GA_cd_2020_map.rds", compress = "xz")
 cli_process_done()

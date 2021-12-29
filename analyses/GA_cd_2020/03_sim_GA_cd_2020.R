@@ -8,6 +8,11 @@ cli_process_start("Running simulations for {.pkg GA_cd_2020}")
 
 # TODO any pre-computation (VRA targets, etc.)
 
+ga_black_prop <- sum(ga_shp$vap_black) / sum(ga_shp$vap)
+
+constr <- redist_constr(map) %>%
+    add_constr_grp_hinge(30, vap_black, vap, tgts_group = c(0.55, ga_black_prop))
+
 # TODO customize as needed. Recommendations:
 #  - For many districts / tighter population tolerances, try setting
 #  `pop_temper=0.01` and nudging upward from there. Monitor the output for
@@ -18,9 +23,9 @@ cli_process_start("Running simulations for {.pkg GA_cd_2020}")
 #  if that's the problem.
 #  - Ask for help!
 
-ga_prop <- sum(ga_shp$vap_black) / sum(ga_shp$vap)
-
 plans <- redist_smc(map, nsims = 5e3, counties = county)
+plans_vra <- redist_smc(map, nsims = 5e3, counties = county,
+                        constraints = constr)
 
 # plans_vra_100 <- redist_smc(map, nsims = 5e3, counties = county,
 #                             constraints = list(vra = list(strength = 100,
@@ -40,6 +45,7 @@ cli_process_done()
 cli_process_start("Computing summary statistics for {.pkg GA_cd_2020}")
 
 plans <- add_summary_stats(plans, map)
+plans_vra <- add_summary_stats(plans_vra, map)
 
 # Output the summary statistics. Do not edit this path.
 save_summary_stats(plans, "data-out/GA_2020/GA_cd_2020_stats.csv")
@@ -52,5 +58,5 @@ if (interactive()) {
     library(ggplot2)
     library(patchwork)
 
-    validate_analysis(plans, map)
+    validate_analysis(plans_vra, map)
 }
