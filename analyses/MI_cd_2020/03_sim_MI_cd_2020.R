@@ -10,12 +10,11 @@ plans <- redist_smc(map, nsims = 8e3, counties = pseudocounty,
     constraints = list(hinge = list(strength = 50, tgts_min = 0.60,
         min_pop = vap - vap_white,
         tot_pop = vap)),
-    seq_alpha = 0.4, verbose = FALSE)
+    seq_alpha = 0.4, verbose = FALSE) %>%
+    subset_sampled()
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
-
-# TODO add any reference plans that aren't already included
 
 # filter to ≥ 2 VRA districts
 vra_ok <- redist.group.percent(as.matrix(plans), map$vap - map$vap_white, map$vap) %>%
@@ -28,6 +27,8 @@ if (sum(vra_ok) < 5e3) {
     plans <- filter(plans, as.integer(draw) %in% vra_idx) %>%
         mutate(draw = as.factor(as.integer(draw)))
 }
+
+plans <- add_reference(plans, map$cd_2020)
 
 # Output the redist_map object. Do not edit this path.
 write_rds(plans, here("data-out/MI_2020/MI_cd_2020_plans.rds"), compress = "xz")

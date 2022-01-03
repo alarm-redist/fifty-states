@@ -19,6 +19,13 @@ cli_process_start("Downloading files for {.pkg MI_cd_2020}")
 
 path_data <- download_redistricting_file("MI", "data-raw/MI")
 
+url <- "https://michigan.mydistricting.com/legdistricting/html/shapefiles/32b6d25653a6843a76a7ac33ac9c55b9-output/32b6d25653a6843a76a7ac33ac9c55b9.zip"
+path_enacted <- "data-raw/MI/MI_enacted.zip"
+download(url, here(path_enacted))
+unzip(here(path_enacted), exdir = here(dirname(path_enacted), "MI_enacted"))
+file.remove(path_enacted)
+path_enacted <- "data-raw/MI/MI_enacted/32b6d25653a6843a76a7ac33ac9c55b9.shp"
+
 cli_process_done()
 
 # Compile raw data into a final shapefile for analysis -----
@@ -49,13 +56,18 @@ if (!file.exists(here(shp_path))) {
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2010, .after = county)
 
+    cd_shp <- st_read(here(path_enacted))
+    mi_shp <- mi_shp %>%
+        mutate(cd_2020 = as.integer(cd_shp$DISTRICTNO)[
+            geo_match(mi_shp, cd_shp, method = "area")],
+        .after = cd_2010)
+
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = mi_shp,
         perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         mi_shp <- rmapshaper::ms_simplify(mi_shp, keep = 0.05,
             keep_shapes = TRUE) %>%
