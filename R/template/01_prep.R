@@ -19,6 +19,15 @@ cli_process_start("Downloading files for {.pkg ``SLUG``}")
 
 path_data <- download_redistricting_file("``STATE``", "data-raw/``STATE``")
 
+# download the enacted plan.
+# TODO try to find a download URL at <https://redistricting.lls.edu/state/``state_name``/>
+url <- "https://redistricting.lls.edu/wp-content/uploads/`state`_2020_congress_XXXXX.zip"
+path_enacted <- "data-raw/``STATE``/``STATE``_enacted.zip"
+download(url, here(path_enacted))
+unzip(here(path_enacted), exdir = here(dirname(path_enacted), "``STATE``_enacted"))
+file.remove(path_enacted)
+path_enacted <- "data-raw/``STATE``/``STATE``_enacted/XXXXXXX.shp" # TODO use actual SHP
+
 # TODO other files here (as necessary). All paths should start with `path_`
 # If large, consider checking to see if these files exist before downloading
 
@@ -48,11 +57,19 @@ if (!file.exists(here(shp_path))) {
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2010, .after = county)
 
+    # add the enacted plan
+    cd_shp <- st_read(here(path_enacted))
+    ``state``_shp <- ``state``_shp %>%
+        mutate(cd_2020 = as.integer(cd_shp$DISTRICT)[
+            geo_match(``state``_shp, cd_shp, method = "area")],
+            .after = cd_2010)
+
     # TODO any additional columns or data you want to add should go here
 
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = ``state``_shp,
-                             perim_path = here(perim_path))
+                             perim_path = here(perim_path)) %>%
+        invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     # TODO feel free to delete if this dependency isn't available

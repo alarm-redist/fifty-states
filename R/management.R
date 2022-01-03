@@ -33,6 +33,8 @@ init_analysis <- function(state, type = "cd", year = 2020, overwrite = FALSE) {
             str_replace_all("``STATE``", state) %>%
             str_replace_all("``YEAR``", year) %>%
             str_replace_all("``state``", str_to_lower(state)) %>%
+            str_replace_all("``state_name``",
+                            str_to_lower(state.name[state.abb == state])) %>%
             str_replace_all("``COPYRIGHT``", copyright) %>%
             write_file(new_path)
         cli_li("Creating {.file {path_r}{new_basename}}'")

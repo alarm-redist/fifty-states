@@ -7,7 +7,7 @@ Authors@R: c(
     person("Tyler", "Simko", role = "aut", email = "tsimko@g.harvard.edu"),
     person("Shiro", "Kuriwaki", role = "aut", email = "kuriwaki@g.harvard.edu"),
     person("Kosuke", "Imai", role = "drt", email = "imai@harvard.edu"),
-    person("George", "Garcia III", role = "aut", email = ""))
+    person("George", "Garcia III", role = "aut", email = "grg3@law.stanford.edu"))
 Description: Redistricting analysis for all 50 U.S. states.
 Imports: 
     dplyr (>= 1.0.7),
@@ -26,6 +26,7 @@ Imports:
     httr,
     cli,
     devtools,
+    dataverse,
     here,
     cvap
 Suggests: 
@@ -35,4 +36,4 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2

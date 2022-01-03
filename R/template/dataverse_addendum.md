@@ -19,5 +19,11 @@ Both the `redist_plans` and `redist_map` object are intended to be used with the
 * `comp_polsby`: compactness, as measured by the Polsby-Popper score. Higher values indicate more compactness.
 * `county_splits`: the number of counties which belong to more than one district.
 * `muni_splits`: the number of Census Designated Places which belong to more than one district.
+* `*_##_dem_*`, `*_##_rep_*`: vote counts for statewide Democratic and Republican candidates in a certain election. More information [here](https://github.com/alarm-redist/census-2020#data-format).
 * `adv_##`, `arv_##`: average vote counts for statewide Democratic and Republican candidates in a certain year. More information [here](https://github.com/alarm-redist/census-2020#data-format).
 * `ndv`, `nrv`: averages of the `adv_##` and `arv_##` variables across all available elections.
+* `ndshare`: normal Democratic share, computed as `ndv / (ndv + nrv)`
+* `pr_dem`: probability seat is represented by a Democrat; calculated as the fraction of statewide elections under which the district had a majority Democratic share.
+* `e_dem`: expected number of Democratic seats for the plan; equivalent to summing the `pr_dem` values across districts
+* `pbias`: partisan bias at 50% vote share, averaged across all available elections. Positive values indicate Republican bias.
+* `egap`: the efficiency gap, averaged across all available elections. Positive values indicate Republican bias.

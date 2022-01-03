@@ -4,15 +4,18 @@
 #'
 #' @param url a URL
 #' @param path a file path
+#' @param overwrite should the file at path be overwritten if it already exists? Default is FALSE.
 #'
 #' @returns the `httr` request
-download <- function(url, path) {
+download <- function(url, path, overwrite = FALSE) {
     dir <- dirname(path)
     if (!dir.exists(dir)) dir.create(dir, recursive = TRUE)
-    if (!file.exists(path))
-        httr::GET(url = url, httr::write_disk(path))
-    else
+    if (!file.exists(path) || overwrite) {
+        httr::GET(url = url, httr::write_disk(path, overwrite = overwrite))
+    } else {
+        cli::cli_alert_info(paste0("File already downloaded at", path, ". Set `overwrite = TRUE` to overwrite."))
         list(status_code = 200)
+    }
 }
 
 #' Download redistricting data file
@@ -32,7 +35,7 @@ download_redistricting_file <- function(abbr, folder, type = "vtd", overwrite = 
     path <- paste0(folder, "/", basename(url))
 
     if (!file.exists(path) || overwrite) {
-        resp <- download(url, path)
+        resp <- download(url, path, overwrite)
         if (resp$status_code == "404") {
             stop("No files available for ", abbr)
         }
@@ -78,6 +81,24 @@ make_epsg_table <- function() {
 
 EPSG <- read_rds(here("R/epsg.rds"))
 
+
+#' Remove an edge
+#'
+#' @param adj an adjacency graph
+#' @param v1 numeric indices of the first vertex in each edge
+#' @param v2 numeric indices of the second vertex in each edge
+#' @param zero if `TRUE`, the entries of `adj` are zero-indexed
+remove_edge = function(adj, v1, v2, zero = TRUE) {
+    if (length(v1) != length(v2)) {
+        stop("v1 and v2 lengths are different.")
+    }
+    for (i in 1:length(v1)) {
+        adj[[v1[i]]] <- setdiff(adj[[v1[i]]], v2[i] - zero)
+        adj[[v2[i]]] <- setdiff(adj[[v2[i]]], v1[i] - zero)
+    }
+    adj
+}
+
 #' Retally with VEST
 #'
 #' Uses VEST crosswalk. Code mostly copied from [census-2020](https://github.com/alarm-redist/census-2020/blob/main/R/00_build_vest.R)
@@ -100,7 +121,7 @@ vest_crosswalk <- function(cvap, state) {
 
     proc_raw_cw <- function(raw) {
         fields <- str_split(raw, ",")
-        map_dfr(fields, function(x) {
+        purrr::map_dfr(fields, function(x) {
             if (length(x) <= 1) {
                 return(tibble())
             }
@@ -112,7 +133,7 @@ vest_crosswalk <- function(cvap, state) {
         })
     }
 
-    vest_cw_raw <- read_lines(glue::glue("{unz_path}/block1020_crosswalk_{match_fips(state)}.csv"))
+    vest_cw_raw <- read_lines(glue::glue("{unz_path}/block1020_crosswalk_{censable::match_fips(state)}.csv"))
     vest_cw <- proc_raw_cw(vest_cw_raw)
     cw <- pl_crosswalk(toupper(state))
     vest_cw <- left_join(vest_cw, select(cw, -int_land), by = c("GEOID", "GEOID_to"))
@@ -122,7 +143,7 @@ vest_crosswalk <- function(cvap, state) {
         .[[1]] %>%
         rename(GEOID = BLOCKID) %>%
         mutate(
-            STATEFP = match_fips(state),
+            STATEFP = censable::match_fips(state),
             GEOID20 = paste0(STATEFP, COUNTYFP, DISTRICT)
         )
 
@@ -143,3 +164,21 @@ vest_crosswalk <- function(cvap, state) {
     vtd
 }
 
+
+load_plans = function(state) {
+    plans <<- read_rds(here(str_glue("data-out/{state}_2020/{state}_cd_2020_plans.rds")))
+}
+rename_cd = function(plans) {
+    m = as.matrix(plans)
+    new_names = colnames(m)
+    new_names[1] = "cd_2020"
+    colnames(m) <- new_names
+    plans$draw = forcats::fct_recode(plans$draw, cd_2020="cd")
+    plans
+}
+
+
+Mode <- function(v) {
+    uv <- unique(v)
+    uv[which.max(tabulate(match(v, uv)))][1]
+}
