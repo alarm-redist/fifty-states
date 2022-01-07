@@ -37,10 +37,14 @@ if (!file.exists(here(shp_path))) {
     d_muni <- make_from_baf("NH", "INCPLACE_CDP", "VTD")  %>%
         mutate(GEOID = paste0(censable::match_fips("NH"), vtd)) %>%
         select(-vtd)
+    d_mcd <- make_from_baf("NH", "MCD", "VTD")  %>%
+        mutate(GEOID = paste0(censable::match_fips("NH"), vtd)) %>%
+        select(-vtd)
     d_cd <- make_from_baf("NH", "CD", "VTD")  %>%
         transmute(GEOID = paste0(censable::match_fips("NH"), vtd),
             cd_2010 = as.integer(cd))
     nh_shp <- left_join(nh_shp, d_muni, by = "GEOID") %>%
+        left_join(d_mcd, by = "GEOID") %>%
         left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2010, .after = county)
@@ -68,7 +72,7 @@ if (!file.exists(here(shp_path))) {
         304, 305, 306, 307, 308, 309)
     nh_shp <- nh_shp %>%
         mutate(rn = row_number(),
-            rep_prop = if_else(rn %in% r, 1L, 2L),
+            cd_2020 = if_else(rn %in% r, 1L, 2L),
             dem_prop = if_else(rn %in% d, 1L, 2L),
             .after = cd_2010)
 

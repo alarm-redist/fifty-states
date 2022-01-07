@@ -16,6 +16,6 @@ Data for New Hampshire comes from the ALARM Project's [2020 Redistricting Data F
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 5,000 districting plans for New Hampshire.
-We use a standard county split algorithmic constraint.
-No special techniques were needed to produce the sample.
+We sample 7,000 districting plans for New Hampshire and rejection sample for 5,000 
+districting plans with 0 municipality splits.
+We use a minor civil division algorithmic constraint.
