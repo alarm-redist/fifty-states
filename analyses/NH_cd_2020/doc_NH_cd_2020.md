@@ -13,9 +13,8 @@ We enforce a maximum population deviation of 0.5%.
 Data for New Hampshire comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
 
 ## Pre-processing Notes
-No manual pre-processing decisions were necessary.
+Precincts are merged by minor civil division, as the enacted has 0 minor civil division splits.
 
 ## Simulation Notes
-We sample 7,000 districting plans for New Hampshire and rejection sample for 5,000 
-districting plans with 0 municipality splits.
-We use a minor civil division algorithmic constraint.
+We sample 5,000 districting plans for New Hampshire.
+We use a standard county algorithmic constraint.
