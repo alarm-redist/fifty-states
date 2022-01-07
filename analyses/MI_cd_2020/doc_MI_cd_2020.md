@@ -15,7 +15,6 @@ Based on the current plan, two districts should be majority-minority in order to
 ### Interpretation of requirements
 We enforce a maximum population deviation of 0.5%.
 We apply a county/municipality constraint, as described below. 
-We apply a competitiveness constraint, which discourages disproportionality.
 We target 60% minority share in two districts, and discard any simulations which fail to reach 50% share in two districts.
 
 ## Data Sources

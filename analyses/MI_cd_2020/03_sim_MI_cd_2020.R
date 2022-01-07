@@ -6,11 +6,11 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg MI_cd_2020}")
 
+constr = redist_constr(map) %>%
+    add_constr_grp_hinge(50, vap - vap_white, vap, 0.60)
+
 plans <- redist_smc(map, nsims = 8e3, counties = pseudocounty,
-    constraints = list(hinge = list(strength = 50, tgts_min = 0.60,
-        min_pop = vap - vap_white,
-        tot_pop = vap)),
-    seq_alpha = 0.4, verbose = FALSE) %>%
+    constraints = constr, seq_alpha = 0.4, verbose = FALSE) %>%
     subset_sampled()
 
 cli_process_done()
