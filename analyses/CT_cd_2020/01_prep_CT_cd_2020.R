@@ -20,16 +20,12 @@ cli_process_start("Downloading files for {.pkg CT_cd_2020}")
 path_data <- download_redistricting_file("CT", "data-raw/CT")
 
 # download the enacted plan.
-# TODO try to find a download URL at <https://redistricting.lls.edu/state/connecticut/>
-url <- "https://redistricting.lls.edu/wp-content/uploads/`state`_2020_congress_XXXXX.zip"
-path_enacted <- "data-raw/CT/CT_enacted.zip"
-download(url, here(path_enacted))
-unzip(here(path_enacted), exdir = here(dirname(path_enacted), "CT_enacted"))
-file.remove(path_enacted)
-path_enacted <- "data-raw/CT/CT_enacted/XXXXXXX.shp" # TODO use actual SHP
-
-# TODO other files here (as necessary). All paths should start with `path_`
-# If large, consider checking to see if these files exist before downloading
+# url <- "https://redistricting.lls.edu/wp-content/uploads/`state`_2020_congress_XXXXX.zip"
+# path_enacted <- "data-raw/CT/CT_enacted.zip"
+# download(url, here(path_enacted))
+# unzip(here(path_enacted), exdir = here(dirname(path_enacted), "CT_enacted"))
+# file.remove(path_enacted)
+# path_enacted <- "data-raw/CT/CT_enacted/XXXXXXX.shp"
 
 cli_process_done()
 
@@ -51,38 +47,33 @@ if (!file.exists(here(shp_path))) {
         select(-vtd)
     d_cd <- make_from_baf("CT", "CD", "VTD")  %>%
         transmute(GEOID = paste0(censable::match_fips("CT"), vtd),
-                  cd_2010 = as.integer(cd))
+            cd_2010 = as.integer(cd))
     ct_shp <- left_join(ct_shp, d_muni, by = "GEOID") %>%
-        left_join(d_cd, by="GEOID") %>%
+        left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2010, .after = county)
 
     # add the enacted plan
-    cd_shp <- st_read(here(path_enacted))
-    ct_shp <- ct_shp %>%
-        mutate(cd_2020 = as.integer(cd_shp$DISTRICT)[
-            geo_match(ct_shp, cd_shp, method = "area")],
-            .after = cd_2010)
-
-    # TODO any additional columns or data you want to add should go here
+    # cd_shp <- st_read(here(path_enacted))
+    # ct_shp <- ct_shp %>%
+    #    mutate(cd_2020 = as.integer(cd_shp$DISTRICT)[
+    #        geo_match(ct_shp, cd_shp, method = "area")],
+    #        .after = cd_2010)
 
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = ct_shp,
-                             perim_path = here(perim_path)) %>%
+        perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         ct_shp <- rmapshaper::ms_simplify(ct_shp, keep = 0.05,
-                                         keep_shapes = TRUE) %>%
+            keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 
     # create adjacency graph
     ct_shp$adj <- redist.adjacency(ct_shp)
-
-    # TODO any custom adjacency graph edits here
 
     ct_shp <- ct_shp %>%
         fix_geo_assignment(muni)
@@ -93,4 +84,3 @@ if (!file.exists(here(shp_path))) {
     ct_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong CT} shapefile")
 }
-
