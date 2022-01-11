@@ -19,6 +19,9 @@ cli_process_start("Downloading files for {.pkg VA_cd_2020}")
 
 path_data <- download_redistricting_file("VA", "data-raw/VA")
 
+# 2020 enacted map manually downloaded from SCV Box folder
+path_enacted <- "data-raw/VA/VA_enacted/SCV FINAL CD.shp"
+
 cli_process_done()
 
 # Compile raw data into a final shapefile for analysis -----
@@ -44,6 +47,13 @@ if (!file.exists(here(shp_path))) {
         left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2010, .after = county)
+
+    # add 2020 enacted plan
+    cd_shp <- st_read(here(path_enacted))
+    cd_shp <- st_transform(cd_shp, crs = st_crs(va_shp))
+    va_shp <- mutate(va_shp,
+        cd_2020 = geo_match(va_shp, cd_shp, method = "area"),
+        .after = cd_2010)
 
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = va_shp,
