@@ -19,8 +19,12 @@ cli_process_start("Downloading files for {.pkg GA_cd_2020}")
 
 path_data <- download_redistricting_file("GA", "data-raw/GA")
 
-# TODO other files here (as necessary). All paths should start with `path_`
-# If large, consider checking to see if these files exist before downloading
+url <- "https://www.legis.ga.gov/api/document/docs/default-source/reapportionment-document-library/cong-s18-p1-shape-export.zip?sfvrsn=c33543b3_2"
+path_enacted <- "data-raw/GA/GA_enacted.zip"
+download(url, here(path_enacted))
+unzip(here(path_enacted), exdir = here(dirname(path_enacted), "GA_enacted"))
+file.remove(path_enacted)
+path_enacted <- "data-raw/GA/GA_enacted/cong-s18-p1-SHAPE-export.shp"
 
 cli_process_done()
 
@@ -48,7 +52,12 @@ if (!file.exists(here(shp_path))) {
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2010, .after = county)
 
-    # TODO any additional columns or data you want to add should go here
+    # add 2020 enacted plan
+    cd_shp <- st_read(here(path_enacted))
+    cd_shp <- st_transform(cd_shp, crs = st_crs(ga_shp))
+    ga_shp <- mutate(ga_shp,
+                     cd_2020 = geo_match(ga_shp, cd_shp, method = "area"),
+                     .after = cd_2010)
 
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = ga_shp,
