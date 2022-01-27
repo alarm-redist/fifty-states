@@ -14,8 +14,6 @@ plans <- redist_smc(map, nsims = 5e3, counties = county, constraints = cons)
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
 
-# TODO add any reference plans that aren't already included
-
 # Output the redist_map object. Do not edit this path.
 write_rds(plans, here("data-out/MS_2020/MS_cd_2020_plans.rds"), compress = "xz")
 cli_process_done()
@@ -41,7 +39,7 @@ if (interactive()) {
                            size = 0.5, alpha = 0.5) +
         scale_y_continuous('Percent Black by VAP') +
         labs(title = 'Mississippi Proposed Plan versus Simulations') +
-        scale_color_manual(values = c(cd_2020_prop = 'black')) +
+        scale_color_manual(values = c(cd_2020 = 'black')) +
         ggredist::theme_r21()
 
 }
