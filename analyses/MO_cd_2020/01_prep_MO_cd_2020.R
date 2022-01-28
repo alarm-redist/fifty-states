@@ -19,15 +19,9 @@ cli_process_start("Downloading files for {.pkg MO_cd_2020}")
 
 path_data <- download_redistricting_file("MO", "data-raw/MO")
 
-# download the enacted plan.
-# TODO try to find a download URL at <https://redistricting.lls.edu/state/missouri/>
-url <- "https://redistricting.lls.edu/wp-content/uploads/`state`_2020_congress_XXXXX.zip"
-path_enacted <- "data-raw/MO/MO_enacted.zip"
-download(url, here(path_enacted))
-unzip(here(path_enacted), exdir = here(dirname(path_enacted), "MO_enacted"))
-file.remove(path_enacted)
-path_enacted <- "data-raw/MO/MO_enacted/XXXXXXX.shp" # TODO use actual SHP
-
+# download the enacted plan
+# currently from dave's, not downloadable.
+path_prop <- "data-raw/MO/block-assignments.csv"
 # TODO other files here (as necessary). All paths should start with `path_`
 # If large, consider checking to see if these files exist before downloading
 
@@ -51,31 +45,45 @@ if (!file.exists(here(shp_path))) {
         select(-vtd)
     d_cd <- make_from_baf("MO", "CD", "VTD")  %>%
         transmute(GEOID = paste0(censable::match_fips("MO"), vtd),
-                  cd_2010 = as.integer(cd))
+            cd_2010 = as.integer(cd))
     mo_shp <- left_join(mo_shp, d_muni, by = "GEOID") %>%
-        left_join(d_cd, by="GEOID") %>%
+        left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2010, .after = county)
 
     # add the enacted plan
-    cd_shp <- st_read(here(path_enacted))
-    mo_shp <- mo_shp %>%
-        mutate(cd_2020 = as.integer(cd_shp$DISTRICT)[
-            geo_match(mo_shp, cd_shp, method = "area")],
-            .after = cd_2010)
+    baf <- read_csv(here(path_prop), col_types = "c", col_names = c("GEOID", "district"))
+    baf_vtd <- PL94171::pl_get_baf("MO", geographies = "VTD")$VTD %>%
+        rename(GEOID = BLOCKID, county = COUNTYFP, vtd = DISTRICT)
+    baf <- baf %>% left_join(baf_vtd, by = "GEOID")
+    baf <- baf %>% select(-GEOID) %>%
+        mutate(GEOID = paste0("29", county, vtd)) %>%
+        select(-county, vtd)
+
+    baf <- baf %>%
+        group_by(GEOID) %>%
+        summarize(district = Mode(district))
+
+    baf <- baf %>% select(GEOID, cd_prop = district)
+
+    mo_shp <- mo_shp %>% left_join(baf, by = "GEOID")
+    # mo_shp <- mo_shp %>%
+    #     mutate(cd_2020 = as.integer(cd_shp$DISTRICT)[
+    #         geo_match(mo_shp, cd_shp, method = "area")],
+    #         .after = cd_2010)
 
     # TODO any additional columns or data you want to add should go here
 
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = mo_shp,
-                             perim_path = here(perim_path)) %>%
+        perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         mo_shp <- rmapshaper::ms_simplify(mo_shp, keep = 0.05,
-                                         keep_shapes = TRUE) %>%
+            keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 
@@ -93,4 +101,3 @@ if (!file.exists(here(shp_path))) {
     mo_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong MO} shapefile")
 }
-

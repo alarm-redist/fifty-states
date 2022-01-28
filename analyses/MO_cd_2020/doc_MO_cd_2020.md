@@ -1,16 +1,14 @@
 # 2020 Missouri Congressional Districts
 
 ## Redistricting requirements
-In Missouri, districts must:
+In [Missouri](https://revisor.mo.gov/main/OneSection.aspx?section=III%20%20%2045&constit=y), districts must:
 
 1. be contiguous
 1. have equal populations
 1. be geographically compact
-1. preserve county and municipality boundaries as much as possible
-
 
 ### Interpretation of requirements
-We enforce a maximum population deviation of X.X%.
+We enforce a maximum population deviation of 0.5%.
 
 ## Data Sources
 Data for Missouri comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).

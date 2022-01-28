@@ -4,18 +4,9 @@
 ###############################################################################
 cli_process_start("Creating {.cls redist_map} object for {.pkg MO_cd_2020}")
 
-# TODO any pre-computation (usually not necessary)
-
+# TODO Change back to cd_2020
 map <- redist_map(mo_shp, pop_tol = 0.005,
-    existing_plan = cd_2020, adj = mo_shp$adj)
-
-# TODO any filtering, cores, merging, etc.
-
-# TODO remove if not necessary. Adjust pop_muni as needed to balance county/muni splits
-# make pseudo counties with default settings
-map <- map %>%
-    mutate(pseudo_county = pick_county_muni(map, counties = county, munis = muni,
-                                            pop_muni = get_target(map)))
+    existing_plan = cd_prop, adj = mo_shp$adj)
 
 # Add an analysis name attribute
 attr(map, "analysis_name") <- "MO_2020"
