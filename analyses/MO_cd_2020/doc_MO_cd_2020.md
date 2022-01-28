@@ -20,5 +20,5 @@ No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
 We sample 5,000 districting plans for Missouri.
-We use a standard algorithmic county constraint.a
+We use a standard algorithmic county constraint.
 No special techniques were needed to produce the sample.
