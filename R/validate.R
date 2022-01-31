@@ -24,9 +24,45 @@ validate_analysis <- function(plans, map) {
         p_split2 <- hist(plans, muni_splits) + labs(title = "Municipality splits") + theme_bw()
     } else p_split2 <- patchwork::plot_spacer()
 
+    st <- map$state[1]
+    enac_sum <- plans %>%
+        filter(draw == attr(map, "existing_col")) %>%
+        # TODO: match with what gets plotted
+        select(district, comp_polsby, vap_white, vap_black, total_vap) %>%
+        mutate(minority = (total_vap - vap_white) / (total_vap)) %>%
+        mutate(
+            dist_lab = paste0(st, "-", str_pad(district, width = 2, pad = '0')),
+            minority_rank = rank(minority), # ascending order
+            compact_rank = rank(comp_polsby),
+        )
+
+    # add label
+    p_comp2 <-  p_comp2 +
+        geom_text(data = enac_sum,
+                  aes(x = compact_rank,
+                      label = dist_lab), # vjust = "inward" is more proper but at the edges
+                  vjust = 3,
+                  y = Inf,
+                  size = 2.5,
+                  fontface = "bold",
+                  lineheight = 0.8,
+                  alpha = 0.8,
+                  color = "red")
+
     p_vra = plans %>%
         mutate(minority = (total_vap - vap_white) / total_vap) %>%
         plot(minority, geom="boxplot") +
+        # add label
+        geom_text(data = enac_sum,
+                  aes(x = minority_rank,
+                      label = dist_lab),
+                  vjust = 3,
+                  y = Inf,
+                  size = 2.5,
+                  fontface = "bold",
+                  lineheight = 0.8,
+                  alpha = 0.8,
+                  color = "red") +
         labs(title = "Minority VAP share") +
         theme_bw()
 
@@ -44,8 +80,8 @@ HHHHHH
 IIJJKK
 IIJJKK"
     p <- patchwork::wrap_plots(A = p_wgts, B = p_div, C = p_dev, D = p_comp1,
-        E = p_comp2, F = p_split1, G = p_split2,
-        H = p_vra, I = p_ex1, J = p_ex2, K = p_ex3, design = layout) +
+                               E = p_comp2, F = p_split1, G = p_split2,
+                               H = p_vra, I = p_ex1, J = p_ex2, K = p_ex3, design = layout) +
         patchwork::plot_annotation(title = str_c(map$state[1], " Validation")) +
         patchwork::plot_layout(guides = "collect")
     out_path <- here(str_glue("data-raw/{map$state[1]}/validation_{format(Sys.time(), '%Y%m%d_%H%M')}.png"))
