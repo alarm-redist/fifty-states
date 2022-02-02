@@ -58,6 +58,16 @@ if (!file.exists(here(shp_path))) {
                              `27740` = "Franklin",
                              `33280` = "Hendersonville",
                              `40000` = "Knoxville",
+                             `08280` = "Brentwood",
+                             `28960` = "Germantown",
+                             `41200` = "La Vergne",
+                             `69420` = "Smyrna",
+                             `70580` = "Spring Hill",
+                             `28540` = "Gallatin",
+                             `15400` = "Cleveland",
+                             `39560` = "Kingsport",
+                             `03440` = "Bartlett",
+                             `16420` = "Collierville",
                              .default = NA_character_))
 
     d_cd <- make_from_baf("TN", "CD", "VTD")  %>%

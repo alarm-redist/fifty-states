@@ -12,10 +12,13 @@ map <- redist_map(
     adj = tn_shp$adj)
 
 
-# add muni county with top 10 munis
+# add muni county with top 20 munis
 map <- map %>%
-    mutate(pseudo_county = pick_county_muni(map, counties = county, munis = muni,
-                                            pop_muni = get_target(map)))
+    mutate(pseudo_county = pick_county_muni(
+        map,
+        counties = county,
+        munis = muni,
+        pop_muni = get_target(map)))
 
 # Add an analysis name attribute
 attr(map, "analysis_name") <- "TN_2020"
