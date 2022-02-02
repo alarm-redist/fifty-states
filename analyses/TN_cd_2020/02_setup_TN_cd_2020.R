@@ -11,12 +11,6 @@ map <- redist_map(tn_shp, pop_tol = 0.005,
 
 # TODO any filtering, cores, merging, etc.
 
-# TODO remove if not necessary. Adjust pop_muni as needed to balance county/muni splits
-# make pseudo counties with default settings
-map <- map %>%
-    mutate(pseudo_county = pick_county_muni(map, counties = county, munis = muni,
-                                            pop_muni = get_target(map)))
-
 # Add an analysis name attribute
 attr(map, "analysis_name") <- "TN_2020"
 
