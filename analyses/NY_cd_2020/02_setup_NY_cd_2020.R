@@ -4,12 +4,8 @@
 ###############################################################################
 cli_process_start("Creating {.cls redist_map} object for {.pkg NY_cd_2020}")
 
-# TODO any pre-computation (usually not necessary)
-
 map <- redist_map(ny_shp, pop_tol = 0.005,
-    ndists = 26, adj = ny_shp$adj)
-
-# TODO any filtering, cores, merging, etc.
+    existing_plan = cd_2020, adj = ny_shp$adj)
 
 # make pseudo counties with default settings
 map <- map %>%

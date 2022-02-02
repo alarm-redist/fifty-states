@@ -22,6 +22,11 @@ path_data <- download_redistricting_file("NY", "data-raw/NY")
 
 path_dem_irc <- here("data-raw/NY/NY congress Letters Plan Draft 9.14.csv")
 path_rep_irc <- here("data-raw/NY/NY CD Block Equivalency.xlsx")
+path_enacted <- here("data-raw/NY/ny_baf.dbf")
+if (!file.exists(path_enacted)) {
+    download(url = "https://latfor.state.ny.us/maps/2022congress/Congress2022_BlockEquivalency.dbf",
+        path = path_enacted)
+}
 
 cli_process_done()
 
@@ -86,10 +91,18 @@ if (!file.exists(here(shp_path))) {
         ungroup()
     rm(vals)
 
+    baf_enacted <- foreign::read.dbf(path_enacted) %>%
+        rename(
+            GEOID = BLOCK,
+            cd_2020 = DISTRICTID
+        )
+
     baf_vtd <- PL94171::pl_get_baf("NY", geographies = "VTD")$VTD %>%
         rename(GEOID = BLOCKID, county = COUNTYFP, vtd = DISTRICT)
-    baf <- baf_vtd %>% left_join(rep_irc_baf, by = "GEOID") %>%
-        left_join(dem_irc_baf, by = "GEOID")
+    baf <- baf_vtd %>%
+        left_join(rep_irc_baf, by = "GEOID") %>%
+        left_join(dem_irc_baf, by = "GEOID") %>%
+        left_join(baf_enacted, by = "GEOID")
     baf <- baf %>% select(-GEOID) %>%
         mutate(GEOID = paste0(censable::match_fips("NY"), county, vtd)) %>%
         select(-county, vtd)
@@ -97,15 +110,16 @@ if (!file.exists(here(shp_path))) {
     baf <- baf %>%
         group_by(GEOID) %>%
         summarize(rep_irc = Mode(rep_irc),
-            dem_irc = Mode(dem_irc)
+            dem_irc = Mode(dem_irc),
+            cd_2020 = Mode(cd_2020)
         )
 
-    baf <- baf %>% select(GEOID, rep_irc, dem_irc)
+    baf <- baf %>% select(GEOID, rep_irc, dem_irc, cd_2020)
 
     ny_shp <- ny_shp %>% left_join(baf, by = "GEOID")
 
     # Create perimeters in case shapes are simplified
-    redist.prep.polsbypopper(
+    redistmetrics::prep_perims(
         shp = ny_shp,
         perim_path = here(perim_path)
     ) %>%

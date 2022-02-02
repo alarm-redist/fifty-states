@@ -21,7 +21,7 @@ We preserve cores of the many geographic regions by using a pseudo county constr
 Data for New York comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
 
 ## Pre-processing Notes
-No manual pre-processing decisions were necessary.
+Islands are connected to their nearest point on land.
 
 ## Simulation Notes
 We sample 5,000 districting plans for New York.
