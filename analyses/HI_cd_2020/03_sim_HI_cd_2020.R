@@ -16,7 +16,8 @@ plans[plans == 0] <- 2
 plans <- redist_plans(
     plans = plans[, -1],
     algorithm = "smc",
-    map = map
+    map = map,
+    wgt = get_plans_weights(plans_honolulu)[-1]
 )
 
 cli_process_done()
