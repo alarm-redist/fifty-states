@@ -48,33 +48,33 @@ if (!file.exists(here(shp_path))) {
         mutate(GEOID = paste0(censable::match_fips("TN"), vtd)) %>%
         select(-vtd) %>%
         mutate(muni = recode(muni,
-                             `48000` = "Memphis",
-                             `52006` = "Nashville",
-                             `38320` = "JohnsonCity",
-                             `51560` = "Murfreesboro",
-                             `14000` = "Chattanooga",
-                             `15160` = "Clarksville",
-                             `37640` = "Jackson",
-                             `27740` = "Franklin",
-                             `33280` = "Hendersonville",
-                             `40000` = "Knoxville",
-                             `08280` = "Brentwood",
-                             `28960` = "Germantown",
-                             `41200` = "La Vergne",
-                             `69420` = "Smyrna",
-                             `70580` = "Spring Hill",
-                             `28540` = "Gallatin",
-                             `15400` = "Cleveland",
-                             `39560` = "Kingsport",
-                             `03440` = "Bartlett",
-                             `16420` = "Collierville",
-                             .default = NA_character_))
+            `48000` = "Memphis",
+            `52006` = "Nashville",
+            `38320` = "JohnsonCity",
+            `51560` = "Murfreesboro",
+            `14000` = "Chattanooga",
+            `15160` = "Clarksville",
+            `37640` = "Jackson",
+            `27740` = "Franklin",
+            `33280` = "Hendersonville",
+            `40000` = "Knoxville",
+            `08280` = "Brentwood",
+            `28960` = "Germantown",
+            `41200` = "La Vergne",
+            `69420` = "Smyrna",
+            `70580` = "Spring Hill",
+            `28540` = "Gallatin",
+            `15400` = "Cleveland",
+            `39560` = "Kingsport",
+            `03440` = "Bartlett",
+            `16420` = "Collierville",
+            .default = NA_character_))
 
     d_cd <- make_from_baf("TN", "CD", "VTD")  %>%
         transmute(GEOID = paste0(censable::match_fips("TN"), vtd),
-                  cd_2010 = as.integer(cd))
+            cd_2010 = as.integer(cd))
     tn_shp <- left_join(tn_shp, d_muni, by = "GEOID") %>%
-        left_join(d_cd, by="GEOID") %>%
+        left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni, sep = "_"))) %>%
         relocate(muni, county_muni, cd_2010, .after = county)
 
@@ -83,19 +83,19 @@ if (!file.exists(here(shp_path))) {
     tn_shp <- tn_shp %>%
         mutate(cd_2020 = as.integer(cd_shp$DISTRICT)[
             geo_match(tn_shp, cd_shp, method = "area")],
-            .after = cd_2010)
+        .after = cd_2010)
 
     # TODO any additional columns or data you want to add should go here
 
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = tn_shp,
-                             perim_path = here(perim_path)) %>%
+        perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         tn_shp <- rmapshaper::ms_simplify(tn_shp, keep = 0.05,
-                                         keep_shapes = TRUE) %>%
+            keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 
@@ -111,4 +111,3 @@ if (!file.exists(here(shp_path))) {
     tn_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong TN} shapefile")
 }
-
