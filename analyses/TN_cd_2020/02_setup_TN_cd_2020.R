@@ -4,12 +4,13 @@
 ###############################################################################
 cli_process_start("Creating {.cls redist_map} object for {.pkg TN_cd_2020}")
 
-# TODO any pre-computation (usually not necessary)
 
-map <- redist_map(tn_shp, pop_tol = 0.005,
-    existing_plan = cd_2010, adj = tn_shp$adj)
+map <- redist_map(
+    tn_shp,
+    pop_tol = 0.005,
+    existing_plan = cd_2010,
+    adj = tn_shp$adj)
 
-# TODO any filtering, cores, merging, etc.
 
 # Add an analysis name attribute
 attr(map, "analysis_name") <- "TN_2020"
