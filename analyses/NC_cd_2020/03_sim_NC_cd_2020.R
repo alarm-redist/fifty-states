@@ -7,7 +7,7 @@
 cli_process_start("Running simulations for {.pkg NC_cd_2020}")
 
 constr <- redist_constr(map) %>%
-    add_constr_splits(1) %>%
+    add_constr_splits(1, admin = county) %>%
     add_constr_grp_hinge(5, vap_black, vap, tgts_group = c(0.52))
 
 plans <- redist_smc(map, nsims = 5e3,
