@@ -22,7 +22,15 @@ constr <- redist_constr(map) %>%
     add_constr_grp_hinge(strength = 25,
         vap_black, vap,
         tgts_group = 0.4)
-plans <- redist_smc(map, nsims = 5e3, counties = county, constraints = constr)
+plans <- redist_smc(map, nsims = 6e3, counties = county, constraints = constr)
+
+plans <- plans %>%
+    mutate(vap_minority = group_frac(map, vap - vap_white, vap)) %>%
+    group_by(draw) %>%
+    mutate(vap_minority = max(vap_minority)) %>%
+    ungroup() %>%
+    filter(vap_minority > 0.5 | draw == 'cd_prop') %>%
+    slice(1 : (5001 * attr(map, 'ndists')))
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
@@ -44,7 +52,6 @@ save_summary_stats(plans, "data-out/MO_2020/MO_cd_2020_stats.csv")
 cli_process_done()
 
 # Extra validation plots for custom constraints -----
-# TODO remove this section if no custom constraints
 if (interactive()) {
     library(ggplot2)
     library(patchwork)
