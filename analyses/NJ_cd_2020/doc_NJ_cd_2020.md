@@ -17,5 +17,7 @@ No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
 We sample 5,000 districting plans for New Jersey.
-We use a standard algorithmic county constraint.
+We use a pseudo-county constraint to limit the county and municipality splits.
+Municipality lines are used in Bergen County, Burlington County, Camden County, Essex County, Hudson County, Mercer County, Middlesex County, Monmouth County, Morris County, Ocean County, Passaic County, Somerset County, and Union County.
+These are larger than 40% the target population for a district.
 No special techniques were needed to produce the sample.

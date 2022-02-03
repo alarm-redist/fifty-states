@@ -47,10 +47,13 @@ if (!file.exists(here(shp_path))) {
     d_cd <- make_from_baf("NJ", "CD", "VTD")  %>%
         transmute(GEOID = paste0(censable::match_fips("NJ"), vtd),
             cd_2010 = as.integer(cd))
+    d_mcd <- make_from_baf("NJ", "MCD", "VTD") %>%
+        transmute(GEOID = vtd, mcd = mcd)
     nj_shp <- left_join(nj_shp, d_muni, by = "GEOID") %>%
         left_join(d_cd, by = "GEOID") %>%
+        left_join(d_mcd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
-        relocate(muni, county_muni, cd_2010, .after = county)
+        relocate(muni, county_muni, mcd, cd_2010, .after = county)
 
     # add the enacted plan
     baf <- read_csv(here(path_enacted), col_types = "cc",
