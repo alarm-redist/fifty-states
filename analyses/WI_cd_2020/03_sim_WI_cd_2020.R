@@ -15,7 +15,7 @@ cons <- redist_constr(map) %>%
         total_pop = vap
     )
 plans <- redist_smc(map, nsims = 5e3, counties = pseudo_county,
-                    constraints = cons)
+    constraints = cons)
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
@@ -42,12 +42,12 @@ if (interactive()) {
     library(ggplot2)
     library(patchwork)
 
-    redist.plot.distr_qtys(plans, (total_vap - vap_white) / total_vap,
-                           color_thresh = NULL,
-                           color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, '#3D77BB', '#B25D4C'),
-                           size = 0.5, alpha = 0.5) +
-        scale_y_continuous('Percent Black by VAP') +
-        labs(title = 'Wisconsin Proposed Plan versus Simulations') +
-        scale_color_manual(values = c(cd_2010 = 'black')) +
+    redist.plot.distr_qtys(plans, (total_vap - vap_white)/total_vap,
+        color_thresh = NULL,
+        color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, "#3D77BB", "#B25D4C"),
+        size = 0.5, alpha = 0.5) +
+        scale_y_continuous("Percent Black by VAP") +
+        labs(title = "Wisconsin Proposed Plan versus Simulations") +
+        scale_color_manual(values = c(cd_2010 = "black")) +
         ggredist::theme_r21()
 }
