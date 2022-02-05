@@ -1,4 +1,4 @@
-# 50-State Redistricting Simulations
+# 50-State Simulation Project
 
 <img src="https://alarm-redist.github.io/assets/alarm_256_tr.png" align="right" height=128>
 
@@ -7,6 +7,9 @@
 [![License: CC0 1.0](https://img.shields.io/badge/Data%20License-Public%20domain-lightgrey.svg)](https://creativecommons.org/publicdomain/zero/1.0/)
 [![License: MIT](https://img.shields.io/badge/Software%20License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Dataverse DOI-10.7910/DVN/SLCD3E](<https://img.shields.io/badge/Dataverse DOI-10.7910/DVN/SLCD3E-orange>)](https://doi.org/10.7910/DVN/SLCD3E)
+
+Every decade following the Census, states and municipalities must redraw districts for Congress, state houses, city councils, and more.
+The goal of the 50-State Simulation Project is to enable researchers, practitioners, and the general public to use cutting-edge redistricting simulation analysis to evaluate enacted congressional districts.
 
 This repository contains code to sample districting plans for all 50 U.S.
 states, according to relevant legal requirements.
