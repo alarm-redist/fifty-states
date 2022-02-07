@@ -75,10 +75,11 @@ add_summary_stats <- function(plans, map, ...) {
             group_by(draw) %>%
             transmute(draw = draw,
                       district = district,
+                      e_dvs = dem,
                       pr_dem = dem > 0.5,
                       e_dem = sum(dem > 0.5, na.rm=T),
                       pbias = -pbias[1], # flip so dem = negative
-                      egap = egap[1])
+                      egap = -egap[1]) # flip so dem = negative
     })
 
     elect_tb <- elect_tb %>%
