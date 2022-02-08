@@ -20,7 +20,8 @@ plans <- plans %>%
     mutate(vap_minority = sum(vap_minority > 0.5)) %>%
     ungroup() %>%
     filter(vap_minority >= 2 | draw == "cd_2020") %>%
-    slice(1:(5001*attr(map, "ndists")))
+    slice(1:(5001*attr(map, "ndists"))) %>%
+    select(-vap_minority)
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
