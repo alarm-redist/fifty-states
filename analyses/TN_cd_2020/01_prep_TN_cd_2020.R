@@ -66,7 +66,7 @@ if (!file.exists(here(shp_path))) {
             `39560` = "Kingsport",
             `03440` = "Bartlett",
             `16420` = "Collierville",
-            .default = NA_character_))
+            .default = ""))
 
     d_cd <- make_from_baf("TN", "CD", "VTD")  %>%
         transmute(GEOID = paste0(censable::match_fips("TN"), vtd),
