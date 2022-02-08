@@ -46,10 +46,10 @@ if (!file.exists(here(shp_path))) {
     d_muni <- make_from_baf("TN", "INCPLACE_CDP", "VTD")  %>%
         mutate(GEOID = paste0(censable::match_fips("TN"), vtd)) %>%
         select(-vtd) %>%
-        mutate(muni = recode(muni,
+        mutate(muni_name = recode(muni,
             `48000` = "Memphis",
             `52006` = "Nashville",
-            `38320` = "JohnsonCity",
+            `38320` = "Johnson City",
             `51560` = "Murfreesboro",
             `14000` = "Chattanooga",
             `15160` = "Clarksville",
@@ -74,8 +74,8 @@ if (!file.exists(here(shp_path))) {
             cd_2010 = as.integer(cd))
     tn_shp <- left_join(tn_shp, d_muni, by = "GEOID") %>%
         left_join(d_cd, by = "GEOID") %>%
-        mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni, sep = "_"))) %>%
-        relocate(muni, county_muni, cd_2010, .after = county)
+        mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni_name, sep = "_"))) %>%
+        relocate(muni_name, county_muni, cd_2010, .after = county)
 
     # add the enacted plan
     cd_shp <- st_read(here(path_enacted))
@@ -83,8 +83,6 @@ if (!file.exists(here(shp_path))) {
         mutate(cd_2020 = as.integer(cd_shp$district)[
             geo_match(tn_shp, cd_shp, method = "area")],
         .after = cd_2010)
-
-    # TODO any additional columns or data you want to add should go here
 
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = tn_shp,
