@@ -21,13 +21,12 @@ path_data <- download_redistricting_file("TN", "data-raw/TN")
 
 # download the enacted plan.
 # TODO try to find a download URL at <https://redistricting.lls.edu/state/tennessee/>
-url <- "https://opendata.arcgis.com/datasets/90e4742978674ef4aaf08eb9f9f845bb_2.zip"
+url <- "https://thearp.org/documents/941/TN_CD_Enacted02062022.zip"
 path_enacted <- "data-raw/TN/TN_enacted.zip"
 download(url, here(path_enacted))
 unzip(here(path_enacted), exdir = here(dirname(path_enacted), "TN_enacted"))
 file.remove(path_enacted)
-path_enacted <- "data-raw/TN/TN_enacted/TN_Congressional_Districts.shp" # TODO use actual SHP
-
+path_enacted <- "data-raw/TN/TN_enacted/TN_CD_Enacted_02060222.shp" # TODO use actual SHP
 
 cli_process_done()
 
@@ -81,7 +80,7 @@ if (!file.exists(here(shp_path))) {
     # add the enacted plan
     cd_shp <- st_read(here(path_enacted))
     tn_shp <- tn_shp %>%
-        mutate(cd_2020 = as.integer(cd_shp$DISTRICT)[
+        mutate(cd_2020 = as.integer(cd_shp$district)[
             geo_match(tn_shp, cd_shp, method = "area")],
         .after = cd_2010)
 
