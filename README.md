@@ -1,7 +1,7 @@
 # 50-State Simulation Project
 
-<img src="https://alarm-redist.github.io/assets/fifty_states_256_tr.png" align="right" height=128>
 <img src="https://alarm-redist.github.io/assets/alarm_256_tr.png" align="right" height=128>
+<img src="https://alarm-redist.github.io/assets/fifty_states_256_tr.png" align="right" height=128>
 
 ### The ALARM Project
 
