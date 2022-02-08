@@ -20,7 +20,6 @@ cli_process_start("Downloading files for {.pkg TN_cd_2020}")
 path_data <- download_redistricting_file("TN", "data-raw/TN")
 
 # download the enacted plan.
-# TODO try to find a download URL at <https://redistricting.lls.edu/state/tennessee/>
 url <- "https://thearp.org/documents/941/TN_CD_Enacted02062022.zip"
 path_enacted <- "data-raw/TN/TN_enacted.zip"
 download(url, here(path_enacted))

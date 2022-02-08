@@ -12,8 +12,6 @@ plans <- redist_smc(map, nsims = 5e3, counties = pseudo_county)
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
 
-# TODO add any reference plans that aren't already included
-
 # Output the redist_map object. Do not edit this path.
 write_rds(plans, here("data-out/TN_2020/TN_cd_2020_plans.rds"), compress = "xz")
 cli_process_done()
