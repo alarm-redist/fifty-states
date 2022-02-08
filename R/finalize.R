@@ -39,7 +39,9 @@ pub_dataverse = function(slug, path_map, path_plans, path_stats) {
     library(dataverse)
 
     # SET UP zip
-    dir.create(path_stage <- file.path(tempdir(), slug))
+    path_stage = file.path(tempdir(), slug)
+    if (dir.exists(path_stage)) unlink(path_stage, recursive=TRUE)
+    dir.create(path_stage)
     file.copy(here(path_map), file.path(path_stage, basename(path_map)))
     file.copy(here(path_plans), file.path(path_stage, basename(path_plans)))
     file.copy(here(path_stats), file.path(path_stage, basename(path_stats)))
