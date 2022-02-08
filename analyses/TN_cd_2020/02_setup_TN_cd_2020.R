@@ -4,11 +4,13 @@
 ###############################################################################
 cli_process_start("Creating {.cls redist_map} object for {.pkg TN_cd_2020}")
 
+cd_pop <- tn_shp %>% as_tibble() %>% count(cd_2020, wt = pop) %>% pull(n)
+tol_existing <- max((cd_pop - mean(cd_pop)) / mean(cd_pop))
 
 map <- redist_map(
     tn_shp,
-    pop_tol = 0.005,
-    existing_plan = cd_2010,
+    pop_tol = tol_existing,
+    existing_plan = cd_2020,
     adj = tn_shp$adj)
 
 
@@ -17,7 +19,7 @@ map <- map %>%
     mutate(pseudo_county = pick_county_muni(
         map,
         counties = county,
-        munis = muni,
+        munis = muni_name,
         pop_muni = get_target(map)))
 
 # Add an analysis name attribute
