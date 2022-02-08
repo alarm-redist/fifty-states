@@ -23,6 +23,7 @@ Both the `redist_plans` and `redist_map` object are intended to be used with the
 * `adv_##`, `arv_##`: average vote counts for statewide Democratic and Republican candidates in a certain year. More information [here](https://github.com/alarm-redist/census-2020#data-format).
 * `ndv`, `nrv`: averages of the `adv_##` and `arv_##` variables across all available elections.
 * `ndshare`: normal Democratic share, computed as `ndv / (ndv + nrv)`
+* `e_dvs`: average Democratic vote share, computed as the average of the Democratic vote share when first scored under each statewide election.
 * `pr_dem`: probability seat is represented by a Democrat; calculated as the fraction of statewide elections under which the district had a majority Democratic share.
 * `e_dem`: expected number of Democratic seats for the plan; equivalent to summing the `pr_dem` values across districts
 * `pbias`: partisan bias at 50% vote share, averaged across all available elections. Positive values indicate Republican bias.
