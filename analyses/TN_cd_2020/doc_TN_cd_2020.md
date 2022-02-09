@@ -9,12 +9,11 @@ Although there are no rules, in practice, the state does avoid splitting its bou
 
 Therefore, to enforce some county splitting avoidance, we took 20 largest cities in Tennessee (each with a population of at least 40,000) and concatenated them with counties so that these "pseudo-counties" were smaller units of geography that delineated major cities as well as counties. We then allowed the simulation to split at most 9 - 1 number of these pseudo-counties.
 
-We enforce a maximum population deviation of roughly 2.7%, which is what the enacted 2020 plan does.
+We enforce a maximum population deviation of 0.5 percent.
 
 ## Data Sources
-Data for Tennessee comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
+Data for Tennessee comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/). The 2022 boundary comes from the [American Redistricting Project](https://thearp.org).
 
-As of 2022-02-02, the 2022 plans have reached the Governor's desk but are not signed. The plots now show 2010 enacted.
 
 ## Pre-processing Notes
 See pseudo-county definition above.

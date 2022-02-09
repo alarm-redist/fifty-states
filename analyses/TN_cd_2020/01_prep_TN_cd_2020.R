@@ -66,14 +66,14 @@ if (!file.exists(here(shp_path))) {
             `39560` = "Kingsport",
             `03440` = "Bartlett",
             `16420` = "Collierville",
-            .default = ""))
+            .default = NA_character_))
 
     d_cd <- make_from_baf("TN", "CD", "VTD")  %>%
         transmute(GEOID = paste0(censable::match_fips("TN"), vtd),
             cd_2010 = as.integer(cd))
     tn_shp <- left_join(tn_shp, d_muni, by = "GEOID") %>%
         left_join(d_cd, by = "GEOID") %>%
-        mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni_name, sep = "_"))) %>%
+        mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni_name, sep = " - "))) %>%
         relocate(muni_name, county_muni, cd_2010, .after = county)
 
     # add the enacted plan
