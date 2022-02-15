@@ -7,7 +7,7 @@
 cli_process_start("Running simulations for {.pkg WA_cd_2020}")
 
 
-constr = redist_constr(map) %>%
+constr <- redist_constr(map) %>%
     add_constr_grp_hinge(15.0, vap - vap_white, vap, c(0.5, 0.35, 0.25))
 
 plans <- redist_smc(map, nsims = 5e3, counties = pseudo_county, constraints = constr)
@@ -36,5 +36,5 @@ if (interactive()) {
 
     # checking contiguity
     redist.plot.plans(plans, 25, map) +
-        geom_sf(data = d_water, size = 0.0, fill = "#ffffffaa", color = NA)
+        geom_sf(data = d_water, size = 0.0, fill = "white", color = NA)
 }
