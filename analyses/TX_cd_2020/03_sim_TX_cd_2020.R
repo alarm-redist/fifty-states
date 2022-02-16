@@ -179,7 +179,6 @@ validate_analysis(plans, map)
 
 # Extra validation plots for custom constraints -----
 # TODO remove this section if no custom constraints
-if (interactive()) {
     library(ggplot2)
     library(patchwork)
 
@@ -189,7 +188,7 @@ if (interactive()) {
                                  color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, '#3D77BB', '#B25D4C'),
                                  size = 0.5, alpha = 0.5) +
         scale_y_continuous('Percent Black by CVAP') +
-        labs(title = 'Yee Haw Proposed Plan versus Simulations') +
+        labs(title = 'TX Proposed Plan versus Simulations') +
         scale_color_manual(values = c(cd_2020_prop = 'black')) +
         ggredist::theme_r21()
 
@@ -198,13 +197,11 @@ if (interactive()) {
                                  color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, '#3D77BB', '#B25D4C'),
                                  size = 0.5, alpha = 0.5) +
         scale_y_continuous('Percent Hispanic by CVAP') +
-        labs(title = 'Yee Haw Proposed Plan versus Simulations') +
+        labs(title = 'TX Proposed Plan versus Simulations') +
         scale_color_manual(values = c(cd_2020_prop = 'black')) +
         ggredist::theme_r21()
 
-    ggsave(plot = d1 / d2, filename = "figs/cvap_plots.pdf")
-
-}
+    ggsave(plot = d1 / d2, filename = "data-raw/cvap_plots.pdf", height = 9, width = 9)
 
 
 # ###

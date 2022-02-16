@@ -88,6 +88,7 @@ add_summary_stats_cvap <- function(plans, map, ...) {
     }
     plans <- plans %>%
         mutate(total_vap = tally_var(map, vap),
+               total_cvap = tally_var(map, cvap),
                plan_dev =  plan_parity(map),
                comp_edge = distr_compactness(map),
                comp_polsby = distr_compactness(map,
