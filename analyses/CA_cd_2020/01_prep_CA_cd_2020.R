@@ -81,7 +81,9 @@ if (!file.exists(here(shp_path))) {
     # create adjacency graph
     ca_shp$adj <- redist.adjacency(ca_shp)
 
-    ca_shp$adj <- geomander::suggest_neighbors(ca_shp, ca_shp$adj)
+    nbrs <- geomander::suggest_neighbors(shp = ca_shp, adj = ca_shp$adj)
+
+    ca_shp$adj <- add_edge(ca_shp$adj, nbrs$x, nbrs$y)
 
     ca_shp <- ca_shp %>%
         fix_geo_assignment(muni)
