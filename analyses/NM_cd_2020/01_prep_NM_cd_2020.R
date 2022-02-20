@@ -19,6 +19,14 @@ cli_process_start("Downloading files for {.pkg NM_cd_2020}")
 
 path_data <- download_redistricting_file("NM", "data-raw/NM")
 
+# download the enacted plan.
+url <- "https://www.nmlegis.gov/Redistricting2021/221711.1/CD_221711_shapefile.zip"
+path_enacted <- "data-raw/NM/NM_enacted.zip"
+download(url, here(path_enacted))
+unzip(here(path_enacted), exdir = here(dirname(path_enacted), "NM_enacted"))
+file.remove(path_enacted)
+path_enacted <- "data-raw/NM/NM_enacted/CD_221711_Shapefile.shp"
+
 cli_process_done()
 
 # Compile raw data into a final shapefile for analysis -----
@@ -45,6 +53,16 @@ if (!file.exists(here(shp_path))) {
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2010, .after = county)
 
+    # add the enacted plan
+    cd_shp <- st_read(here(path_enacted))
+    cd_shp <- cd_shp %>%
+        st_transform(EPSG$NM) %>%
+        st_make_valid()
+    nm_shp <- nm_shp %>%
+        mutate(cd_2020 = as.integer(cd_shp$DISTRICT)[
+            geo_match(nm_shp, cd_shp, method = "area")],
+        .after = cd_2010)
+
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = nm_shp,
         perim_path = here(perim_path)) %>%
@@ -69,4 +87,3 @@ if (!file.exists(here(shp_path))) {
     nm_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong NM} shapefile")
 }
-
