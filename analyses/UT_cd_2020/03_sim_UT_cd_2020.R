@@ -26,16 +26,3 @@ plans <- add_summary_stats(plans, map)
 save_summary_stats(plans, "data-out/UT_2020/UT_cd_2020_stats.csv")
 
 cli_process_done()
-
-# Validation plot for Democrat share
-if (interactive()) {
-    library(ggplot2)
-    library(patchwork)
-    plans %>%
-        mutate(dvs_20 = group_frac(map, adv_20, adv_20 + arv_20)) %>%
-        redist.plot.distr_qtys(qty = dvs_20, geom = "boxplot") +
-        theme_bw() +
-        lims(y = c(0, 1)) +
-        labs(title = "Democrat Share", y = "dem 2020")
-    ggsave("data-raw/UT/dem_share.png")
-}
