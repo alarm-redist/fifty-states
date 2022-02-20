@@ -20,13 +20,12 @@ cli_process_start("Downloading files for {.pkg CT_cd_2020}")
 path_data <- download_redistricting_file("CT", "data-raw/CT")
 
 # download the enacted plan.
-# url <- "https://redistricting.lls.edu/wp-content/uploads/`state`_2020_congress_XXXXX.zip"
+url <- "https://redistrictingdatahub.org/download/?datasetid=33952&document=%2Fweb_ready_stage%2Flegislative%2F2021_adopted_plans%2Fct_cong_adopted_2022.zip"
+#  Downloading the above .zip file requires that one first create and log into their account with Redistricting Data Hub
 # path_enacted <- "data-raw/CT/CT_enacted.zip"
-# download(url, here(path_enacted))
 # unzip(here(path_enacted), exdir = here(dirname(path_enacted), "CT_enacted"))
 # file.remove(path_enacted)
-# path_enacted <- "data-raw/CT/CT_enacted/XXXXXXX.shp"
-
+path_enacted <- "data-raw/CT/CT_enacted/Districts_1 2022-02-14.shp"
 cli_process_done()
 
 # Compile raw data into a final shapefile for analysis -----
@@ -54,11 +53,13 @@ if (!file.exists(here(shp_path))) {
         relocate(muni, county_muni, cd_2010, .after = county)
 
     # add the enacted plan
-    # cd_shp <- st_read(here(path_enacted))
-    # ct_shp <- ct_shp %>%
-    #    mutate(cd_2020 = as.integer(cd_shp$DISTRICT)[
-    #        geo_match(ct_shp, cd_shp, method = "area")],
-    #        .after = cd_2010)
+    cd_shp <- st_read(here(path_enacted)) %>%
+        st_transform(EPSG$CT) %>%
+        st_make_valid()
+    ct_shp <- ct_shp %>%
+        mutate(cd_2020 = as.integer(cd_shp$DISTRICT)[
+            geo_match(ct_shp, cd_shp, method = "area")],
+            .after = cd_2010)
 
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = ct_shp,
