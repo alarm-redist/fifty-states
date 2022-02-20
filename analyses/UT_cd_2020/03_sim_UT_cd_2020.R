@@ -7,8 +7,7 @@
 cli_process_start("Running simulations for {.pkg UT_cd_2020}")
 
 plans <- redist_smc(map, nsims = 5e3,
-    counties = pseudo_county) %>%
-    pullback(map)
+    counties = pseudo_county)
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
