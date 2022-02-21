@@ -21,7 +21,7 @@ path_data <- download_redistricting_file("CT", "data-raw/CT")
 
 # download the enacted plan.
 url <- "https://redistrictingdatahub.org/download/?datasetid=33952&document=%2Fweb_ready_stage%2Flegislative%2F2021_adopted_plans%2Fct_cong_adopted_2022.zip"
-#  Downloading the above .zip file requires that one first create and log into their account with Redistricting Data Hub
+# Downloading the above .zip file requires that one first create and log into their account with Redistricting Data Hub
 # path_enacted <- "data-raw/CT/CT_enacted.zip"
 # unzip(here(path_enacted), exdir = here(dirname(path_enacted), "CT_enacted"))
 # file.remove(path_enacted)
@@ -59,7 +59,12 @@ if (!file.exists(here(shp_path))) {
     ct_shp <- ct_shp %>%
         mutate(cd_2020 = as.integer(cd_shp$DISTRICT)[
             geo_match(ct_shp, cd_shp, method = "area")],
-            .after = cd_2010)
+        .after = cd_2010)
+    # A few of the VTDs in the south which encompass mostly-to-only water are not assigned to a district in the final plan.
+    # According to the Report and Plan of the Special Master (2022, page 13), these "water blocks" were left
+    # "largely as they are under the current plan." Hence, we assign these VTDs with missing district assignment to the same
+    # district assignments they had in 2010.
+    ct_shp$cd_2020[is.na(ct_shp$cd_2020)] <- ct_shp$cd_2010[is.na(ct_shp$cd_2020)]
 
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = ct_shp,
