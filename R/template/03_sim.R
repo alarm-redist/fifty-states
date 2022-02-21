@@ -20,8 +20,6 @@ cli_process_start("Running simulations for {.pkg ``SLUG``}")
 plans <- redist_smc(map, nsims = 5e3, counties = county)
 # IF CORES OR OTHER UNITS HAVE BEEN MERGED:
 # make sure to call `pullback()` on this plans object!
-# Then do:
-# attr(plans, "prec_pop") <- map$pop
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
