@@ -217,6 +217,9 @@ if (!file.exists(here(shp_path))) {
     wa_shp <- wa_shp %>%
         fix_geo_assignment(muni)
 
+    wa_shp <- st_cast(wa_shp, "MULTIPOLYGON") %>%
+        suppressWarnings()
+
     write_rds(wa_shp, here(shp_path), compress = "gz")
     cli_process_done()
 } else {
