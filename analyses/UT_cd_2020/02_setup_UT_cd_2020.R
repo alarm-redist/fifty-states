@@ -14,7 +14,7 @@ map <- map %>% mutate(
 
 # Set up cores objects
 map <- map %>%
-    mutate(cores = redist.identify.cores(map$adj, map$cd_2010, boundary = 2)) %>%
+    mutate(cores = make_cores(boundary = 2)) %>%
     # Merge by both cores and pseudo_county to preserve pseudo_county contiguity
     merge_by(cores, pseudo_county, drop_geom = FALSE)
 
