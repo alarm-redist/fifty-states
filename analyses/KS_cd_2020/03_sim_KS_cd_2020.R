@@ -6,14 +6,11 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg KS_cd_2020}")
 
-# constr <- redist_constr(map_m) %>%
-#     add_constr_splits(10)
-
-# merge_idx <- attr(map_m, "merge_idx")
-# constr <- redist_constr(map_m) %>%
-#     add_constr_custom(4.0, function(plan, i) {
-#         sum(tapply(map$county, plan[merge_idx] == i, n_distinct) - 1L)
-#     })
+merge_idx <- attr(map_m, "merge_idx")
+constr <- redist_constr(map_m) %>%
+    add_constr_custom(1.0, function(plan, i) {
+        sum(tapply(map$county, plan[merge_idx] == i, n_distinct) - 1L)
+    })
 
 plans <- redist_smc(map_m, nsims = 5e3,
                     counties = county,
@@ -23,8 +20,6 @@ attr(plans, "prec_pop") <- map$pop
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
-
-# TODO add any reference plans that aren't already included
 
 # Output the redist_map object. Do not edit this path.
 write_rds(plans, here("data-out/KS_2020/KS_cd_2020_plans.rds"), compress = "xz")
@@ -39,11 +34,3 @@ plans <- add_summary_stats(plans, map)
 save_summary_stats(plans, "data-out/KS_2020/KS_cd_2020_stats.csv")
 
 cli_process_done()
-
-# Extra validation plots for custom constraints -----
-# TODO remove this section if no custom constraints
-if (interactive()) {
-    library(ggplot2)
-    library(patchwork)
-
-}

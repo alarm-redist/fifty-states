@@ -5,10 +5,10 @@
 cli_process_start("Creating {.cls redist_map} object for {.pkg KS_cd_2020}")
 
 map <- redist_map(ks_shp, pop_tol = 0.005,
-    existing_plan = cd_2010, adj = ks_shp$adj)
+    existing_plan = cd_2020, adj = ks_shp$adj)
 
 map <- map %>%
-    mutate(cores = make_cores(boundary = 2))
+    mutate(cores = redist.identify.cores(map$adj, map$cd_2010, boundary = 3))
 map_m <- merge_by(map, cores)
 
 # Add an analysis name attribute

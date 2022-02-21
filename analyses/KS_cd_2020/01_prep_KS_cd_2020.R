@@ -20,16 +20,12 @@ cli_process_start("Downloading files for {.pkg KS_cd_2020}")
 path_data <- download_redistricting_file("KS", "data-raw/KS")
 
 # download the enacted plan.
-# TODO try to find a download URL at <https://redistricting.lls.edu/state/kansas/>
-# url <- "https://redistricting.lls.edu/wp-content/uploads/`state`_2020_congress_XXXXX.zip"
-# path_enacted <- "data-raw/KS/KS_enacted.zip"
-# download(url, here(path_enacted))
-# unzip(here(path_enacted), exdir = here(dirname(path_enacted), "KS_enacted"))
-# file.remove(path_enacted)
-# path_enacted <- "data-raw/KS/KS_enacted/XXXXXXX.shp" # TODO use actual SHP
-
-# TODO other files here (as necessary). All paths should start with `path_`
-# If large, consider checking to see if these files exist before downloading
+url <- "https://thearp.org/documents/718/KS_CD_Enacted02092022.zip"
+path_enacted <- "data-raw/KS/KS_enacted.zip"
+download(url, here(path_enacted))
+unzip(here(path_enacted), exdir = here(dirname(path_enacted), "KS_enacted"))
+file.remove(path_enacted)
+path_enacted <- "data-raw/KS/KS_enacted/KS_CD_enacted02092022.shp"
 
 cli_process_done()
 
@@ -58,13 +54,12 @@ if (!file.exists(here(shp_path))) {
         relocate(muni, county_muni, cd_2010, .after = county)
 
     # add the enacted plan
-    # cd_shp <- st_read(here(path_enacted))
-    # ks_shp <- ks_shp %>%
-    #     mutate(cd_2020 = as.integer(cd_shp$DISTRICT)[
-    #         geo_match(ks_shp, cd_shp, method = "area")],
-    #         .after = cd_2010)
-
-    # TODO any additional columns or data you want to add should go here
+    cd_shp <- st_read(here(path_enacted))
+    cd_shp <- st_transform(cd_shp, st_crs(ks_shp))
+    ks_shp <- ks_shp %>%
+        mutate(cd_2020 = as.integer(cd_shp$district)[
+            geo_match(ks_shp, cd_shp, method = "area")],
+            .after = cd_2010)
 
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = ks_shp,
