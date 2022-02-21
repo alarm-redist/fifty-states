@@ -13,8 +13,8 @@ constr <- redist_constr(map_m) %>%
     })
 
 plans <- redist_smc(map_m, nsims = 5e3,
-                    counties = county,
-                    constraints = constr) %>%
+    counties = county,
+    constraints = constr) %>%
     pullback(map)
 attr(plans, "prec_pop") <- map$pop
 
