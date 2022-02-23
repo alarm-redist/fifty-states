@@ -7,8 +7,8 @@
 cli_process_start("Running simulations for {.pkg DE_hd_2020}")
 
 # TODO any pre-computation (VRA targets, etc.)
-constr <- redist_constr(map) %>%
-    add_constr_grp_hinge(6, vap_black, vap)
+# constr <- redist_constr(map) %>%
+#    add_constr_grp_hinge(6, vap_black, total_pop = vap, tgts_group = c(0.52))
 
 # TODO customize as needed. Recommendations:
 #  - For many districts / tighter population tolerances, try setting
@@ -19,7 +19,7 @@ constr <- redist_constr(map) %>%
 #  - If the sampler freezes, try turning off the county split constraint to see
 #  if that's the problem.
 #  - Ask for help!
-plans <- redist_smc(map, nsims = 5e3, constraints = constr, pop_temper = 0.05)
+plans <- redist_smc(map, nsims = 5e3, pop_temper = 0.05, final_infl = 2)
 
 # IF CORES OR OTHER UNITS HAVE BEEN MERGED:
 # make sure to call `pullback()` on this plans object!
