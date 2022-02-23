@@ -37,7 +37,7 @@ if (interactive()) {
     # check performance
     mutate(plans, mvap = 1 - vap_white/total_vap) %>%
         number_by(mvap) %>%
-        plot(e_dvs, size = 0.01, sort = F, color_thresh=0.5) +
+        plot(e_dvs, size = 0.01, sort = FALSE, color_thresh=0.5) +
         scale_color_manual(values=c("red", "blue")) +
         labs(x="Districts, ordered by minority VAP share",
              y="ExpectedDemocratic vote share")
