@@ -20,12 +20,12 @@ cli_process_start("Downloading files for {.pkg DE_hd_2020}")
 path_data <- download_redistricting_file("DE", "data-raw/DE")
 
 # download the enacted plan.
-url <- "https://redistricting.lls.edu/wp-content/uploads/de_2020_state_lower_2021-11-02_2031-06-30.zip"
+url <- "https://legis.delaware.gov/docs/default-source/redistricting/housemajority/enacted-house-esrishp.zip"
 path_enacted <- "data-raw/DE/DE_enacted.zip"
 download(url, here(path_enacted))
 unzip(here(path_enacted), exdir = here(dirname(path_enacted), "DE_enacted"))
 file.remove(path_enacted)
-path_enacted <- "data-raw/DE/DE_enacted/de_2020_state_lower_2021-11-07_2031-06-30.shp" # TODO use actual SHP
+path_enacted <- "data-raw/DE/DE_enacted/Enacted-House.shp" # TODO use actual SHP
 
 # TODO other files here (as necessary). All paths should start with `path_`
 # If large, consider checking to see if these files exist before downloading
@@ -48,11 +48,11 @@ if (!file.exists(here(shp_path))) {
     d_muni <- make_from_baf("DE", "INCPLACE_CDP", "VTD")  %>%
         mutate(GEOID = paste0(censable::match_fips("DE"), vtd)) %>%
         select(-vtd)
-    d_cd <- make_from_baf("DE", "CD", "VTD")  %>%
+    d_cd <- make_from_baf("DE", "SLDL", "VTD")  %>%
         transmute(GEOID = paste0(censable::match_fips("DE"), vtd),
-                  cd_2010 = as.integer(cd))
+            cd_2010 = as.integer(sldl))
     de_shp <- left_join(de_shp, d_muni, by = "GEOID") %>%
-        left_join(d_cd, by="GEOID") %>%
+        left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2010, .after = county)
 
@@ -61,20 +61,20 @@ if (!file.exists(here(shp_path))) {
     de_shp <- de_shp %>%
         mutate(cd_2020 = as.integer(cd_shp$DISTRICT)[
             geo_match(de_shp, cd_shp, method = "area")],
-            .after = cd_2010)
+        .after = cd_2010)
 
     # TODO any additional columns or data you want to add should go here
 
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = de_shp,
-                             perim_path = here(perim_path)) %>%
+        perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         de_shp <- rmapshaper::ms_simplify(de_shp, keep = 0.05,
-                                         keep_shapes = TRUE) %>%
+            keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 
@@ -92,4 +92,3 @@ if (!file.exists(here(shp_path))) {
     de_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong DE} shapefile")
 }
-
