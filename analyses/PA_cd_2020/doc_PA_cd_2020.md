@@ -27,3 +27,4 @@ Montgomery County, and Philadelphia County. Within Allegheny County, Montgomery
 County, and Philadelphia County, each municipality is its own pseudocounty as
 well. These counties were chosen since they are necessarily split by
 congressional districts.
+We also apply an additional Gibbs constraint to further avoid splitting municipalities.
