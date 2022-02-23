@@ -7,6 +7,8 @@
 cli_process_start("Running simulations for {.pkg DE_hd_2020}")
 
 # TODO any pre-computation (VRA targets, etc.)
+constr <- redist_constr(map) %>%
+    add_constr_grp_hinge(6, vap_black, vap)
 
 # TODO customize as needed. Recommendations:
 #  - For many districts / tighter population tolerances, try setting
@@ -17,7 +19,8 @@ cli_process_start("Running simulations for {.pkg DE_hd_2020}")
 #  - If the sampler freezes, try turning off the county split constraint to see
 #  if that's the problem.
 #  - Ask for help!
-plans <- redist_smc(map, nsims = 5e3, counties = county)
+plans <- redist_smc(map, nsims = 5e3, constraints = constr, pop_temper = 0.05)
+
 # IF CORES OR OTHER UNITS HAVE BEEN MERGED:
 # make sure to call `pullback()` on this plans object!
 
@@ -46,4 +49,11 @@ if (interactive()) {
     library(ggplot2)
     library(patchwork)
 
+    # VRA
+    redist.plot.distr_qtys(plans, vap_black/total_vap,
+        color_thresh = NULL,
+        color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, "#3D77BB", "#B25D4C"),
+        size = 0.5, alpha = 0.5) +
+        scale_y_continuous("Percent Black by VAP") +
+        labs(title = "Delaware Proposed Plan versus Simulations")
 }
