@@ -20,4 +20,4 @@ No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
 We sample 5,000 districting plans for Delaware. 
-We apply a hinge Gibbs constraint of strength 6 to encourage drawing majority black districts.
+We apply a hinge Gibbs constraint of strength 1 to encourage drawing majority black districts.
