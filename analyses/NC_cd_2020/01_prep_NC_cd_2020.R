@@ -54,7 +54,9 @@ if (!file.exists(here(shp_path))) {
 
     dists <- read_sf(path_enacted)
     dists <- st_transform(dists, st_crs(nc_shp))
-    nc_shp$cd_2020 <- as.integer(dists$DISTRICT)[geo_match(from = nc_shp, to = dists, method = "area")]
+    nc_shp <- mutate(nc_shp,
+        cd_2020 = as.integer(dists$DISTRICT)[geo_match(from = nc_shp, to = dists, method = "area")],
+        .after = cd_2010)
 
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = nc_shp,
