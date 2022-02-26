@@ -27,9 +27,6 @@ unzip(here(path_enacted), exdir = here(dirname(path_enacted), "MN_enacted"))
 file.remove(path_enacted)
 path_enacted <- "data-raw/MN/MN_enacted/C2022.shp" # TODO use actual SHP
 
-# TODO other files here (as necessary). All paths should start with `path_`
-# If large, consider checking to see if these files exist before downloading
-
 cli_process_done()
 
 # Compile raw data into a final shapefile for analysis -----
@@ -73,7 +70,6 @@ if (!file.exists(here(shp_path))) {
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         mn_shp <- rmapshaper::ms_simplify(mn_shp, keep = 0.05,
             keep_shapes = TRUE) %>%
@@ -82,8 +78,6 @@ if (!file.exists(here(shp_path))) {
 
     # create adjacency graph
     mn_shp$adj <- redist.adjacency(mn_shp)
-
-    # TODO any custom adjacency graph edits here
 
     mn_shp <- mn_shp %>%
         fix_geo_assignment(muni)
