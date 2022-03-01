@@ -25,7 +25,7 @@ path_enacted <- "data-raw/MN/MN_enacted.zip"
 download(url, here(path_enacted))
 unzip(here(path_enacted), exdir = here(dirname(path_enacted), "MN_enacted"))
 file.remove(path_enacted)
-path_enacted <- "data-raw/MN/MN_enacted/C2022.shp" # TODO use actual SHP
+path_enacted <- "data-raw/MN/MN_enacted/C2022.shp"
 
 cli_process_done()
 
@@ -61,8 +61,6 @@ if (!file.exists(here(shp_path))) {
         mutate(cd_2020 = as.integer(cd_shp$DISTRICT)[
             geo_match(mn_shp, cd_shp, method = "area")],
         .after = cd_2010)
-
-    # TODO any additional columns or data you want to add should go here
 
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = mn_shp,
