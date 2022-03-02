@@ -56,6 +56,9 @@ if (!file.exists(here(shp_path))) {
 
     # add the enacted plan
     cd_shp <- st_read(here(path_enacted))
+    cd_shp <- cd_shp %>% st_transform(4269)
+    tx_shp <- tx_shp %>% st_transform(4269)
+    
     tx_shp <- tx_shp %>%
         mutate(cd_2020 = as.integer(cd_shp$District)[
             geo_match(tx_shp, cd_shp, method = "area")],

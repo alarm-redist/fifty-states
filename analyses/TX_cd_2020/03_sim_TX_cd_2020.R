@@ -6,8 +6,15 @@ library(sf)
 library(tidyverse)
 
 source("analyses/TX_cd_2020/TX_helpers.R")
+source("analyses/TX_cd_2020/01_prep_TX_cd_2020.R")
+source("analyses/TX_cd_2020/02_setup_TX_cd_2020.R")
 
-nsims <- 1000
+cluster_pop_tol <- 0.0025
+
+map <- set_pop_tol(map, 0.01)
+nsims <- 500
+
+diag_plots <- FALSE
 
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg TX_cd_2020}")
@@ -15,63 +22,67 @@ cli_process_start("Running simulations for {.pkg TX_cd_2020}")
 # Unique ID for each row, will use later to reconnect pieces
 map$row_id <- 1:nrow(map)
 
-# Greater Houston
+########################################################################
+# Cluster #1: Greater Houston
 clust1 <- c("Austin", "Brazoria", "Chambers", "Fort Bend",
             "Galveston", "Harris", "Liberty", "Montgomery", "Waller")
 
 clust1 <- paste(clust1, "County")
 
 m1 <- map %>% filter(county %in% clust1)
-m1 <- set_pop_tol(m1, 0.005)
+m1 <- set_pop_tol(m1, cluster_pop_tol)
 attr(m1, "pop_bounds") <-  attr(map, "pop_bounds")
 attr(m1, "pop_bounds")
 attr(map, "pop_bounds")
 attr(m1, "ndists")
 attr(map, "ndists")
 
+# Check for potential MMDs
+m1 %>% st_drop_geometry() %>%
+    filter(county %in% clust1) %>%
+    group_by(cd_2020) %>%
+    summarise(hisp_prop = sum(cvap_hisp) / sum(cvap),
+              black_prop = sum(cvap_black) / sum(cvap))
+
 constraints <- redist_constr(m1) %>%
     add_constr_grp_hinge(
-        150,
+        2,
         cvap_hisp,
         total_pop = cvap,
-        tgts_group = c(0.50)
+        tgts_group = c(0.45)
     ) %>%
     add_constr_grp_hinge(
-        150,
+        1,
         cvap_black,
         total_pop = cvap,
-        tgts_group = c(0.50)
-    ) %>%
-    add_constr_splits(strength=1)
+        tgts_group = c(0.45))
 
 n_steps <- (sum(m1$pop) / attr(map, "pop_bounds")[2]) %>% floor()
 
 houston_plans <- redist_smc(m1, counties = county,
-                    nsims = nsims, n_steps = n_steps,
-                    constraints = constraints)
+                        nsims = nsims, n_steps = n_steps,
+                        constraints = constraints)
+
+p <- redist.plot.plans(houston_plans, draws = c(10, 20, 30, 50), m1)
+ggsave("data-raw/houston.pdf")
 
 #############################################################
-## Austin
+## Cluster #2: Austin and San Antonio
+## MSAs border each other
 clust2 <- c("Bastrop", "Caldwell", "Hays", "Travis", "Williamson")
+clust4 <- c("Atascosa", "Bandera", "Bexar", "Comal", "Guadalupe",
+            "Kendall", "Medina", "Wilson")
+clust2 <- c(clust2, clust4)
 
 clust2 <- paste(clust2, "County")
 
 m2 <- map %>% filter(county %in% clust2)
-m2 <- set_pop_tol(m2, 0.005)
+m2 <- set_pop_tol(m2, cluster_pop_tol)
 attr(m2, "pop_bounds") <-  attr(map, "pop_bounds")
 attr(m2, "pop_bounds")
 attr(map, "pop_bounds")
 attr(m2, "ndists")
 attr(m2, "ndists")
-
-# dists <- m2$cd_2020 %>% unique()
-#
-# co1 <- map %>% st_drop_geometry() %>% group_by(cd_2020) %>% summarise(nfull = n())
-# co2 <- m2 %>% st_drop_geometry() %>% group_by(cd_2020) %>% summarise(nlocal = n())
-#
-# counts <- left_join(co2, co1, by = "cd_2020")
-#
-# full_districts <- counts$cd_2020[counts$nlocal == counts$nfull]
 
 m2 %>% st_drop_geometry() %>%
     filter(county %in% clust2) %>%
@@ -81,12 +92,11 @@ m2 %>% st_drop_geometry() %>%
 
 constraints <- redist_constr(m2) %>%
     add_constr_grp_hinge(
-        150,
+        2,
         cvap_hisp,
         total_pop = cvap,
         tgts_group = c(0.50)
-    ) %>%
-    add_constr_splits(strength=1)
+    )
 
 n_steps <- (sum(m2$pop) / attr(map, "pop_bounds")[2]) %>% floor()
 
@@ -94,66 +104,126 @@ austin_plans <- redist_smc(m2, counties = county,
                             nsims = nsims, n_steps = n_steps,
                             constraints = constraints)
 
-#############################################################
+p <- redist.plot.plans(austin_plans, draws = c(10, 20, 30, 50), m2)
+ggsave("data-raw/austin.pdf")
 
-m0 <- map %>% filter(!(county %in% clust1) & !(county %in% clust2))
-m0 <- set_pop_tol(m0, 0.005)
-attr(m0, "pop_bounds") <-  attr(map, "pop_bounds")
-attr(m0, "pop_bounds") == attr(map, "pop_bounds")
-attr(m0, "pop_bounds") == attr(m1, "pop_bounds")
+#########################################################################
+## Cluster #3: Dallas
 
-constraints <- redist_constr(m0) %>%
+clust3 <- c("Collin", "Dallas", "Denton", "Ellis", "Hunt",
+            "Kaufman", "Rockwall", "Johnson", "Parker",
+            "Tarrant", "Wise")
+
+clust3 <- paste(clust3, "County")
+
+m3 <- map %>% filter(county %in% clust3)
+m3 <- set_pop_tol(m3, cluster_pop_tol)
+attr(m3, "pop_bounds") <-  attr(map, "pop_bounds")
+attr(m3, "pop_bounds")
+attr(map, "pop_bounds")
+attr(m3, "ndists")
+attr(m3, "ndists")
+
+map %>% st_drop_geometry() %>%
+    filter(county %in% clust3) %>%
+    group_by(cd_2020) %>%
+    summarise(hisp_prop = sum(cvap_hisp) / sum(cvap),
+              black_prop = sum(cvap_black) / sum(cvap))
+
+constraints <- redist_constr(m3) %>%
     add_constr_grp_hinge(
-        150,
+        2,
         cvap_hisp,
         total_pop = cvap,
-        tgts_group = c(0.50)
+        tgts_group = c(0.45)
     ) %>%
     add_constr_grp_hinge(
-        150,
+        1,
         cvap_black,
         total_pop = cvap,
-        tgts_group = c(0.50)
-    ) %>%
-    add_constr_splits(strength=1)
+        tgts_group = c(0.45))
 
-n_steps <- floor(sum(m0$pop) / attr(m0, "pop_bounds")[2])
+n_steps <- (sum(m3$pop) / attr(map, "pop_bounds")[2]) %>% floor()
 
-# remaining_plans <- redist_smc(m0, counties = county, constraints = constraints,
-#                             nsims = nsims, n_steps = n_steps)
+dallas_plans <- redist_smc(m3, counties = county,
+                           nsims = nsims, n_steps = n_steps,
+                           constraints = constraints)
+
+p <- redist.plot.plans(dallas_plans, draws = c(10, 20, 30, 50), m3)
+ggsave("data-raw/dallas.pdf")
+#############################################################
+## Combine Clusters
 
 houston_plans$dist_keep <- ifelse(houston_plans$district == 0, FALSE, TRUE)
 austin_plans$dist_keep <- ifelse(austin_plans$district == 0, FALSE, TRUE)
-# remaining_plans$dist_keep <- ifelse(remaining_plans$district == 0, FALSE, TRUE)
+dallas_plans$dist_keep <- ifelse(dallas_plans$district == 0, FALSE, TRUE)
 
-tx_plan_list <- list(list(map = m2, plans = austin_plans),
-                     list(map = m1, plans = houston_plans))
-                     # list(map = m0, plans = remaining_plans))
+tx_plan_list <- list(list(map = m1, plans = houston_plans),
+                     list(map = m2, plans = austin_plans),
+                     list(map = m3, plans = dallas_plans))
 
 prep_mat <- prep_particles(map = map, map_plan_list = tx_plan_list,
                uid = row_id, dist_keep = dist_keep, nsims = nsims)
+
+## Check contiguity
+test_vec <- sapply(1:ncol(prep_mat), function(i) {
+    cat(i, "\n")
+    z <- map %>%
+        mutate(ex_dist = ifelse(prep_mat[,i] == 0, 1, 0))
+
+    z <- geomander::check_contiguity(adjacency = z$adj, group = z$ex_dist)
+
+    length(unique(z$component[z$group == 1]))
+})
+
+table(test_vec) / nsims
+# 1     2     3     4
+# 0.014 0.240 0.508 0.238
+
+if (diag_plots) {
+    counties <- map %>%
+        group_by(county) %>%
+        summarise(geometry = st_union(geometry))
+
+    p <- map %>%
+        ggplot() + geom_sf(fill = NA, color = "black", lwd = 0.001) +
+        geom_sf(data = m2, fill = "blue", lwd = 0.001) +
+        geom_sf(data = m3, fill = "red", lwd = 0.001) +
+        geom_sf(data = m1, fill = "green", lwd = 0.001) +
+        geom_sf(data = counties, fill = NA, lwd = 0.05, col = "blue") +
+        geom_sf_label(data = counties, aes(label = gsub(" County", "", county)))
+    ggsave("data-raw/county_test.pdf", width = 20, height = 20)
+
+    p <- redist.plot.map(map, plan = prep_mat[,which(test_vec == 1)[1]]) +
+        geom_sf(data = map %>% filter(prep_mat[,which(test_vec == 1)[1]] == 0),
+                fill = "black")
+    ggsave("data-raw/contig.pdf", width = 20, height = 20)
+
+}
+
 
 prep_mat[,1] %>% unique() %>% length()
 prep_mat[,5] %>% unique() %>% length()
 
 constraints <- redist_constr(map) %>%
     add_constr_grp_hinge(
-        150,
+        2,
         cvap_hisp,
         total_pop = cvap,
-        tgts_group = c(0.50)
+        tgts_group = c(0.45)
     ) %>%
     add_constr_grp_hinge(
-        150,
+        1,
         cvap_black,
         total_pop = cvap,
-        tgts_group = c(0.50)
-    ) %>%
-    add_constr_splits(strength=1)
+        tgts_group = c(0.45))
+
+map <- set_pop_tol(map, 0.01)
 
 plans <- redist_smc(map, nsims = nsims,
                     counties = county, verbose = TRUE,
-                    constraints = constraints, init_particles = prep_mat)
+                    constraints = constraints, init_particles = prep_mat,
+                    pop_temper = 0.01)
 
 plans <- plans %>% filter(draw != "cd_2020")
 plans <- plans %>% add_reference(ref_plan = map$cd_2020)
