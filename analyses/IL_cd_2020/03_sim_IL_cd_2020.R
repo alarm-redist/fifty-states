@@ -10,18 +10,8 @@ constr <- redist_constr(map) %>%
     add_constr_grp_hinge(20, vap_black, vap, tgts_group = 0.55) %>%
     add_constr_grp_hinge(20, vap_hisp, vap, tgts_group = 0.55)
 
-# TODO customize as needed. Recommendations:
-#  - For many districts / tighter population tolerances, try setting
-#  `pop_temper=0.01` and nudging upward from there. Monitor the output for
-#  efficiency!
-#  - Monitor the output (i.e. leave `verbose=TRUE`) to ensure things aren't breaking
-#  - Don't change the number of simulations unless you have a good reason
-#  - If the sampler freezes, try turning off the county split constraint to see
-#  if that's the problem.
-#  - Ask for help!
-
 plans <- redist_smc(map, nsims = 5e3, counties = pseudo_county,
-                    constraints = constr)
+    constraints = constr)
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
@@ -41,20 +31,19 @@ save_summary_stats(plans, "data-out/IL_2020/IL_cd_2020_stats.csv")
 cli_process_done()
 
 # Extra validation plots for custom constraints -----
-# TODO remove this section if no custom constraints
 if (interactive()) {
     library(ggplot2)
     library(patchwork)
 
     validate_analysis(plans, map)
 
-    redist.plot.distr_qtys(plans, vap_black / total_vap,
-                           color_thresh = NULL,
-                           color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, '#3D77BB', '#B25D4C'),
-                           size = 0.5, alpha = 0.5) +
-        scale_y_continuous('Percent Black by VAP') +
-        labs(title = 'Approximate Performance') +
-        scale_color_manual(values = c(cd_2020_prop = 'black')) +
+    redist.plot.distr_qtys(plans, vap_black/total_vap,
+        color_thresh = NULL,
+        color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, "#3D77BB", "#B25D4C"),
+        size = 0.5, alpha = 0.5) +
+        scale_y_continuous("Percent Black by VAP") +
+        labs(title = "Approximate Performance") +
+        scale_color_manual(values = c(cd_2020_prop = "black")) +
         ggredist::theme_r21()
     ggsave("figs/performance.pdf", height = 7, width = 7)
 }
