@@ -65,7 +65,6 @@ if (!file.exists(here(shp_path))) {
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         ga_shp <- rmapshaper::ms_simplify(ga_shp, keep = 0.05,
             keep_shapes = TRUE) %>%
@@ -74,8 +73,6 @@ if (!file.exists(here(shp_path))) {
 
     # create adjacency graph
     ga_shp$adj <- redist.adjacency(ga_shp)
-
-    # TODO any custom adjacency graph edits here
 
     ga_shp <- ga_shp %>%
         fix_geo_assignment(muni)
