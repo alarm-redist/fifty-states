@@ -2,8 +2,10 @@
 # Simulate plans for `TX_cd_2020`
 # © ALARM Project, February 2022
 ###############################################################################
+set.seed(02138)
 library(sf)
 library(tidyverse)
+library(patchwork)
 
 source("analyses/TX_cd_2020/TX_helpers.R")
 source("analyses/TX_cd_2020/01_prep_TX_cd_2020.R")
@@ -12,7 +14,7 @@ source("analyses/TX_cd_2020/02_setup_TX_cd_2020.R")
 cluster_pop_tol <- 0.0025
 
 map <- set_pop_tol(map, 0.01)
-nsims <- 500
+nsims <- 5000
 
 diag_plots <- FALSE
 
@@ -24,6 +26,7 @@ map$row_id <- 1:nrow(map)
 
 ########################################################################
 # Cluster #1: Greater Houston
+
 clust1 <- c("Austin", "Brazoria", "Chambers", "Fort Bend",
             "Galveston", "Harris", "Liberty", "Montgomery", "Waller")
 
@@ -44,6 +47,24 @@ m1 %>% st_drop_geometry() %>%
     summarise(hisp_prop = sum(cvap_hisp) / sum(cvap),
               black_prop = sum(cvap_black) / sum(cvap))
 
+map <- map %>%
+    mutate(cluster_edge = ifelse(row_id %in% m1$row_id, 1, 0))
+
+z <- geomander::seam_geom(map$adj, map, admin = "cluster_edge", seam = c(0, 1))
+
+z <- z[z$cluster_edge == 1,]
+
+border_idxs <- which(m1$row_id %in% z$row_id)
+
+# p <- map %>%
+#     ggplot() + geom_sf(fill = NA, color = "black", lwd = 0.001) +
+#     geom_sf(data = m1, fill = "dodgerblue", lwd = 0.001) +
+#     geom_sf(data = z, fill = "indianred", lwd = 0.001) +
+#     ggthemes::theme_map() +
+#     geom_sf(data = counties, fill = NA, lwd = .5, col = "orange")
+# # geom_sf_label(data = counties, aes(label = gsub(" County", "", county)))
+# ggsave("data-raw/county_test.pdf", width = 20, height = 20)
+
 constraints <- redist_constr(m1) %>%
     add_constr_grp_hinge(
         2,
@@ -55,7 +76,10 @@ constraints <- redist_constr(m1) %>%
         1,
         cvap_black,
         total_pop = cvap,
-        tgts_group = c(0.45))
+        tgts_group = c(0.45)) %>%
+    add_constr_custom(strength = 10, function(plan, distr) {
+        ifelse(any(plan[border_idxs] == 0), 0, 1)
+    })
 
 n_steps <- (sum(m1$pop) / attr(map, "pop_bounds")[2]) %>% floor()
 
@@ -63,12 +87,37 @@ houston_plans <- redist_smc(m1, counties = county,
                         nsims = nsims, n_steps = n_steps,
                         constraints = constraints)
 
-p <- redist.plot.plans(houston_plans, draws = c(10, 20, 30, 50), m1)
-ggsave("data-raw/houston.pdf")
+i <- 25
+p1 <- redist.plot.plans(houston_plans, draws = i, m1) +
+    geom_sf(data = m1 %>% filter(get_plans_matrix(houston_plans)[,i] == 0),
+            fill = "black")
+i <- 35
+p2 <- redist.plot.plans(houston_plans, draws = i, m1) +
+    geom_sf(data = m1 %>% filter(get_plans_matrix(houston_plans)[,i] == 0),
+            fill = "black")
+i <- 45
+p3 <- redist.plot.plans(houston_plans, draws = i, m1) +
+    geom_sf(data = m1 %>% filter(get_plans_matrix(houston_plans)[,i] == 0),
+            fill = "black")
+i <- 11
+p4 <- redist.plot.plans(houston_plans, draws = i, m1) +
+    geom_sf(data = m1 %>% filter(get_plans_matrix(houston_plans)[,i] == 0),
+            fill = "black")
+i <- 8
+p5 <- redist.plot.plans(houston_plans, draws = i, m1) +
+    geom_sf(data = m1 %>% filter(get_plans_matrix(houston_plans)[,i] == 0),
+            fill = "black")
+i <- 5
+p6 <- redist.plot.plans(houston_plans, draws = i, m1) +
+    geom_sf(data = m1 %>% filter(get_plans_matrix(houston_plans)[,i] == 0),
+            fill = "black")
+
+ggsave("data-raw/houston.pdf", (p1 + p2 + p3) / (p4 + p5 + p6), width = 20, height = 20)
 
 #############################################################
 ## Cluster #2: Austin and San Antonio
 ## MSAs border each other
+
 clust2 <- c("Bastrop", "Caldwell", "Hays", "Travis", "Williamson")
 clust4 <- c("Atascosa", "Bandera", "Bexar", "Comal", "Guadalupe",
             "Kendall", "Medina", "Wilson")
@@ -90,13 +139,25 @@ m2 %>% st_drop_geometry() %>%
     summarise(hisp_prop = sum(cvap_hisp) / sum(cvap),
               black_prop = sum(cvap_black) / sum(cvap))
 
+map <- map %>%
+    mutate(cluster_edge = ifelse(row_id %in% m2$row_id, 1, 0))
+
+z <- geomander::seam_geom(map$adj, map, admin = "cluster_edge", seam = c(0, 1))
+
+z <- z[z$cluster_edge == 1,]
+
+border_idxs <- which(m2$row_id %in% z$row_id)
+
 constraints <- redist_constr(m2) %>%
     add_constr_grp_hinge(
         2,
         cvap_hisp,
         total_pop = cvap,
-        tgts_group = c(0.50)
-    )
+        tgts_group = c(0.45)
+    ) %>%
+    add_constr_custom(strength = 10, function(plan, distr) {
+        ifelse(any(plan[border_idxs] == 0), 0, 1)
+    })
 
 n_steps <- (sum(m2$pop) / attr(map, "pop_bounds")[2]) %>% floor()
 
@@ -124,11 +185,14 @@ attr(map, "pop_bounds")
 attr(m3, "ndists")
 attr(m3, "ndists")
 
-map %>% st_drop_geometry() %>%
-    filter(county %in% clust3) %>%
-    group_by(cd_2020) %>%
-    summarise(hisp_prop = sum(cvap_hisp) / sum(cvap),
-              black_prop = sum(cvap_black) / sum(cvap))
+map <- map %>%
+    mutate(cluster_edge = ifelse(row_id %in% m3$row_id, 1, 0))
+
+z <- geomander::seam_geom(map$adj, map, admin = "cluster_edge", seam = c(0, 1))
+
+z <- z[z$cluster_edge == 1,]
+
+border_idxs <- which(m3$row_id %in% z$row_id)
 
 constraints <- redist_constr(m3) %>%
     add_constr_grp_hinge(
@@ -137,11 +201,15 @@ constraints <- redist_constr(m3) %>%
         total_pop = cvap,
         tgts_group = c(0.45)
     ) %>%
-    add_constr_grp_hinge(
-        1,
-        cvap_black,
-        total_pop = cvap,
-        tgts_group = c(0.45))
+    add_constr_custom(strength = 10, function(plan, distr) {
+        ifelse(any(plan[border_idxs] == 0), 0, 1)
+    })
+
+map %>% st_drop_geometry() %>%
+    filter(county %in% clust3) %>%
+    group_by(cd_2020) %>%
+    summarise(hisp_prop = sum(cvap_hisp) / sum(cvap),
+              black_prop = sum(cvap_black) / sum(cvap))
 
 n_steps <- (sum(m3$pop) / attr(map, "pop_bounds")[2]) %>% floor()
 
@@ -171,7 +239,7 @@ test_vec <- sapply(1:ncol(prep_mat), function(i) {
     z <- map %>%
         mutate(ex_dist = ifelse(prep_mat[,i] == 0, 1, 0))
 
-    z <- geomander::check_contiguity(adjacency = z$adj, group = z$ex_dist)
+    z <- geomander::check_contiguity(adj = z$adj, group = z$ex_dist)
 
     length(unique(z$component[z$group == 1]))
 })
@@ -180,26 +248,27 @@ table(test_vec) / nsims
 # 1     2     3     4
 # 0.014 0.240 0.508 0.238
 
-if (diag_plots) {
-    counties <- map %>%
-        group_by(county) %>%
-        summarise(geometry = st_union(geometry))
-
-    p <- map %>%
-        ggplot() + geom_sf(fill = NA, color = "black", lwd = 0.001) +
-        geom_sf(data = m2, fill = "blue", lwd = 0.001) +
-        geom_sf(data = m3, fill = "red", lwd = 0.001) +
-        geom_sf(data = m1, fill = "green", lwd = 0.001) +
-        geom_sf(data = counties, fill = NA, lwd = 0.05, col = "blue") +
-        geom_sf_label(data = counties, aes(label = gsub(" County", "", county)))
-    ggsave("data-raw/county_test.pdf", width = 20, height = 20)
-
-    p <- redist.plot.map(map, plan = prep_mat[,which(test_vec == 1)[1]]) +
-        geom_sf(data = map %>% filter(prep_mat[,which(test_vec == 1)[1]] == 0),
-                fill = "black")
-    ggsave("data-raw/contig.pdf", width = 20, height = 20)
-
-}
+# if (diag_plots) {
+#     counties <- map %>%
+#         group_by(county) %>%
+#         summarise(geometry = st_union(geometry))
+#
+#     p <- map %>%
+#         ggplot() + geom_sf(fill = NA, color = "black", lwd = 0.001) +
+#         geom_sf(data = m2, fill = "dodgerblue", lwd = 0.001) +
+#         geom_sf(data = m3, fill = "indianred", lwd = 0.001) +
+#         geom_sf(data = m1, fill = "darkgreen", lwd = 0.001) +
+#         geom_sf(data = counties, fill = NA, lwd = 0.05, col = "blue") +
+#         # geom_sf_label(data = counties, aes(label = gsub(" County", "", county))) +
+#         ggthemes::theme_map()
+#     ggsave("data-raw/county_test.pdf", width = 20, height = 20)
+#
+#     p <- redist.plot.map(map, plan = prep_mat[,which(test_vec == 1)[1]]) +
+#         geom_sf(data = map %>% filter(prep_mat[,which(test_vec == 1)[1]] == 0),
+#                 fill = "black")
+#     ggsave("data-raw/contig.pdf", width = 20, height = 20)
+#
+# }
 
 
 prep_mat[,1] %>% unique() %>% length()
