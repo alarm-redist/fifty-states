@@ -67,13 +67,13 @@ border_idxs <- which(m1$row_id %in% z$row_id)
 
 constraints <- redist_constr(m1) %>%
     add_constr_grp_hinge(
-        2,
+        10,
         cvap_hisp,
         total_pop = cvap,
         tgts_group = c(0.45)
     ) %>%
     add_constr_grp_hinge(
-        1,
+        5,
         cvap_black,
         total_pop = cvap,
         tgts_group = c(0.45)) %>%
@@ -150,7 +150,7 @@ border_idxs <- which(m2$row_id %in% z$row_id)
 
 constraints <- redist_constr(m2) %>%
     add_constr_grp_hinge(
-        2,
+        10,
         cvap_hisp,
         total_pop = cvap,
         tgts_group = c(0.45)
@@ -196,7 +196,7 @@ border_idxs <- which(m3$row_id %in% z$row_id)
 
 constraints <- redist_constr(m3) %>%
     add_constr_grp_hinge(
-        2,
+        10,
         cvap_hisp,
         total_pop = cvap,
         tgts_group = c(0.45)
@@ -245,8 +245,8 @@ test_vec <- sapply(1:ncol(prep_mat), function(i) {
 })
 
 table(test_vec) / nsims
-# 1     2     3     4
-# 0.014 0.240 0.508 0.238
+# 1      2      4      5      6      7
+# 0.9950 0.0026 0.0006 0.0010 0.0002 0.0006
 
 # if (diag_plots) {
 #     counties <- map %>%
@@ -276,13 +276,13 @@ prep_mat[,5] %>% unique() %>% length()
 
 constraints <- redist_constr(map) %>%
     add_constr_grp_hinge(
-        2,
+        10,
         cvap_hisp,
         total_pop = cvap,
         tgts_group = c(0.45)
     ) %>%
     add_constr_grp_hinge(
-        1,
+        2,
         cvap_black,
         total_pop = cvap,
         tgts_group = c(0.45))
@@ -341,6 +341,19 @@ validate_analysis(plans, map)
         ggredist::theme_r21()
 
     ggsave(plot = d1 / d2, filename = "data-raw/cvap_plots.pdf", height = 9, width = 9)
+
+
+plans <- plans %>%
+    group_by(draw) %>%
+    summarise(all_hcvap = sum((cvap_hisp / total_cvap) > 0.4),
+              dem_hcvap = sum((cvap_hisp / total_cvap) > 0.4 & (ndv > nrv)),
+              rep_hcvap = sum((cvap_hisp / total_cvap) > 0.4 & (nrv > ndv)))
+
+p1 <- redist.plot.hist(plans, all_hcvap)
+p2 <- redist.plot.hist(plans, dem_hcvap)
+p3 <- redist.plot.hist(plans, rep_hcvap)
+
+ggsave("data-raw/hist.pdf", p1 / p2 / p3)
 
 
 # ###
