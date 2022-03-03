@@ -8,12 +8,12 @@ cli_process_start("Running simulations for {.pkg DE_hd_2020}")
 
 constr <- redist_constr(map) %>%
     add_constr_grp_hinge(
-        strength = 1,
+        strength = 6,
         group_pop = vap_black,
         total_pop = vap
     )
 
-plans <- redist_smc(map, nsims = 5e3, constraints = constr, pop_temper = 0.05, final_infl = 4)
+plans <- redist_smc(map, nsims = 5e3, constraints = constr)
 
 # IF CORES OR OTHER UNITS HAVE BEEN MERGED:
 # make sure to call `pullback()` on this plans object!
