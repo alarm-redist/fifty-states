@@ -37,13 +37,29 @@ if (interactive()) {
 
     validate_analysis(plans, map)
 
-    redist.plot.distr_qtys(plans, vap_black/total_vap,
+    redist.plot.distr_qtys(plans, vap_hisp/total_vap,
         color_thresh = NULL,
         color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, "#3D77BB", "#B25D4C"),
         size = 0.5, alpha = 0.5) +
-        scale_y_continuous("Percent Black by VAP") +
+        scale_y_continuous("Percent Hispanic by VAP") +
         labs(title = "Approximate Performance") +
         scale_color_manual(values = c(cd_2020_prop = "black")) +
         ggredist::theme_r21()
     ggsave("figs/performance.pdf", height = 7, width = 7)
+
+    fake_map <- map
+    fake_map$Enacted <- get_plans_matrix(plans)[,1000]
+    fake_map %>%
+        group_by(Enacted) %>%
+        summarize(geometry = st_union(geometry),
+                  hisp = sum(vap_hisp) / sum(vap)) %>%
+        ggplot() +
+        geom_sf(aes(fill = hisp), lwd = 0.25) +
+        # geom_sf(data = ctys, fill = NA, lwd = 2.5, alpha = 0.3, color = "grey") +
+        # geom_sf(data = dists, fill = NA, lwd = 1) +
+        geom_sf(data = fake_map, fill = NA, lwd = 0) +
+        theme_void()
+    # coord_sf(xlim=c(bbox$xmin, bbox$xmax),
+    #          ylim=c(bbox$ymin, bbox$ymax))
+    ggsave("figs/il_hisp.pdf", height = 10, width = 10)
 }
