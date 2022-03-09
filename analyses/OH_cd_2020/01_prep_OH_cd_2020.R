@@ -11,6 +11,7 @@ suppressMessages({
     library(geomander)
     library(cli)
     library(here)
+    library(readxl)
     devtools::load_all() # load utilities
 })
 
@@ -20,12 +21,12 @@ cli_process_start("Downloading files for {.pkg OH_cd_2020}")
 path_data <- download_redistricting_file("OH", "data-raw/OH")
 
 # download the enacted plan.
-url <- "https://redistricting.lls.edu/wp-content/uploads/oh_2020_congress_2022-02-19_2024-12-31.zip"
+url <- "https://redistricting.ohio.gov/assets/district-maps/district-map-973.zip"
 path_enacted <- "data-raw/OH/OH_enacted.zip"
 download(url, here(path_enacted))
 unzip(here(path_enacted), exdir = here(dirname(path_enacted), "OH_enacted"))
 file.remove(path_enacted)
-path_enacted <- "data-raw/OH/OH_enacted/oh_2020_congress_2021-11-20_2024-12-31.shp"
+path_enacted <- "data-raw/OH/OH_enacted/March 2 2022 CD BAF.xlsx"
 
 cli_process_done()
 
@@ -54,12 +55,13 @@ if (!file.exists(here(shp_path))) {
         relocate(muni, county_muni, cd_2010, .after = county)
 
     # add the enacted plan
-    cd_shp <- st_read(here(path_enacted)) %>%
-        st_transform(st_crs(oh_shp))
-    oh_shp <- oh_shp %>%
-        mutate(cd_2020 = as.integer(cd_shp$Districts)[
-            geo_match(oh_shp, cd_shp, method = "area")],
-        .after = cd_2010)
+    baf_20 <- readxl::read_xlsx(path_enacted) %>%
+        rename(BLOCKID=BLOCK)
+    d_cd <- make_from_baf("OH", baf_20, "VTD") %>%
+        transmute(GEOID = paste0(censable::match_fips("OH"), vtd),
+            cd_2020 = as.integer(districtid))
+    oh_shp <- left_join(oh_shp, d_cd, by = "GEOID") %>%
+        relocate(cd_2020, .after = cd_2010)
 
     water_precs <- "39(093|035|007|085)ZZZZZZ"
     oh_shp <- filter(oh_shp, !str_starts(GEOID, water_precs))
