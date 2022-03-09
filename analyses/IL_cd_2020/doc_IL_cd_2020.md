@@ -18,4 +18,5 @@ No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
 We sample 5,000 districting plans for Illinois.
-To balance county and municipality splits, we create pseudocounties for use in the county constraint, which leads to fewer municipality splits than using a county constraint.
+To balance county and municipality splits, we create pseudocounties for use in the county constraint, which leads to fewer municipality splits than using a county constraint. These are counties outside of Cook County and DuPage County. Within Cook County and DuPage County, each municipality is its own pseudocounty as well. Cook County and DuPage County were chosen since they are necessarily split by congressional districts.
+To comply with the federal VRA and to respect communities of interest, we add weak VRA constraints targeting one majority-Black district (IL-01) and one majority-Hispanic district (IL-04).
