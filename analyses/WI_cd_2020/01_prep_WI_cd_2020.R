@@ -20,13 +20,9 @@ cli_process_start("Downloading files for {.pkg WI_cd_2020}")
 path_data <- download_redistricting_file("WI", "data-raw/WI")
 
 # download the enacted plan.
-# TODO try to find a download URL at <https://redistricting.lls.edu/state/wisconsin/>
-# url <- "https://redistricting.lls.edu/wp-content/uploads/`state`_2020_congress_XXXXX.zip"
-# path_enacted <- "data-raw/WI/WI_enacted.zip"
-# download(url, here(path_enacted))
-# unzip(here(path_enacted), exdir = here(dirname(path_enacted), "WI_enacted"))
-# file.remove(path_enacted)
-# path_enacted <- "data-raw/WI/WI_enacted/XXXXXXX.shp" # TODO use actual SHP
+url <- "https://www.dropbox.com/sh/a94yyx9a30z6or4/AAB9oOsdsYZHOrp3AOQEixAIa/Governor%27s%20LC%20Congressional.csv?dl=1"
+path_enacted <- "data-raw/WI/WI_enacted.csv"
+download(url, here(path_enacted))
 
 cli_process_done()
 
@@ -55,14 +51,25 @@ if (!file.exists(here(shp_path))) {
         relocate(muni, county_muni, cd_2010, .after = county)
 
     # add the enacted plan
-    # cd_shp <- st_read(here(path_enacted))
-    # wi_shp <- wi_shp %>%
-    #     mutate(cd_2020 = as.integer(cd_shp$DISTRICT)[
-    #         geo_match(wi_shp, cd_shp, method = "area")],
-    #         .after = cd_2010)
+    baf <- read_csv(here(path_enacted), col_types = "cc",
+        col_names = c("GEOID", "cd_2020"))
+    baf_vtd <- PL94171::pl_get_baf("WI", geographies = "VTD")$VTD %>%
+        rename(GEOID = BLOCKID, county = COUNTYFP, vtd = DISTRICT)
+    baf <- baf %>% left_join(baf_vtd, by = "GEOID")
+    baf <- baf %>% select(-GEOID) %>%
+        mutate(GEOID = paste0("55", county, vtd)) %>%
+        select(-county, vtd)
+    baf <- baf %>%
+        group_by(GEOID) %>%
+        summarize(cd_2020 = Mode(cd_2020))
+
+    wi_shp <- wi_shp %>%
+        left_join(baf, by = "GEOID") %>%
+        relocate(cd_2020,
+            .after = cd_2010)
 
     # Create perimeters in case shapes are simplified
-    redist.prep.polsbypopper(shp = wi_shp,
+    redistmetrics::prep_perims(shp = wi_shp,
         perim_path = here(perim_path)) %>%
         invisible()
 
