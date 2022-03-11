@@ -19,7 +19,7 @@ plans <- redist_smc(map_merge, nsims = 5e3, counties = county_muni,
     constraints = cons) %>%
     pullback() %>%
     add_reference(ref_plan = map$cd_2020)
-
+attr(plans, "prec_pop") <- map$pop
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
 
@@ -30,7 +30,7 @@ cli_process_done()
 # Compute summary statistics -----
 cli_process_start("Computing summary statistics for {.pkg WI_cd_2020}")
 
-attr(plans, "prec_pop") <- map$pop
+
 plans <- add_summary_stats(plans, map)
 
 # Output the summary statistics. Do not edit this path.
