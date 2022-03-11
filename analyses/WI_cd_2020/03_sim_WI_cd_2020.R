@@ -55,10 +55,6 @@ if (interactive()) {
     pl_renum <- plans %>%
         match_numbers(plan = map$cd_2010)
 
-    pl_renum <- pl_renum %>%
-        group_by(draw) %>%
-        mutate(mean_overlap = mean(pop_overlap))
-
-    hist(pl_renum, mean_overlap, bins = 30) +
+    hist(pl_renum, pop_overlap, bins = 30) +
         ggredist::theme_r21()
 }
