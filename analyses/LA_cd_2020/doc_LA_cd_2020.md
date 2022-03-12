@@ -17,7 +17,7 @@ We enforce a maximum population deviation of 0.5%. We add a VRA constraint targe
 Data for Louisiana comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
 
 ## Pre-processing Notes
-No manual pre-processing decisions were necessary.
+To preserve the cores of prior districts, we merge all precincts which are more than two precincts away from a district border, under the 2010 plan.
 
 ## Simulation Notes
 We sample 6,000 districting plans for Louisiana and subset to 5,000 which contain at least one majority-minority district. To balance county and municipality splits, we create pseudocounties for use in the county constraint, which leads to fewer municipality splits than using a county constraint.
