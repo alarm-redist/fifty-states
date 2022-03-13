@@ -48,9 +48,9 @@ if (!file.exists(here(shp_path))) {
         select(-vtd)
     d_cd <- make_from_baf("TX", "CD", "VTD")  %>%
         transmute(GEOID = paste0(censable::match_fips("TX"), vtd),
-                  cd_2010 = as.integer(cd))
+            cd_2010 = as.integer(cd))
     tx_shp <- left_join(tx_shp, d_muni, by = "GEOID") %>%
-        left_join(d_cd, by="GEOID") %>%
+        left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2010, .after = county)
 
@@ -58,11 +58,11 @@ if (!file.exists(here(shp_path))) {
     cd_shp <- st_read(here(path_enacted))
     cd_shp <- cd_shp %>% st_transform(4269)
     tx_shp <- tx_shp %>% st_transform(4269)
-    
+
     tx_shp <- tx_shp %>%
         mutate(cd_2020 = as.integer(cd_shp$District)[
             geo_match(tx_shp, cd_shp, method = "area")],
-            .after = cd_2010)
+        .after = cd_2010)
 
     state <- "TX"
     path_cvap <- here(paste0("data-raw/", state, "/cvap.rds"))
@@ -76,7 +76,7 @@ if (!file.exists(here(shp_path))) {
         vtd_baf <- PL94171::pl_get_baf(state)$VTD
         cvap <- cvap %>%
             left_join(vtd_baf %>% rename(GEOID = BLOCKID),
-                      by = "GEOID")
+                by = "GEOID")
         cvap <- cvap %>%
             mutate(GEOID = paste0(COUNTYFP, DISTRICT)) %>%
             select(GEOID, starts_with("cvap"))
@@ -96,13 +96,13 @@ if (!file.exists(here(shp_path))) {
 
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = tx_shp,
-                             perim_path = here(perim_path)) %>%
+        perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         tx_shp <- rmapshaper::ms_simplify(tx_shp, keep = 0.05,
-                                         keep_shapes = TRUE) %>%
+            keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 
@@ -118,4 +118,3 @@ if (!file.exists(here(shp_path))) {
     tx_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong TX} shapefile")
 }
-

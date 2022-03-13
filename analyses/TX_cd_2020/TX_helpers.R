@@ -14,7 +14,6 @@
 #'
 #' @examples
 #' # TODO
-#'
 prep_particles <- function(map, map_plan_list, uid, dist_keep, nsims) {
     m_init <- matrix(0L, nrow = nrow(map), ncol = nsims)
 
@@ -61,7 +60,7 @@ prep_particles <- function(map, map_plan_list, uid, dist_keep, nsims) {
     })
 
     for (i in seq_len(length(plans_m_l))) {
-        n <- nsims / ncol(plans_m_l[[i]])
+        n <- nsims/ncol(plans_m_l[[i]])
         m_init[map_rows[[i]], ] <- rep_cols(plans_m_l[[i]], n)
     }
 
@@ -69,7 +68,7 @@ prep_particles <- function(map, map_plan_list, uid, dist_keep, nsims) {
 }
 
 rep_cols <- function(mat, n) {
-    do.call('cbind', lapply(seq_len(ncol(mat)), \(x) rep_col(mat[, x], n)))
+    do.call("cbind", lapply(seq_len(ncol(mat)), \(x) rep_col(mat[, x], n)))
 }
 
 rep_col <- function(col, n) {
@@ -88,22 +87,22 @@ add_summary_stats_cvap <- function(plans, map, ...) {
     }
     plans <- plans %>%
         mutate(total_vap = tally_var(map, vap),
-               total_cvap = tally_var(map, cvap),
-               plan_dev =  plan_parity(map),
-               comp_edge = distr_compactness(map),
-               comp_polsby = distr_compactness(map,
-                                               measure = "PolsbyPopper",
-                                               perim_df = perim_df),
-               ndv = tally_var(map, ndv),
-               nrv = tally_var(map, nrv),
-               ndshare = ndv / (ndv + nrv),
-               ...)
+            total_cvap = tally_var(map, cvap),
+            plan_dev =  plan_parity(map),
+            comp_edge = distr_compactness(map),
+            comp_polsby = distr_compactness(map,
+                measure = "PolsbyPopper",
+                perim_df = perim_df),
+            ndv = tally_var(map, ndv),
+            nrv = tally_var(map, nrv),
+            ndshare = ndv/(ndv + nrv),
+            ...)
 
     tally_cols <- names(map)[c(tidyselect::eval_select(starts_with("pop_"), map),
-                               tidyselect::eval_select(starts_with("vap_"), map),
-                               tidyselect::eval_select(starts_with("cvap_"), map),
-                               tidyselect::eval_select(matches("_(dem|rep)_"), map),
-                               tidyselect::eval_select(matches("^a[dr]v_"), map))]
+        tidyselect::eval_select(starts_with("vap_"), map),
+        tidyselect::eval_select(starts_with("cvap_"), map),
+        tidyselect::eval_select(matches("_(dem|rep)_"), map),
+        tidyselect::eval_select(matches("^a[dr]v_"), map))]
     for (col in tally_cols) {
         plans <- mutate(plans, {{ col }} := tally_var(map, map[[col]]), .before = ndv)
     }
@@ -114,25 +113,25 @@ add_summary_stats_cvap <- function(plans, map, ...) {
         unique()
 
     elect_tb <- purrr::map_dfr(elecs, function(el) {
-        vote_d = select(as_tibble(map),
-                        starts_with(paste0(el, "_dem_")),
-                        starts_with(paste0(el, "_rep_")))
+        vote_d <- select(as_tibble(map),
+            starts_with(paste0(el, "_dem_")),
+            starts_with(paste0(el, "_rep_")))
         if (ncol(vote_d) != 2) return(tibble())
         dvote <- pull(vote_d, 1)
         rvote <- pull(vote_d, 2)
 
         plans %>%
             mutate(dem = group_frac(map, dvote, dvote + rvote),
-                   egap = partisan_metrics(map, "EffGap", rvote, dvote),
-                   pbias = partisan_metrics(map, "Bias", rvote, dvote)) %>%
+                egap = partisan_metrics(map, "EffGap", rvote, dvote),
+                pbias = partisan_metrics(map, "Bias", rvote, dvote)) %>%
             as_tibble() %>%
             group_by(draw) %>%
             transmute(draw = draw,
-                      district = district,
-                      pr_dem = dem > 0.5,
-                      e_dem = sum(dem > 0.5, na.rm=T),
-                      pbias = -pbias[1], # flip so dem = negative
-                      egap = egap[1])
+                district = district,
+                pr_dem = dem > 0.5,
+                e_dem = sum(dem > 0.5, na.rm = T),
+                pbias = -pbias[1], # flip so dem = negative
+                egap = egap[1])
     })
 
     elect_tb <- elect_tb %>%
