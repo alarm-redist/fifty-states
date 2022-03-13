@@ -56,24 +56,15 @@ z <- z[z$cluster_edge == 1,]
 
 border_idxs <- which(m1$row_id %in% z$row_id)
 
-# p <- map %>%
-#     ggplot() + geom_sf(fill = NA, color = "black", lwd = 0.001) +
-#     geom_sf(data = m1, fill = "dodgerblue", lwd = 0.001) +
-#     geom_sf(data = z, fill = "indianred", lwd = 0.001) +
-#     ggthemes::theme_map() +
-#     geom_sf(data = counties, fill = NA, lwd = .5, col = "orange")
-# # geom_sf_label(data = counties, aes(label = gsub(" County", "", county)))
-# ggsave("data-raw/county_test.pdf", width = 20, height = 20)
-
 constraints <- redist_constr(m1) %>%
     add_constr_grp_hinge(
-        10,
+        20,
         cvap_hisp,
         total_pop = cvap,
         tgts_group = c(0.45)
     ) %>%
     add_constr_grp_hinge(
-        5,
+        10,
         cvap_black,
         total_pop = cvap,
         tgts_group = c(0.45)) %>%
@@ -87,6 +78,8 @@ houston_plans <- redist_smc(m1, counties = county,
                         nsims = nsims, n_steps = n_steps,
                         constraints = constraints)
 
+#############################################################
+## Local Diagnostic plots
 i <- 25
 p1 <- redist.plot.plans(houston_plans, draws = i, m1) +
     geom_sf(data = m1 %>% filter(get_plans_matrix(houston_plans)[,i] == 0),
@@ -150,7 +143,7 @@ border_idxs <- which(m2$row_id %in% z$row_id)
 
 constraints <- redist_constr(m2) %>%
     add_constr_grp_hinge(
-        10,
+        20,
         cvap_hisp,
         total_pop = cvap,
         tgts_group = c(0.45)
@@ -196,7 +189,7 @@ border_idxs <- which(m3$row_id %in% z$row_id)
 
 constraints <- redist_constr(m3) %>%
     add_constr_grp_hinge(
-        10,
+        20,
         cvap_hisp,
         total_pop = cvap,
         tgts_group = c(0.45)
@@ -245,38 +238,10 @@ test_vec <- sapply(1:ncol(prep_mat), function(i) {
 })
 
 table(test_vec) / nsims
-# 1      2      4      5      6      7
-# 0.9950 0.0026 0.0006 0.0010 0.0002 0.0006
-
-# if (diag_plots) {
-#     counties <- map %>%
-#         group_by(county) %>%
-#         summarise(geometry = st_union(geometry))
-#
-#     p <- map %>%
-#         ggplot() + geom_sf(fill = NA, color = "black", lwd = 0.001) +
-#         geom_sf(data = m2, fill = "dodgerblue", lwd = 0.001) +
-#         geom_sf(data = m3, fill = "indianred", lwd = 0.001) +
-#         geom_sf(data = m1, fill = "darkgreen", lwd = 0.001) +
-#         geom_sf(data = counties, fill = NA, lwd = 0.05, col = "blue") +
-#         # geom_sf_label(data = counties, aes(label = gsub(" County", "", county))) +
-#         ggthemes::theme_map()
-#     ggsave("data-raw/county_test.pdf", width = 20, height = 20)
-#
-#     p <- redist.plot.map(map, plan = prep_mat[,which(test_vec == 1)[1]]) +
-#         geom_sf(data = map %>% filter(prep_mat[,which(test_vec == 1)[1]] == 0),
-#                 fill = "black")
-#     ggsave("data-raw/contig.pdf", width = 20, height = 20)
-#
-# }
-
-
-prep_mat[,1] %>% unique() %>% length()
-prep_mat[,5] %>% unique() %>% length()
 
 constraints <- redist_constr(map) %>%
     add_constr_grp_hinge(
-        10,
+        5,
         cvap_hisp,
         total_pop = cvap,
         tgts_group = c(0.45)
@@ -317,37 +282,84 @@ cli_process_done()
 validate_analysis(plans, map)
 
 # Extra validation plots for custom constraints -----
-# TODO remove this section if no custom constraints
-    library(ggplot2)
-    library(patchwork)
+library(ggplot2)
+library(patchwork)
 
-    ## local results
-    d1 <- redist.plot.distr_qtys(plans, cvap_black / total_cvap,
-                                 color_thresh = NULL,
-                                 color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, '#3D77BB', '#B25D4C'),
-                                 size = 0.5, alpha = 0.5) +
-        scale_y_continuous('Percent Black by CVAP') +
-        labs(title = 'TX Proposed Plan versus Simulations') +
-        scale_color_manual(values = c(cd_2020_prop = 'black')) +
-        ggredist::theme_r21()
+## local results
+d1 <- redist.plot.distr_qtys(
+    plans,
+    cvap_black / total_cvap,
+    color_thresh = NULL,
+    color = ifelse(
+        subset_sampled(plans)$ndv > subset_sampled(plans)$nrv,
+        '#3D77BB',
+        '#B25D4C'
+    ),
+    size = 0.5,
+    alpha = 0.5
+) +
+    scale_y_continuous('Percent Black by CVAP') +
+    labs(title = 'TX Proposed Plan versus Simulations') +
+    scale_color_manual(values = c(cd_2020_prop = 'black')) +
+    ggredist::theme_r21()
 
-    d2 <- redist.plot.distr_qtys(plans, cvap_hisp / total_cvap,
-                                 color_thresh = NULL,
-                                 color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, '#3D77BB', '#B25D4C'),
-                                 size = 0.5, alpha = 0.5) +
-        scale_y_continuous('Percent Hispanic by CVAP') +
-        labs(title = 'TX Proposed Plan versus Simulations') +
-        scale_color_manual(values = c(cd_2020_prop = 'black')) +
-        ggredist::theme_r21()
+d2 <- redist.plot.distr_qtys(
+    plans,
+    cvap_hisp / total_cvap,
+    color_thresh = NULL,
+    color = ifelse(
+        subset_sampled(plans)$ndv > subset_sampled(plans)$nrv,
+        '#3D77BB',
+        '#B25D4C'
+    ),
+    size = 0.5,
+    alpha = 0.5
+) +
+    scale_y_continuous('Percent Hispanic by CVAP') +
+    labs(title = 'TX Proposed Plan versus Simulations') +
+    scale_color_manual(values = c(cd_2020_prop = 'black')) +
+    ggredist::theme_r21()
 
-    ggsave(plot = d1 / d2, filename = "data-raw/cvap_plots.pdf", height = 9, width = 9)
+d3 <-
+    redist.plot.distr_qtys(
+        plans,
+        (cvap_hisp + cvap_black) / total_cvap,
+        color_thresh = NULL,
+        color = ifelse(
+            subset_sampled(plans)$ndv > subset_sampled(plans)$nrv,
+            '#3D77BB',
+            '#B25D4C'
+        ),
+        size = 0.5,
+        alpha = 0.5
+    ) +
+    scale_y_continuous('HCVAP + BCVAP / CVAP') +
+    labs(title = 'TX Proposed Plan versus Simulations') +
+    scale_color_manual(values = c(cd_2020_prop = 'black')) +
+    ggredist::theme_r21()
 
+ggsave(
+    plot = d1 / d2,
+    filename = "data-raw/cvap_plots.pdf",
+    height = 9,
+    width = 9
+)
+ggsave(
+    plot = d3,
+    filename = "data-raw/cvap_sum_plots.pdf",
+    height = 9,
+    width = 9
+)
 
 plans <- plans %>%
     group_by(draw) %>%
-    summarise(all_hcvap = sum((cvap_hisp / total_cvap) > 0.4),
-              dem_hcvap = sum((cvap_hisp / total_cvap) > 0.4 & (ndv > nrv)),
-              rep_hcvap = sum((cvap_hisp / total_cvap) > 0.4 & (nrv > ndv)))
+    summarise(
+        all_hcvap = sum((cvap_hisp / total_cvap) > 0.4),
+        dem_hcvap = sum((cvap_hisp / total_cvap) > 0.4 &
+                            (ndv > nrv)),
+        rep_hcvap = sum((cvap_hisp / total_cvap) > 0.4 &
+                            (nrv > ndv))
+    )
 
 p1 <- redist.plot.hist(plans, all_hcvap)
 p2 <- redist.plot.hist(plans, dem_hcvap)
@@ -355,150 +367,74 @@ p3 <- redist.plot.hist(plans, rep_hcvap)
 
 ggsave("data-raw/hist.pdf", p1 / p2 / p3)
 
+psum <- plans %>%
+    group_by(draw) %>%
+    mutate(cvap_nonwhite = total_cvap - cvap_white) %>%
+    summarise(
+        all_hcvap = sum((cvap_hisp / total_cvap) > 0.4),
+        dem_hcvap = sum((cvap_hisp / total_cvap) > 0.4 &
+                            (ndv > nrv)),
+        rep_hcvap = sum((cvap_hisp / total_cvap) > 0.4 &
+                            (nrv > ndv)),
+        all_bcvap = sum((cvap_black / total_cvap) > 0.4),
+        dem_bcvap = sum((cvap_black / total_cvap) > 0.4 &
+                            (ndv > nrv)),
+        rep_bcvap = sum((cvap_black / total_cvap) > 0.4 &
+                            (nrv > ndv)),
+        mmd_all = sum(cvap_nonwhite / total_cvap > 0.5),
+        mmd_coalition = sum(((
+            cvap_hisp + cvap_black
+        ) / total_cvap) > 0.5)
+    )
 
-# ###
-#
-# dist <- map %>%
-#     group_by(cd_2020) %>%
-#     summarise(geometry = st_union(geometry))
-#
-# county <- m1 %>%
-#     group_by(county) %>%
-#     summarise(geometry = st_union(geometry))
-#
-# # TODO FIGURE OUT PLOTS
-#
-# d <- m0 %>%
-#     ggplot() +
-#     geom_sf(aes(fill = factor(cd_2020)), color = NA, lwd = 1) +
-#     geom_sf(data = county, fill = NA, color = rgb(0, 0, 1, alpha = 0.5), lwd = 1) +
-#     geom_sf_label(data = county, aes(label = gsub(" County", "", county)))
-# ggsave("data-out/TX_2020/m0.pdf", height = 20, width = 20)
-#
-# sim_pop <- m1 %>%
-#     mutate(sim = get_plans_matrix(plans)[,45]) %>%
-#     group_by(sim) %>%
-#     summarise(pop = sum(pop))
-#
-#
-# local_dists <- m1 %>%
-#     group_by(cd_2020) %>%
-#     summarise(geometry = st_union(geometry))
-#
-# d <- m1 %>%
-#     mutate(sim = get_plans_matrix(plans)[,45]) %>%
-#     ggplot() +
-#     geom_sf(data = m1, fill = "black", color = "black") +
-#     geom_sf(aes(fill = factor(cd_2020)), color = NA, lwd = 1) +
-#     geom_sf_label(data = local_dists, aes(label = cd_2020), size = 3) +
-#     geom_sf(data = county, fill = NA, color = rgb(0, 0, 1, alpha = 0.5), lwd = 1) +
-#     geom_sf_label(data = county, aes(label = gsub(" County", "", county)))
-# ggsave("data-out/TX_2020/county_dist.pdf", height = 20, width = 20)
-#
-# sum(m1$pop) / 766987
-#
-#
-#
-# d <- ggplot(dist) +
-#     geom_sf(aes(fill = factor(cd_2020)), color = NA, lwd = 1) +
-#     geom_sf(data = county, fill = NA, color = rgb(0, 0, 1, alpha = 0.5), lwd = 1) +
-#     geom_sf_label(aes(label = cd_2020), size = 5)
-# ggsave("data-out/TX_2020/enacted_map.pdf", height = 50, width = 50, limitsize = FALSE)
-#
-# d <- ggplot(dist) +
-#     geom_sf(aes(fill = factor(cd_2020)), color = NA, lwd = 1) +
-#     geom_sf(data = county, fill = NA, color = rgb(0, 0, 1, alpha = 0.5), lwd = 1) +
-#     geom_sf_label(data = county, aes(label = gsub(" County", "", county))) +
-#     geom_sf_label(data = dist, aes(label = cd_2020))
-# ggsave("data-out/TX_2020/state_map.pdf", height = 20, width = 20)
-#
-# # Enacted, remove "part" districts in this area
-# dists <- m1$cd_2020 %>% unique()
-#
-# co1 <- map %>% st_drop_geometry() %>% group_by(cd_2020) %>% summarise(nfull = n())
-# co2 <- m1 %>% st_drop_geometry() %>% group_by(cd_2020) %>% summarise(nlocal = n())
-#
-# counts <- left_join(co2, co1, by = "cd_2020")
-#
-# full_districts <- counts$cd_2020[counts$nlocal == counts$nfull]
-#
-# map %>% st_drop_geometry() %>%
-#     filter(cd_2020 %in% full_districts) %>%
-#     group_by(cd_2020) %>%
-#     summarise(hisp_prop = sum(cvap_hisp) / sum(cvap),
-#               black_prop = sum(cvap_black) / sum(cvap))
-#
-# z <- m1 %>%
-#     filter(cd_2020 %in% full_districts)
-# redist.splits(m1$cd_2020, m1$county)
-# redist.multisplits(m1$cd_2020, m1$county)
-#
-# d <- ggplot(z) +
-#     geom_sf(aes(fill = factor(cd_2020)), color = NA, lwd = 1) +
-#     geom_sf(data = county, fill = NA, color = rgb(0, 0, 1, alpha = 0.5), lwd = 1)
-# ggsave("data-out/TX_2020/local_map.pdf", height = 20, width = 20)
-#
-# z <- m2 %>%
-#     filter(county %in% clust2)
-#
-# county <- m2 %>%
-#     group_by(county) %>%
-#     summarise(geometry = st_union(geometry))
-#
-# d <- ggplot(z) +
-#     geom_sf(aes(fill = factor(cd_2020)), color = NA, lwd = 1) +
-#     geom_sf(data = county, fill = NA, color = rgb(0, 0, 1, alpha = 0.5), lwd = 1)
-# ggsave("data-out/TX_2020/austin_map.pdf", height = 20, width = 20)
-#
-# plans %>%
-#     mutate(hisp_prop = group_frac(m1, cvap_hisp, cvap),
-#            black_prop = group_frac(m1, cvap_black, cvap)) %>%
-#     filter(district != 0)
-#
-# idx <- get_plans_matrix(plans)[,22]
-#
-# redistmetrics::splits_count(plans, m1, county)
-# redist::redist.district.splits(plans, m1$county)
-#
-# redist.splits(m1$cd_2020, m1$county)
-# redist.splits(plans, m1$county)
-# redist.multisplits(plans, m1$county)
-# redist.multisplits(m1$cd_2020, m1$county)
-#
-# redist.splits(idx[idx != 0], m1$county[idx != 0])
-#
-# redist.multisplits(get_plans_matrix(plans)[idx != 0,22], m1$county[idx != 0])
-#
-# table(get_plans_matrix(plans)[,22], m1$county)[2:9,] %>% View()
-#
-# limited <- m1 %>%
-#     mutate(sim = get_plans_matrix(plans)[,18]) %>%
-#     filter(sim != 0)
-#
-# local_dists <- m1 %>%
-#     mutate(sim = get_plans_matrix(plans)[,18]) %>%
-#     filter(sim != 0) %>%
-#     group_by(sim) %>%
-#     summarise(geometry = st_union(geometry))
-#
-# d <- m1 %>%
-#     ggplot() +
-#     geom_sf(fill = "grey", color = "black") +
-#     geom_sf(data = limited, aes(fill = factor(sim)), color = NA, lwd = 1) +
-#     geom_sf_label(data = local_dists, aes(label = sim), size = 5) +
-#     geom_sf(data = county, fill = NA, color = rgb(0, 0, 1, alpha = 0.5), lwd = 1) +
-#     geom_sf_label(data = county, aes(label = gsub(" County", "", county)), size = 5) +
-#     ggthemes::theme_map()
-# ggsave("data-out/TX_2020/test_dist.pdf", height = 20, width = 20)
-#
-# mutate(plans, county_splits = county_splits(m1, county, .data = plans))
-#
-# # TODO customize as needed. Recommendations:
-# #  - For many districts / tighter population tolerances, try setting
-# #  `pop_temper=0.01` and nudging upward from there. Monitor the output for
-# #  efficiency!
-# #  - Monitor the output (i.e. leave `verbose=TRUE`) to ensure things aren't breaking
-# #  - Don't change the number of simulations unless you have a good reason
-# #  - If the sampler freezes, try turning off the county split constraint to see
-# #  if that's the problem.
-# #  - Ask for help!
+plans %>%
+    filter(draw == "cd_2020") %>%
+    mutate(bvap_pct = cvap_black / total_cvap) %>%
+    arrange(desc(bvap_pct)) %>%
+    select(district, bvap_pct)
+
+map <- map %>% mutate(bvap_pct = cvap_black / cvap)
+
+p <- redist.plot.map(
+    map,
+    plan = cd_2020,
+    zoom_to = map$cd_2020 %in% c(30, 9, 18),
+    boundaries = FALSE,
+    fill_label = bvap_pct
+)
+ggsave("bcvap_zoom.pdf", p)
+
+p <- plans %>%
+    group_by(draw) %>%
+    mutate(cvap_nonwhite = total_cvap - cvap_white,
+           cvap_nw_prop = cvap_nonwhite / total_cvap)  %>%
+    redist.plot.distr_qtys(
+        cvap_nw_prop,
+        color = ifelse(
+            subset_sampled(plans)$ndv > subset_sampled(plans)$nrv,
+            '#3D77BB',
+            '#B25D4C'
+        ),
+        color_thresh = NULL
+    ) +
+    scale_y_continuous('Percent Non-White by CVAP') +
+    labs(title = 'TX Proposed Plan versus Simulations') +
+    scale_color_manual(values = c(cd_2020_prop = 'black'))
+ggsave("data-raw/qty_nonwhite.pdf", p, width = 9)
+
+p0 <-
+    redist.plot.hist(psum, mmd_all) + labs(x = "Nonwhite CVAP > 0.5", y = NULL)
+p1 <-
+    redist.plot.hist(psum, mmd_coalition) + labs(x = "HCVAP + BCVAP > 0.5", y = NULL)
+p2 <-
+    redist.plot.hist(psum, all_hcvap) + labs(x = "HCVAP > 0.4", y = NULL)
+p3 <-
+    redist.plot.hist(psum, dem_hcvap) + labs(x = "HCVAP > 0.4 & Dem. > Rep.", y = NULL)
+p4 <-
+    redist.plot.hist(psum, rep_hcvap) + labs(x = "HCVAP > 0.4 & Dem. < Rep.", y = NULL)
+p5 <-
+    redist.plot.hist(psum, all_bcvap) + labs(x = "BCVAP > 0.4", y = NULL)
+p6 <-
+    redist.plot.hist(psum, dem_bcvap) + labs(x = "BCVAP > 0.4 & Dem. > Rep.", y = NULL)
+
+ggsave("data-raw/hist.pdf", p0 / p1 / p2 / p3 / p4 / p5 / p6, height = 9)
