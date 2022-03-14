@@ -32,7 +32,11 @@ add_summary_stats <- function(plans, map, ...) {
         state <- map$state[1]
         perim_df <- read_rds(perim_path)
     } else {
-        perim_df <- redist.prep.polsbypopper(map, perim_path = perim_path)
+        if (requireNamespace('redistmetrics', quietly = TRUE)) {
+            perim_df <- redistmetrics::prep_perims(map, perim_path = perim_path)
+        } else {
+            perim_df <- redist.prep.polsbypopper(map, perim_path = perim_path)
+        }
     }
     plans <- plans %>%
         mutate(total_vap = tally_var(map, vap),
@@ -75,9 +79,10 @@ add_summary_stats <- function(plans, map, ...) {
             group_by(draw) %>%
             transmute(draw = draw,
                       district = district,
+                      e_dvs = dem,
                       pr_dem = dem > 0.5,
                       e_dem = sum(dem > 0.5, na.rm=T),
-                      pbias = -pbias[1], # flip so dem = negative
+                      pbias = -pbias[1], # flip so dem = negative (only for old redist versioning)
                       egap = egap[1])
     })
 

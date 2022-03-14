@@ -168,6 +168,9 @@ vest_crosswalk <- function(cvap, state) {
 load_plans = function(state) {
     plans <<- read_rds(here(str_glue("data-out/{state}_2020/{state}_cd_2020_plans.rds")))
 }
+load_map = function(state) {
+    map <<- read_rds(here(str_glue("data-out/{state}_2020/{state}_cd_2020_map.rds")))
+}
 rename_cd = function(plans) {
     m = as.matrix(plans)
     new_names = colnames(m)

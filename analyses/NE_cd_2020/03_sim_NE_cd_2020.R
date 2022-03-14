@@ -15,7 +15,6 @@ constr <- redist_constr(map_cores) %>%
 plans <- redist_smc(map_cores, nsims = 5e3, counties = county,
     constraints = constr) %>%
     pullback(map)
-attr(plans, "prec_pop") <- map$pop
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
