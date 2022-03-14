@@ -194,6 +194,11 @@ constraints <- redist_constr(m3) %>%
         total_pop = cvap,
         tgts_group = c(0.45)
     ) %>%
+    add_constr_grp_hinge(
+        10,
+        cvap_black,
+        total_pop = cvap,
+        tgts_group = c(0.45)) %>%
     add_constr_custom(strength = 10, function(plan, distr) {
         ifelse(any(plan[border_idxs] == 0), 0, 1)
     })
@@ -351,7 +356,7 @@ ggsave(
     width = 9
 )
 
-plans <- plans %>%
+psum <- plans %>%
     group_by(draw) %>%
     summarise(
         all_hcvap = sum((cvap_hisp/total_cvap) > 0.4),
@@ -361,9 +366,9 @@ plans <- plans %>%
             (nrv > ndv))
     )
 
-p1 <- redist.plot.hist(plans, all_hcvap)
-p2 <- redist.plot.hist(plans, dem_hcvap)
-p3 <- redist.plot.hist(plans, rep_hcvap)
+p1 <- redist.plot.hist(psum, all_hcvap)
+p2 <- redist.plot.hist(psum, dem_hcvap)
+p3 <- redist.plot.hist(psum, rep_hcvap)
 
 ggsave("data-raw/hist.pdf", p1/p2/p3)
 
