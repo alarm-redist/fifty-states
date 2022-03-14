@@ -20,7 +20,6 @@ cli_process_start("Downloading files for {.pkg TX_cd_2020}")
 path_data <- download_redistricting_file("TX", "data-raw/TX")
 
 # download the enacted plan.
-# TODO try to find a download URL at <https://redistricting.lls.edu/state/texas/>
 url <- "https://redistricting.lls.edu/wp-content/uploads/tx_2020_congress_2021-10-25_2031-06-30.zip"
 path_enacted <- "data-raw/TX/TX_enacted.zip"
 download(url, here(path_enacted))
