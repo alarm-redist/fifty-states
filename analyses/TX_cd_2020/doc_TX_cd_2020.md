@@ -1,12 +1,8 @@
 # 2020 Texas Congressional Districts
 
 ## Redistricting requirements
-In Texas, districts must:
-
-1. be contiguous
-1. have equal populations
-1. be geographically compact
-1. preserve county and municipality boundaries as much as possible.
+In Texas, districts must meet US constitutional requirements, but there are 
+[no state-specific statutes](https://redistricting.capitol.texas.gov/reqs#congress-section).
 
 ### Interpretation of requirements
 We enforce a maximum population deviation of 1.0%.
