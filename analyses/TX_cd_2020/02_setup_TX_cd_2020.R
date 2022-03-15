@@ -14,6 +14,9 @@ map <- map %>%
 # Add an analysis name attribute
 attr(map, "analysis_name") <- "TX_2020"
 
+# Unique ID for each row, will use later to reconnect pieces
+map$row_id <- 1:nrow(map)
+
 # Output the redist_map object. Do not edit this path.
 write_rds(map, "data-out/TX_2020/TX_cd_2020_map.rds", compress = "xz")
 cli_process_done()

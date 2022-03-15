@@ -16,9 +16,6 @@ diag_plots <- FALSE
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg TX_cd_2020}")
 
-# Unique ID for each row, will use later to reconnect pieces
-map$row_id <- 1:nrow(map)
-
 ########################################################################
 # Cluster #1: Greater Houston
 
