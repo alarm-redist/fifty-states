@@ -4,14 +4,11 @@
 ###############################################################################
 set.seed(02138)
 
-source("analyses/TX_cd_2020/TX_helpers.R")
-source("analyses/TX_cd_2020/01_prep_TX_cd_2020.R")
-source("analyses/TX_cd_2020/02_setup_TX_cd_2020.R")
-
 cluster_pop_tol <- 0.0025
 nsims <- 5000
 
-diag_plots <- FALSE
+# Unique ID for each row, will use later to reconnect pieces
+map$row_id <- 1:nrow(map)
 
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg TX_cd_2020}")
