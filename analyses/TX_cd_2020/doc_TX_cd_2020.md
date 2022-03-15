@@ -11,32 +11,31 @@ We enforce a maximum population deviation of 1.0%.
 Data for Texas comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
 
 ## Pre-processing Notes
-We estimate CVAP populations with the [CVAP](https://github.com/christopherkenny/cvap)
+We estimate CVAP populations with the [`cvap`](https://github.com/christopherkenny/cvap)
 R package.
+We also pre-process the map to split it into clusters for simulation, which has a slight effect on the types of redistrict plans that will be sampled.
 
 ## Simulation Notes
 We sample 5,000 districting plans for Texas.
-
 Due to the size and complexity of Texas, we split the simulations into
-multiple steps.
+multiple steps and use a 1.0% population constraint versus the usual 0.5%.
 
 ### 1. Clustering procedure
 First, we run simulations in three major metropolitan areas:
 Greater Houston, a combination of Greater San Antonio and Austin, and
 Dallas-Fort Worth. We use collections of counties that define the
 Metropolitan Statistical Areas.
-
 The counties in each cluster are those in each Census MSA:
 
-Houston–The Woodlands–Sugar Land: Austin, Brazoria, Chambers, Fort Bend,
+* Houston–The Woodlands–Sugar Land: Austin, Brazoria, Chambers, Fort Bend,
 Galveston, Harris, Liberty, Montgomery, Waller.
 
-Austin–Round Rock-Georgetown: Bastrop, Caldwell, Hays, Travis, Williamson.
+* Austin–Round Rock-Georgetown: Bastrop, Caldwell, Hays, Travis, Williamson.
 
-San Antonio–New Braunfels: Atascosa, Bandera, Bexar, Comal, Guadalupe,
+* San Antonio–New Braunfels: Atascosa, Bandera, Bexar, Comal, Guadalupe,
     Kendall, Medina, Wilson.
     
-Dallas–Fort Worth–Arlington: Collin, Dallas, Denton, Ellis, Hunt,
+* Dallas–Fort Worth–Arlington: Collin, Dallas, Denton, Ellis, Hunt,
 Kaufman, Rockwall, Johnson, Parker, Tarrant, Wise.
 
 These simulations run the SMC algorithm within each cluster. Because each
@@ -46,10 +45,8 @@ avoid discontiguities.
 
 In each cluster, we apply hinge Gibbs constraints of strength 20 to encourage
 the formation of Hispanic CVAP opportunity districts.
-
 In Houston, we also apply a hinge Gibbs constraint of strength 10 to encourage
 the formation of Black CVAP opportunity districts.
-
 
 ### 2. Combination procedure
 Then, these partial map simulations are combined to run statewide simulations.
