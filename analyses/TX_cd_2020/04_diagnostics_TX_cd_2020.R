@@ -3,6 +3,8 @@
 # © ALARM Project, February 2022
 ###############################################################################
 
+library(patchwork)
+
 i <- 25
 p1 <- redist.plot.plans(houston_plans, draws = i, m1) +
     geom_sf(data = m1 %>% filter(get_plans_matrix(houston_plans)[, i] == 0),

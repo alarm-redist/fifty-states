@@ -11,6 +11,8 @@ suppressMessages({
     library(geomander)
     library(cli)
     library(here)
+    library(sf)
+    library(tidyverse)
     devtools::load_all() # load utilities
 })
 

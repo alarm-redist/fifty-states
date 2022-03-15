@@ -3,17 +3,12 @@
 # © ALARM Project, February 2022
 ###############################################################################
 set.seed(02138)
-library(sf)
-library(tidyverse)
-library(patchwork)
 
 source("analyses/TX_cd_2020/TX_helpers.R")
 source("analyses/TX_cd_2020/01_prep_TX_cd_2020.R")
 source("analyses/TX_cd_2020/02_setup_TX_cd_2020.R")
 
 cluster_pop_tol <- 0.0025
-
-map <- set_pop_tol(map, 0.01)
 nsims <- 5000
 
 diag_plots <- FALSE
@@ -185,17 +180,19 @@ prep_mat <- prep_particles(map = map, map_plan_list = tx_plan_list,
     uid = row_id, dist_keep = dist_keep, nsims = nsims)
 
 ## Check contiguity
-test_vec <- sapply(1:ncol(prep_mat), function(i) {
-    cat(i, "\n")
-    z <- map %>%
-        mutate(ex_dist = ifelse(prep_mat[, i] == 0, 1, 0))
+if (FALSE) {
+    test_vec <- sapply(1:ncol(prep_mat), function(i) {
+        cat(i, "\n")
+        z <- map %>%
+            mutate(ex_dist = ifelse(prep_mat[, i] == 0, 1, 0))
 
-    z <- geomander::check_contiguity(adj = z$adj, group = z$ex_dist)
+        z <- geomander::check_contiguity(adj = z$adj, group = z$ex_dist)
 
-    length(unique(z$component[z$group == 1]))
-})
+        length(unique(z$component[z$group == 1]))
+    })
 
-table(test_vec)/nsims
+    table(test_vec)/nsims
+}
 
 constraints <- redist_constr(map) %>%
     add_constr_grp_hinge(
@@ -209,8 +206,6 @@ constraints <- redist_constr(map) %>%
         cvap_black,
         total_pop = cvap,
         tgts_group = c(0.45))
-
-map <- set_pop_tol(map, 0.01)
 
 plans <- redist_smc(map, nsims = nsims,
     counties = county, verbose = TRUE,
