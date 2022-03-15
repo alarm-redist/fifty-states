@@ -217,6 +217,7 @@ dallas_plans <- redist_smc(m3, counties = county,
 
 p <- redist.plot.plans(dallas_plans, draws = c(10, 20, 30, 50), m3)
 ggsave("data-raw/dallas.pdf")
+
 #############################################################
 ## Combine Clusters
 
@@ -277,7 +278,13 @@ cli_process_done()
 # Compute summary statistics -----
 cli_process_start("Computing summary statistics for {.pkg TX_cd_2020}")
 
-plans <- add_summary_stats_cvap(plans, map)
+plans <- add_summary_stats(plans, map) %>%
+    mutate(total_cvap = tally_var(map, cvap), .after=total_vap)
+# cvap columns
+cvap_cols = names(map)[tidyselect::eval_select(starts_with("cvap_"), map)]
+for (col in rev(cvap_cols)) {
+    plans <- mutate(plans, {{ col }} := tally_var(map, map[[col]]), .after = vap_two)
+}
 
 # Output the summary statistics. Do not edit this path.
 save_summary_stats(plans, "data-out/TX_2020/TX_cd_2020_stats.csv")
