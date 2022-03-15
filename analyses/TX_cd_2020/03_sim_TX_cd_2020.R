@@ -28,13 +28,8 @@ m1 <- map %>% filter(county %in% clust1)
 m1 <- set_pop_tol(m1, cluster_pop_tol)
 attr(m1, "pop_bounds") <-  attr(map, "pop_bounds")
 
-# Check for potential MMDs
-m1 %>% st_drop_geometry() %>%
-    filter(county %in% clust1) %>%
-    group_by(cd_2020) %>%
-    summarise(hisp_prop = sum(cvap_hisp)/sum(cvap),
-        black_prop = sum(cvap_black)/sum(cvap))
-
+########################################################################
+# Setup for cluster constraint
 map <- map %>%
     mutate(cluster_edge = ifelse(row_id %in% m1$row_id, 1, 0))
 
@@ -43,6 +38,7 @@ z <- geomander::seam_geom(map$adj, map, admin = "cluster_edge", seam = c(0, 1))
 z <- z[z$cluster_edge == 1, ]
 
 border_idxs <- which(m1$row_id %in% z$row_id)
+########################################################################
 
 constraints <- redist_constr(m1) %>%
     add_constr_grp_hinge(
@@ -80,12 +76,9 @@ clust2 <- paste(clust2, "County")
 m2 <- map %>% filter(county %in% clust2)
 m2 <- set_pop_tol(m2, cluster_pop_tol)
 attr(m2, "pop_bounds") <-  attr(map, "pop_bounds")
-m2 %>% st_drop_geometry() %>%
-    filter(county %in% clust2) %>%
-    group_by(cd_2020) %>%
-    summarise(hisp_prop = sum(cvap_hisp)/sum(cvap),
-        black_prop = sum(cvap_black)/sum(cvap))
 
+########################################################################
+# Setup for cluster constraint
 map <- map %>%
     mutate(cluster_edge = ifelse(row_id %in% m2$row_id, 1, 0))
 
@@ -94,6 +87,7 @@ z <- geomander::seam_geom(map$adj, map, admin = "cluster_edge", seam = c(0, 1))
 z <- z[z$cluster_edge == 1, ]
 
 border_idxs <- which(m2$row_id %in% z$row_id)
+########################################################################
 
 constraints <- redist_constr(m2) %>%
     add_constr_grp_hinge(
@@ -125,6 +119,8 @@ m3 <- map %>% filter(county %in% clust3)
 m3 <- set_pop_tol(m3, cluster_pop_tol)
 attr(m3, "pop_bounds") <-  attr(map, "pop_bounds")
 
+########################################################################
+# Setup for cluster constraint
 map <- map %>%
     mutate(cluster_edge = ifelse(row_id %in% m3$row_id, 1, 0))
 
@@ -133,6 +129,7 @@ z <- geomander::seam_geom(map$adj, map, admin = "cluster_edge", seam = c(0, 1))
 z <- z[z$cluster_edge == 1, ]
 
 border_idxs <- which(m3$row_id %in% z$row_id)
+########################################################################
 
 constraints <- redist_constr(m3) %>%
     add_constr_grp_hinge(
@@ -149,12 +146,6 @@ constraints <- redist_constr(m3) %>%
     add_constr_custom(strength = 10, function(plan, distr) {
         ifelse(any(plan[border_idxs] == 0), 0, 1)
     })
-
-map %>% st_drop_geometry() %>%
-    filter(county %in% clust3) %>%
-    group_by(cd_2020) %>%
-    summarise(hisp_prop = sum(cvap_hisp)/sum(cvap),
-        black_prop = sum(cvap_black)/sum(cvap))
 
 n_steps <- (sum(m3$pop)/attr(map, "pop_bounds")[2]) %>% floor()
 
