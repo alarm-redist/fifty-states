@@ -119,3 +119,5 @@ if (!file.exists(here(shp_path))) {
     tx_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong TX} shapefile")
 }
+
+source("analyses/TX_cd_2020/TX_helpers.R")
