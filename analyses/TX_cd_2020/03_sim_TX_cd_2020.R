@@ -7,6 +7,9 @@ set.seed(02138)
 cluster_pop_tol <- 0.0025
 nsims <- 5000
 
+# Unique ID for each row, will use later to reconnect pieces
+map$row_id <- 1:nrow(map)
+
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg TX_cd_2020}")
 
