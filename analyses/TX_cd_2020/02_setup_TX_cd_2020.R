@@ -4,7 +4,7 @@
 ###############################################################################
 cli_process_start("Creating {.cls redist_map} object for {.pkg TX_cd_2020}")
 
-map <- redist_map(tx_shp, pop_tol = 0.01,
+map <- redist_map(tx_shp, pop_tol = 0.005,
     existing_plan = cd_2020, adj = tx_shp$adj)
 
 map <- map %>%
