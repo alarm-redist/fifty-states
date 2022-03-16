@@ -5,7 +5,7 @@ In Texas, districts must meet US constitutional requirements, but there are
 [no state-specific statutes](https://redistricting.capitol.texas.gov/reqs#congress-section).
 
 ### Interpretation of requirements
-We enforce a maximum population deviation of 1.0%.
+We enforce a maximum population deviation of 0.5%.
 
 ## Data Sources
 Data for Texas comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
@@ -18,7 +18,7 @@ We also pre-process the map to split it into clusters for simulation, which has 
 ## Simulation Notes
 We sample 5,000 districting plans for Texas.
 Due to the size and complexity of Texas, we split the simulations into
-multiple steps and use a 1.0% population constraint versus the usual 0.5%.
+multiple steps.
 
 ### 1. Clustering procedure
 First, we run simulations in three major metropolitan areas:
@@ -38,8 +38,8 @@ Galveston, Harris, Liberty, Montgomery, Waller.
 * Dallas–Fort Worth–Arlington: Collin, Dallas, Denton, Ellis, Hunt,
 Kaufman, Rockwall, Johnson, Parker, Tarrant, Wise.
 
-These simulations run the SMC algorithm within each cluster. Because each
-cluster will have leftover population, we apply an additional constraint that
+These simulations run the SMC algorithm within each cluster with a 0.25% population tolerance.
+Because each cluster will have leftover population, we apply an additional constraint that
 incentivizes leaving any unassigned areas on the edge of these clusters to
 avoid discontiguities.
 
