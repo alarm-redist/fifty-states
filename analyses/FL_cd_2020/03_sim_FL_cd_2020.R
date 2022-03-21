@@ -11,7 +11,7 @@
 set.seed(719)
 
 cluster_pop_tol <- 0.005
-nsims <- 500
+nsims <- 5000
 
 # Unique ID for each row, will use later to reconnect pieces
 map$row_id <- 1:nrow(map)
@@ -40,13 +40,13 @@ border_idxs <- which(map_south$row_id %in% z$row_id)
 
 constraints <- redist_constr(map_south) %>%
     add_constr_grp_hinge(
-        2,
+        5,
         cvap_hisp,
         total_pop = cvap,
         tgts_group = c(0.45)
     ) %>%
     add_constr_grp_hinge(
-        25,
+        20,
         cvap_black,
         total_pop = cvap,
         tgts_group = c(0.50)) %>%
@@ -83,13 +83,13 @@ border_idxs <- which(map_north$row_id %in% z$row_id)
 
 constraints <- redist_constr(map_north) %>%
     add_constr_grp_hinge(
-        2,
+        5,
         cvap_hisp,
         total_pop = cvap,
         tgts_group = c(0.45)
     ) %>%
     add_constr_grp_hinge(
-        25,
+        20,
         cvap_black,
         total_pop = cvap,
         tgts_group = c(0.40)) %>%
@@ -136,13 +136,13 @@ constraints <- redist_constr(map) %>%
         5,
         cvap_hisp,
         total_pop = cvap,
-        tgts_group = c(0.50)
+        tgts_group = c(0.40)
     ) %>%
     add_constr_grp_hinge(
         5,
         cvap_black,
         total_pop = cvap,
-        tgts_group = c(0.50))
+        tgts_group = c(0.40))
 
 plans <- redist_smc(map, nsims = nsims, counties = pseudo_county,
                     constraints = constraints,
