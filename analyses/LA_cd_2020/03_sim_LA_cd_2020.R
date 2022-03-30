@@ -7,7 +7,7 @@
 cli_process_start("Running simulations for {.pkg LA_cd_2020}")
 
 constr <- redist_constr(map_m) %>%
-    add_constr_grp_hinge(40, vap_black, vap, tgts_group = 0.55)
+    add_constr_grp_hinge(50, vap_black, vap, tgts_group = 0.55)
 
 plans <- redist_smc(map_m, nsims = 6e3,
     counties = pseudo_county, constraints = constr) %>%
@@ -19,7 +19,7 @@ plans <- plans %>%
     group_by(draw) %>%
     mutate(vap_minority = sum(vap_minority > 0.5)) %>%
     ungroup() %>%
-    filter(vap_minority >= 1 | draw == "cd_2010") %>%
+    filter(vap_minority >= 1 | draw == "cd_2020") %>%
     slice(1:(5001*attr(map, "ndists"))) %>%
     select(-vap_minority)
 
@@ -53,7 +53,7 @@ if (interactive()) {
         scale_y_continuous("Percent Black by VAP") +
         labs(title = "Louisiana Proposed Plan versus Simulations") +
         scale_color_manual(values = c(cd_2020_prop = "black")) +
-        ggredist::theme_r21()
+        theme_bw()
 
     # Minority VAP Performance Plot
     redist.plot.distr_qtys(plans, (total_vap - vap_white)/total_vap,
@@ -63,6 +63,6 @@ if (interactive()) {
         scale_y_continuous("Minority Percentage by VAP") +
         labs(title = "Louisiana Proposed Plan versus Simulations") +
         scale_color_manual(values = c(cd_2020_prop = "black")) +
-        ggredist::theme_r21()
+        theme_bw()
 
 }

@@ -20,13 +20,12 @@ cli_process_start("Downloading files for {.pkg LA_cd_2020}")
 path_data <- download_redistricting_file("LA", "data-raw/LA")
 
 # download the enacted plan.
-# TODO try to find a download URL at <https://redistricting.lls.edu/state/louisiana/>
-# url <- "https://redistricting.lls.edu/wp-content/uploads/`state`_2020_congress_XXXXX.zip"
-# path_enacted <- "data-raw/LA/LA_enacted.zip"
-# download(url, here(path_enacted))
-# unzip(here(path_enacted), exdir = here(dirname(path_enacted), "LA_enacted"))
-# file.remove(path_enacted)
-# path_enacted <- "data-raw/LA/LA_enacted/XXXXXXX.shp" # TODO use actual SHP
+url <- "https://thearp.org/documents/736/LA_CD_Enacted03302022.zip"
+path_enacted <- "data-raw/LA/LA_enacted.zip"
+download(url, here(path_enacted))
+unzip(here(path_enacted), exdir = here(dirname(path_enacted), "LA_enacted"))
+file.remove(path_enacted)
+path_enacted <- "data-raw/LA/LA_enacted/LA_CD_Enacted_03302022.shp"
 
 cli_process_done()
 
@@ -55,11 +54,12 @@ if (!file.exists(here(shp_path))) {
         relocate(muni, county_muni, cd_2010, .after = county)
 
     # add the enacted plan
-    # cd_shp <- st_read(here(path_enacted))
-    # la_shp <- la_shp %>%
-    #     mutate(cd_2020 = as.integer(cd_shp$DISTRICT)[
-    #         geo_match(la_shp, cd_shp, method = "area")],
-    #         .after = cd_2010)
+    cd_shp <- st_read(here(path_enacted))
+    cd_shp <- st_transform(cd_shp, st_crs(la_shp))
+    la_shp <- la_shp %>%
+        mutate(cd_2020 = as.integer(cd_shp$DISTRICT)[
+            geo_match(la_shp, cd_shp, method = "area")],
+        .after = cd_2010)
 
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = la_shp,
