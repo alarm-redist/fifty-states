@@ -15,7 +15,7 @@ We add a county constraint.
 We add a VRA constraint targeting two majority-minority districts.
 
 ## Data Sources
-Data for North Carolina comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/). Data for the 2021 North Carolina ratified congressional map comes from the [North Carolina State Board of Elections](https://www.ncsbe.gov/results-data/voting-maps-redistricting).
+Data for North Carolina comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/). Data for the 2022 North Carolina ratified congressional map comes from the [North Carolina General Assembly](https://www.ncleg.gov/Redistricting).
 
 ## Pre-processing Notes
 No manual pre-processing decisions were necessary.
