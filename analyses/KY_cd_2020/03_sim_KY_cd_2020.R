@@ -29,4 +29,8 @@ if (interactive()) {
     library(ggplot2)
     library(patchwork)
     validate_analysis(plans, map)
+    redist.plot.distr_qtys(plans, qty = ndshare, geom = "boxplot") +
+        scale_y_continuous("Democratic Voteshare", labels = scales::percent_format(accuracy = 1)) +
+        theme_bw()
+    ggsave("partisan.pdf", height = 4, width = 8)
 }

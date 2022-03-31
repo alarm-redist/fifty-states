@@ -20,15 +20,13 @@ cli_process_start("Downloading files for {.pkg KY_cd_2020}")
 path_data <- download_redistricting_file("KY", "data-raw/KY")
 
 # download the enacted plan.
-# TODO try to find a download URL at <https://redistricting.lls.edu/state/kentucky/>
 url <- "https://redistricting.lls.edu/wp-content/uploads/`state`_2020_congress_XXXXX.zip"
 path_enacted <- "data-raw/KY/KY_enacted.zip"
 download(url, here(path_enacted))
 unzip(here(path_enacted), exdir = here(dirname(path_enacted), "KY_enacted"))
 file.remove(path_enacted)
-path_enacted <- "data-raw/KY/KY_enacted/C1278B01 (22RS-SB3).shp" # TODO use actual SHP
+path_enacted <- "data-raw/KY/KY_enacted/C1278B01 (22RS-SB3).shp"
 
-# TODO other files here (as necessary). All paths should start with `path_`
 # If large, consider checking to see if these files exist before downloading
 
 cli_process_done()
@@ -51,9 +49,9 @@ if (!file.exists(here(shp_path))) {
         select(-vtd)
     d_cd <- make_from_baf("KY", "CD", "VTD")  %>%
         transmute(GEOID = paste0(censable::match_fips("KY"), vtd),
-                  cd_2010 = as.integer(cd))
+            cd_2010 = as.integer(cd))
     ky_shp <- left_join(ky_shp, d_muni, by = "GEOID") %>%
-        left_join(d_cd, by="GEOID") %>%
+        left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2010, .after = county)
 
@@ -62,27 +60,22 @@ if (!file.exists(here(shp_path))) {
     ky_shp <- ky_shp %>%
         mutate(cd_2020 = as.integer(cd_shp$DISTRICT)[
             geo_match(ky_shp, cd_shp, method = "area")],
-            .after = cd_2010)
-
-    # TODO any additional columns or data you want to add should go here
+        .after = cd_2010)
 
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = ky_shp,
-                             perim_path = here(perim_path)) %>%
+        perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         ky_shp <- rmapshaper::ms_simplify(ky_shp, keep = 0.05,
-                                         keep_shapes = TRUE) %>%
+            keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 
     # create adjacency graph
     ky_shp$adj <- redist.adjacency(ky_shp)
-
-    # TODO any custom adjacency graph edits here
 
     ky_shp <- ky_shp %>%
         fix_geo_assignment(muni)
@@ -93,4 +86,3 @@ if (!file.exists(here(shp_path))) {
     ky_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong KY} shapefile")
 }
-
