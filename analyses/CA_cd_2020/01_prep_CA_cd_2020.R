@@ -81,8 +81,11 @@ if (!file.exists(here(shp_path))) {
     # create adjacency graph
     ca_shp$adj <- redist.adjacency(ca_shp)
 
-    nbrs <- geomander::suggest_neighbors(shp = ca_shp, adj = ca_shp$adj)
+    # island 1: 7296
+    ca_shp$adj <- add_edge(ca_shp$adj, 7296, 7300)
 
+    # island 2: 3442 3443
+    nbrs <- geomander::suggest_component_connection(ca_shp, ca_shp$adj)
     ca_shp$adj <- add_edge(ca_shp$adj, nbrs$x, nbrs$y)
 
     ca_shp <- ca_shp %>%

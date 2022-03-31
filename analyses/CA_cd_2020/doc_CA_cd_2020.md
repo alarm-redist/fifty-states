@@ -21,3 +21,5 @@ No manual pre-processing decisions were necessary.
 ## Simulation Notes
 We sample 5,000 districting plans for California.
 No special techniques were needed to produce the sample.
+
+Alameda County, Contra Costa County, Fresno County, Kern County, Los Angeles County, Orange County, Riverside County, Sacramento County, San Bernardino County, San Diego County, San Francisco County, San Joaquin County, San Mateo County, Santa Clara County, and Ventura County are larger than the target population.
