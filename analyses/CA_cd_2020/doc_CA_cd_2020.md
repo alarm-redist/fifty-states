@@ -18,7 +18,7 @@ We enforce a maximum population deviation of 0.5%. We add a pseudo-county constr
 Data for California comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
 
 ## Pre-processing Notes
-No manual pre-processing decisions were necessary.
+Islands were connected to their nearest point within county on the mainland.
 
 ## Simulation Notes
 We sample 5,000 districting plans for California. To balance county and municipality splits, we create pseudocounties for use in the county constraint. These are counties are Alameda County, Contra Costa County, Fresno County, Kern County, Los Angeles County, Orange County, Riverside County, Sacramento County, San Bernardino County, San Diego County, San Francisco County, San Joaquin County, San Mateo County, Santa Clara County, and Ventura County, which are larger than a congressional district in population.
