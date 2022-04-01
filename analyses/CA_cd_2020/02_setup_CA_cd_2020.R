@@ -4,40 +4,41 @@
 ###############################################################################
 cli_process_start("Creating {.cls redist_map} object for {.pkg CA_cd_2020}")
 
-# TODO any pre-computation (usually not necessary)
-
 map <- redist_map(ca_shp, pop_tol = 0.005,
     existing_plan = cd_2020, adj = ca_shp$adj)
 
-# TODO any filtering, cores, merging, etc.
-
-# TODO remove if not necessary. Adjust pop_muni as needed to balance county/muni splits
 # make pseudo counties with default settings
 map <- map %>%
     mutate(pseudo_county = pick_county_muni(map, counties = county, munis = muni,
-                                            pop_muni = get_target(map)))
+        pop_muni = get_target(map)))
 
 map <- map %>%
     mutate(uid = row_number())
 
+map <- map %>%
+    mutate(across(contains(c("_16", "_18", "_20")), \(x) coalesce(x, 0)))
+map <- map %>%
+    mutate(ndv = coalesce(ndv, 0),
+        nrv = coalesce(nrv, 0))
+
 
 map_south <- map %>%
-    `attr<-`('existing_col', NULL) %>%
-    filter(county %in% c('Los Angeles County', 'San Bernardino County', 'Orange County',
-                         'Riverside County', 'San Diego County', 'Imperial County')) %>%
-    `attr<-`('ndists', 29) %>%
-    `attr<-`('pop_bounds', attr(map, 'pop_bounds'))
+    `attr<-`("existing_col", NULL) %>%
+    filter(county %in% c("Los Angeles County", "San Bernardino County", "Orange County",
+        "Riverside County", "San Diego County", "Imperial County")) %>%
+    `attr<-`("ndists", 29) %>%
+    `attr<-`("pop_bounds", attr(map, "pop_bounds"))
 
 map_bay <- map %>%
-    `attr<-`('existing_col', NULL) %>%
+    `attr<-`("existing_col", NULL) %>%
     filter(county %in% c("Alameda County", "Contra Costa County", "Fresno County", "Kings County",
-                         "Madera County", "Madera County", "Merced County", "Monterey County",
-                         "Sacramento County", "San Benito County", "San Francisco County",
-                         "San Joaquin County", "San Mateo County", "Santa Clara County",
-                         "Santa Cruz County", "Solano County", "Stanislaus County", "Tulare County",
-                         "Yolo County")) %>%
-    `attr<-`('ndists', 17) %>%
-    `attr<-`('pop_bounds', attr(map, 'pop_bounds'))
+        "Madera County", "Madera County", "Merced County", "Monterey County",
+        "Sacramento County", "San Benito County", "San Francisco County",
+        "San Joaquin County", "San Mateo County", "Santa Clara County",
+        "Santa Cruz County", "Solano County", "Stanislaus County", "Tulare County",
+        "Yolo County")) %>%
+    `attr<-`("ndists", 17) %>%
+    `attr<-`("pop_bounds", attr(map, "pop_bounds"))
 
 
 

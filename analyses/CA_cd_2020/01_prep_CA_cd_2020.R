@@ -44,7 +44,7 @@ if (!file.exists(here(shp_path))) {
         rename(GEOID = BLOCKID, muni = PLACEFP)
     d_cd <- PL94171::pl_get_baf("CA", "CD")[[1]]  %>%
         transmute(GEOID = BLOCKID,
-                  cd_2010 = as.integer(DISTRICT))
+            cd_2010 = as.integer(DISTRICT))
     ca_shp <- left_join(ca_shp, d_muni, by = "GEOID") %>%
         left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
@@ -52,29 +52,29 @@ if (!file.exists(here(shp_path))) {
 
     # add the enacted plan
     cd_baf <- read_csv(path_enacted, col_names = c("GEOID", "cd_2020"),
-                       col_types = c("ci"))
+        col_types = c("ci"))
 
     ca_shp <- ca_shp %>%
         left_join(cd_baf, by = "GEOID") %>%
         mutate(tract = str_sub(GEOID, 1, 11)) %>%
         group_by(tract) %>%
         summarize(cd_2010 = Mode(cd_2010),
-                  cd_2020 = Mode(cd_2020),
-                  muni = Mode(muni),
-                  state = unique(state),
-                  county = unique(county),
-                  across(where(is.numeric), sum)
+            cd_2020 = Mode(cd_2020),
+            muni = Mode(muni),
+            state = unique(state),
+            county = unique(county),
+            across(where(is.numeric), sum)
         )
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = ca_shp,
-                             perim_path = here(perim_path)) %>%
+        perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         ca_shp <- rmapshaper::ms_simplify(ca_shp, keep = 0.05,
-                                         keep_shapes = TRUE) %>%
+            keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 
@@ -97,4 +97,3 @@ if (!file.exists(here(shp_path))) {
     ca_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong CA} shapefile")
 }
-
