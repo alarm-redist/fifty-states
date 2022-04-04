@@ -22,4 +22,17 @@ Islands were connected to their nearest point within county on the mainland.
 
 ## Simulation Notes
 We sample 5,000 districting plans for California. To balance county and municipality splits, we create pseudocounties for use in the county constraint. These are counties are Alameda County, Contra Costa County, Fresno County, Kern County, Los Angeles County, Orange County, Riverside County, Sacramento County, San Bernardino County, San Diego County, San Francisco County, San Joaquin County, San Mateo County, Santa Clara County, and Ventura County, which are larger than a congressional district in population.
-We split the state into two partial SMC pieces. The first in the southern part of the state, composed of Los Angeles County, San Bernardino County, Orange County, Riverside County, San Diego County, and Imperial County. We sample 27 districts in this region and direct the remainder into the rest of the state. The second a large bay area, composed of Alameda County, Contra Costa County, Fresno County, Kings County, Madera County, Madera County, Merced County, Monterey County, Sacramento County, San Benito County, San Francisco County, San Joaquin County, San Mateo County, Santa Clara County, Santa Cruz County, Solano County, Stanislaus County, Tulare County, and Yolo County. We sample 15 districts in this region and direct the remainder into the rest of the state. We finally sample the remaining districts, using the outputs of the two clusters to initialize the particles for SMC.
+
+### 1. Clustering Procedure
+First, we run partial SMC in two pieces: the south and the bay. The counties in each cluster are:
+
+* Los Angeles, San Bernardino, Orange, Riverside, San Diego, and Imperial
+
+* Alameda, Contra Costa, Fresno, Kings, Madera, Madera, Merced, Monterey, Sacramento, San Benito, San Francisco, San Joaquin, San Mateo, Santa Clara, Santa Cruz, Solano, Stanislaus, Tulare, and Yolo
+
+We sample in each of these regions with a population deviation of 0.5%. We sample 27 districts in the southern region and 15 districts in the bay area region. Because each cluster will have leftover population, we apply an additional constraint that
+incentivizes leaving any unassigned areas on the edge of these clusters to
+avoid discontiguities. For each cluster, we add VRA constraints encouraging Hispanic VAP and Asian VAP concentrations in districts, in line with the enacted plan.
+
+### 2. Combination Procedure
+Then, these partial map simulations are combined to run statewide simulations. We sample 10 districts in the remainder.
