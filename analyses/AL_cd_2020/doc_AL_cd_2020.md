@@ -21,5 +21,5 @@ Data for Alabama comes from the ALARM Project's [2020 Redistricting Data Files](
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Alabama.
+We sample 5,000 districting plans for Alabama, targeting one majority-minority district and one opportunity minority district.
 No special techniques were needed to produce the sample.
