@@ -147,27 +147,22 @@ if (interactive()) {
 
     redist.plot.hist(plans %>% group_by(draw) %>%
         mutate(hisp_dem = sum((vap_hisp/total_vap > 0.5) & e_dvs > 0.5)), qty = hisp_dem) +
-        ggredist::theme_r21() +
         labs(x = "Number of Hispanic and Dem. Majority")
 
     redist.plot.hist(plans %>% group_by(draw) %>%
         mutate(hisp_dem = sum((vap_hisp/total_vap > 0.4) & e_dvs > 0.5)), qty = hisp_dem) +
-        ggredist::theme_r21() +
         labs(x = "Number of Hispanic > 40% and Dem. Majority")
 
     redist.plot.hist(plans %>% group_by(draw) %>%
         mutate(ha_dem = sum(((vap_hisp + vap_asian)/total_vap > 0.5) & e_dvs > 0.5)), qty = ha_dem) +
-        ggredist::theme_r21()  +
         labs(x = "Number of Hispanic + Asian and Dem. Majority")
 
     redist.plot.hist(plans %>% group_by(draw) %>%
         mutate(asian_dem = sum((vap_asian/total_vap > 0.5) & e_dvs > 0.5)), qty = asian_dem) +
-        ggredist::theme_r21() +
         labs(x = "Number of Asian and Dem. Majority")
 
     redist.plot.hist(plans %>% group_by(draw) %>%
         mutate(coalition_dem = sum(((vap_asian + vap_hisp + vap_black)/total_vap > 0.5) & e_dvs > 0.5)), qty = coalition_dem) +
-        ggredist::theme_r21() +
         labs(x = "Number of Hispanic + Asian + Black and Dem. Majority")
 
 
@@ -191,7 +186,6 @@ if (interactive()) {
         labs(title = "CA Enacted versus Simulations") +
         scale_color_manual(values = c(cd_2020 = "black")) +
         geom_hline(yintercept = 0.5, linetype = "dotted") +
-        ggredist::theme_r21() +
         geom_text(data = enac_sum, aes(x = hisp_rank, label = round(e_dvs, 2)),
             vjust = 3, y = Inf, size = 2.5, fontface = "bold", lineheight = 0.8, alpha = 0.8,
             color = ifelse(subset_ref(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C"))
@@ -204,7 +198,6 @@ if (interactive()) {
         labs(title = "CA Enacted versus Simulations") +
         scale_color_manual(values = c(cd_2020 = "black")) +
         geom_hline(yintercept = 0.5, linetype = "dotted") +
-        ggredist::theme_r21()  +
         geom_text(data = enac_sum, aes(x = asian_rank, label = round(e_dvs, 2)),
             vjust = 3, y = Inf, size = 2.5, fontface = "bold", lineheight = 0.8, alpha = 0.8,
             color = ifelse(subset_ref(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C"))
@@ -217,7 +210,6 @@ if (interactive()) {
         labs(title = "CA Enacted versus Simulations") +
         scale_color_manual(values = c(cd_2020 = "black")) +
         geom_hline(yintercept = 0.5, linetype = "dotted") +
-        ggredist::theme_r21()  +
         geom_text(data = enac_sum, aes(x = ha_rank, label = round(e_dvs, 2)),
             vjust = 3, y = Inf, size = 2.5, fontface = "bold", lineheight = 0.8, alpha = 0.8,
             color = ifelse(subset_ref(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C"))
@@ -229,8 +221,7 @@ if (interactive()) {
         scale_y_continuous("Percent Coalition by VAP") +
         labs(title = "CA Enacted versus Simulations") +
         scale_color_manual(values = c(cd_2020 = "black")) +
-        geom_hline(yintercept = 0.5, linetype = "dotted") +
-        ggredist::theme_r21()
+        geom_hline(yintercept = 0.5, linetype = "dotted")
 
     redist.plot.distr_qtys(plans %>% number_by(e_dvs), (vap_asian + vap_hisp + vap_black)/total_vap, sort = FALSE,
         color_thresh = NULL,
@@ -239,7 +230,6 @@ if (interactive()) {
         scale_y_continuous("Percent Coalition by VAP") +
         labs(title = "CA Enacted versus Simulations") +
         scale_color_manual(values = c(cd_2020 = "black")) +
-        geom_hline(yintercept = 0.5, linetype = "dotted") +
-        ggredist::theme_r21()
+        geom_hline(yintercept = 0.5, linetype = "dotted")
 
 }
