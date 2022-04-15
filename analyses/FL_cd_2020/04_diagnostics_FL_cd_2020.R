@@ -22,7 +22,7 @@ for (i in draws) {
     j <- j + 1
 }
 
-ggsave("data-raw/FL/example_plans.pdf", (
+ggsave("data-raw/FL/example_plans.png", (
     (ex_plots[[4]] + ex_plots[[5]] + ex_plots[[6]])/
         (ex_plots[[1]] + ex_plots[[2]] + ex_plots[[3]])/
         (ex_plots[[7]] + ex_plots[[8]] + ex_plots[[9]])
@@ -83,13 +83,13 @@ d3 <-
 
 ggsave(
     plot = d1/d2,
-    filename = "data-raw/FL/cvap_plots.pdf",
+    filename = "data-raw/FL/cvap_plots.png",
     height = 9,
     width = 9
 )
 ggsave(
     plot = d3,
-    filename = "data-raw/FL/cvap_sum_plots.pdf",
+    filename = "data-raw/FL/cvap_sum_plots.png",
     height = 9,
     width = 9
 )
@@ -127,4 +127,4 @@ p5 <-
 p6 <-
     redist.plot.hist(psum, all_bcvap_30) + labs(x = "BCVAP > 0.3", y = NULL)
 
-ggsave("data-raw/FL/cvap_histograms.pdf", p1/p2/p3/p4/p5/p6, height = 9)
+ggsave("data-raw/FL/cvap_histograms.png", p1/p2/p3/p4/p5/p6, height = 9)
