@@ -20,22 +20,15 @@ cli_process_start("Downloading files for {.pkg FL_cd_2020}")
 path_data <- download_redistricting_file("FL", "data-raw/FL")
 
 # download the enacted plan.
-
-# On March 4, 2022, the Florida Legislature passed CS/SB 102, which contains the congressional
-# districts (H000C8019) to serve for the qualification, nomination, and election of members to
-# the U.S. House of Representatives in the primary and general elections held in 2022 and therafter.
-# The bill contains a secondary map (H000C8015) to become effective should Congressional District 5
-# of the primary map be invalidated.
-# I will need to get the final map once its approved. For now, I am using H000C8019
-url <- "https://redistrictingplans.flsenate.gov/download?planId=146&fileName=H000C8019.zip"
+url <- "https://redistrictingplans.flsenate.gov/download?planId=155&fileName=P000C0109.zip"
 path_files <- "data-raw/FL/FL_files.zip"
 download(url, here(path_files))
 unzip(here(path_files), exdir = here(dirname(path_files), "FL_files"))
-path_enacted <- "data-raw/FL/FL_files/H000C8019.zip"
+path_enacted <- "data-raw/FL/FL_files/P000C0109.zip"
 unzip(here(path_enacted), exdir = here(dirname(path_files), "FL_enacted"))
 file.remove(path_files)
 unlink("data-raw/FL/FL_files", recursive = T)
-path_enacted <- "data-raw/FL/FL_enacted/H000C8019.shp" # TODO use actual SHP
+path_enacted <- "data-raw/FL/FL_enacted/P000C0109.shp"
 
 cli_process_done()
 

@@ -54,8 +54,6 @@ plans_south <- redist_smc(map_south, counties = county,
     compactness = 0.85,
     pop_temper = 0.01)
 
-plans_south <- plans_south %>% filter(draw != "cd_2020")
-
 #############################################################
 
 # Cluster #2: North Florida
@@ -102,9 +100,9 @@ plans_north <- redist_smc(map_north, counties = pseudo_county,
 #############################################################
 
 ## Combine North and South Clusters
-
-plans_south$dist_keep <- ifelse(plans_south$district == 12, FALSE, TRUE)
-plans_north$dist_keep <- ifelse(plans_north$district == 0, FALSE, TRUE)
+plans_north <- plans_north %>% filter(draw != "cd_2020")
+plans_south$dist_keep <- ifelse(plans_south$district == 0, FALSE, TRUE)
+plans_north$dist_keep <- ifelse(plans_north$district == 6, FALSE, TRUE)
 
 fl_plan_list <- list(list(map = map_south, plans = plans_south),
     list(map = map_north, plans = plans_north))
