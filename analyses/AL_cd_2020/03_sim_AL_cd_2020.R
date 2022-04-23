@@ -7,19 +7,21 @@
 cli_process_start("Running simulations for {.pkg AL_cd_2020}")
 
 constr <- redist_constr(map) %>%
-    add_constr_grp_pow(100, vap_black, vap, tgt_group = 0.5, tgt_other = 0.1, pow = 0.5)
+    add_constr_grp_pow(115, vap_black, vap, tgt_group = 0.5, tgt_other = 0.1, pow = 0.5)
 
 plans <- redist_smc(map, nsims = 6e3,
     counties = county, constraints = constr)
 
 plans <- plans %>%
-    mutate(vap_minority = group_frac(map, vap - vap_white, vap)) %>%
+    mutate(vap_minority = group_frac(map, vap - vap_white, vap),
+        dem_win = group_frac(map, ndv, ndv + nrv)) %>%
     group_by(draw) %>%
-    mutate(vap_minority = sum(vap_minority > 0.5)) %>%
+    mutate(vap_minority = sum(vap_minority > 0.52),
+        dem_win = sum(dem_win > 0.5)) %>%
     ungroup() %>%
-    filter(vap_minority >= 1 | draw == "cd_2020") %>%
+    filter((vap_minority >= 1 & dem_win >= 1) | draw == "cd_2020") %>%
     slice(1:(5001*attr(map, "ndists"))) %>%
-    select(-vap_minority)
+    select(-vap_minority, -dem_win)
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
