@@ -5,10 +5,20 @@
 cli_process_start("Creating {.cls redist_map} object for {.pkg SC_cd_2020}")
 
 
-map <- redist_map(sc_shp, pop_tol = 0.005,
-    existing_plan = cd_2020, adj = sc_shp$adj)
+map <- sc_shp %>%
+    mutate(pop_minoity = pop - pop_white,
+           vap_minority = vap - vap_white) %>%
+    redist_map(pop_tol = 0.005,
+               existing_plan = cd_2020, adj = sc_shp$adj)
 
 # TODO any filtering, cores, merging, etc.
+
+map <- map %>%
+    mutate(cores = make_cores(boundary = 3))
+
+# Merge by both cores and county to preserve county contiguity
+map_cores <- merge_by(map, cores, county)
+
 
 # TODO remove if not necessary. Adjust pop_muni as needed to balance county/muni splits
 # make pseudo counties with default settings
