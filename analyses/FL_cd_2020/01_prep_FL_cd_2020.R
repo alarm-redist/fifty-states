@@ -20,15 +20,8 @@ cli_process_start("Downloading files for {.pkg FL_cd_2020}")
 path_data <- download_redistricting_file("FL", "data-raw/FL")
 
 # download the enacted plan.
-url <- "https://redistrictingplans.flsenate.gov/download?planId=155&fileName=P000C0109.zip"
-path_files <- "data-raw/FL/FL_files.zip"
-download(url, here(path_files))
-unzip(here(path_files), exdir = here(dirname(path_files), "FL_files"))
-path_enacted <- "data-raw/FL/FL_files/P000C0109.zip"
-unzip(here(path_enacted), exdir = here(dirname(path_files), "FL_enacted"))
-file.remove(path_files)
-unlink("data-raw/FL/FL_files", recursive = T)
-path_enacted <- "data-raw/FL/FL_enacted/P000C0109.shp"
+# plan had to be manually downloaded from: https://davesredistricting.org/maps#viewmap::27ce8314-c3a6-4365-b980-36d869398235
+path_enacted <- "data-raw/FL/FL_enacted/POLYGON.shp"
 
 cli_process_done()
 

@@ -16,7 +16,7 @@ We enforce a maximum population deviation of 0.05%.
 
 ## Data Sources
 Data for Florida comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
-Data for Florida's 2020 congressional district map comes from the [Florida Redistricting website](https://www.floridaredistricting.gov/pages/submitted-plans)
+Data for Florida's 2020 congressional district map comes from the [Dave's Redistricting](https://davesredistricting.org/maps#home)
 
 ## Pre-processing Notes
 We estimate CVAP populations with the [cvap](https://github.com/christopherkenny/cvap) R package. We also pre-process the map to split it into clusters for simulation, which has a slight effect on the types of redistrict plans that will be sampled.
