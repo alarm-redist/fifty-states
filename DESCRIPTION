@@ -17,7 +17,7 @@ Imports:
     purrr,
     tidyr,
     readr,
-    redist (>= 3.1.6),
+    redist (>= 4.0.0.9000),
     sf (>= 1.0.0),
     stringr,
     tigris,
