@@ -55,6 +55,7 @@ constraints <- redist_constr(m1) %>%
 
 n_steps <- (sum(m1$pop)/attr(map, "pop_bounds")[2]) %>% floor()
 
+set.seed(2020)
 houston_plans <- redist_smc(m1, counties = county,
     nsims = nsims, n_steps = n_steps,
     constraints = constraints)
@@ -99,6 +100,7 @@ constraints <- redist_constr(m2) %>%
 
 n_steps <- (sum(m2$pop)/attr(map, "pop_bounds")[2]) %>% floor()
 
+set.seed(2020)
 austin_plans <- redist_smc(m2, counties = county,
     nsims = nsims, n_steps = n_steps,
     constraints = constraints)
@@ -146,6 +148,7 @@ constraints <- redist_constr(m3) %>%
 
 n_steps <- (sum(m3$pop)/attr(map, "pop_bounds")[2]) %>% floor()
 
+set.seed(2020)
 dallas_plans <- redist_smc(m3, counties = county,
     nsims = nsims, n_steps = n_steps,
     constraints = constraints)
@@ -192,6 +195,7 @@ constraints <- redist_constr(map) %>%
         total_pop = cvap,
         tgts_group = c(0.45))
 
+set.seed(2020)
 plans <- redist_smc(map, nsims = nsims,
     counties = county, verbose = TRUE,
     constraints = constraints, init_particles = prep_mat,
