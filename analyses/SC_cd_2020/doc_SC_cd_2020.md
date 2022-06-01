@@ -1,26 +1,32 @@
 # 2020 South Carolina Congressional Districts
 
 ## Redistricting requirements
-In South Carolina, according to the State House Redistrcting committee ([House link](https://redistricting.schouse.gov/docs/2021%20Redistricting%20Guidelines.pdf), [Senate link](https://redistricting.scsenate.gov/)), districts must:
+South Carolina has no state constitution or statute for redistricting. However, the state legislature committees do provide _guidelines_ for redistricting.  ([House link](https://redistricting.schouse.gov/docs/2021%20Redistricting%20Guidelines.pdf), [Senate link](https://redistricting.scsenate.gov/docs/Senate%20Redistricting%20Guidelines%20Adopted%209-17-21.DOCX)), According to these guidelines, districts should:
 
 1. be contiguous (including contiguity by water)
-1. have equal populations
+1. have equal populations as is practicable
+1. comply with VRA Section 2
 1. be geographically compact
 1. preserve boundaries of counties, municipalities, voting tabulation districts, cores of previous districts, and other communities of interests as much as possible
 1. preserve separation of incumbents as much as possible
 
-
-
+The House guidelines state that if the criteria come into conflict, federal law (including the VRA) and population parity should be prioritized over others.
 
 ### Interpretation of requirements
-We enforce a maximum population deviation of 0.5%.
+
+We do not adhere to all criteria in the guidelines. We include the following constraints:
+
+1. We enforce a maximum population deviation of 0.5%.
+1. We impose a hinge constraint on the Black Voting Age Population so that it encourages district BVAP of above 49 percent. This aims to ensure that Black voters can elect their candidate of choice in districts with high BVAP.
+1. We impose a municipality-split constraint to lower the number of municipality splits.
 
 ## Data Sources
-Data for South Carolina comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
+Data for South Carolina comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/). 
+The state's new district lines come from [All About Redistricting](https://redistricting.lls.edu/state/south-carolina/?cycle=2020&level=Congress).
 
 ## Pre-processing Notes
-No manual pre-processing decisions were necessary.
+We take municipalities and concatenate them with counties in order to apply a constraint to avoid too many municipality splits.
 
 ## Simulation Notes
-We sample 5,000 districting plans for South Carolina.
-No special techniques were needed to produce the sample.
+We sample 20,000 districting plans across two independent runs of the SMC algorithm. We set the population tempering at 0.05 to avoid bottlenecks.
+More plans simulations than usual were necessary to improve the convergence of the SMC.
