@@ -19,6 +19,6 @@ Data for Tennessee comes from the ALARM Project's [2020 Redistricting Data Files
 See pseudo-county definition above.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Tennessee.
+We sample 5,000 districting plans for Tennessee across two independent runs of the SMC algorithm.
 Pseudo-counties created as above and used as a hard SMC constraint.
 No special techniques were needed to produce the sample.
