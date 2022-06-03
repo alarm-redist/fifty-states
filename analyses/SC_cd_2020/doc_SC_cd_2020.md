@@ -27,6 +27,7 @@ The state's new district lines come from [All About Redistricting](https://redis
 ## Pre-processing Notes
 We take municipalities and concatenate them with counties in order to apply a constraint to avoid too many municipality splits.
 
+
 ## Simulation Notes
-We sample 20,000 districting plans across two independent runs of the SMC algorithm. We set the population tempering at 0.05 to avoid bottlenecks.
+We sample 20,000 districting plans across two independent runs of the SMC algorithm, and then thin the sample down to 5,000 plans. We set the population tempering at 0.05 to avoid bottlenecks.
 More plans simulations than usual were necessary to improve the convergence of the SMC.

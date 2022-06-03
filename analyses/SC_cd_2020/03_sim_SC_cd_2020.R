@@ -20,7 +20,11 @@ plans <- redist_smc(map,
     compactness = 1,
     pop_temper = 0.05,
     counties = county,
-    constraints = constr_sc)
+    constraints = constr_sc) %>%
+    group_by(chain) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>%
+    ungroup()
+
 
 plans <- match_numbers(plans, "cd_2020")
 
