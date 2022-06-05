@@ -29,5 +29,5 @@ To preserve the cores of prior districts, we merge all precincts which are more 
 
 
 ## Simulation Notes
-We sample 6,000 districting plans for Utah across two independent runs of the SMC algorithm. 
+We sample 6,000 districting plans for Utah across two independent runs of the SMC algorithm, and then thin the sample to down to 5,000 plans.
 To balance county and municipality splits, we create pseudo-counties as described above.
