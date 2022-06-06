@@ -12,11 +12,15 @@ constr <- redist_constr(map_m) %>%
         sum(tapply(map$county, plan[merge_idx] == i, n_distinct) - 1L)
     })
 
+set.seed(2020)
 plans <- redist_smc(map_m, nsims = 5e3,
+    runs = 2L,
     counties = county,
     constraints = constr) %>%
     pullback(map)
 attr(plans, "prec_pop") <- map$pop
+
+plans <- match_numbers(plans, "cd_2020")
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
