@@ -15,9 +15,9 @@ In Utah, districts must, under [legislation code 20A-20-302](https://le.utah.gov
     f. prohibit the purposeful or undue favoring or disfavoring of incumbents, candidates or prospective candidates, and political parties
 
 ### Interpretation of requirements
-We enforce a maximum population deviation of 0.5% (which ensures that the total population deviation as defined by Utah legistlation does not exceed 1%).
+We enforce a maximum population deviation of 0.5% (which ensures that the total population deviation as defined by Utah legislation does not exceed 1%).
 We constrain the number of "pseudo-county" divisions (see below for an explanation of pseudo-county).
-We perform cores-based simulations, thereby preserving cores of prior districs.
+We perform cores-based simulations, thereby preserving cores of prior districts.
 
 ## Data Sources
 Data for Utah comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
@@ -29,5 +29,5 @@ To preserve the cores of prior districts, we merge all precincts which are more 
 
 
 ## Simulation Notes
-We sample 5,000 districting plans for Utah. 
+We sample 6,000 districting plans for Utah across two independent runs of the SMC algorithm. 
 To balance county and municipality splits, we create pseudo-counties as described above.

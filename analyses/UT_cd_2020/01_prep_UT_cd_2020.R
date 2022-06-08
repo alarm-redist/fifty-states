@@ -52,11 +52,14 @@ if (!file.exists(here(shp_path))) {
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2010, .after = county)
 
-    # add newly enacted plans
+    # add the enacted plan
     cd_shp <- st_read(here(path_enacted))
-    cd_shp <- st_transform(cd_shp, crs = st_crs(ut_shp))
-    ut_shp <- mutate(ut_shp,
-        cd_2020 = geo_match(ut_shp, cd_shp, method = "area"),
+    cd_shp <- cd_shp %>%
+        st_transform(EPSG$UT) %>%
+        st_make_valid()
+    ut_shp <- ut_shp %>%
+        mutate(ut_2020 = as.integer(ut_shp$DISTRICTNO)[
+            geo_match(ut_shp, cd_shp, method = "area")],
         .after = cd_2010)
 
     # Create perimeters in case shapes are simplified

@@ -66,7 +66,7 @@ validate_analysis <- function(plans, map) {
         labs(title = "Minority VAP share") +
         theme_bw()
 
-    draws <- sample(ncol(as.matrix(subset_sampled(plans))), 3)
+    draws <- sample(levels(subset_sampled(plans)$draw), 3)
     p_ex1 <- redist.plot.plans(plans, draws[1], map)
     p_ex2 <- redist.plot.plans(plans, draws[2], map)
     p_ex3 <- redist.plot.plans(plans, draws[3], map)

@@ -11,13 +11,13 @@ Authors@R: c(
 Description: Redistricting analysis for all 50 U.S. states.
 Imports: 
     dplyr (>= 1.0.7),
-    geomander (>= 1.1.0.9000),
+    geomander (>= 1.1.0),
     PL94171 (>= 1.0.0),
     censable,
     purrr,
     tidyr,
     readr,
-    redist (>= 3.1.6),
+    redist (>= 4.0.0),
     sf (>= 1.0.0),
     stringr,
     tigris,

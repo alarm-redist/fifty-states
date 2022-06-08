@@ -119,5 +119,3 @@ save_summary_stats <- function(plans, path) {
         mutate(across(where(is.numeric), format, digits = 4, scientific = FALSE)) %>%
         write_csv(here(path))
 }
-
-
