@@ -7,11 +7,23 @@
 cli_process_start("Running simulations for {.pkg AZ_cd_2020}")
 
 constr <- redist_constr(map) %>%
-    add_constr_compet(25, ndv, nrv) %>%
-    add_constr_grp_pow(1e3, vap_hisp, vap, 0.51, 0.15, pow = 1.4)
+    add_constr_compet(15, ndv, nrv) %>%
+    add_constr_grp_hinge(10, vap_hisp, vap, 0.55) %>%
+    add_constr_grp_hinge(-5, vap_hisp, vap, 0.28) %>%
+    add_constr_grp_hinge(-10, vap_hisp, vap, 0.35) %>%
+    add_constr_grp_inv_hinge(8, vap_hisp, vap, 0.6) %>%
+    add_constr_grp_hinge(4, vap_hisp, vap, 0.15) %>%
+    suppressWarnings()
 
-plans <- redist_smc(map, nsims = 5e3, counties = pseudo_county,
-    constraints = constr, pop_temper = 0.01, seq_alpha = 0.65)
+set.seed(2020)
+
+plans <- redist_smc(map, nsims = 15e3, runs = 4L, counties = pseudo_county,
+    constraints = constr, pop_temper = 0.04, seq_alpha = 0.95) %>%
+    group_by(chain) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 1250) %>% # thin samples
+    ungroup()
+
+plans <- match_numbers(plans, "cd_2020")
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
@@ -34,6 +46,8 @@ cli_process_done()
 if (interactive()) {
     library(ggplot2)
     library(patchwork)
+
+    plot(constr)
 
     # competitiveness
     constr <- redist_constr(map) %>%
@@ -58,5 +72,13 @@ if (interactive()) {
         number_by(min) %>%
         redist.plot.distr_qtys(ndshare, sort = "none", geom = "boxplot") +
         labs(x = "Districts, ordered by HVAP", y = "Average Democratic share")
+
+    redist.plot.distr_qtys(plans, vap_hisp / total_vap,
+                           color_thresh = NULL,
+                           color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, '#3D77BB', '#B25D4C'),
+                           size = 0.1) +
+        scale_y_continuous('Percent Hispanic by VAP') +
+        labs(title = 'Approximate Performance') +
+        scale_color_manual(values = c(cd_2020_prop = 'black'))
 
 }
