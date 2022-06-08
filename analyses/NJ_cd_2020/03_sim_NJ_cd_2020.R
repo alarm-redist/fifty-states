@@ -7,7 +7,7 @@
 cli_process_start("Running simulations for {.pkg NJ_cd_2020}")
 
 set.seed(2020)
-plans <- redist_smc(map, nsims = 8e3, runs = 2L, ncores =8, counties = pseudo_county)
+plans <- redist_smc(map, nsims = 8e3, runs = 2L, counties = pseudo_county)
 plans <- match_numbers(plans, "cd_2020")
 plans <- plans %>%
     group_by(chain) %>%
