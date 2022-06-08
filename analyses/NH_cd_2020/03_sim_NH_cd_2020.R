@@ -6,15 +6,13 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg NH_cd_2020}")
 
-plans <- redist_smc(map %>% merge_by(mcd), nsims = 5e3, counties = county)
+set.seed(2020)
+plans <- redist_smc(map %>% merge_by(mcd), nsims = 2500, runs = 2L, counties = county) %>%
+    pullback()
+attr(plans, "prec_pop") <- map$pop
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
-
-plans <- plans %>%
-    pullback() %>%
-    add_reference(map$dem_prop, "dem_prop")
-attr(plans, "prec_pop") <- map$pop
 
 # Output the redist_map object. Do not edit this path.
 write_rds(plans, here("data-out/NH_2020/NH_cd_2020_plans.rds"), compress = "xz")
