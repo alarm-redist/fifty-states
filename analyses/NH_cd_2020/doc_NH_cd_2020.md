@@ -16,5 +16,5 @@ Data for New Hampshire comes from the ALARM Project's [2020 Redistricting Data F
 Precincts are merged by minor civil division, as the enacted has 0 minor civil division splits.
 
 ## Simulation Notes
-We sample 5,000 districting plans for New Hampshire.
+We sample 5,000 districting plans for New Hampshire across two independent runs of the SMC algorithm.
 We use a standard county algorithmic constraint.
