@@ -10,6 +10,7 @@ set.seed(2020)
 plans <- redist_smc(map %>% merge_by(mcd), nsims = 2500, runs = 2L, counties = county) %>%
     pullback()
 attr(plans, "prec_pop") <- map$pop
+plans <- plans %>% match_numbers("cd_2020")
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
