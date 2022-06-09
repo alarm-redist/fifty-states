@@ -6,36 +6,29 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg MO_cd_2020}")
 
-# TODO any pre-computation (VRA targets, etc.)
-
-# TODO customize as needed. Recommendations:
-#  - For many districts / tighter population tolerances, try setting
-#  `pop_temper=0.01` and nudging upward from there. Monitor the output for
-#  efficiency!
-#  - Monitor the output (i.e. leave `verbose=TRUE`) to ensure things aren't breaking
-#  - Don't change the number of simulations unless you have a good reason
-#  - If the sampler freezes, try turning off the county split constraint to see
-#  if that's the problem.
-#  - Ask for help!
-
 constr <- redist_constr(map) %>%
-    add_constr_grp_hinge(strength = 25,
+    add_constr_grp_hinge(strength = 24,
         vap_black, vap,
         tgts_group = 0.4)
-plans <- redist_smc(map, nsims = 6e3, counties = county, constraints = constr)
-
+set.seed(2020)
+plans <- redist_smc(map, nsims = 7e3, runs = 2L, ncores = 8,
+                    counties = county, constraints = constr)
+plans <- match_numbers(plans, "cd_2020")
 plans <- plans %>%
-    mutate(vap_minority = group_frac(map, vap - vap_white, vap)) %>%
-    group_by(draw) %>%
-    mutate(vap_minority = max(vap_minority)) %>%
-    ungroup() %>%
-    filter(vap_minority > 0.5 | draw == 'cd_prop') %>%
-    slice(1 : (5001 * attr(map, 'ndists')))
+    group_by(chain) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
+    ungroup()
+
+# plans <- plans %>%
+#     mutate(vap_minority = group_frac(map, vap - vap_white, vap)) %>%
+#     group_by(draw) %>%
+#     mutate(vap_minority = max(vap_minority)) %>%
+#     ungroup() %>%
+#     filter(vap_minority > 0.5 | draw == 'cd_prop') %>%
+#     slice(1 : (5001 * attr(map, 'ndists')))
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
-
-# TODO add any reference plans that aren't already included
 
 # Output the redist_map object. Do not edit this path.
 write_rds(plans, here("data-out/MO_2020/MO_cd_2020_plans.rds"), compress = "xz")
@@ -62,8 +55,7 @@ if (interactive()) {
         size = 0.5, alpha = 0.5) +
         scale_y_continuous("Percent Black by VAP") +
         labs(title = "Approximate Performance") +
-        scale_color_manual(values = c(cd_prop = "black")) +
+        scale_color_manual(values = c(cd_2020 = "black")) +
         ggredist::theme_r21()
-
-
 }
+

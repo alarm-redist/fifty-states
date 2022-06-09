@@ -4,9 +4,8 @@
 ###############################################################################
 cli_process_start("Creating {.cls redist_map} object for {.pkg MO_cd_2020}")
 
-# TODO Change back to cd_2020
 map <- redist_map(mo_shp, pop_tol = 0.005,
-    existing_plan = cd_prop, adj = mo_shp$adj)
+    existing_plan = cd_2020, adj = mo_shp$adj)
 
 # Add an analysis name attribute
 attr(map, "analysis_name") <- "MO_2020"

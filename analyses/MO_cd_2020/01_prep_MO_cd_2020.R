@@ -20,10 +20,9 @@ cli_process_start("Downloading files for {.pkg MO_cd_2020}")
 path_data <- download_redistricting_file("MO", "data-raw/MO")
 
 # download the enacted plan
-# currently from dave's, not downloadable.
-path_prop <- "data-raw/MO/block-assignments.csv"
-# TODO other files here (as necessary). All paths should start with `path_`
-# If large, consider checking to see if these files exist before downloading
+url <- "https://house.mo.gov/billtracking/bills221/RedistrictingMaps/5799H_02T.xlsx"
+path_enacted <- "data-raw/MO/MO_enacted.xlsx"
+download(url, here(path_enacted))
 
 cli_process_done()
 
@@ -52,7 +51,11 @@ if (!file.exists(here(shp_path))) {
         relocate(muni, county_muni, cd_2010, .after = county)
 
     # add the enacted plan
-    baf <- read_csv(here(path_prop), col_types = "c", col_names = c("GEOID", "district"))
+    baf <- readxl::read_xlsx(here(path_enacted), col_types = c("text", "text")) %>%
+        rename(
+            GEOID = Block,
+            cd_2020 = `DistrictID:1`
+        )
     baf_vtd <- PL94171::pl_get_baf("MO", geographies = "VTD")$VTD %>%
         rename(GEOID = BLOCKID, county = COUNTYFP, vtd = DISTRICT)
     baf <- baf %>% left_join(baf_vtd, by = "GEOID")
@@ -62,25 +65,17 @@ if (!file.exists(here(shp_path))) {
 
     baf <- baf %>%
         group_by(GEOID) %>%
-        summarize(district = Mode(district))
-
-    baf <- baf %>% select(GEOID, cd_prop = district)
+        summarize(cd_2020  = Mode(cd_2020 )) %>%
+        select(GEOID, cd_2020)
 
     mo_shp <- mo_shp %>% left_join(baf, by = "GEOID")
-    # mo_shp <- mo_shp %>%
-    #     mutate(cd_2020 = as.integer(cd_shp$DISTRICT)[
-    #         geo_match(mo_shp, cd_shp, method = "area")],
-    #         .after = cd_2010)
-
-    # TODO any additional columns or data you want to add should go here
 
     # Create perimeters in case shapes are simplified
-    redist.prep.polsbypopper(shp = mo_shp,
+    redistmetrics::prep_perims(shp = mo_shp,
         perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         mo_shp <- rmapshaper::ms_simplify(mo_shp, keep = 0.05,
             keep_shapes = TRUE) %>%
@@ -89,8 +84,6 @@ if (!file.exists(here(shp_path))) {
 
     # create adjacency graph
     mo_shp$adj <- redist.adjacency(mo_shp)
-
-    # TODO any custom adjacency graph edits here
 
     mo_shp <- mo_shp %>%
         fix_geo_assignment(muni)
