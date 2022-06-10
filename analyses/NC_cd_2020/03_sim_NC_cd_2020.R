@@ -8,20 +8,19 @@ cli_process_start("Running simulations for {.pkg NC_cd_2020}")
 
 constr <- redist_constr(map) %>%
     add_constr_splits(1, admin = county) %>%
-    add_constr_grp_hinge(6, vap_black, vap, tgts_group = c(0.52))
+    add_constr_grp_hinge(5, vap_black, vap, tgts_group = c(0.51))
 
-plans <- redist_smc(map, nsims = 6e3,
+set.seed(2020)
+plans <- redist_smc(map, nsims = 18e3,
+    runs = 2L,
+    compactness = 1,
     counties = pseudo_county,
-    constraints = constr)
+    constraints = constr) %>%
+    group_by(chain) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
+    ungroup()
 
-plans <- plans %>%
-    mutate(vap_minority = group_frac(map, vap - vap_white, vap)) %>%
-    group_by(draw) %>%
-    mutate(vap_minority = sum(vap_minority > 0.5)) %>%
-    ungroup() %>%
-    filter(vap_minority >= 2 | draw == "cd_2020") %>%
-    slice(1:(5001*attr(map, "ndists"))) %>%
-    select(-vap_minority)
+plans <- match_numbers(plans, "cd_2020")
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
@@ -51,7 +50,6 @@ if (interactive()) {
         size = 0.5, alpha = 0.5) +
         scale_y_continuous("Percent Black by VAP") +
         labs(title = "North Carolina Proposed Plan versus Simulations") +
-        scale_color_manual(values = c(cd_2020_prop = "black")) +
-        ggredist::theme_r21()
+        scale_color_manual(values = c(cd_2020_prop = "black"))
 
 }

@@ -21,4 +21,4 @@ Data for North Carolina comes from the ALARM Project's [2020 Redistricting Data 
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 6,000 districting plans for North Carolina and subset to 5,000 which contain at least two majority-minority districts.
+We sample 36,000 districting plans for North Carolina across two independent runs of the SMC algorithm, and then thin the sample to down to 5,000 plans.
