@@ -12,7 +12,7 @@ constr <- redist_constr(map) %>%
         tgts_group = 0.4)
 set.seed(2020)
 plans <- redist_smc(map, nsims = 1e4, runs = 2L, ncores = 8,
-                    counties = county, constraints = constr)
+    counties = county, constraints = constr)
 plans <- match_numbers(plans, "cd_2020")
 plans <- plans %>%
     group_by(chain) %>%

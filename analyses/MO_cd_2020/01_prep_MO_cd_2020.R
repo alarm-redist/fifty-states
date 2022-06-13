@@ -65,7 +65,7 @@ if (!file.exists(here(shp_path))) {
 
     baf <- baf %>%
         group_by(GEOID) %>%
-        summarize(cd_2020  = Mode(cd_2020 )) %>%
+        summarize(cd_2020  = Mode(cd_2020)) %>%
         select(GEOID, cd_2020)
 
     mo_shp <- mo_shp %>% left_join(baf, by = "GEOID")
