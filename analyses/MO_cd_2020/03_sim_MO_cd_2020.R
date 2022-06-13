@@ -7,11 +7,11 @@
 cli_process_start("Running simulations for {.pkg MO_cd_2020}")
 
 constr <- redist_constr(map) %>%
-    add_constr_grp_hinge(strength = 24,
+    add_constr_grp_hinge(strength = 20,
         vap_black, vap,
         tgts_group = 0.4)
 set.seed(2020)
-plans <- redist_smc(map, nsims = 7e3, runs = 2L, ncores = 8,
+plans <- redist_smc(map, nsims = 1e4, runs = 2L, ncores = 8,
                     counties = county, constraints = constr)
 plans <- match_numbers(plans, "cd_2020")
 plans <- plans %>%
@@ -58,4 +58,3 @@ if (interactive()) {
         scale_color_manual(values = c(cd_2020 = "black")) +
         ggredist::theme_r21()
 }
-
