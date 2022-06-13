@@ -19,14 +19,6 @@ plans <- plans %>%
     filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
     ungroup()
 
-# plans <- plans %>%
-#     mutate(vap_minority = group_frac(map, vap - vap_white, vap)) %>%
-#     group_by(draw) %>%
-#     mutate(vap_minority = max(vap_minority)) %>%
-#     ungroup() %>%
-#     filter(vap_minority > 0.5 | draw == 'cd_prop') %>%
-#     slice(1 : (5001 * attr(map, 'ndists')))
-
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
 
