@@ -128,22 +128,3 @@ p6 <-
     redist.plot.hist(psum, all_bvap_30) + labs(x = "BVAP > 0.3", y = NULL)
 
 ggsave("data-raw/FL/vap_histograms.png", p1/p2/p3/p4/p5/p6, height = 9)
-
-
-# Just south
-d1_south <- redist.plot.distr_qtys(
-    plans %>% ,
-    vap_black/total_vap,
-    color_thresh = NULL,
-    color = ifelse(
-        subset_sampled(plans)$ndv > subset_sampled(plans)$nrv,
-        "#3D77BB",
-        "#B25D4C"
-    ),
-    size = 0.5,
-    alpha = 0.5
-) +
-    scale_y_continuous("Percent Black by VAP") +
-    labs(title = "FL Proposed Plan versus Simulations") +
-    scale_color_manual(values = c(cd_2020_prop = "black")) +
-    ggredist::theme_r21()

@@ -3,10 +3,10 @@
 # © ALARM Project, March 2022
 ###############################################################################
 
-set.seed(719)
+set.seed(2020)
 
 cluster_pop_tol <- 0.005
-nsims <- 5000
+nsims <- 10000
 
 # Unique ID for each row, will use later to reconnect pieces
 map$row_id <- 1:nrow(map)
@@ -15,6 +15,7 @@ map$row_id <- 1:nrow(map)
 cli_process_start("Running simulations for {.pkg FL_cd_2020}")
 
 ########################################################################
+
 # Cluster #1: Southern Florida
 
 map_south <- map %>% filter(region == "South")
@@ -22,6 +23,7 @@ map_south <- set_pop_tol(map_south, cluster_pop_tol)
 attr(map_south, "pop_bounds") <-  attr(map, "pop_bounds")
 
 ########################################################################
+
 # Setup for cluster constraint
 map <- map %>%
     mutate(cluster_edge = ifelse(row_id %in% map_south$row_id, 1, 0))
@@ -63,6 +65,7 @@ map_north <- set_pop_tol(map_north, cluster_pop_tol)
 attr(map_north, "pop_bounds") <-  attr(map, "pop_bounds")
 
 ########################################################################
+
 # Setup for cluster constraint
 map <- map %>%
     mutate(cluster_edge = ifelse(row_id %in% map_north$row_id, 1, 0))
@@ -127,10 +130,14 @@ constraints <- redist_constr(map) %>%
         total_pop = cvap,
         tgts_group = c(0.40))
 
-plans <- redist_smc(map, nsims = nsims, counties = pseudo_county,
+plans <- redist_smc(map, nsims = nsims, runs = 2L,
+    counties = pseudo_county,
     constraints = constraints,
     init_particles = prep_mat,
-    pop_temper = 0.01)
+    pop_temper = 0.01)  %>%
+    group_by(chain) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
+    ungroup()
 
 plans <- plans %>% filter(draw != "cd_2020")
 plans <- plans %>% add_reference(ref_plan = map$cd_2020)
@@ -158,5 +165,3 @@ for (col in rev(cvap_cols)) {
 save_summary_stats(plans, "data-out/FL_2020/FL_cd_2020_stats.csv")
 
 cli_process_done()
-
-validate_analysis(plans, map)
