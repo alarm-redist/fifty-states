@@ -20,7 +20,7 @@ cli_process_start("Downloading files for {.pkg KY_cd_2020}")
 path_data <- download_redistricting_file("KY", "data-raw/KY")
 
 # download the enacted plan.
-url <- "https://redistricting.lls.edu/wp-content/uploads/`state`_2020_congress_XXXXX.zip"
+url <- "https://legislature.ky.gov/Public%20Services/GIS%20contents/C1278B01%20%2822RS-SB3%29.zip"
 path_enacted <- "data-raw/KY/KY_enacted.zip"
 download(url, here(path_enacted))
 unzip(here(path_enacted), exdir = here(dirname(path_enacted), "KY_enacted"))
