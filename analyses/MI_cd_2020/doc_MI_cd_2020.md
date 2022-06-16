@@ -25,5 +25,5 @@ To meet contiguity requirements, we removed precincts with more water area than 
 We then manually connected any disconnected islands with the nearest precinct on the mainland and in the same county: precincts 26029029017 and 26029029016 in Charlevoix county, and precincts 26047047022 and 26097097010 for the Upper Peninsula.
 
 ## Simulation Notes
-We sample 40,000 districting plans for Michigan across four independent runs of the SMC algorithm, then filter down to 5,000 total plans.
+We sample 48,000 districting plans for Michigan across four independent runs of the SMC algorithm, then filter down to 5,000 total plans.
 To balance county and municipality splits, we create pseudocounties for use in the county constraint. These are counties, outside of Wayne, Macomb, and Oakland counties. Within these counties, municipalities are each their own pseudocounty as well.  These counties were chosen since they are necessarily split by congressional districts.  Overall, this approach leads to much fewer county and municipality splits than using either a county or county/municipality constraint.

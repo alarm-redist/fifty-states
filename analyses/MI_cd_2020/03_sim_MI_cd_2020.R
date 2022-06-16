@@ -55,9 +55,9 @@ if (FALSE) {
     library(ggplot2)
 
     redist.plot.distr_qtys(plans, 1 - vap_white/total_vap,
-                           color_thresh = NULL,
-                           color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, "#3D77BB", "#B25D4C"),
-                           size = 0.1) +
+        color_thresh = NULL,
+        color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, "#3D77BB", "#B25D4C"),
+        size = 0.1) +
         scale_y_continuous("Percent Minority by VAP") +
         labs(title = "Approximate Performance") +
         scale_color_manual(values = c(cd_2020_prop = "black"))
