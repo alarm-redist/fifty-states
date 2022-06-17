@@ -49,6 +49,19 @@ if (!file.exists(here(shp_path))) {
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2010, .after = county)
 
+    # add enacted ----
+    # build from hand from this pdf:
+    # https://www.courts.nh.gov/sites/g/files/ehbemt471/files/documents/2022-05/052722norellivsos-plan.pdf
+    en <- c(1, 2, 3, 5, 6, 6, 7, 8, 9, 10, 11, 12, 13, 15, 16, 18, 19,
+        20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 32, 33, 34, 35, 152,
+        157, 166, 167, 168, 169, 170, 171, 172, 173, 174, 175, 176, 177,
+        179, 225, 238, 240, 241, 242, 243, 244, 245, 246, 247, 248, 250,
+        251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263,
+        264, 265, 266, 268, 269, 270, 271, 272, 273, 274, 275, 277, 278,
+        279, 280, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292,
+        293, 294, 295, 296, 297, 298, 298, 299, 300, 301, 302, 303, 304,
+        305, 306, 307, 308, 309)
+
     # add proposed ----
     # built from hand from this pdf:
     # http://gencourt.state.nh.us/house/committees/committee_websites/Redistricting_2021/plans/HB%2052%20-%20Congressional%20Districts%20%20Adopted.pdf
@@ -72,12 +85,13 @@ if (!file.exists(here(shp_path))) {
         304, 305, 306, 307, 308, 309)
     nh_shp <- nh_shp %>%
         mutate(rn = row_number(),
-            cd_2020 = if_else(rn %in% r, 1L, 2L),
+            cd_2020 = if_else(rn %in% en, 1L, 2L),
+            rep_prop = if_else(rn %in% r, 1L, 2L),
             dem_prop = if_else(rn %in% d, 1L, 2L),
             .after = cd_2010)
 
     # Create perimeters in case shapes are simplified
-    redist.prep.polsbypopper(shp = nh_shp,
+    redistmetrics::prep_perims(shp = nh_shp,
         perim_path = here(perim_path)) %>%
         invisible()
 
