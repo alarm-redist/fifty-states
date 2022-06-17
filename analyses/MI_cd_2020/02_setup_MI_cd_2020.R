@@ -6,7 +6,7 @@ cli_process_start("Creating {.cls redist_map} object for {.pkg MI_cd_2020}")
 
 map <- redist_map(mi_shp, pop_tol = 0.005,
     existing_plan = cd_2020, adj = mi_shp$adj) %>%
-    mutate(pseudocounty = if_else(str_detect(county, "(Wayne|Oakland|Macomb)"),
+    mutate(pseudo_county = if_else(str_detect(county, "(Wayne|Oakland|Macomb)"),
         county_muni, county))
 
 # Add an analysis name attribute ----
