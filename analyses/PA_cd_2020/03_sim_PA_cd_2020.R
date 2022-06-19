@@ -48,5 +48,5 @@ if (interactive()) {
         size = 0.1) +
         scale_y_continuous("Percent Minority by VAP") +
         labs(title = "Approximate Performance") +
-        scale_color_manual(values = c(cd_2020_prop = "black"))
+        scale_color_manual(values = c(cd_2020 = "black"))
 }
