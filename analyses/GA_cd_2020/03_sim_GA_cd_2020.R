@@ -13,7 +13,7 @@ constr <- redist_constr(map) %>%
 
 set.seed(2020)
 plans <- redist_smc(map, nsims = 1e4, runs = 2L, counties = county, constraints = constr,
-                    pop_temper = 0.01, ncores = 8) %>%
+                    pop_temper = 0.01) %>%
     group_by(chain) %>%
     filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>%
     ungroup()
