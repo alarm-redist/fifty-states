@@ -10,12 +10,13 @@ constr <- redist_constr(map) %>%
     add_constr_grp_hinge(20, vap_black, vap, 0.52) %>%
     add_constr_grp_hinge(-20, vap_black, vap, 0.45) %>%
     add_constr_grp_inv_hinge(10, vap_black, vap, 0.62)
-    # add_constr_grp_hinge(20, vap_black, vap, tgts_group = 0.55)
-    # add_constr_grp_hinge(5, vap_black, vap, tgts_group = 0.55)
 
 set.seed(2020)
 plans <- redist_smc(map, nsims = 1e4, runs = 2L, counties = county, constraints = constr,
-                    pop_temper = 0.01)
+                    pop_temper = 0.01, ncores = 8) %>%
+    group_by(chain) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>%
+    ungroup()
 plans <- match_numbers(plans, "cd_2020")
 
 cli_process_done()
