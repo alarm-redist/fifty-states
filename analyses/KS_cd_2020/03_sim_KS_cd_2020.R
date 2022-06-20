@@ -6,16 +6,9 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg KS_cd_2020}")
 
-merge_idx <- attr(map_m, "merge_idx")
-constr <- redist_constr(map_m) %>%
-    add_constr_custom(1.0, function(plan, i) {
-        sum(tapply(map$county, plan[merge_idx] == i, n_distinct) - 1L)
-    })
-
 set.seed(2020)
-plans <- redist_smc(map_m, nsims = 5e3,
-    runs = 2L,
-    counties = county,
+plans <- redist_smc(map_m, nsims = 2.5e3,
+    runs = 2L, counties = county, seq_alpha = 0.7,
     constraints = constr) %>%
     pullback(map)
 attr(plans, "prec_pop") <- map$pop
