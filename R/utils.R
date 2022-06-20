@@ -13,7 +13,7 @@ download <- function(url, path, overwrite = FALSE) {
     if (!file.exists(path) || overwrite) {
         httr::GET(url = url, httr::write_disk(path, overwrite = overwrite))
     } else {
-        cli::cli_alert_info(paste0("File already downloaded at", path, ". Set `overwrite = TRUE` to overwrite."))
+        cli::cli_alert_info(paste0("File already downloaded at ", path, ". Set `overwrite = TRUE` to overwrite."))
         list(status_code = 200)
     }
 }
@@ -28,10 +28,10 @@ download <- function(url, path, overwrite = FALSE) {
 #'
 #' @returns the path to file
 #' @export
-download_redistricting_file <- function(abbr, folder, type = "vtd", overwrite = FALSE) {
+download_redistricting_file <- function(abbr, folder, type = "vtd", overwrite = FALSE, year = 2020) {
     abbr <- tolower(abbr)
     url <- str_glue("https://raw.githubusercontent.com/alarm-redist/census-2020/",
-        "main/census-vest-2020/{abbr}_2020_{type}.csv")
+        "main/census-vest-{year}/{abbr}_{year}_{type}.csv")
     path <- paste0(folder, "/", basename(url))
 
     if (!file.exists(path) || overwrite) {
@@ -49,11 +49,38 @@ download_redistricting_file <- function(abbr, folder, type = "vtd", overwrite = 
 #'
 #' @returns the joined data
 #' @export
-join_vtd_shapefile <- function(data) {
-    geom_d <- PL94171::pl_get_vtd(data$state[1]) %>%
-        select(GEOID20, area_land = ALAND20, area_water = AWATER20, geometry)
-    left_join(data, geom_d, by = "GEOID20") %>%
-        sf::st_as_sf()
+join_vtd_shapefile <- function(data, year = 2020) {
+    if (year == 2020) {
+        geom_d <- PL94171::pl_get_vtd(data$state[1]) %>%
+            select(GEOID20, area_land = ALAND20, area_water = AWATER20, geometry)
+        left_join(data, geom_d, by = "GEOID20") %>%
+            sf::st_as_sf()
+    } else if (year == 2010) {
+        state_fp <- censable::match_fips(data$state[1])
+        counties <- censable::fips_2010 %>%
+            dplyr::filter(state == state_fp) %>%
+            dplyr::pull(county)
+
+        files <- lapply(counties,
+                        function(cty) {
+                            temp <- tempfile(fileext = '.zip')
+                            download(url = str_glue('https://www2.census.gov/geo/tiger/TIGER2010/VTD/2010/tl_2010_{state_fp}{cty}_vtd10.zip'),
+                                     path = temp)
+                            unzip(temp,  exdir = dirname(temp))
+                            sf::st_read(str_glue('{dirname(temp)}/tl_2010_{state_fp}{cty}_vtd10.shp')) %>%
+                                dplyr::transmute(
+                                    GEOID10 = GEOID10,
+                                    geometry = geometry
+                                )
+                        })
+
+        geom_d <- do.call('rbind', files)
+        left_join(data %>% mutate(GEOID10 = paste0(state, county, vtd)), geom_d, by = "GEOID10") %>%
+            sf::st_as_sf()
+    } else {
+        stop('Only years in c(2010, 2020) currently supported.')
+    }
+
 }
 
 # reproducible code for making EPSG lookup
@@ -168,6 +195,9 @@ vest_crosswalk <- function(cvap, state) {
 load_plans = function(state) {
     plans <<- read_rds(here(str_glue("data-out/{state}_2020/{state}_cd_2020_plans.rds")))
 }
+load_map = function(state) {
+    map <<- read_rds(here(str_glue("data-out/{state}_2020/{state}_cd_2020_map.rds")))
+}
 rename_cd = function(plans) {
     m = as.matrix(plans)
     new_names = colnames(m)
@@ -175,6 +205,22 @@ rename_cd = function(plans) {
     colnames(m) <- new_names
     plans$draw = forcats::fct_recode(plans$draw, cd_2020="cd")
     plans
+}
+
+open_state = function(state, type = "cd", year = 2020) {
+    state <- str_to_upper(state)
+    year <- as.character(as.integer(year))
+    slug <- str_glue("{state}_{type}_{year}")
+
+    if (requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()) {
+        rstudioapi::navigateToFile(str_glue("analyses/{slug}/01_prep_{slug}.R"))
+        rstudioapi::navigateToFile(str_glue("analyses/{slug}/02_setup_{slug}.R"))
+        rstudioapi::navigateToFile(str_glue("analyses/{slug}/03_sim_{slug}.R"))
+        rstudioapi::navigateToFile(str_glue("analyses/{slug}/doc_{slug}.md"))
+        rstudioapi::navigateToFile(str_glue("analyses/{slug}/03_sim_{slug}.R"))
+        rstudioapi::navigateToFile(str_glue("analyses/{slug}/02_setup_{slug}.R"))
+        rstudioapi::navigateToFile(str_glue("analyses/{slug}/01_prep_{slug}.R"))
+    }
 }
 
 

@@ -11,6 +11,7 @@
     to "In progress".
     1. Research the [legal requirements](https://www.ncsl.org/research/redistricting/redistricting-criteria.aspx) for your state.
     1. Edit the provided template to create and run your analysis.
+    1. Be particularly careful if you need to merge precincts. The template has specific instructions for this.
     1. We will enforce an R code style guide, based on the tidyverse style guide.
     Run `enforce_style("WA", "cd", 2020)` (with your details) periodically to
     automatically format your code.

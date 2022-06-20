@@ -19,12 +19,12 @@ cli_process_start("Downloading files for {.pkg NC_cd_2020}")
 
 path_data <- download_redistricting_file("NC", "data-raw/NC")
 
-path_enacted <- here("data-raw", "NC", "SL 2021-174 Congress.shp")
-if (!file.exists(path_enacted)) {
-    url <- "https://s3.amazonaws.com/dl.ncsbe.gov/ShapeFiles/USCongress/2021-11-04%20US_Congress_SL_2021-174.zip"
-    download(url, paste0(dirname(path_enacted), "/nc.zip"))
-    unzip(paste0(dirname(path_enacted), "/nc.zip"), exdir = dirname(path_enacted))
-}
+url <- "https://www.ncleg.gov/Files/GIS/Plans_Main/Congress_2022_Court/2022%20Interim%20Congressional%20-%20Shapefile.zip"
+path_enacted <- "data-raw/NC/NC_enacted.zip"
+download(url, here(path_enacted))
+unzip(here(path_enacted), exdir = here(dirname(path_enacted), "NC_enacted"))
+file.remove(path_enacted)
+path_enacted <- "data-raw/NC/NC_enacted/Interim Congressional.shp"
 
 cli_process_done()
 
@@ -54,7 +54,9 @@ if (!file.exists(here(shp_path))) {
 
     dists <- read_sf(path_enacted)
     dists <- st_transform(dists, st_crs(nc_shp))
-    nc_shp$cd_2020 <- as.integer(dists$DISTRICT)[geo_match(from = nc_shp, to = dists, method = "area")]
+    nc_shp <- mutate(nc_shp,
+        cd_2020 = as.integer(dists$DISTRICT)[geo_match(from = nc_shp, to = dists, method = "area")],
+        .after = cd_2010)
 
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = nc_shp,

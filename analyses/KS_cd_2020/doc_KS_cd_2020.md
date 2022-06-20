@@ -18,7 +18,8 @@ We enforce a maximum population deviation of 0.5%. We add a county constraint.
 Data for Kansas comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/). Data for the 2022 Kansas enacted congressional map comes from the [American Redistricting Project](https://thearp.org/state/kansas/).
 
 ## Pre-processing Notes
-To preserve the cores of prior districts, we merge all precincts which are more than three precincts away from a district border, under the 2010 plan.
+To preserve the cores of prior districts, we merge all precincts which are more than two precincts away from a district border, under the 2010 plan.
+Precincts in counties which are split by existing district boundaries are merged only within their county.
 
 ## Simulation Notes
 We sample 5,000 districting plans for Kansas.

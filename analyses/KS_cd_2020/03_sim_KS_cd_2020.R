@@ -11,7 +11,6 @@ plans <- redist_smc(map_m, nsims = 2.5e3,
     runs = 2L, counties = county, seq_alpha = 0.7,
     constraints = constr) %>%
     pullback(map)
-attr(plans, "prec_pop") <- map$pop
 
 plans <- match_numbers(plans, "cd_2020")
 
