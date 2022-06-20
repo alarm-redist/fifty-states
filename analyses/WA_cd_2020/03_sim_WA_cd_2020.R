@@ -7,12 +7,12 @@
 cli_process_start("Running simulations for {.pkg WA_cd_2020}")
 
 constr <- redist_constr(map) %>%
-    add_constr_grp_hinge(10.0, vap - vap_white, vap, c(0.37, 0.55)) %>%
-    add_constr_grp_hinge(-10.0, vap - vap_white, vap, 0.32)
+    add_constr_grp_hinge(10.0, vap - vap_white, vap, c(0.52, 0.35, 0.25)) %>%
+    add_constr_grp_hinge(-8.0, vap - vap_white, vap, c(0.35, 0.25))
 
 set.seed(2020)
 
-plans <- redist_smc(map, nsims = 6000, runs = 2L, counties = pseudo_county,
+plans <- redist_smc(map, nsims = 8e3, runs = 2L, counties = pseudo_county,
     constraints = constr, pop_temper = 0.02, seq_alpha = 0.9) %>%
     group_by(chain) %>%
     filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
