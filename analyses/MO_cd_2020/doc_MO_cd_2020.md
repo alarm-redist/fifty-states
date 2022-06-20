@@ -19,6 +19,6 @@ Data for Missouri comes from the ALARM Project's [2020 Redistricting Data Files]
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 20,000 districting plans for New Jersey across two independent runs of the SMC algorithm, and then thin the sample to down to 5,000 plans.
+We sample 10,000 districting plans for Missouri across two independent runs of the SMC algorithm, and then thin the sample to down to 5,000 plans.
 We use a standard algorithmic county constraint.
 No special techniques were needed to produce the sample.

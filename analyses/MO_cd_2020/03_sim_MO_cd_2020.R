@@ -7,11 +7,11 @@
 cli_process_start("Running simulations for {.pkg MO_cd_2020}")
 
 constr <- redist_constr(map) %>%
-    add_constr_grp_hinge(strength = 20,
-        vap_black, vap,
-        tgts_group = 0.4)
+    add_constr_grp_hinge(6, vap_black, vap, 0.4) %>%
+    add_constr_grp_hinge(-3, vap_black, vap, 0.25) %>%
+    add_constr_grp_hinge(-3, vap_black, vap, 0.08)
 set.seed(2020)
-plans <- redist_smc(map, nsims = 1e4, runs = 2L, ncores = 8,
+plans <- redist_smc(map, nsims = 5e3, runs = 2L, ncores = 8, seq_alpha = 0.95,
     counties = county, constraints = constr)
 plans <- match_numbers(plans, "cd_2020")
 plans <- plans %>%
