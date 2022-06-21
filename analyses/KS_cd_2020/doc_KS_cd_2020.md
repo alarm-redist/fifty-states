@@ -22,5 +22,5 @@ To preserve the cores of prior districts, we merge all precincts which are more 
 Precincts in counties which are split by existing district boundaries are merged only within their county.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Kansas.
+We sample 5,000 districting plans for Kansas across two independent runs of the SMC algorithm.
 No special techniques were needed to produce the sample.
