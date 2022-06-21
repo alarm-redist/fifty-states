@@ -57,7 +57,7 @@ if (!file.exists(here(shp_path))) {
     cd_shp <- st_read(here(path_shp))
     ms_shp <- ms_shp %>%
         mutate(cd_2020 = as.integer(cd_shp$DISTRICT)[
-            geo_match(ms_shp, cd_shp, method = "area")],
+            geo_match(ms_shp, cd_shp, method = "area")] - 2800L,
         .after = cd_2010)
 
     # Create perimeters in case shapes are simplified
