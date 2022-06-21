@@ -47,7 +47,7 @@ if (!file.exists(here(shp_path))) {
         select(-vtd)
     d_cd <- make_from_baf("MS", "CD", "VTD")  %>%
         transmute(GEOID = paste0(censable::match_fips("MS"), vtd),
-                  cd_2010 = as.integer(cd))
+            cd_2010 = as.integer(cd))
     ms_shp <- left_join(ms_shp, d_muni, by = "GEOID") %>%
         left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
@@ -58,10 +58,10 @@ if (!file.exists(here(shp_path))) {
     ms_shp <- ms_shp %>%
         mutate(cd_2020 = as.integer(cd_shp$DISTRICT)[
             geo_match(ms_shp, cd_shp, method = "area")],
-            .after = cd_2010)
+        .after = cd_2010)
 
     # Create perimeters in case shapes are simplified
-    redist.prep.polsbypopper(shp = ms_shp,
+    redistmetrics::prep_perims(shp = ms_shp,
         perim_path = here(perim_path)) %>%
         invisible()
 
