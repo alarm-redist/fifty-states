@@ -8,7 +8,10 @@ cli_process_start("Running simulations for {.pkg KY_cd_2020}")
 
 set.seed(2020)
 plans <- redist_smc(map, nsims = 4e3, runs = 2L, counties = pseudo_county,
-                    ncores = 8)
+                    ncores = 8) %>%
+    group_by(chain) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
+    ungroup()
 plans <- match_numbers(plans, "cd_2020")
 
 cli_process_done()
@@ -37,5 +40,5 @@ if (interactive()) {
     redist.plot.distr_qtys(plans, qty = ndshare, geom = "boxplot") +
         scale_y_continuous("Democratic Voteshare", labels = scales::percent_format(accuracy = 1)) +
         theme_bw()
-    ggsave("partisan.pdf", height = 4, width = 8)
+    ggsave("figs/partisan.pdf", height = 4, width = 8)
 }

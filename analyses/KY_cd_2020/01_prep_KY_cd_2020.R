@@ -19,7 +19,7 @@ cli_process_start("Downloading files for {.pkg KY_cd_2020}")
 
 path_data <- download_redistricting_file("KY", "data-raw/KY")
 
-# download the enacted plan.
+# Download the enacted plan.
 url <- "https://legislature.ky.gov/Public%20Services/GIS%20contents/C1278B01%20%2822RS-SB3%29.zip"
 path_enacted <- "data-raw/KY/KY_enacted.zip"
 download(url, here(path_enacted))
@@ -63,7 +63,7 @@ if (!file.exists(here(shp_path))) {
         .after = cd_2010)
 
     # Create perimeters in case shapes are simplified
-    redist.prep.polsbypopper(shp = ky_shp,
+    redistmetrics::prep_perims(shp = ky_shp,
         perim_path = here(perim_path)) %>%
         invisible()
 
