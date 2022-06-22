@@ -10,8 +10,11 @@ map <- redist_map(nm_shp, pop_tol = 0.005,
 
 # Set up cores objects
 map <- map %>%
-    mutate(cores = make_cores(boundary = 2))
-# Merge by both cores and county to preserve county contiguity
+    mutate(cores = make_cores(boundary = 2)) %>%
+    # merge by both cores and county to preserve county contiguity
+    merge_by(cores, county, drop_geom = FALSE)
+
+
 map_cores <- merge_by(map, cores, county)
 
 # Add an analysis name attribute
