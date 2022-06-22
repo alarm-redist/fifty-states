@@ -21,6 +21,7 @@ url <- "https://raw.githubusercontent.com/alarm-redist/census-2020/main/census-v
 path_data <- "data-raw/OR/or_2020_block.csv"
 download(url, here(path_data))
 
+# updated link: manual download from https://geo.maps.arcgis.com/home/item.html?id=b43a1bf5997d4863a45023bfe7a047b1
 url <- "https://oregon-redistricting.esriemcs.com/portal/sharing/rest/content/items/4ebcfc87b06c4e79b65685135329513c/data"
 path_enacted <- "data-raw/OR/or_enacted.zip"
 download(url, here(path_enacted))

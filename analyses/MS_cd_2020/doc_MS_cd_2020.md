@@ -21,5 +21,5 @@ Data for Mississippi comes from the ALARM Project's [2020 Redistricting Data Fil
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Mississippi.
+We sample 5,000 districting plans for Mississippi, across two independent runs of the SMC algorithm.
 We apply a hinge Gibbs constraint of strength 25 to encourage drawing a majority black district.
