@@ -7,8 +7,7 @@
 cli_process_start("Running simulations for {.pkg KY_cd_2020}")
 
 set.seed(2020)
-plans <- redist_smc(map, nsims = 4e3, runs = 2L, counties = pseudo_county,
-                    ncores = 8) %>%
+plans <- redist_smc(map, nsims = 4e3, runs = 2L, counties = pseudo_county) %>%
     group_by(chain) %>%
     filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
     ungroup()

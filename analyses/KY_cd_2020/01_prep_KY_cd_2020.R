@@ -27,8 +27,6 @@ unzip(here(path_enacted), exdir = here(dirname(path_enacted), "KY_enacted"))
 file.remove(path_enacted)
 path_enacted <- "data-raw/KY/KY_enacted/C1278B01 (22RS-SB3).shp"
 
-# If large, consider checking to see if these files exist before downloading
-
 cli_process_done()
 
 # Compile raw data into a final shapefile for analysis -----
