@@ -47,10 +47,10 @@ if (!file.exists(here(shp_path))) {
 
     dists <- read_sf("https://redistricting.lls.edu/wp-content/uploads/ma_2020_congress_2021-11-05_2031-06-30.json")
 
-    ma_shp$cd_2020 <- as.numeric(dists$Districts)[geo_match(from = ma_shp, to = dists, method = "area")]
+    ma_shp$cd_2020 <- as.integer(dists$Districts)[geo_match(from = ma_shp, to = dists, method = "area")]
 
     # Create perimeters in case shapes are simplified
-    redist.prep.polsbypopper(shp = ma_shp,
+    redistmetrics::prep_perims(shp = ma_shp,
         perim_path = here(perim_path)) %>%
         invisible()
 
