@@ -8,7 +8,7 @@ cli_process_start("Running simulations for {.pkg ID_cd_2020}")
 
 set.seed(2020)
 
-plans <- redist_smc(map, nsims = 2500, runs = 2L, ncores = 8, counties = county)
+plans <- redist_smc(map, nsims = 2500, runs = 2L, counties = county)
 
 plans <- match_numbers(plans, "cd_2020")
 
