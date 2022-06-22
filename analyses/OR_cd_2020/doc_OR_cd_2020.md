@@ -26,7 +26,7 @@ As described above, counties not linked by a state or federal highway were manua
 The full list of these counties can be found in the `01_prep_OR_cd_2020.R` file.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Oregon.
+We sample 6,000 districting plans for Oregon across two independent runs of the SMC algorithm.
 To balance county and municipality splits, we create pseudocounties for use in the county constraint.
 These are counties, outside of Multnomah county. Within Multnomah county, each municipality is its own pseudocounty as well.
 Multnomah county were chosen since it is necessarily split by congressional districts.

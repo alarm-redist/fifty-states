@@ -12,7 +12,7 @@ Both the `redist_plans` and `redist_map` object are intended to be used with the
 * `draw`: unique identifier for each sample. Non-numeric draw names are real-world plans, e.g., `cd_2010` for an enacted 2010 plan.
 * `district`: a district identifier. District numbers are functionally assigned at random and do not correspond to real-world plans.
 * `chain`: a number identifying the run of the redistricting algorithm used to produce this draw. Used for diagnostic purposes.
-* `pop_overlap`: a number indicating the fraction of people in this district who reside in the same-numbered district in the enacted plan.
+* `pop_overlap`: a number indicating the fraction of people in this plan who reside in the same-numbered district in the enacted plan.
 * `total_pop`: the total population of each district.
 * `total_vap`: the total voting-aged population of each district.
 * `pop_*`, `vap_*`: total (voting-aged) population within racial and ethnic groups for each district. Variable codes documented [here](https://github.com/alarm-redist/census-2020#data-format).

@@ -58,6 +58,7 @@ if (!file.exists(here(shp_path))) {
     elec_at_2010 <- purrr::reduce(el_l, left_join, by = "GEOID")
     vest_cw <- cvap::vest_crosswalk(state)
     rt <- PL94171::pl_retally(elec_at_2010, crosswalk = vest_cw)
+    names(rt)[4:13] <- names(elec_at_2010)[2:11]
 
     tract <- rt %>%
         censable::breakdown_geoid() %>%
@@ -112,7 +113,7 @@ if (!file.exists(here(shp_path))) {
     )
 
     # Create perimeters in case shapes are simplified
-    redist.prep.polsbypopper(shp = me_shp,
+    redistmetrics::prep_perims(shp = me_shp,
         perim_path = here(perim_path)) %>%
         invisible()
 
@@ -132,6 +133,8 @@ if (!file.exists(here(shp_path))) {
 
     me_shp <- me_shp %>%
         fix_geo_assignment(muni)
+
+    me_shp$state <- "ME"
 
     write_rds(me_shp, here(shp_path), compress = "gz")
     cli_process_done()
