@@ -18,7 +18,7 @@ Data for Wisconsin comes from the ALARM Project's [2020 Redistricting Data Files
 We use a hybrid boundary-2 cores constraint, based on the 2010 map. Any VTDs more than 2 VTD from the boundary are frozen as a core. Pseudocounties which contain any of the non-frozen VTDs are frozen into remainder portions, separate from their district core. This avoids adding additional county splits. For the pseudocounties used in freezing cores, municipality lines are used within Milwaukee County, which is larger than a congressional district in population.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Wisconsin.
+We sample 5,000 districting plans for Wisconsin across 2 independent runs of the SMC algorithm.
 We use municipalities for use in the county constraint (or counties if a VTD is not assigned to a municipality) to match norms in the state of having low county and municipality splits, despite no rules regarding this. 
 We use a status quo constraint to encourage simulated plans to be similar to the 2010 map.
 We use a weak county split Gibbs constraint to keep county splits comparable to the enacted map.

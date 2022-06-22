@@ -6,20 +6,23 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg WI_cd_2020}")
 
-cons <- redist_constr(map_merge) %>%
-    add_constr_status_quo(
-        strength = 20,
-        current = map_merge$cd_2010
-    ) %>%
+cons <- redist_constr(map) %>%
     add_constr_splits(
         strength = 0.5,
-        admin = county_muni
+        admin = pseudo_county
     )
-plans <- redist_smc(map_merge, nsims = 5e3, counties = county_muni,
-    constraints = cons) %>%
-    pullback() %>%
-    add_reference(ref_plan = map$cd_2020)
-attr(plans, "prec_pop") <- map$pop
+
+set.seed(2020)
+
+plans <- redist_smc(
+    map,
+    nsims = 2500, runs = 2L, ncores = 8,
+    counties = pseudo_county,
+    constraints = cons
+)
+
+plans <- match_numbers(plans, "cd_2020")
+
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
 
@@ -44,9 +47,9 @@ if (interactive()) {
     library(patchwork)
 
     redist.plot.distr_qtys(plans, (total_vap - vap_white)/total_vap,
-        color_thresh = NULL,
-        color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, "#3D77BB", "#B25D4C"),
-        size = 0.5, alpha = 0.5) +
+                           color_thresh = NULL,
+                           color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, "#3D77BB", "#B25D4C"),
+                           size = 0.5, alpha = 0.5) +
         scale_y_continuous("Percent Minority by VAP") +
         labs(title = "Wisconsin Plan versus Simulations") +
         scale_color_manual(values = c(cd_2020 = "black")) +
