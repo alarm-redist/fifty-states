@@ -19,6 +19,7 @@ Data for Missouri comes from the ALARM Project's [2020 Redistricting Data Files]
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 10,000 districting plans for Missouri across two independent runs of the SMC algorithm, and then thin the sample to down to 5,000 plans.
+We sample 10,000 districting plans for Missouri across two independent runs of the SMC algorithm, subset to plans with at least 30% BVAP in the most Black district, and then thin the sample to down to 5,000 plans.
+The subsetting by BVAP removes around 2% of sampled plans.
 We use a standard algorithmic county constraint.
 No special techniques were needed to produce the sample.

@@ -14,9 +14,18 @@ constr <- redist_constr(map) %>%
 set.seed(2020)
 
 plans <- redist_smc(map, nsims = 5e3, runs = 2L, ncores = 8, seq_alpha = 0.95,
-    counties = county, constraints = constr) %>%
+    counties = county, constraints = constr)
+
+plans <- plans %>%
+    mutate(vap_black = group_frac(map, vap_black, vap)) %>%
+    group_by(draw) %>%
+    mutate(vap_black = max(vap_black)) %>%
+    ungroup() %>%
+    filter(vap_black > 0.3 | draw == "cd_2020")
+
+plans <- plans %>%
     group_by(chain) %>%
-    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
+    filter(as.integer(droplevels(draw)) < min(as.integer(droplevels(draw))) + 2500) %>% # thin samples
     ungroup()
 
 plans <- match_numbers(plans, "cd_2020")
@@ -50,5 +59,5 @@ if (interactive()) {
         scale_y_continuous("Percent Black by VAP") +
         labs(title = "Approximate Performance") +
         scale_color_manual(values = c(cd_2020 = "black")) +
-        ggredist::theme_r21()
+        theme_bw()
 }
