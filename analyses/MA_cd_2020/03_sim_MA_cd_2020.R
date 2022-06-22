@@ -10,7 +10,7 @@ set.seed(2020)
 
 plans <- redist_smc(
     map,
-    nsims = 5e3, runs = 2L, ncores = 8,
+    nsims = 5e3, runs = 2L,
     counties = pseudo_county
 )
 
