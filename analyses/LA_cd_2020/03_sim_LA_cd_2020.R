@@ -7,10 +7,12 @@
 cli_process_start("Running simulations for {.pkg LA_cd_2020}")
 
 constr <- redist_constr(map_m) %>%
-    add_constr_grp_hinge(35, vap_black, vap, tgts_group = 0.55)
+    add_constr_grp_hinge(25, vap - vap_white, vap, 0.55) %>%
+    add_constr_grp_hinge(-25, vap - vap_white, vap, 0.46) %>%
+    add_constr_grp_inv_hinge(10, vap - vap_white, vap, 0.6)
 
 set.seed(2020)
-plans <- redist_smc(map_m, nsims = 6e3,
+plans <- redist_smc(map_m, nsims = 8e3,
     runs = 2L,
     counties = pseudo_county,
     constraints = constr) %>%
