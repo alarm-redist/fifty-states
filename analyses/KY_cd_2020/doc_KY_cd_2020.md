@@ -10,7 +10,7 @@ In Kentucky, under the Criteria and Standards for Congressional Redistricting ad
 5. preserve communities of interest as much as possible
 
 ### Interpretation of requirements
-We enforce a maximum population deviation of 0.1%. We use a pseudo-county constraint described below which attempts to mimic the norms in Kentucky of generally preserving county, city, and township boundaries.
+We enforce a maximum population deviation of 0.5%. We use a pseudo-county constraint described below which attempts to mimic the norms in Kentucky of generally preserving county, city, and township boundaries.
 
 ## Data Sources
 Data for Kentucky comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
@@ -19,5 +19,5 @@ Data for Kentucky comes from the ALARM Project's [2020 Redistricting Data Files]
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Kentucky.
-We use a pseudo-county constraint to limit the county and municipality (i.e., city and township) splits. Municipality lines are used in Jefferson County, which has a population larger than the target population for a congressional district.
+We sample 8,000 districting plans for Kentucky across two independent runs of the SMC algorithm, and then thin the sample down to 5,000 plans.
+We use a pseudo-county constraint to limit the county and municipality (i.e. city and township) splits. Municipality lines are used in Jefferson County, which has a population larger than the target population for a congressional district.
