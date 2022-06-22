@@ -50,7 +50,7 @@ if (!file.exists(here(shp_path))) {
     id_shp$cd_2020 <- as.integer(dists$Districts)[geo_match(from = id_shp, to = dists, method = "area")]
 
     # Create perimeters in case shapes are simplified
-    redist.prep.polsbypopper(shp = id_shp,
+    redistmetrics::prep_perims(shp = id_shp,
         perim_path = here(perim_path)) %>%
         invisible()
 
@@ -70,7 +70,7 @@ if (!file.exists(here(shp_path))) {
 
     cty_adj <- adjacency(cty) %>% lapply(\(x) x + 1)
 
-    cty_pair <- map_dfr(seq_along(cty_adj), \(x){
+    cty_pair <- purrr::map_dfr(seq_along(cty_adj), \(x){
         tibble(x = x, y = cty_adj[[x]])
     })
 
@@ -79,9 +79,9 @@ if (!file.exists(here(shp_path))) {
         geos::as_geos_geometry()
 
     ints <- geos::geos_intersects_matrix(geom = roads, tree = cty)
-    tbl <- map_dfr(ints, \(x){
+    tbl <- purrr::map_dfr(ints, \(x){
         if (length(x) > 1) {
-            expand_grid(x = x, y = x) %>% filter(
+            tidyr::expand_grid(x = x, y = x) %>% filter(
                 x != y
             )
         } else {
@@ -91,7 +91,7 @@ if (!file.exists(here(shp_path))) {
         mutate(magic = TRUE)
 
     cty_pair <- cty_pair %>%
-        left_join(tbl) %>%
+        left_join(tbl, by = c("x", "y")) %>%
         filter(is.na(magic))
 
     cty_pair <- cty_pair %>%

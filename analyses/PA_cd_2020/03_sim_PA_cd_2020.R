@@ -7,10 +7,18 @@
 cli_process_start("Running simulations for {.pkg PA_cd_2020}")
 
 constr <- redist_constr(map) %>%
-    add_constr_splits(0.2, coalesce(map$county_muni, "<bg>"))
+    add_constr_splits(0.25, coalesce(map$county_muni, "<bg>"))
 
-plans <- redist_smc(map, nsims = 5e3, counties = pseudo_county,
-    constraints = constr)
+set.seed(2020)
+
+plans <- redist_smc(map, nsims = 5000, runs = 2L, counties = pseudo_county,
+    constraints = constr, pop_temper = 0.02) %>%
+    group_by(chain) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
+    ungroup()
+
+plans <- match_numbers(plans, map$cd_2020)
+
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
@@ -32,13 +40,13 @@ cli_process_done()
 # Extra validation plots for custom constraints -----
 if (interactive()) {
     library(ggplot2)
-    library(patchwork)
 
     # check performance
-    mutate(plans, mvap = 1 - vap_white/total_vap) %>%
-        number_by(mvap) %>%
-        plot(e_dvs, size = 0.01, sort = FALSE, color_thresh=0.5) +
-        scale_color_manual(values=c("red", "blue")) +
-        labs(x="Districts, ordered by minority VAP share",
-             y="ExpectedDemocratic vote share")
+    redist.plot.distr_qtys(plans, 1 - vap_white/total_vap,
+        color_thresh = NULL,
+        color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, "#3D77BB", "#B25D4C"),
+        size = 0.1) +
+        scale_y_continuous("Percent Minority by VAP") +
+        labs(title = "Approximate Performance") +
+        scale_color_manual(values = c(cd_2020 = "black"))
 }

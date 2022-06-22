@@ -25,7 +25,7 @@ path_enacted <- "data-raw/RI/RI_enacted.zip"
 download(url, here(path_enacted))
 unzip(here(path_enacted), exdir = here(dirname(path_enacted), "RI_enacted"))
 file.remove(path_enacted)
-path_enacted <- "data-raw/RI/RI_enacted/RI_CD_Enacted02162022.shp" # TODO use actual SHP
+path_enacted <- "data-raw/RI/RI_enacted/RI_CD_Enacted02162022.shp"
 
 # download enacted state senate plan
 url_sd <- "https://thearp.org/documents/920/RI_SD_Enacted02162022.zip"
@@ -33,7 +33,7 @@ path_enacted_sd <- "data-raw/RI/RI_enacted_sd.zip"
 download(url_sd, here(path_enacted_sd))
 unzip(here(path_enacted_sd), exdir = here(dirname(path_enacted_sd), "RI_enacted_sd"))
 file.remove(path_enacted_sd)
-path_enacted_sd <- "data-raw/RI/RI_enacted_sd/RI_SD_Enacted02162022.shp" # TODO use actual SHP
+path_enacted_sd <- "data-raw/RI/RI_enacted_sd/RI_SD_Enacted02162022.shp"
 
 cli_process_done()
 
