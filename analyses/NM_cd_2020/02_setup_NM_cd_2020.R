@@ -14,9 +14,6 @@ map <- map %>%
     # merge by both cores and county to preserve county contiguity
     merge_by(cores, county, drop_geom = FALSE)
 
-
-map_cores <- merge_by(map, cores, county)
-
 # Add an analysis name attribute
 attr(map, "analysis_name") <- "NM_2020"
 
