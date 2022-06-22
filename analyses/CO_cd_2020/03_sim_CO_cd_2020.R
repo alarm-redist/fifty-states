@@ -14,7 +14,7 @@ set.seed(2020)
 
 plans <- redist_smc(
     map,
-    nsims = 2500, runs = 2L, ncores = 8,
+    nsims = 2500, runs = 2L,
     counties = pseudo_county,
     constraints = cons
 )
@@ -47,16 +47,16 @@ if (interactive()) {
     set.seed(2022)
     plans2 <- redist_smc(
         map,
-        nsims = 2500, runs = 2L, ncores = 8,
+        nsims = 2500, runs = 2L,
         counties = pseudo_county
     )
     plans2 <- plans2 %>% mutate(dvs_20 = group_frac(map, adv_20, adv_20 + arv_20))
 
     redist.plot.distr_qtys(plans2, qty = dvs_20, geom = "boxplot") + theme_bw() +
-        lims(y = c(0.25, 0.8)) +
+        lims(y = c(0.25, 0.9)) +
         labs(title = "No Competitive Constraint") +
         redist.plot.distr_qtys(plans, qty = dvs_20, geom = "boxplot") +
         theme_bw() +
-        lims(y = c(0.25, 0.8)) +
+        lims(y = c(0.25, 0.9)) +
         labs(title = "With Competitive Constraint")
 }
