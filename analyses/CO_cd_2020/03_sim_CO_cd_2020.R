@@ -8,18 +8,13 @@ cli_process_start("Running simulations for {.pkg CO_cd_2020}")
 
 # Set up competitiveness targets ----
 cons <- redist_constr(map) %>%
-    add_constr_compet(30, ndv, nrv, pow = 1)
+    add_constr_compet(300, ndv, nrv, pow = 1)
 
-set.seed(2020)
-
-plans <- redist_smc(
-    map,
-    nsims = 2500, runs = 2L, ncores = 8,
+plans <- redist_smc(map, nsims = 5e3,
     counties = pseudo_county,
-    constraints = cons
-)
-
-plans <- match_numbers(plans, "cd_2020")
+    constraints = cons)
+plans2 <- redist_smc(map, nsims = 5e3,
+    counties = pseudo_county)
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
@@ -43,20 +38,16 @@ if (interactive()) {
     library(patchwork)
 
     plans <- plans %>% mutate(dvs_20 = group_frac(map, adv_20, adv_20 + arv_20))
-
-    set.seed(2022)
-    plans2 <- redist_smc(
-        map,
-        nsims = 2500, runs = 2L, ncores = 8,
-        counties = pseudo_county
-    )
-    plans2 <- plans2 %>% mutate(dvs_20 = group_frac(map, adv_20, adv_20 + arv_20))
-
-    redist.plot.distr_qtys(plans2, qty = dvs_20, geom = "boxplot") + theme_bw() +
-        lims(y = c(0.25, 0.8)) +
-        labs(title = "No Competitive Constraint") +
-        redist.plot.distr_qtys(plans, qty = dvs_20, geom = "boxplot") +
+    redist.plot.distr_qtys(plans, qty = dvs_20, geom = "boxplot") +
         theme_bw() +
-        lims(y = c(0.25, 0.8)) +
+        lims(y = c(0, 1)) +
         labs(title = "With Competitive Constraint")
+    ggsave("data-raw/CO/competitiveness_plans.png", width = 6.5, height = 3)
+    plans2 <- plans2 %>% mutate(dvs_20 = group_frac(map, adv_20, adv_20 + arv_20))
+    redist.plot.distr_qtys(plans2, qty = dvs_20, geom = "boxplot") + theme_bw() +
+        lims(y = c(0, 1)) +
+        labs(title = "No Competitive Constraint")
+    ggsave("data-raw/CO/competitiveness_plans_no_const.png", width = 6.5, height = 3)
+
+
 }

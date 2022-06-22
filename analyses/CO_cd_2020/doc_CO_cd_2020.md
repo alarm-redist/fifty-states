@@ -22,5 +22,5 @@ Data for Colorado comes from the ALARM Project's [2020 Redistricting Data Files]
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Colorado across 2 independent runs of the SMC algorithm.
+We sample 5,000 districting plans for Colorado.
 A partisan competitiveness constraint was used.
