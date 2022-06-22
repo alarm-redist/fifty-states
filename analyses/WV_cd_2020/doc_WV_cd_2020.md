@@ -20,5 +20,5 @@ Data for West Virginia comes from the [The Upshot Presidential Precinct Map data
 Data is aggregated to the county level.
 
 ## Simulation Notes
-We sample 5,000 districting plans for West Virginia.
+We sample 5,000 districting plans for West Virginia, across 4 independent runs of the SMC algorithm.
 No special techniques were needed to produce the sample.
