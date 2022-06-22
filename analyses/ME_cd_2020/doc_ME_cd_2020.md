@@ -19,6 +19,6 @@ Data for Maine comes from the [Voting and Election Science Team](https://dataver
 Islands tracts were connected to the nearest tract within the same district.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Maine, across 4 independent runs of the SMC algorithm.
+We sample 5,000 districting plans for Maine across 4 independent runs of the SMC algorithm.
 We use the standard county constraint.
 We weaken the compactness parameter to 0.9 due to the relatively small state size and total number of tracts to encourage more diversity in the sample.
