@@ -21,6 +21,6 @@ Data for Idaho comes from the ALARM Project's [2020 Redistricting Data Files](ht
 Borders between counties which are not connected by highways were removed.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Idaho, across 2 independent runs of the SMC algorithm.
+We sample 5,000 districting plans for Idaho across 2 independent runs of the SMC algorithm.
 We sample using the standard algorithmic county constraint.
 No special techniques were needed to produce the sample.
