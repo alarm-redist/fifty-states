@@ -11,7 +11,7 @@ In Louisiana, according to [Louisiana Joint Rule No. 21](https://www.legis.la.go
 
 
 ### Interpretation of requirements
-We enforce a maximum population deviation of 0.5%. We add a VRA constraint targeting one majority-minority district.
+We enforce a maximum population deviation of 0.5%. We add a hinge Gibbs constraint targeting the same number of majority-minority districts as the enacted plan. We also apply a hinge Gibbs constraint to discourage packing of minority voters.
 
 ## Data Sources
 Data for Louisiana comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
