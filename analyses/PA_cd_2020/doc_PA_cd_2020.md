@@ -20,7 +20,7 @@ Data for Pennsylvania comes from the ALARM Project's [2020 Redistricting Data Fi
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Pennsylvania.
+We sample 10,000 districting plans for Pennsylvania across two runs of the SMC algorithm, then filter down to 5,000 total plans.
 To balance county and municipality splits, we create pseudocounties for use in
 the county constraint. These are counties, outside of Allegheny County,
 Montgomery County, and Philadelphia County. Within Allegheny County, Montgomery

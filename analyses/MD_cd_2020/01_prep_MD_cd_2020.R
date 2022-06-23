@@ -70,7 +70,7 @@ if (!file.exists(here(shp_path))) {
     md_shp <- md_shp %>% left_join(baf, by = "GEOID")
 
     # Create perimeters in case shapes are simplified
-    redist.prep.polsbypopper(shp = md_shp,
+    redistmetrics::prep_perims(shp = md_shp,
         perim_path = here(perim_path)) %>%
         invisible()
 

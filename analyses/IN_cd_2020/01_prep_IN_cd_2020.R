@@ -51,7 +51,7 @@ if (!file.exists(here(shp_path))) {
     in_shp$cd_2020 <- geo_match(in_shp, dists, "area")
 
     # Create perimeters in case shapes are simplified
-    redist.prep.polsbypopper(shp = in_shp,
+    redistmetrics::prep_perims(shp = in_shp,
         perim_path = here(perim_path)) %>%
         invisible()
 
