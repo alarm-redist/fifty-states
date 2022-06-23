@@ -306,6 +306,13 @@ plans <- add_summary_stats(plans, map) %>%
 
 summary(plans)
 
+plans <- plans %>%
+    group_by(chain) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
+    ungroup()
+
+summary(plans)
+
 # cvap columns
 cvap_cols <- names(map)[tidyselect::eval_select(starts_with("cvap_"), map)]
 for (col in rev(cvap_cols)) {
