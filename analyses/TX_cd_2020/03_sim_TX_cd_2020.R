@@ -2,10 +2,11 @@
 # Simulate plans for `TX_cd_2020`
 # © ALARM Project, February 2022
 ###############################################################################
-set.seed(02138)
-
 cluster_pop_tol <- 0.0025
-nsims <- 5000
+nsims <- 12500
+pop_temp <- 0.03
+sa_city <- 0.99
+sa <- 0.95
 
 # Unique ID for each row, will use later to reconnect pieces
 map$row_id <- 1:nrow(map)
@@ -22,8 +23,8 @@ clust1 <- c("Austin", "Brazoria", "Chambers", "Fort Bend",
 clust1 <- paste(clust1, "County")
 
 m1 <- map %>% filter(county %in% clust1)
-m1 <- set_pop_tol(m1, cluster_pop_tol)
 attr(m1, "pop_bounds") <-  attr(map, "pop_bounds")
+m1 <- set_pop_tol(m1, cluster_pop_tol)
 
 ########################################################################
 # Setup for cluster constraint
@@ -38,14 +39,26 @@ border_idxs <- which(m1$row_id %in% z$row_id)
 ########################################################################
 
 constraints <- redist_constr(m1) %>%
+    #########################################################
+    # HISPANIC
     add_constr_grp_hinge(
-        20,
+        3,
         cvap_hisp,
         total_pop = cvap,
         tgts_group = c(0.45)
     ) %>%
+    add_constr_grp_hinge(-3,
+                         cvap_hisp,
+                         cvap,
+                         0.35) %>%
+    add_constr_grp_inv_hinge(3,
+                             cvap_hisp,
+                             cvap,
+                             0.70) %>%
+    #########################################################
+    # BLACK
     add_constr_grp_hinge(
-        10,
+        3,
         cvap_black,
         total_pop = cvap,
         tgts_group = c(0.45)) %>%
@@ -58,7 +71,17 @@ n_steps <- (sum(m1$pop)/attr(map, "pop_bounds")[2]) %>% floor()
 set.seed(2020)
 houston_plans <- redist_smc(m1, counties = county,
     nsims = nsims, n_steps = n_steps, runs = 2L,
-    constraints = constraints)
+    seq_alpha = sa_city,
+    constraints = constraints, pop_temper = pop_temp + 0.02, verbose = TRUE)
+
+houston_plans <- houston_plans %>%
+    mutate(hvap = group_frac(m1, cvap_hisp, cvap),
+            bvap = group_frac(m1, cvap_black, cvap),
+            dem16 = group_frac(m1, adv_16, arv_16 + adv_16),
+            dem18 = group_frac(m1, adv_18, arv_18 + adv_18),
+            dem20 = group_frac(m1, adv_20, arv_20 + adv_20))
+
+summary(houston_plans)
 
 #############################################################
 ## Cluster #2: Austin and San Antonio
@@ -72,8 +95,8 @@ clust2 <- c(clust2, clust4)
 clust2 <- paste(clust2, "County")
 
 m2 <- map %>% filter(county %in% clust2)
-m2 <- set_pop_tol(m2, cluster_pop_tol)
 attr(m2, "pop_bounds") <-  attr(map, "pop_bounds")
+m2 <- set_pop_tol(m2, cluster_pop_tol)
 
 ########################################################################
 # Setup for cluster constraint
@@ -88,12 +111,23 @@ border_idxs <- which(m2$row_id %in% z$row_id)
 ########################################################################
 
 constraints <- redist_constr(m2) %>%
+    #########################################################
+    # HISPANIC
     add_constr_grp_hinge(
-        20,
+        3,
         cvap_hisp,
         total_pop = cvap,
         tgts_group = c(0.45)
     ) %>%
+        add_constr_grp_hinge(-3,
+                             cvap_hisp,
+                             cvap,
+                             0.35) %>%
+        add_constr_grp_inv_hinge(3,
+                                 cvap_hisp,
+                                 cvap,
+                                 0.70) %>%
+    #########################################################
     add_constr_custom(strength = 10, function(plan, distr) {
         ifelse(any(plan[border_idxs] == 0), 0, 1)
     })
@@ -102,9 +136,17 @@ n_steps <- (sum(m2$pop)/attr(map, "pop_bounds")[2]) %>% floor()
 
 set.seed(2020)
 austin_plans <- redist_smc(m2, counties = county,
-    nsims = nsims, n_steps = n_steps, runs = 2L,
-    constraints = constraints)
+    nsims = nsims, n_steps = n_steps, runs = 2L, seq_alpha = sa_city,
+    constraints = constraints, pop_temper = pop_temp)
 
+austin_plans <- austin_plans %>%
+    mutate(hvap = group_frac(m2, cvap_hisp, cvap),
+           bvap = group_frac(m2, cvap_black, cvap),
+           dem16 = group_frac(m2, adv_16, arv_16 + adv_16),
+           dem18 = group_frac(m2, adv_18, arv_18 + adv_18),
+           dem20 = group_frac(m2, adv_20, arv_20 + adv_20))
+
+summary(austin_plans)
 #########################################################################
 ## Cluster #3: Dallas
 
@@ -115,8 +157,8 @@ clust3 <- c("Collin", "Dallas", "Denton", "Ellis", "Hunt",
 clust3 <- paste(clust3, "County")
 
 m3 <- map %>% filter(county %in% clust3)
-m3 <- set_pop_tol(m3, cluster_pop_tol)
 attr(m3, "pop_bounds") <-  attr(map, "pop_bounds")
+m3 <- set_pop_tol(m3, cluster_pop_tol)
 
 ########################################################################
 # Setup for cluster constraint
@@ -131,14 +173,25 @@ border_idxs <- which(m3$row_id %in% z$row_id)
 ########################################################################
 
 constraints <- redist_constr(m3) %>%
+    #########################################################
+    # HISPANIC
     add_constr_grp_hinge(
-        20,
+        3,
         cvap_hisp,
         total_pop = cvap,
         tgts_group = c(0.45)
     ) %>%
+        add_constr_grp_hinge(-3,
+                             cvap_hisp,
+                             cvap,
+                             0.35) %>%
+        add_constr_grp_inv_hinge(3,
+                                 cvap_hisp,
+                                 cvap,
+                                 0.70) %>%
+
     add_constr_grp_hinge(
-        10,
+        5,
         cvap_black,
         total_pop = cvap,
         tgts_group = c(0.45)) %>%
@@ -150,8 +203,17 @@ n_steps <- (sum(m3$pop)/attr(map, "pop_bounds")[2]) %>% floor()
 
 set.seed(2020)
 dallas_plans <- redist_smc(m3, counties = county,
-    nsims = nsims, n_steps = n_steps, runs = 2L,
-    constraints = constraints)
+    nsims = nsims, n_steps = n_steps, runs = 2L, seq_alpha = sa_city,
+    constraints = constraints, pop_temper = pop_temp)
+
+dallas_plans <- dallas_plans %>%
+    mutate(hvap = group_frac(m3, cvap_hisp, cvap),
+           bvap = group_frac(m3, cvap_black, cvap),
+           dem16 = group_frac(m3, adv_16, arv_16 + adv_16),
+           dem18 = group_frac(m3, adv_18, arv_18 + adv_18),
+           dem20 = group_frac(m3, adv_20, arv_20 + adv_20))
+
+summary(dallas_plans)
 
 #############################################################
 ## Combine Clusters
@@ -165,7 +227,7 @@ tx_plan_list <- list(list(map = m1, plans = houston_plans),
     list(map = m3, plans = dallas_plans))
 
 prep_mat <- prep_particles(map = map, map_plan_list = tx_plan_list,
-    uid = row_id, dist_keep = dist_keep, nsims = nsims)
+    uid = row_id, dist_keep = dist_keep, nsims = nsims * 2)
 
 ## Check contiguity
 if (FALSE) {
@@ -183,26 +245,51 @@ if (FALSE) {
 }
 
 constraints <- redist_constr(map) %>%
+    #########################################################
+    # HISPANIC
     add_constr_grp_hinge(
-        5,
+        3,
         cvap_hisp,
         total_pop = cvap,
         tgts_group = c(0.45)
     ) %>%
+        add_constr_grp_hinge(-3,
+                             cvap_hisp,
+                             cvap,
+                             0.35) %>%
+        add_constr_grp_inv_hinge(3,
+                                 cvap_hisp,
+                                 cvap,
+                                 0.70) %>%
     add_constr_grp_hinge(
-        2,
+        3,
         cvap_black,
         total_pop = cvap,
-        tgts_group = c(0.45))
+        tgts_group = c(0.45)
+    ) %>%
+    add_constr_grp_hinge(-3,
+                         cvap_black,
+                         cvap,
+                         0.35) %>%
+    add_constr_grp_inv_hinge(3,
+                             cvap_black,
+                             cvap,
+                             0.70)
+
 
 set.seed(2020)
-plans <- redist_smc(map, nsims = nsims, runs = 2L,
+plans <- redist_smc(map, nsims = nsims * 2, runs = 2L,
     counties = county, verbose = TRUE,
     constraints = constraints, init_particles = prep_mat,
-    pop_temper = 0.01)
+    pop_temper = pop_temp, seq_alpha = sa)
+
+plans <- match_numbers(plans, "cd_2020")
 
 plans <- plans %>% filter(draw != "cd_2020")
-plans <- plans %>% add_reference(ref_plan = map$cd_2020)
+
+plans <- plans %>%
+    mutate(district = as.numeric(district)) %>%
+    add_reference(ref_plan = as.numeric(map$cd_2020))
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
@@ -216,6 +303,8 @@ cli_process_start("Computing summary statistics for {.pkg TX_cd_2020}")
 
 plans <- add_summary_stats(plans, map) %>%
     mutate(total_cvap = tally_var(map, cvap), .after=total_vap)
+
+summary(plans)
 
 # cvap columns
 cvap_cols = names(map)[tidyselect::eval_select(starts_with("cvap_"), map)]
