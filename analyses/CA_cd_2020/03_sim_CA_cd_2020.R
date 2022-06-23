@@ -22,7 +22,7 @@ map_south$boundary <- map_south$tract %in% seam_south
 
 cons_south <- redist_constr(map_south) %>%
     add_constr_grp_hinge(
-        strength = 30,
+        strength = 15,
         group_pop = vap_hisp,
         total_pop = vap
     ) %>%
@@ -32,10 +32,16 @@ cons_south <- redist_constr(map_south) %>%
             as.numeric(!any(plan[map_south$boundary] == 0))
         }
     )
-set.seed(1)
+
+
+set.seed(2020)
+
 plans_south <- redist_smc(
-    map_south, nsims = 5e3, counties = pseudo_county,
-    constraints = cons_south, n_steps = 27
+    map_south,
+    nsims = 5e3, runs = 2L, ncores = 8,
+    counties = pseudo_county,
+    constraints = cons_south,
+    n_steps = 27
 )
 
 # simulate large bay area ----
@@ -91,10 +97,14 @@ cons_bay <- redist_constr(map_bay) %>%
             as.numeric(!any(plan[map_bay$boundary] == 0))
         }
     )
-set.seed(1)
+set.seed(2020)
+
 plans_bay <- redist_smc(
-    map_bay, nsims = 5e3, counties = pseudo_county,
-    constraints = cons_bay, n_steps = 15
+    map_bay,
+    nsims = 5e3, runs = 2L, ncores = 8,
+    counties = pseudo_county,
+    constraints = cons_bay,
+    n_steps = 15
 )
 
 
@@ -113,15 +123,22 @@ init <- prep_particles(
     ),
     uid = uid,
     dist_keep = keep,
-    nsims = 5e3
+    nsims = 5e3 * 2
 )
 
 
-set.seed(1)
-plans <- redist_smc(map, nsims = 5e3, counties = county,
-    init_particles = init)
+set.seed(2020)
+
+plans <- redist_smc(
+    map,
+    nsims = 1e4, runs = 2L, ncores = 8,
+    counties = county,
+    init_particles = init
+    )
 
 attr(plans, "prec_pop") <- map$pop
+
+plans <- match_numbers(plans, 'cd_2020')
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
