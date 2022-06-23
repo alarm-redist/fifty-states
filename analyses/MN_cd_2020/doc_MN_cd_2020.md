@@ -25,6 +25,6 @@ Data for Minnesota's 2020 congressional district map comes from the Minnesota Le
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Minnesota.
+We sample 5,000 districting plans for Minnesota across two independent runs of the SMC algorithm.
 We use a pseudo-county constraint to limit the county and municipality (i.e., city and township) splits.
 Municipality lines are used in Anoka County, Dakota County, Hennepin County, and Ramsey County, which are all counties with populations larger than 40% the target population for a district.

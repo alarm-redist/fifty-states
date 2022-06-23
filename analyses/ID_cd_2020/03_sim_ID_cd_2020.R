@@ -6,7 +6,11 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg ID_cd_2020}")
 
-plans <- redist_smc(map, nsims = 5e3, counties = county)
+set.seed(2020)
+
+plans <- redist_smc(map, nsims = 2500, runs = 2L, counties = county)
+
+plans <- match_numbers(plans, "cd_2020")
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")

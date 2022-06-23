@@ -56,7 +56,7 @@ if (!file.exists(here(shp_path))) {
 
     # add the enacted plan
     baf_20 <- readxl::read_xlsx(path_enacted) %>%
-        rename(BLOCKID=BLOCK)
+        rename(BLOCKID = BLOCK)
     d_cd <- make_from_baf("OH", baf_20, "VTD") %>%
         transmute(GEOID = paste0(censable::match_fips("OH"), vtd),
             cd_2020 = as.integer(districtid))

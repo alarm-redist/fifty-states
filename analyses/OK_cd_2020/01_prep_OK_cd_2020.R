@@ -20,11 +20,10 @@ cli_process_start("Downloading files for {.pkg OK_cd_2020}")
 path_data <- download_redistricting_file("OK", "data-raw/OK")
 
 # https://oksenate.gov/redistricting
-path_enacted <- here("data-raw", "OK", "Congress Final 102621.shp")
+path_enacted <- here("data-raw", "OK", "ok.geojson")
 if (!file.exists(path_enacted)) {
-    url <- "https://oksenategov-my.sharepoint.com/personal/website_oksenate_gov/_layouts/15/download.aspx?UniqueId=1860110b%2D0561%2D4a92%2D8a9b%2Db2bebf6767f6"
-    download(url, paste0(dirname(path_enacted), "/ok.zip"))
-    unzip(paste0(dirname(path_enacted), "/ok.zip"), exdir = dirname(path_enacted))
+    url <- "https://redistricting.lls.edu/wp-content/uploads/ok_2020_congress_2021-11-22_2031-06-30.json"
+    download(url, path_enacted)
 }
 
 cli_process_done()
@@ -54,14 +53,13 @@ if (!file.exists(here(shp_path))) {
         relocate(muni, county_muni, cd_2010, .after = county)
 
     dists <- read_sf(path_enacted)
-    ok_shp$cd_2020 <- as.integer(dists$DISTRICT)[geo_match(from = ok_shp, to = dists, method = "area")]
-
+    ok_shp$cd_2020 <- as.integer(dists$District)[geo_match(from = ok_shp, to = dists, method = "area")]
 
     ok_shp <- ok_shp %>%
         mutate(across(contains(c("_16", "_18", "_20", "nrv", "ndv")), tidyr::replace_na, 0))
 
     # Create perimeters in case shapes are simplified
-    redist.prep.polsbypopper(shp = ok_shp,
+    redistmetrics::prep_perims(shp = ok_shp,
         perim_path = here(perim_path)) %>%
         invisible()
 

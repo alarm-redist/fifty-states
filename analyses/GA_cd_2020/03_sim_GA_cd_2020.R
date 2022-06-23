@@ -7,9 +7,17 @@
 cli_process_start("Running simulations for {.pkg GA_cd_2020}")
 
 constr <- redist_constr(map) %>%
-    add_constr_grp_hinge(20, vap_black, vap, tgts_group = 0.55)
+    add_constr_grp_hinge(20, vap_black, vap, 0.52) %>%
+    add_constr_grp_hinge(-20, vap_black, vap, 0.45) %>%
+    add_constr_grp_inv_hinge(10, vap_black, vap, 0.62)
 
-plans <- redist_smc(map, nsims = 5e3, counties = county, constraints = constr)
+set.seed(2020)
+plans <- redist_smc(map, nsims = 1e4, runs = 2L, counties = county, constraints = constr,
+                    pop_temper = 0.01) %>%
+    group_by(chain) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>%
+    ungroup()
+plans <- match_numbers(plans, "cd_2020")
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
@@ -22,6 +30,8 @@ cli_process_done()
 cli_process_start("Computing summary statistics for {.pkg GA_cd_2020}")
 
 plans <- add_summary_stats(plans, map)
+
+summary(plans)
 
 # Output the summary statistics. Do not edit this path.
 save_summary_stats(plans, "data-out/GA_2020/GA_cd_2020_stats.csv")
