@@ -17,7 +17,7 @@ The House guidelines state that if the criteria come into conflict, federal law 
 We do not adhere to all criteria in the guidelines. We include the following constraints:
 
 1. We enforce a maximum population deviation of 0.5%.
-1. We impose a hinge constraint on the Black Voting Age Population so that it encourages district BVAP of above 49 percent. This aims to ensure that Black voters can elect their candidate of choice in districts with high BVAP.
+1. We impose a hinge constraint on the Black Voting Age Population so that it encourages district BVAP of above 40%. Districts with BVAP of 30% or less are not penalized as much. Together, these aim to ensure that Black voters can elect their candidate of choice in districts with high BVAP.
 1. We impose a municipality-split constraint to lower the number of municipality splits.
 
 ## Data Sources
@@ -29,5 +29,5 @@ We take municipalities and concatenate them with counties in order to apply a co
 
 
 ## Simulation Notes
-We sample 20,000 districting plans across two independent runs of the SMC algorithm, and then thin the sample down to 5,000 plans. We set the population tempering at 0.05 to avoid bottlenecks.
-More plans simulations than usual were necessary to improve the convergence of the SMC.
+We sample 6,000 districting plans across two independent runs of the SMC algorithm. We set the population tempering at 0.05 to avoid bottlenecks. We then remove all plans that do not contain any district that has both a BVAP of over 30% and an average voteshare that is more Democratic than Republican. This remove occurs after verifying that such plans comprise less than 1% of the 6,000 plans. We then thin the sample down to exactly 5,000 plans. 
+
