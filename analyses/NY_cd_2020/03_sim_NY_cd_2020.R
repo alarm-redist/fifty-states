@@ -10,8 +10,8 @@ set.seed(2020)
 
 plans <- redist_smc(
     map,
-    nsims = 1e4, runs = 2L, ncores = 8,
-    seq_alpha = 0.95, counties = pseudo_county, pop_temper = 0.03
+    nsims = 2e4, runs = 2L, ncores = 4, verbose = TRUE,
+    seq_alpha = 0.95, counties = pseudo_county, pop_temper = 0.001
 )
 
 plans <- match_numbers(plans, "cd_2020")
