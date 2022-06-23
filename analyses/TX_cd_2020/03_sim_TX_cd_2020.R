@@ -48,13 +48,13 @@ constraints <- redist_constr(m1) %>%
         tgts_group = c(0.45)
     ) %>%
     add_constr_grp_hinge(-3,
-                         cvap_hisp,
-                         cvap,
-                         0.35) %>%
+        cvap_hisp,
+        cvap,
+        0.35) %>%
     add_constr_grp_inv_hinge(3,
-                             cvap_hisp,
-                             cvap,
-                             0.70) %>%
+        cvap_hisp,
+        cvap,
+        0.70) %>%
     #########################################################
     # BLACK
     add_constr_grp_hinge(
@@ -76,10 +76,10 @@ houston_plans <- redist_smc(m1, counties = county,
 
 houston_plans <- houston_plans %>%
     mutate(hvap = group_frac(m1, cvap_hisp, cvap),
-            bvap = group_frac(m1, cvap_black, cvap),
-            dem16 = group_frac(m1, adv_16, arv_16 + adv_16),
-            dem18 = group_frac(m1, adv_18, arv_18 + adv_18),
-            dem20 = group_frac(m1, adv_20, arv_20 + adv_20))
+        bvap = group_frac(m1, cvap_black, cvap),
+        dem16 = group_frac(m1, adv_16, arv_16 + adv_16),
+        dem18 = group_frac(m1, adv_18, arv_18 + adv_18),
+        dem20 = group_frac(m1, adv_20, arv_20 + adv_20))
 
 summary(houston_plans)
 
@@ -119,14 +119,14 @@ constraints <- redist_constr(m2) %>%
         total_pop = cvap,
         tgts_group = c(0.45)
     ) %>%
-        add_constr_grp_hinge(-3,
-                             cvap_hisp,
-                             cvap,
-                             0.35) %>%
-        add_constr_grp_inv_hinge(3,
-                                 cvap_hisp,
-                                 cvap,
-                                 0.70) %>%
+    add_constr_grp_hinge(-3,
+        cvap_hisp,
+        cvap,
+        0.35) %>%
+    add_constr_grp_inv_hinge(3,
+        cvap_hisp,
+        cvap,
+        0.70) %>%
     #########################################################
     add_constr_custom(strength = 10, function(plan, distr) {
         ifelse(any(plan[border_idxs] == 0), 0, 1)
@@ -141,10 +141,10 @@ austin_plans <- redist_smc(m2, counties = county,
 
 austin_plans <- austin_plans %>%
     mutate(hvap = group_frac(m2, cvap_hisp, cvap),
-           bvap = group_frac(m2, cvap_black, cvap),
-           dem16 = group_frac(m2, adv_16, arv_16 + adv_16),
-           dem18 = group_frac(m2, adv_18, arv_18 + adv_18),
-           dem20 = group_frac(m2, adv_20, arv_20 + adv_20))
+        bvap = group_frac(m2, cvap_black, cvap),
+        dem16 = group_frac(m2, adv_16, arv_16 + adv_16),
+        dem18 = group_frac(m2, adv_18, arv_18 + adv_18),
+        dem20 = group_frac(m2, adv_20, arv_20 + adv_20))
 
 summary(austin_plans)
 #########################################################################
@@ -181,14 +181,14 @@ constraints <- redist_constr(m3) %>%
         total_pop = cvap,
         tgts_group = c(0.45)
     ) %>%
-        add_constr_grp_hinge(-3,
-                             cvap_hisp,
-                             cvap,
-                             0.35) %>%
-        add_constr_grp_inv_hinge(3,
-                                 cvap_hisp,
-                                 cvap,
-                                 0.70) %>%
+    add_constr_grp_hinge(-3,
+        cvap_hisp,
+        cvap,
+        0.35) %>%
+    add_constr_grp_inv_hinge(3,
+        cvap_hisp,
+        cvap,
+        0.70) %>%
 
     add_constr_grp_hinge(
         5,
@@ -208,10 +208,10 @@ dallas_plans <- redist_smc(m3, counties = county,
 
 dallas_plans <- dallas_plans %>%
     mutate(hvap = group_frac(m3, cvap_hisp, cvap),
-           bvap = group_frac(m3, cvap_black, cvap),
-           dem16 = group_frac(m3, adv_16, arv_16 + adv_16),
-           dem18 = group_frac(m3, adv_18, arv_18 + adv_18),
-           dem20 = group_frac(m3, adv_20, arv_20 + adv_20))
+        bvap = group_frac(m3, cvap_black, cvap),
+        dem16 = group_frac(m3, adv_16, arv_16 + adv_16),
+        dem18 = group_frac(m3, adv_18, arv_18 + adv_18),
+        dem20 = group_frac(m3, adv_20, arv_20 + adv_20))
 
 summary(dallas_plans)
 
@@ -227,7 +227,7 @@ tx_plan_list <- list(list(map = m1, plans = houston_plans),
     list(map = m3, plans = dallas_plans))
 
 prep_mat <- prep_particles(map = map, map_plan_list = tx_plan_list,
-    uid = row_id, dist_keep = dist_keep, nsims = nsims * 2)
+    uid = row_id, dist_keep = dist_keep, nsims = nsims*2)
 
 ## Check contiguity
 if (FALSE) {
@@ -253,14 +253,14 @@ constraints <- redist_constr(map) %>%
         total_pop = cvap,
         tgts_group = c(0.45)
     ) %>%
-        add_constr_grp_hinge(-3,
-                             cvap_hisp,
-                             cvap,
-                             0.35) %>%
-        add_constr_grp_inv_hinge(3,
-                                 cvap_hisp,
-                                 cvap,
-                                 0.70) %>%
+    add_constr_grp_hinge(-3,
+        cvap_hisp,
+        cvap,
+        0.35) %>%
+    add_constr_grp_inv_hinge(3,
+        cvap_hisp,
+        cvap,
+        0.70) %>%
     add_constr_grp_hinge(
         3,
         cvap_black,
@@ -268,17 +268,17 @@ constraints <- redist_constr(map) %>%
         tgts_group = c(0.45)
     ) %>%
     add_constr_grp_hinge(-3,
-                         cvap_black,
-                         cvap,
-                         0.35) %>%
+        cvap_black,
+        cvap,
+        0.35) %>%
     add_constr_grp_inv_hinge(3,
-                             cvap_black,
-                             cvap,
-                             0.70)
+        cvap_black,
+        cvap,
+        0.70)
 
 
 set.seed(2020)
-plans <- redist_smc(map, nsims = nsims * 2, runs = 2L,
+plans <- redist_smc(map, nsims = nsims*2, runs = 2L,
     counties = county, verbose = TRUE,
     constraints = constraints, init_particles = prep_mat,
     pop_temper = pop_temp, seq_alpha = sa)
@@ -302,12 +302,12 @@ cli_process_done()
 cli_process_start("Computing summary statistics for {.pkg TX_cd_2020}")
 
 plans <- add_summary_stats(plans, map) %>%
-    mutate(total_cvap = tally_var(map, cvap), .after=total_vap)
+    mutate(total_cvap = tally_var(map, cvap), .after = total_vap)
 
 summary(plans)
 
 # cvap columns
-cvap_cols = names(map)[tidyselect::eval_select(starts_with("cvap_"), map)]
+cvap_cols <- names(map)[tidyselect::eval_select(starts_with("cvap_"), map)]
 for (col in rev(cvap_cols)) {
     plans <- mutate(plans, {{ col }} := tally_var(map, map[[col]]), .after = vap_two)
 }
@@ -318,4 +318,3 @@ save_summary_stats(plans, "data-out/TX_2020/TX_cd_2020_stats.csv")
 cli_process_done()
 
 validate_analysis(plans, map)
-
