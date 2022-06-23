@@ -24,7 +24,7 @@ plans <- redist_plans(
     algorithm = "smc",
     map = map,
     wgt = get_plans_weights(plans_honolulu)[-1],
-    diagnostics = attr(plans, "diagnostics")
+    diagnostics = attr(plans_honolulu, "diagnostics")
 )
 
 cli_process_done()
@@ -33,7 +33,6 @@ cli_process_start("Saving {.cls redist_plans} object")
 plans <- plans %>%
     mutate(chain = rep(1:2, each = 5000), .after = draw) %>%
     add_reference(ref_plan = map$cd_2020, "cd_2020")
-
 
 # Output the redist_map object. Do not edit this path.
 write_rds(plans, here("data-out/HI_2020/HI_cd_2020_plans.rds"), compress = "xz")
