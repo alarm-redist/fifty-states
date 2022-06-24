@@ -291,6 +291,11 @@ plans <- plans %>%
     mutate(district = as.numeric(district)) %>%
     add_reference(ref_plan = as.numeric(map$cd_2020))
 
+plans <- plans %>%
+    group_by(chain) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
+    ungroup()
+
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
 
@@ -303,13 +308,6 @@ cli_process_start("Computing summary statistics for {.pkg TX_cd_2020}")
 
 plans <- add_summary_stats(plans, map) %>%
     mutate(total_cvap = tally_var(map, cvap), .after = total_vap)
-
-summary(plans)
-
-plans <- plans %>%
-    group_by(chain) %>%
-    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
-    ungroup()
 
 summary(plans)
 
