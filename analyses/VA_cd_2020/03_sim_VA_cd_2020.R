@@ -31,11 +31,3 @@ summary(plans)
 save_summary_stats(plans, "data-out/VA_2020/VA_cd_2020_stats.csv")
 
 cli_process_done()
-
-# Extra validation plots for custom constraints -----
-if (interactive()) {
-    library(ggplot2)
-    library(patchwork)
-
-    validate_analysis(plans, map)
-}
