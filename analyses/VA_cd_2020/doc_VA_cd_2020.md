@@ -19,5 +19,5 @@ Data for Virginia comes from the ALARM Project's [2020 Redistricting Data Files]
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Virginia.
-No special techniques were needed to produce the sample.
+We sample 10,000 districting plans for Virginia across two independent runs of the SMC algorithm, and then thin the sample down to 5,000 plans.
+To balance county and municipality splits, we create pseudocounties for use in the county constraint, which leads to fewer municipality splits than using a county constraint. Note that Fairfax County must be split due to its large population, although within the county, we avoid splitting any municipality.
