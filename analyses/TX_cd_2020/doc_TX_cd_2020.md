@@ -13,10 +13,10 @@ Data for Texas comes from the ALARM Project's [2020 Redistricting Data Files](ht
 ## Pre-processing Notes
 We estimate CVAP populations with the [`cvap`](https://github.com/christopherkenny/cvap)
 R package.
-We also pre-process the map to split it into clusters for simulation, which has a slight effect on the types of redistrict plans that will be sampled.
+We also pre-process the map to split it into clusters for simulation, which has a slight effect on the types of district plans that will be sampled.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Texas.
+We sample 50,000 districting plans for Texas across two independent runs of the SMC algorithm, then filter down to 5,000 total plans.
 Due to the size and complexity of Texas, we split the simulations into
 multiple steps.
 
@@ -43,13 +43,13 @@ Because each cluster will have leftover population, we apply an additional const
 incentivizes leaving any unassigned areas on the edge of these clusters to
 avoid discontiguities.
 
-In each cluster, we apply hinge Gibbs constraints of strength 20 to encourage
+In each cluster, we apply hinge Gibbs constraints of strength 3 to encourage
 the formation of Hispanic CVAP opportunity districts.
-In Houston, we also apply a hinge Gibbs constraint of strength 10 to encourage
+In Houston, we also apply a hinge Gibbs constraint of strength 3 to encourage
 the formation of Black CVAP opportunity districts.
+These districts nudge the formation of opportunity districts are above 35%, and penalize districts with minority populations above 70%.
 
 ### 2. Combination procedure
 Then, these partial map simulations are combined to run statewide simulations.
 We again apply Gibbs hing constraints to encourage the formation of minority
-opportunity districts, though with weaker strength since most of these
-districts are found in our clusters.
+opportunity districts.

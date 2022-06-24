@@ -24,8 +24,10 @@ Data for New York comes from the ALARM Project's [2020 Redistricting Data Files]
 Islands are connected to their nearest point on land.
 
 ## Simulation Notes
-We sample 5,000 districting plans for New York.
-we apply a pseudo-county algorithmic constraint, which encourages keeping together counties in less populated counties and municipalities in the largest counties.
+We sample 40,000 districting plans for New York across 2 independent runs of the SMC algorithm.
+We then thin the sample to down to 5,000 plans.
+We apply a pseudo-county algorithmic constraint, which encourages keeping together counties in less populated counties and municipalities in the largest counties.
 The boundary here is set at the size of one district, so Bronx County, Erie County, Kings County, Nassau County, New York County, Queens County, Suffolk County, and Westchester County use municipalities over counties.
 The core constraint here is unclear, as the number of districts have changed, and because it is crossed with preserving other communities.
 As such, the pseudo-county constraint should weakly preserve the cores, as the prior map generally held together counties and municipalities.
+A small population tempering value was used to avoid losing diversity at the final step based on initial runs.

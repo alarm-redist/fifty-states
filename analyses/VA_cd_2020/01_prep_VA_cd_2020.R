@@ -19,7 +19,11 @@ cli_process_start("Downloading files for {.pkg VA_cd_2020}")
 
 path_data <- download_redistricting_file("VA", "data-raw/VA")
 
-# 2020 enacted map manually downloaded from SCV Box folder
+url <- "https://redistrictingdatahub.org/download/?datasetid=33553&document=%2Fweb_ready_stage%2Flegislative%2F2021_adopted_plans%2Fva_cong_adopted_2021.zip"
+path_enacted <- "data-raw/VA/VA_enacted.zip"
+download(url, here(path_enacted))
+unzip(here(path_enacted), exdir = here(dirname(path_enacted), "VA_enacted"))
+file.remove(path_enacted)
 path_enacted <- "data-raw/VA/VA_enacted/SCV FINAL CD.shp"
 
 cli_process_done()
@@ -56,7 +60,7 @@ if (!file.exists(here(shp_path))) {
         .after = cd_2010)
 
     # Create perimeters in case shapes are simplified
-    redist.prep.polsbypopper(shp = va_shp,
+    redistmetrics::prep_perims(shp = va_shp,
         perim_path = here(perim_path)) %>%
         invisible()
 
