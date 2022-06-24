@@ -16,7 +16,7 @@ R package.
 We also pre-process the map to split it into clusters for simulation, which has a slight effect on the types of district plans that will be sampled.
 
 ## Simulation Notes
-We sample 50,000 districting plans for Texas across two independent runs of the SMC algorithm.
+We sample 50,000 districting plans for Texas across two independent runs of the SMC algorithm, then filter down to 5,000 total plans.
 Due to the size and complexity of Texas, we split the simulations into
 multiple steps.
 
