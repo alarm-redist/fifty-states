@@ -17,7 +17,8 @@ map <- map %>%
         map,
         counties = county,
         munis = muni_name,
-        pop_muni = get_target(map)))
+        pop_muni = get_target(map))) %>%
+    select(-matches("a(d|r)v_18")) # drop all-NA columns
 
 # Add an analysis name attribute
 attr(map, "analysis_name") <- "TN_2020"
