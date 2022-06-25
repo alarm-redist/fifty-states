@@ -55,11 +55,10 @@ if (!file.exists(here(shp_path))) {
 
     # Add enacted ----
     dists <- read_sf(path_shp)
-    nv_shp$cd_2020 <- as.numeric(dists$DISTRICT)[geo_match(from = nv_shp, to = dists, method = "area")]
-
+    nv_shp$cd_2020 <- as.integer(dists$DISTRICT)[geo_match(from = nv_shp, to = dists, method = "area")]
 
     # Create perimeters in case shapes are simplified
-    redist.prep.polsbypopper(shp = nv_shp,
+    redistmetrics::prep_perims(shp = nv_shp,
         perim_path = here(perim_path)) %>%
         invisible()
 

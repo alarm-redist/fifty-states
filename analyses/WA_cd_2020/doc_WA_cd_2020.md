@@ -24,6 +24,6 @@ As described above, the adjacency graph was modified by hand to reflect Washingt
 The full list of these changes can be found in the `01_prep_WA_cd_2020.R` file.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Washington.
+We sample 16,000 districting plans for Washington across two runs of the SMC algorithm, then filter down to 5,000 total plans.
 To balance county and municipality splits, we create pseudocounties for use in the county constraint. These are counties, outside of King County, Pierce County, and Snohomish County. Within King County, Pierce County, and Snohomish County, each municipality is its own pseudocounty as well. King County, Pierce County, and Snohomish County were chosen since they are necessarily split by congressional districts.
 To comply with the federal VRA and to respect communities of interest, we add a weak VRA constraint targeting one majority-minority district (currently WA-09).

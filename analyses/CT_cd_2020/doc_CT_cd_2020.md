@@ -15,7 +15,7 @@ Data for Connecticut's 2020 congressional district map comes from [Redistricting
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Connecticut.
+We sample 5,000 districting plans for Connecticut across two independent runs of the SMC algorithm.
 We use a pseudo-county constraint to limit the county and municipality splits.
-Municipality lines are used in Fairfield County, Hartford County, and New Haven County, which are all countied with populations larger than 40% the target population for a district.
+Municipality lines are used in Fairfield County, Hartford County, and New Haven County, which are all counties with populations larger than 40% the target population for a district.
 No special techniques were needed to produce the sample.

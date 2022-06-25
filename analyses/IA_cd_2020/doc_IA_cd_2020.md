@@ -23,5 +23,5 @@ Data for Iowa comes from the ALARM Project's [2020 Redistricting Data Files](htt
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Iowa.
-As noted above, we set `compactness=1.1`. This also required setting `seq_alpha=0.5` to ensure maximum efficiency across all iterations of the algorithm.
+We sample 5,000 districting plans for Iowa across two independent runs of the SMC algorithm.
+As noted above, we set `compactness=1.1`. 

@@ -1,6 +1,6 @@
 ###############################################################################
-# Download and prepare data for `KY_cd_2020` analysis
-# © ALARM Project, February 2022
+# Download and prepare data for `SC_cd_2020` analysis
+# © ALARM Project, April 2022
 ###############################################################################
 
 suppressMessages({
@@ -15,72 +15,73 @@ suppressMessages({
 })
 
 # Download necessary files for analysis -----
-cli_process_start("Downloading files for {.pkg KY_cd_2020}")
+cli_process_start("Downloading files for {.pkg SC_cd_2020}")
 
-path_data <- download_redistricting_file("KY", "data-raw/KY")
+path_data <- download_redistricting_file("SC", "data-raw/SC")
 
-# Download the enacted plan.
-url <- "https://legislature.ky.gov/Public%20Services/GIS%20contents/C1278B01%20%2822RS-SB3%29.zip"
-path_enacted <- "data-raw/KY/KY_enacted.zip"
+# download the enacted plan.
+url <- "https://redistricting.lls.edu/wp-content/uploads/sc_2020_congress_2022-01-27_2031-06-30.zip"
+path_enacted <- "data-raw/SC/SC_enacted.zip"
 download(url, here(path_enacted))
-unzip(here(path_enacted), exdir = here(dirname(path_enacted), "KY_enacted"))
+unzip(here(path_enacted), exdir = here(dirname(path_enacted), "SC_enacted"))
 file.remove(path_enacted)
-path_enacted <- "data-raw/KY/KY_enacted/C1278B01 (22RS-SB3).shp"
+path_enacted <- "data-raw/SC/SC_enacted/sc_2020_congress_2022-01-27_2031-06-30/sc_2020_congress_2022-01-27_2031-06-30.shp"
+
 
 cli_process_done()
 
 # Compile raw data into a final shapefile for analysis -----
-shp_path <- "data-out/KY_2020/shp_vtd.rds"
-perim_path <- "data-out/KY_2020/perim.rds"
+shp_path <- "data-out/SC_2020/shp_vtd.rds"
+perim_path <- "data-out/SC_2020/perim.rds"
 
 if (!file.exists(here(shp_path))) {
-    cli_process_start("Preparing {.strong KY} shapefile")
+    cli_process_start("Preparing {.strong SC} shapefile")
     # read in redistricting data
-    ky_shp <- read_csv(here(path_data), col_types = cols(GEOID20 = "c")) %>%
+    sc_shp <- read_csv(here(path_data), col_types = cols(GEOID20 = "c")) %>%
         join_vtd_shapefile() %>%
-        st_transform(EPSG$KY)  %>%
+        st_transform(EPSG$SC)  %>%
         rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
 
     # add municipalities
-    d_muni <- make_from_baf("KY", "INCPLACE_CDP", "VTD")  %>%
-        mutate(GEOID = paste0(censable::match_fips("KY"), vtd)) %>%
+    d_muni <- make_from_baf("SC", "INCPLACE_CDP", "VTD")  %>%
+        mutate(GEOID = paste0(censable::match_fips("SC"), vtd)) %>%
         select(-vtd)
-    d_cd <- make_from_baf("KY", "CD", "VTD")  %>%
-        transmute(GEOID = paste0(censable::match_fips("KY"), vtd),
+    d_cd <- make_from_baf("SC", "CD", "VTD")  %>%
+        transmute(GEOID = paste0(censable::match_fips("SC"), vtd),
             cd_2010 = as.integer(cd))
-    ky_shp <- left_join(ky_shp, d_muni, by = "GEOID") %>%
+    sc_shp <- left_join(sc_shp, d_muni, by = "GEOID") %>%
         left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2010, .after = county)
 
     # add the enacted plan
     cd_shp <- st_read(here(path_enacted))
-    ky_shp <- ky_shp %>%
+    sc_shp <- sc_shp %>%
         mutate(cd_2020 = as.integer(cd_shp$DISTRICT)[
-            geo_match(ky_shp, cd_shp, method = "area")],
+            geo_match(sc_shp, cd_shp, method = "area")],
         .after = cd_2010)
 
     # Create perimeters in case shapes are simplified
-    redistmetrics::prep_perims(shp = ky_shp,
+    redist.prep.polsbypopper(shp = sc_shp,
         perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
-        ky_shp <- rmapshaper::ms_simplify(ky_shp, keep = 0.05,
+        sc_shp <- rmapshaper::ms_simplify(sc_shp, keep = 0.05,
             keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 
     # create adjacency graph
-    ky_shp$adj <- redist.adjacency(ky_shp)
+    sc_shp$adj <- redist.adjacency(sc_shp)
 
-    ky_shp <- ky_shp %>%
+    sc_shp <- sc_shp %>%
         fix_geo_assignment(muni)
 
-    write_rds(ky_shp, here(shp_path), compress = "gz")
+    write_rds(sc_shp, here(shp_path), compress = "gz")
     cli_process_done()
 } else {
-    ky_shp <- read_rds(here(shp_path))
-    cli_alert_success("Loaded {.strong KY} shapefile")
+    sc_shp <- read_rds(here(shp_path))
+    cli_alert_success("Loaded {.strong SC} shapefile")
 }
