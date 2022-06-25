@@ -17,6 +17,6 @@ Data for Illinois comes from the ALARM Project's [2020 Redistricting Data Files]
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 20,000 districting plans for Illinois across two independent runs of the SMC algorithm, and then thin the sample down to 5,000 plans.
+We sample 60,000 districting plans for Illinois across two independent runs of the SMC algorithm, and then thin the sample down to 5,000 plans.
 To balance county and municipality splits, we create pseudocounties for use in the county constraint, which leads to fewer municipality splits than using a county constraint. These are counties outside of Cook County and DuPage County. Within Cook County and DuPage County, each municipality is its own pseudocounty as well. Cook County and DuPage County were chosen since they are necessarily split by congressional districts.
-To comply with the federal VRA and to respect communities of interest, we add hinge constraints of strength 20 targeting one majority-Black district (IL-01) and one majority-Hispanic district (IL-04).
+To comply with the federal VRA and to respect communities of interest, we add hinge Gibbs constraints of strength 20 targeting one majority-Black district (IL-01) and one majority-Hispanic district (IL-04), focusing on districts with relatively higher proportions of Black and Hispanic voters. We also apply a hinge Gibbs constraint of strength 10 to discourage packing of Black voters.
