@@ -75,7 +75,7 @@ if (!file.exists(here(shp_path))) {
     # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         ``state``_shp <- rmapshaper::ms_simplify(``state``_shp, keep = 0.05,
-                                         keep_shapes = TRUE) %>%
+                                                 keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 
@@ -93,4 +93,3 @@ if (!file.exists(here(shp_path))) {
     ``state``_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong ``STATE``} shapefile")
 }
-
