@@ -22,12 +22,6 @@ path_data <- download_redistricting_file("WA", "data-raw/WA", year = 2010)
 # download the enacted plan.
 path_enacted <- "data-raw/WA/wa_2020_congress_2022-02-08_2031-06-30/CONG_AMEND_FINAL.shp"
 
-url <- "https://data.wsdot.wa.gov/geospatial/DOT_TDO/FerryRoutes/FerryRoutes.zip"
-path_ferries <- "data-raw/WA/WA_ferries.zip"
-download(url, path_ferries)
-unzip(here(path_ferries), exdir = here(dirname(path_ferries), "WA_ferries"))
-file.remove(path_ferries)
-path_ferries <- "data-raw/WA/WA_ferries/FerryRoutes/FerryRoutes.shp"
 
 cli_process_done()
 
