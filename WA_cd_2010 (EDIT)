@@ -33,11 +33,12 @@ perim_path <- "data-out/WA_2010/perim.rds"
 if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong WA} shapefile")
     # read in redistricting data
-    st_make_valid(wa_shp)
 
     wa_shp <- read_csv(here(path_data), col_types = cols(GEOID20 = "c")) %>% join_vtd_shapefile(year = 2010) %>%
         st_transform(EPSG$WA)  %>%
         rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
+
+    st_make_valid(wa_shp)
 
     # add municipalities
     d_muni <- make_from_baf("WA", "INCPLACE_CDP", "VTD")  %>%
