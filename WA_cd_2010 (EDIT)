@@ -1,0 +1,96 @@
+###############################################################################
+# Download and prepare data for `WA_cd_2010` analysis
+# © ALARM Project, June 2022
+###############################################################################
+
+suppressMessages({
+    library(dplyr)
+    library(readr)
+    library(sf)
+    library(redist)
+    library(geomander)
+    library(cli)
+    library(here)
+    devtools::load_all() # load utilities
+})
+
+# Download necessary files for analysis -----
+cli_process_start("Downloading files for {.pkg WA_cd_2010}")
+
+path_data <- download_redistricting_file("WA", "data-raw/WA", year = 2010)
+
+# download the enacted plan.
+path_enacted <- "data-raw/WA/wa_2020_congress_2022-02-08_2031-06-30/CONG_AMEND_FINAL.shp"
+
+url <- "https://data.wsdot.wa.gov/geospatial/DOT_TDO/FerryRoutes/FerryRoutes.zip"
+path_ferries <- "data-raw/WA/WA_ferries.zip"
+download(url, path_ferries)
+unzip(here(path_ferries), exdir = here(dirname(path_ferries), "WA_ferries"))
+file.remove(path_ferries)
+path_ferries <- "data-raw/WA/WA_ferries/FerryRoutes/FerryRoutes.shp"
+
+cli_process_done()
+
+# Compile raw data into a final shapefile for analysis -----
+shp_path <- "data-out/WA_2010/shp_vtd.rds"
+perim_path <- "data-out/WA_2010/perim.rds"
+
+
+if (!file.exists(here(shp_path))) {
+    cli_process_start("Preparing {.strong WA} shapefile")
+    # read in redistricting data
+    st_make_valid(wa_shp)
+
+    wa_shp <- read_csv(here(path_data), col_types = cols(GEOID20 = "c")) %>% join_vtd_shapefile(year = 2010) %>%
+        st_transform(EPSG$WA)  %>%
+        rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
+
+    # add municipalities
+    d_muni <- make_from_baf("WA", "INCPLACE_CDP", "VTD")  %>%
+        mutate(GEOID = paste0(censable::match_fips("WA"), vtd)) %>%
+        select(-vtd)
+    d_cd <- make_from_baf("WA", "CD", "VTD")  %>%
+        transmute(GEOID = paste0(censable::match_fips("WA"), vtd),
+                  cd_2010 = as.integer(cd))
+
+    wa_shp <- left_join(wa_shp, d_muni, by = "GEOID") %>%
+        left_join(d_cd, by = "GEOID") %>%
+        mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
+        relocate(muni, county_muni, cd_2010, .after = county)
+
+    # add the enacted plan
+    cd_shp <- st_read(here(path_enacted))
+    wa_shp <- wa_shp %>%
+        mutate(cd_2010 = as.integer(cd_shp$DISTRICT)[
+            geo_match(wa_shp, cd_shp, method = "area")],
+            .after = cd_2010)
+
+
+
+    # Create perimeters in case shapes are simplified
+    redistmetrics::prep_perims(wa_shp, epsg = 3857, perim_path, ncores = 1) %>%
+        invisible()
+
+    # simplifies geometry for faster processing, plotting, and smaller shapefiles
+    # TODO feel free to delete if this dependency isn't available
+    if (requireNamespace("rmapshaper", quietly = TRUE)) {
+        wa_shp <- rmapshaper::ms_simplify(wa_shp, keep = 0.05,
+                                         keep_shapes = TRUE) %>%
+            suppressWarnings()
+    }
+
+    # create adjacency graph
+    sf::sf_use_s2(FALSE)
+    wa_shp$adj <- redist.adjacency(wa_shp)
+    # TODO any custom adjacency graph edits here
+
+    wa_shp <- wa_shp %>%
+        fix_geo_assignment(muni)
+
+    write_rds(wa_shp, here(shp_path), compress = "gz")
+    cli_process_done()
+} else {
+    wa_shp <- read_rds(here(shp_path))
+    cli_alert_success("Loaded {.strong WA} shapefile")
+}
+
