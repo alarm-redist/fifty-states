@@ -19,7 +19,7 @@ plans <- match_numbers(plans, "cd_2020")
 # Subset plans that are not performing
 n_perf <- plans %>%
     mutate(bvap = group_frac(map, vap_black, vap),
-           ndshare = group_frac(map, ndv, nrv + ndv)) %>%
+        ndshare = group_frac(map, ndv, nrv + ndv)) %>%
     group_by(draw) %>%
     summarize(n_blk_perf = sum(bvap > 0.3 & ndshare > 0.5))
 
