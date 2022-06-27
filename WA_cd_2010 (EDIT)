@@ -11,6 +11,7 @@ suppressMessages({
     library(geomander)
     library(cli)
     library(here)
+    library(PL94171)
     devtools::load_all() # load utilities
 })
 
@@ -20,7 +21,7 @@ cli_process_start("Downloading files for {.pkg WA_cd_2010}")
 path_data <- download_redistricting_file("WA", "data-raw/WA", year = 2010)
 
 # download the enacted plan.
-path_enacted <- "data-raw/WA/wa_2020_congress_2022-02-08_2031-06-30/CONG_AMEND_FINAL.shp"
+path_enacted <- "data-raw/WA/wa_2010_congress_2012-02-07_2021-12-31(1)/CONG_AMEND_FINAL.shp"
 
 
 cli_process_done()
