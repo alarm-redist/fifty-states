@@ -6,7 +6,10 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg MN_cd_2020}")
 
-plans <- redist_smc(map, nsims = 5e3, counties = pseudo_county)
+set.seed(2020)
+
+plans <- redist_smc(map, nsims = 2500, runs = 2L, counties = pseudo_county)
+plans <- match_numbers(plans, "cd_2020")
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
@@ -24,6 +27,3 @@ plans <- add_summary_stats(plans, map)
 save_summary_stats(plans, "data-out/MN_2020/MN_cd_2020_stats.csv")
 
 cli_process_done()
-
-
-validate_analysis(plans, map)

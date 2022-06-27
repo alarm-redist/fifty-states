@@ -15,5 +15,5 @@ Data for Arkansas' 2020 congressional district map comes from All About Redistri
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Arkansas.
+We sample 5,000 districting plans for Arkansas across two independent runs of the SMC algorithm.
 No special techniques were needed to produce the sample.

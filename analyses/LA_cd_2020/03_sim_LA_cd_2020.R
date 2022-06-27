@@ -7,21 +7,22 @@
 cli_process_start("Running simulations for {.pkg LA_cd_2020}")
 
 constr <- redist_constr(map_m) %>%
-    add_constr_grp_hinge(50, vap_black, vap, tgts_group = 0.55)
+    add_constr_grp_hinge(25, vap - vap_white, vap, 0.55) %>%
+    add_constr_grp_hinge(-25, vap - vap_white, vap, 0.46) %>%
+    add_constr_grp_inv_hinge(10, vap - vap_white, vap, 0.6)
 
-plans <- redist_smc(map_m, nsims = 6e3,
-    counties = pseudo_county, constraints = constr) %>%
-    pullback(map)
+set.seed(2020)
+plans <- redist_smc(map_m, nsims = 8e3,
+    runs = 2L,
+    counties = pseudo_county,
+    constraints = constr) %>%
+    pullback(map) %>%
+    group_by(chain) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
+    ungroup()
 attr(plans, "prec_pop") <- map$pop
 
-plans <- plans %>%
-    mutate(vap_minority = group_frac(map, vap - vap_white, vap)) %>%
-    group_by(draw) %>%
-    mutate(vap_minority = sum(vap_minority > 0.5)) %>%
-    ungroup() %>%
-    filter(vap_minority >= 1 | draw == "cd_2020") %>%
-    slice(1:(5001*attr(map, "ndists"))) %>%
-    select(-vap_minority)
+plans <- match_numbers(plans, "cd_2020")
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")

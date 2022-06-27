@@ -22,7 +22,6 @@ Data for Hawaii comes from the ALARM Project's [2020 Redistricting Data Files](h
 Islands are connecting in the adjacency graph, but this is not used for simulation purposes.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Hawaii.
+We sample 5,000 districting plans for Hawaii across 2 independent runs of the SMC algorithm.
 We use partial SMC to draw one district in the contiguous portion of Honolulu and assign the remainder to district 2.
 We use municipalities (or the county name if a tract is not assigned to a municipality) for the algorithmic constraint.
-

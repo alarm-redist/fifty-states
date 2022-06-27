@@ -20,7 +20,7 @@ Data for Montana comes from the ALARM Project's [2020 Redistricting Data Files](
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Montana.
+We sample 5,000 districting plans for Montana across two independent runs of the SMC algorithm.
 To balance county and municipality splits, we create pseudocounties for use in the county constraint.
 These are counties for all counties with a population under 50,000.
 Within counties larger than 50,000, municipalities are each their own pseudocounty as well.

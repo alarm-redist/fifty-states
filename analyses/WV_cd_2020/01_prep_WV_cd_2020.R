@@ -49,7 +49,7 @@ if (!file.exists(here(shp_path))) {
             pre_20_dem_bid = sum(votes_dem),
             .groups = "drop")  %>%
         mutate(ndv = pre_20_dem_bid, adv_20 = pre_20_dem_bid,
-            nrv = pre_20_rep_tru, arv_20 = pre_20_rep_tru, )
+            nrv = pre_20_rep_tru, arv_20 = pre_20_rep_tru)
 
     wv_shp <- censable::build_dec("county", "WV") %>%
         censable::breakdown_geoid() %>%
@@ -80,7 +80,7 @@ if (!file.exists(here(shp_path))) {
     )
 
     # Create perimeters in case shapes are simplified
-    redist.prep.polsbypopper(shp = wv_shp,
+    redistmetrics::prep_perims(shp = wv_shp,
         perim_path = here(perim_path)) %>%
         invisible()
 
@@ -93,6 +93,8 @@ if (!file.exists(here(shp_path))) {
 
     # create adjacency graph
     wv_shp$adj <- redist.adjacency(wv_shp)
+
+    wv_shp$state <- "WV"
 
     write_rds(wv_shp, here(shp_path), compress = "gz")
     cli_process_done()
