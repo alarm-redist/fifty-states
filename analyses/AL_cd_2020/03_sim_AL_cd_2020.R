@@ -7,8 +7,8 @@
 cli_process_start("Running simulations for {.pkg AL_cd_2020}")
 
 constr <- redist_constr(map) %>%
-    add_constr_grp_hinge(22, vap_black, vap, 0.42) %>%
-    add_constr_grp_hinge(-14, vap_black, vap, 0.30) %>%
+    add_constr_grp_hinge(21, vap_black, vap, 0.42) %>%
+    add_constr_grp_hinge(-15, vap_black, vap, 0.30) %>%
     add_constr_grp_inv_hinge(10, vap_black, vap, 0.45)
 
 set.seed(2020)
