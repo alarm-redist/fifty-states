@@ -13,9 +13,12 @@ cons <- redist_constr(map) %>%
         total_pop = vap
     )
 
-plans <- redist_smc(map, nsims = 5e3,
+set.seed(2020)
+plans <- redist_smc(map, nsims = 2.5e3,
+    runs = 2L,
     counties = sd_2020,
     constraints = cons)
+plans <- match_numbers(plans, "cd_2020")
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")

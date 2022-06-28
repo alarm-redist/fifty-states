@@ -20,5 +20,5 @@ Data for Nevada comes from the ALARM Project's [2020 Redistricting Data Files](h
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Nevada.
+We sample 5,000 districting plans for Nevada across 2 independent runs of the SMC algorithm.
 We use a standard algorithmic county constraint.
