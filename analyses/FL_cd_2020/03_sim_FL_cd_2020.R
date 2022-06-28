@@ -37,7 +37,7 @@ border_idxs <- which(map_south$row_id %in% z$row_id)
 ########################################################################
 
 constraints <- redist_constr(map_south) %>%
-    # reward districts with black vap % below 15% and above 45%, enforcing barrier in between
+    # reward districts with black vap % below 10% and above 40%, enforcing barrier in between
     add_constr_grp_hinge(10, vap_black, vap, 0.4) %>%
     add_constr_grp_hinge(-12, vap_black, vap, 0.1) %>%
     # reward districts with hispanic vap % below 30% and above 70%, enforcing barrier in between
@@ -80,18 +80,21 @@ border_idxs <- which(map_north$row_id %in% z$row_id)
 ########################################################################
 
 constraints <- redist_constr(map_north) %>%
+    # reward districts with hispanic vap % above 45%
     add_constr_grp_hinge(
         10,
         vap_hisp,
         total_pop = vap,
         tgts_group = c(0.45)
     ) %>%
+    # reward districts with black vap % below 15% and above 30%, enforcing barrier in between
     add_constr_grp_hinge(
         12,
         vap_black,
         total_pop = vap,
         tgts_group = c(0.30)) %>%
     add_constr_grp_hinge(-15, vap_black, vap, 0.15) %>%
+    # constrain the unassigned area be on the border, to ensure contiguity
     add_constr_custom(strength = 10, function(plan, distr) {
         ifelse(any(plan[border_idxs] == 0), 0, 1)
     })
@@ -120,12 +123,14 @@ prep_mat <- prep_particles(map = map, map_plan_list = fl_plan_list,
 # Cluster #3: Central Florida (with leftover VTDs from North and South)
 
 constraints <- redist_constr(map) %>%
+    # reward districts with hispanic vap % above 40%
     add_constr_grp_hinge(
         5,
         vap_hisp,
         total_pop = vap,
         tgts_group = c(0.40)
     ) %>%
+    # reward districts with hispanic vap % above 40%
     add_constr_grp_hinge(
         5,
         vap_black,
