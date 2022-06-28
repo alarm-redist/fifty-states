@@ -8,27 +8,27 @@ library(patchwork)
 i <- 25
 p1 <- redist.plot.plans(houston_plans, draws = i, m1) +
     geom_sf(data = m1 %>% filter(get_plans_matrix(houston_plans)[, i] == 0),
-            fill = "black")
+        fill = "black")
 i <- 35
 p2 <- redist.plot.plans(houston_plans, draws = i, m1) +
     geom_sf(data = m1 %>% filter(get_plans_matrix(houston_plans)[, i] == 0),
-            fill = "black")
+        fill = "black")
 i <- 45
 p3 <- redist.plot.plans(houston_plans, draws = i, m1) +
     geom_sf(data = m1 %>% filter(get_plans_matrix(houston_plans)[, i] == 0),
-            fill = "black")
+        fill = "black")
 i <- 11
 p4 <- redist.plot.plans(houston_plans, draws = i, m1) +
     geom_sf(data = m1 %>% filter(get_plans_matrix(houston_plans)[, i] == 0),
-            fill = "black")
+        fill = "black")
 i <- 8
 p5 <- redist.plot.plans(houston_plans, draws = i, m1) +
     geom_sf(data = m1 %>% filter(get_plans_matrix(houston_plans)[, i] == 0),
-            fill = "black")
+        fill = "black")
 i <- 5
 p6 <- redist.plot.plans(houston_plans, draws = i, m1) +
     geom_sf(data = m1 %>% filter(get_plans_matrix(houston_plans)[, i] == 0),
-            fill = "black")
+        fill = "black")
 
 ggsave("data-raw/houston.pdf", (p1 + p2 + p3)/(p4 + p5 + p6), width = 20, height = 20)
 
@@ -112,9 +112,9 @@ psum <- plans %>%
     summarise(
         all_hcvap = sum((cvap_hisp/total_cvap) > 0.4),
         dem_hcvap = sum((cvap_hisp/total_cvap) > 0.4 &
-                            (ndv > nrv)),
+            (ndv > nrv)),
         rep_hcvap = sum((cvap_hisp/total_cvap) > 0.4 &
-                            (nrv > ndv))
+            (nrv > ndv))
     )
 
 p1 <- redist.plot.hist(psum, all_hcvap)
@@ -129,14 +129,14 @@ psum <- plans %>%
     summarise(
         all_hcvap = sum((cvap_hisp/total_cvap) > 0.4),
         dem_hcvap = sum((cvap_hisp/total_cvap) > 0.4 &
-                            (ndv > nrv)),
+            (ndv > nrv)),
         rep_hcvap = sum((cvap_hisp/total_cvap) > 0.4 &
-                            (nrv > ndv)),
+            (nrv > ndv)),
         all_bcvap = sum((cvap_black/total_cvap) > 0.4),
         dem_bcvap = sum((cvap_black/total_cvap) > 0.4 &
-                            (ndv > nrv)),
+            (ndv > nrv)),
         rep_bcvap = sum((cvap_black/total_cvap) > 0.4 &
-                            (nrv > ndv)),
+            (nrv > ndv)),
         mmd_all = sum(cvap_nonwhite/total_cvap > 0.5),
         mmd_coalition = sum(((
             cvap_hisp + cvap_black
@@ -163,7 +163,7 @@ ggsave("bcvap_zoom.pdf", p)
 p <- plans %>%
     group_by(draw) %>%
     mutate(cvap_nonwhite = total_cvap - cvap_white,
-           cvap_nw_prop = cvap_nonwhite/total_cvap)  %>%
+        cvap_nw_prop = cvap_nonwhite/total_cvap)  %>%
     redist.plot.distr_qtys(
         cvap_nw_prop,
         color = ifelse(

@@ -7,7 +7,7 @@ cli_process_start("Creating {.cls redist_map} object for {.pkg MN_cd_2020}")
 map <- redist_map(mn_shp, pop_tol = 0.01,
     existing_plan = cd_2020, adj = mn_shp$adj)
 
-# make pseudo counties with 20% of target size
+# make pseudo counties with 40% of target size
 map <- map %>%
     mutate(pseudo_county = pick_county_muni(map, counties = county, munis = muni,
         pop_muni = 0.4*get_target(map)))

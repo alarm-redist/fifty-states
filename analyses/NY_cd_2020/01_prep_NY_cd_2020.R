@@ -22,10 +22,35 @@ path_data <- download_redistricting_file("NY", "data-raw/NY")
 
 path_dem_irc <- here("data-raw/NY/NY congress Letters Plan Draft 9.14.csv")
 path_rep_irc <- here("data-raw/NY/NY CD Block Equivalency.xlsx")
-path_enacted <- here("data-raw/NY/ny_baf.dbf")
-if (!file.exists(path_enacted)) {
+path_enacted_old <- here("data-raw/NY/ny_baf.dbf")
+path_enacted <- here("data-raw/NY/ny_baf.csv")
+
+if (!file.exists(path_dem_irc)) {
+    temp_dem_irc <- fs::file_temp(ext = "zip")
+    download(
+        url = "https://nyirc.gov/storage/plans/20210915/congress_letters.zip",
+        path = temp_dem_irc
+    )
+    unzip(temp_dem_irc, exdir = "data-raw/NY")
+}
+
+if (!file.exists(path_rep_irc)) {
+    temp_rep_irc <- fs::file_temp(ext = "zip")
+    download(
+        url = "https://nyirc.gov/storage/plans/20210915/congress_names.zip",
+        path = temp_rep_irc
+    )
+    unzip(temp_rep_irc, exdir = "data-raw/NY")
+}
+
+if (!file.exists(path_enacted_old)) {
     download(url = "https://latfor.state.ny.us/maps/2022congress/Congress2022_BlockEquivalency.dbf",
-        path = path_enacted)
+        path = path_enacted_old)
+}
+
+if (!file.exists(path_enacted)) {
+    download(url = "https://latfor.state.ny.us/maps/2022congress/congress_block.csv",
+             path = path_enacted)
 }
 
 cli_process_done()
@@ -56,14 +81,7 @@ if (!file.exists(here(shp_path))) {
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2010, .after = county)
 
-    if (!file.exists(path_dem_irc)) {
-        temp_dem_irc <- fs::file_temp(ext = "zip")
-        download(
-            url = "https://nyirc.gov/storage/plans/20210915/congress_letters.zip",
-            path = temp_dem_irc
-        )
-        unzip(temp_dem_irc, exdir = "data-raw/NY")
-    }
+
     dem_irc_baf <- read_csv(here(path_dem_irc),
         col_names = c("GEOID", "dem_irc"),
         col_types = "cc"
@@ -74,14 +92,7 @@ if (!file.exists(here(shp_path))) {
             dem_irc = which(dem_irc == letters)) %>%
         ungroup()
 
-    if (!file.exists(path_rep_irc)) {
-        temp_rep_irc <- fs::file_temp(ext = "zip")
-        download(
-            url = "https://nyirc.gov/storage/plans/20210915/congress_names.zip",
-            path = temp_rep_irc
-        )
-        unzip(temp_rep_irc, exdir = "data-raw/NY")
-    }
+
     rep_irc_baf <- readxl::read_xlsx(here(path_rep_irc))
     names(rep_irc_baf) <- c("GEOID", "rep_irc")
     vals <- unique(rep_irc_baf$rep_irc)
@@ -91,10 +102,15 @@ if (!file.exists(here(shp_path))) {
         ungroup()
     rm(vals)
 
-    baf_enacted <- foreign::read.dbf(path_enacted) %>%
+    baf_enacted_old <- foreign::read.dbf(path_enacted_old) %>%
         rename(
             GEOID = BLOCK,
-            cd_2020 = DISTRICTID
+            cd_2020_leg = DISTRICTID
+        )
+    baf_enacted <- read_csv(path_enacted, col_types = "ci") %>%
+        rename(
+            GEOID = GEOID20,
+            cd_2020 = District
         )
 
     baf_vtd <- PL94171::pl_get_baf("NY", geographies = "VTD")$VTD %>%
@@ -102,6 +118,7 @@ if (!file.exists(here(shp_path))) {
     baf <- baf_vtd %>%
         left_join(rep_irc_baf, by = "GEOID") %>%
         left_join(dem_irc_baf, by = "GEOID") %>%
+        left_join(baf_enacted_old, by = "GEOID") %>%
         left_join(baf_enacted, by = "GEOID")
     baf <- baf %>% select(-GEOID) %>%
         mutate(GEOID = paste0(censable::match_fips("NY"), county, vtd)) %>%
@@ -109,12 +126,14 @@ if (!file.exists(here(shp_path))) {
 
     baf <- baf %>%
         group_by(GEOID) %>%
-        summarize(rep_irc = Mode(rep_irc),
+        summarize(
+            rep_irc = Mode(rep_irc),
             dem_irc = Mode(dem_irc),
+            cd_2020_leg = Mode(cd_2020_leg),
             cd_2020 = Mode(cd_2020)
         )
 
-    baf <- baf %>% select(GEOID, rep_irc, dem_irc, cd_2020)
+    baf <- baf %>% select(GEOID, rep_irc, dem_irc, cd_2020_leg, cd_2020)
 
     ny_shp <- ny_shp %>% left_join(baf, by = "GEOID")
 
