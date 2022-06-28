@@ -5,8 +5,8 @@
 
 set.seed(2020)
 
-cluster_pop_tol <- 0.005
-nsims <- 10000
+cluster_pop_tol <- 0.0175
+nsims <- 35000
 
 # Unique ID for each row, will use later to reconnect pieces
 map$row_id <- 1:nrow(map)
@@ -37,24 +37,25 @@ border_idxs <- which(map_south$row_id %in% z$row_id)
 ########################################################################
 
 constraints <- redist_constr(map_south) %>%
-    add_constr_grp_pow(
-        35,
-        vap_black,
-        total_pop = vap,
-        tgt_group = c(0.48),
-        tgt_other = c(0),
-        pow = 0.25) %>%
-    add_constr_custom(strength = 10, function(plan, distr) {
+    # reward districts with black vap % below 15% and above 45%, enforcing barrier in between
+    add_constr_grp_hinge(10, vap_black, vap, 0.4) %>%
+    add_constr_grp_hinge(-12, vap_black, vap, 0.1) %>%
+    # reward districts with hispanic vap % below 30% and above 70%, enforcing barrier in between
+    add_constr_grp_hinge(5, vap_hisp, vap, 0.7) %>%
+    add_constr_grp_hinge(-8, vap_hisp, vap, 0.3) %>%
+    # constrain the unassigned area be on the border, to ensure contiguity
+    add_constr_custom(strength = 8, function(plan, distr) {
         ifelse(any(plan[border_idxs] == 0), 0, 1)
     })
 
 n_steps <- (sum(map_south$pop)/attr(map, "pop_bounds")[2]) %>% floor()
 
-plans_south <- redist_smc(map_south, counties = county,
+plans_south <- redist_smc(map_south,
+    counties = pseudo_county,
     nsims = nsims, n_steps = n_steps,
     constraints = constraints,
-    compactness = 0.85,
-    pop_temper = 0.01)
+    pop_temper = 0.06,
+    seq_alpha = 0.65)
 
 #############################################################
 
@@ -80,16 +81,17 @@ border_idxs <- which(map_north$row_id %in% z$row_id)
 
 constraints <- redist_constr(map_north) %>%
     add_constr_grp_hinge(
-        5,
-        cvap_hisp,
-        total_pop = cvap,
+        10,
+        vap_hisp,
+        total_pop = vap,
         tgts_group = c(0.45)
     ) %>%
     add_constr_grp_hinge(
-        20,
-        cvap_black,
-        total_pop = cvap,
-        tgts_group = c(0.40)) %>%
+        12,
+        vap_black,
+        total_pop = vap,
+        tgts_group = c(0.30)) %>%
+    add_constr_grp_hinge(-15, vap_black, vap, 0.15) %>%
     add_constr_custom(strength = 10, function(plan, distr) {
         ifelse(any(plan[border_idxs] == 0), 0, 1)
     })
@@ -120,26 +122,25 @@ prep_mat <- prep_particles(map = map, map_plan_list = fl_plan_list,
 constraints <- redist_constr(map) %>%
     add_constr_grp_hinge(
         5,
-        cvap_hisp,
-        total_pop = cvap,
+        vap_hisp,
+        total_pop = vap,
         tgts_group = c(0.40)
     ) %>%
     add_constr_grp_hinge(
         5,
-        cvap_black,
-        total_pop = cvap,
+        vap_black,
+        total_pop = vap,
         tgts_group = c(0.40))
 
-plans <- redist_smc(map, nsims = nsims, runs = 2L,
+plans <- redist_smc(map, nsims = nsims, runs = 2L, ncores = 4,
     counties = pseudo_county,
     constraints = constraints,
     init_particles = prep_mat,
-    pop_temper = 0.01)  %>%
+    pop_temper = 0.05, seq_alpha = 0.65)  %>%
     group_by(chain) %>%
     filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
     ungroup()
 
-plans <- plans %>% filter(draw != "cd_2020")
 plans <- plans %>% add_reference(ref_plan = map$cd_2020)
 
 cli_process_done()

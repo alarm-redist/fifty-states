@@ -28,7 +28,7 @@ ggsave("data-raw/FL/example_plans.png", (
         (ex_plots[[7]] + ex_plots[[8]] + ex_plots[[9]])
 ), width = 20, height = 20)
 
-## CVAP charts
+## VAP charts
 d1 <- redist.plot.distr_qtys(
     plans,
     vap_black/total_vap,

@@ -12,7 +12,7 @@ In Florida, according to [the state constitution Art. III §§ 20](http://www.le
 
 
 ### Interpretation of requirements
-We enforce a maximum population deviation of 0.05%.
+We enforce a maximum population deviation of 2%.
 
 ## Data Sources
 Data for Florida comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
@@ -22,7 +22,7 @@ Data for Florida's 2020 congressional district map comes from the [Dave's Redist
 We estimate CVAP populations with the [cvap](https://github.com/christopherkenny/cvap) R package. We also pre-process the map to split it into clusters for simulation, which has a slight effect on the types of redistrict plans that will be sampled.
 
 ## Simulation Notes
-We sample 10,000 districting plans for Florida across two independent runs of the SMC algorithm, and then thin the sample down to 5,000 plans. Due to the size, shape, and complexity of Florida, we split the simulations into multiple steps.
+We sample 35,000 districting plans for Florida across two independent runs of the SMC algorithm, and then thin the sample down to 5,000 plans. Due to the size, shape, and complexity of Florida, we split the simulations into multiple steps.
 
 1. Regional clustering
 First, we cluster Florida counties into 3 regions--Southern Florida, Northern Florida, and Central Florida--with the following county assignments:
@@ -36,11 +36,9 @@ Central Florida: Brevard, Citrus, Flagler, Hernando, Hillsborough, Indian River,
 County assignments were based on the collections of counties that define Metropolitan and Combined Statistical Areas and on past and current Congressional district maps.
 
 2. Simulating Northern and Southern Florida
-We run simulations first in Northern and Southern Florida. These simulations run the SMC algorithm within each cluster with a 0.5% population tolerance. Because each cluster will have leftover population, we apply an additional constraint that encourages unassigned areas to be set on each cluster's border with the Central Florida cluster, thereby avoiding district discontiguities.
+We run simulations first in Northern and Southern Florida. These simulations run the SMC algorithm within each cluster with a 1.75% population tolerance. Because each cluster will have leftover population, we apply an additional constraint that encourages unassigned areas to be set on each cluster's border with the Central Florida cluster, thereby avoiding district discontiguities.
 
-In the Northern Florida cluster, we apply a hinge Gibbs constraint of strength 20 to encourage the formation of Black opportunity districts and a hinge Gibbs constraint of strength 5 to weakly encourage the formation of Hispanic CVAP opportunity districts. To balance county and municipality splits, we create pseudocounties for use in the county constraint, which leads to fewer municipality splits than using only a county constraint.
-
-In the Southern Florida cluster, we apply a Gibbs power constraint of strength 35, which strongly encourages districts to have either large Black CVAP shares (near 48%) or small Black CVAP shares (near 0%) but not in-between. So as to not limit the effectiveness of the power Gibbs constraint in creating Black CVAP opportunity districts, we use only a county constraint and allow for slightly less compact districts.
+In both the Northern Florida cluster and the Southern Florida cluster, we apply Gibbs constraints to encourage the formation of Black and Hispanic opportunity districts. To balance county and municipality splits, we create pseudocounties for use in the county constraint, which leads to fewer municipality splits than using only a county constraint.
 
 3. Simulating Central Florida
-The partial map simulations from the Southern and Northern Florida clusters are then combined, with unassigned areas being absorbed into the Central Florida cluster. We then run simulations in Central Florida, applying Gibbs hinge constraints to encourage the formation of minority opportunity districts, though with weaker strengths since most minority opportunity districts are found in the Northern and Southern clusters. To limit county and municipality splits, we again create pseudocounties for use in the county constraint.
+The partial map simulations from the Southern and Northern Florida clusters are then combined, with unassigned areas being absorbed into the Central Florida cluster. We then run simulations in Central Florida, applying Gibbs hinge constraints to encourage the formation of minority opportunity districts. To limit county and municipality splits, we create pseudocounties for use in the county constraint.
