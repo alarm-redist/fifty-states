@@ -46,6 +46,7 @@ download_redistricting_file <- function(abbr, folder, type = "vtd", overwrite = 
 #' Add precinct shapefile geometry to downloaded data
 #'
 #' @param data the output of e.g. [download_redistricting_file]
+#' @param year the year, either 2020 (default) or 2010
 #'
 #' @returns the joined data
 #' @export
@@ -74,8 +75,11 @@ join_vtd_shapefile <- function(data, year = 2020) {
                                 )
                         })
 
+
         geom_d <- do.call('rbind', files)
-        left_join(data %>% mutate(GEOID10 = paste0(state, county, vtd)), geom_d, by = "GEOID10") %>%
+        left_join(data %>% mutate(GEOID10 = paste0(
+            str_pad_l0(state, 2),  str_pad_l0(county, 3), str_pad_l0(vtd, 3)
+            )), geom_d, by = "GEOID10") %>%
             sf::st_as_sf()
     } else {
         stop('Only years in c(2010, 2020) currently supported.')
@@ -227,4 +231,8 @@ open_state = function(state, type = "cd", year = 2020) {
 Mode <- function(v) {
     uv <- unique(v)
     uv[which.max(tabulate(match(v, uv)))][1]
+}
+
+str_pad_l0 <- function(string, width) {
+    stringr::str_pad(string = string, width = width, side = 'left', pad = '0')
 }
