@@ -17,7 +17,7 @@ suppressMessages({
 # Download necessary files for analysis -----
 cli_process_start("Downloading files for {.pkg SC_cd_2010}")
 
-path_data <- download_redistricting_file("SC", "data-raw/SC")
+path_data <- download_redistricting_file("SC", "data-raw/SC", year = 2010)
 
 # download the enacted plan.
 url <- "https://redistricting.lls.edu/wp-content/uploads/sc_2010_congress_2011-10-28_2021-12-31.zip"
@@ -40,7 +40,7 @@ if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong SC} shapefile")
     # read in redistricting data
     sc_shp <- read_csv(here(path_data), col_types = cols(GEOID20 = "c")) %>%
-        join_vtd_shapefile() %>%
+        join_vtd_shapefile(year = 2010) %>%
         st_transform(EPSG$SC)  %>%
         rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
 
@@ -50,19 +50,23 @@ if (!file.exists(here(shp_path))) {
         select(-vtd)
     d_cd <- make_from_baf("SC", "CD", "VTD")  %>%
         transmute(GEOID = paste0(censable::match_fips("SC"), vtd),
-            cd_2010 = as.integer(cd))
+            cd_2000 = as.integer(cd))
     sc_shp <- left_join(sc_shp, d_muni, by = "GEOID") %>%
         left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
-        relocate(muni, county_muni, cd_2010, .after = county)
+        relocate(muni, county_muni, cd_2000, .after = county)
+
+    # add missing ndv data
+    sc_shp <- sc_shp %>%
+        mutate(nrv = rowMeans(select(as_tibble(.), contains('_rep_')), na.rm = TRUE),
+               ndv = rowMeans(select(as_tibble(.), contains('_dem_')), na.rm = TRUE))
 
     # add the enacted plan
     cd_shp <- st_read(here(path_enacted))
     sc_shp <- sc_shp %>%
-        mutate(cd_2020 = as.integer(cd_shp$DISTRICT)[
+        mutate(cd_2010 = as.integer(cd_shp$District)[
             geo_match(sc_shp, cd_shp, method = "area")],
-        .after = cd_2010)
-
+        .after = cd_2000)
 
     # Create perimeters in case shapes are simplified
     redist.prep.polsbypopper(shp = sc_shp,

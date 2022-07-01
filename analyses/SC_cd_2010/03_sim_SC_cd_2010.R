@@ -28,7 +28,6 @@ plans <- redist_smc(map,
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
 
-
 # Output the redist_map object. Do not edit this path.
 write_rds(plans, here("data-out/SC_2010/SC_cd_2010_plans.rds"), compress = "xz")
 cli_process_done()

@@ -4,17 +4,9 @@
 ###############################################################################
 cli_process_start("Creating {.cls redist_map} object for {.pkg SC_cd_2010}")
 
-
-map <- redist_map(sc_shp, pop_tol = 0.005,
-    existing_plan = cd_2010, adj = sc_shp$adj)
-
-
-# make pseudo counties with default settings
-map <- map %>%
-    mutate(pseudo_county = pick_county_muni(map, counties = county, munis = muni,
-        pop_muni = get_target(map)))
-# IF MERGING CORES OR OTHER UNITS:
-# make a new `map_cores` object that is merged & used for simulating. You can set `drop_geom=TRUE` for this.
+map <- sc_shp %>%
+    redist_map(pop_tol = 0.005,
+        existing_plan = cd_2010, adj = sc_shp$adj)
 
 # Add an analysis name attribute
 attr(map, "analysis_name") <- "SC_2010"
