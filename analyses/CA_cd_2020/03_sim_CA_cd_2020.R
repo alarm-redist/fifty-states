@@ -22,9 +22,21 @@ map_south$boundary <- map_south$tract %in% seam_south
 
 cons_south <- redist_constr(map_south) %>%
     add_constr_grp_hinge(
-        strength = 15,
+        strength = 20,
         group_pop = vap_hisp,
-        total_pop = vap
+        total_pop = vap,
+    ) %>%
+    add_constr_grp_hinge(
+        strength = -15,
+        group_pop = vap_hisp,
+        total_pop = vap,
+        tgts_group = .3
+    ) %>%
+    add_constr_grp_hinge(
+        strength = -15,
+        group_pop = vap_hisp,
+        total_pop = vap,
+        tgts_group = .2
     ) %>%
     add_constr_custom(
         strength = 10,
@@ -33,7 +45,6 @@ cons_south <- redist_constr(map_south) %>%
         }
     )
 
-
 set.seed(2020)
 
 plans_south <- redist_smc(
@@ -41,7 +52,7 @@ plans_south <- redist_smc(
     nsims = 5e3, runs = 2L, ncores = 8,
     counties = pseudo_county,
     constraints = cons_south,
-    n_steps = 27
+    n_steps = 27, pop_temper = 0.005, seq_alpha = 0.7
 )
 
 # simulate large bay area ----
