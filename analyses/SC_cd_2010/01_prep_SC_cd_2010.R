@@ -39,16 +39,16 @@ perim_path <- "data-out/SC_2010/perim.rds"
 if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong SC} shapefile")
     # read in redistricting data
-    sc_shp <- read_csv(here(path_data), col_types = cols(GEOID10 = "c")) %>%
+    sc_shp <- read_csv(here(path_data)) %>%
         join_vtd_shapefile(year = 2010) %>%
         st_transform(EPSG$SC)  %>%
         rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
 
     # add municipalities
-    d_muni <- make_from_baf("SC", "INCPLACE_CDP", "VTD")  %>%
+    d_muni <- make_from_baf("SC", "INCPLACE_CDP", "VTD", year = 2010)  %>%
         mutate(GEOID = paste0(censable::match_fips("SC"), vtd)) %>%
         select(-vtd)
-    d_cd <- make_from_baf("SC", "CD", "VTD")  %>%
+    d_cd <- make_from_baf("SC", "CD", "VTD", year = 2010)  %>%
         transmute(GEOID = paste0(censable::match_fips("SC"), vtd),
             cd_2000 = as.integer(cd))
     sc_shp <- left_join(sc_shp, d_muni, by = "GEOID") %>%
@@ -69,7 +69,7 @@ if (!file.exists(here(shp_path))) {
         .after = cd_2000)
 
     # Create perimeters in case shapes are simplified
-    redist.prep.polsbypopper(shp = sc_shp,
+    redistmetrics::prep_perims(shp = sc_shp,
         perim_path = here(perim_path)) %>%
         invisible()
 
