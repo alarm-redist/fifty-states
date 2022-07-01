@@ -39,7 +39,7 @@ perim_path <- "data-out/SC_2010/perim.rds"
 if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong SC} shapefile")
     # read in redistricting data
-    sc_shp <- read_csv(here(path_data), col_types = cols(GEOID20 = "c")) %>%
+    sc_shp <- read_csv(here(path_data), col_types = cols(GEOID10 = "c")) %>%
         join_vtd_shapefile(year = 2010) %>%
         st_transform(EPSG$SC)  %>%
         rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
