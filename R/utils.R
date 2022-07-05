@@ -72,7 +72,13 @@ join_vtd_shapefile <- function(data, year = 2020) {
                                 dplyr::transmute(
                                     GEOID10 = GEOID10,
                                     geometry = geometry
-                                )
+                                ) %>%
+                                dplyr::mutate(state_cty = paste0(str_pad_l0(state_fp, 2), str_pad_l0(cty, 3))) %>%
+                                dplyr::rowwise() %>%
+                                # inconsistent length for vtd ID, but remove state + county code, pad, then recombine
+                                dplyr::mutate(GEOID_strip = str_pad_l0(gsub(state_cty, "", GEOID10), 3),
+                                       GEOID10 = paste0(state_cty, GEOID_strip)) %>%
+                                dplyr::select(GEOID10, geometry)
                         })
 
 
