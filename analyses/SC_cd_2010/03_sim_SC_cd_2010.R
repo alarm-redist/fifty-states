@@ -10,8 +10,7 @@ cli_process_start("Running simulations for {.pkg SC_cd_2010}")
 constr_sc <- redist_constr(map) %>%
     add_constr_splits(strength = 0.5, admin = county_muni) %>%
     add_constr_grp_hinge(5, vap_black, vap, 0.4) %>%
-    add_constr_grp_hinge(-5, vap_black, vap, 0.3) %>%
-    add_constr_grp_inv_hinge(2, vap_black, vap, 0.6)
+    add_constr_grp_hinge(-5, vap_black, vap, 0.3)
 
 # Sample
 set.seed(2010)
@@ -19,8 +18,6 @@ plans <- redist_smc(map,
     nsims = 3000,
     runs = 2L,
     ncores = 1,
-    compactness = 1,
-    pop_temper =  0.01,
     counties = county,
     constraints = constr_sc) %>%
     match_numbers("cd_2010")

@@ -27,7 +27,6 @@ unzip(here(path_enacted), exdir = here(dirname(path_enacted), "SC_enacted"))
 file.remove(path_enacted)
 path_enacted <- "data-raw/SC/SC_enacted/H3992.shp"
 
-
 # If large, consider checking to see if these files exist before downloading
 
 cli_process_done()
@@ -58,8 +57,8 @@ if (!file.exists(here(shp_path))) {
 
     # add missing ndv data
     sc_shp <- sc_shp %>%
-        mutate(nrv = rowMeans(select(as_tibble(.), contains('_rep_')), na.rm = TRUE),
-               ndv = rowMeans(select(as_tibble(.), contains('_dem_')), na.rm = TRUE))
+        mutate(nrv = rowMeans(select(as_tibble(.), contains("_rep_")), na.rm = TRUE),
+            ndv = rowMeans(select(as_tibble(.), contains("_dem_")), na.rm = TRUE))
 
     # add the enacted plan
     cd_shp <- st_read(here(path_enacted))
