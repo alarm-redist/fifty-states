@@ -16,7 +16,7 @@ https://redistricting.schouse.gov/archives/2011/6334-1500-2011-Redistricting-Gui
 We do not adhere to all criteria in the guidelines. We include the following constraints:
 
 1. We enforce a maximum population deviation of 0.5%.
-2. We impose a hinge constraint on the Black Voting Age Population so that it encourages district BVAP between 40 percent and 60 percent, but districts with BVAP of 30% or less are not penalized as much.
+2. We impose a hinge constraint on the Black Voting Age Population so that it encourages districts with BVAP above 40%, but districts with BVAP of 30% or less are not penalized as much.
 3. We impose a municipality-split constraint to lower the number of municipality splits.
 
 ## Data Sources
