@@ -5,8 +5,8 @@
 
 set.seed(2020)
 
-cluster_pop_tol <- 0.0175
-nsims <- 35000
+cluster_pop_tol <- 0.005
+nsims <- 40000
 
 # Unique ID for each row, will use later to reconnect pieces
 map$row_id <- 1:nrow(map)
@@ -38,8 +38,8 @@ border_idxs <- which(map_south$row_id %in% z$row_id)
 
 constraints <- redist_constr(map_south) %>%
     # reward districts with black vap % below 10% and above 40%, enforcing barrier in between
-    add_constr_grp_hinge(10, vap_black, vap, 0.4) %>%
-    add_constr_grp_hinge(-12, vap_black, vap, 0.1) %>%
+    add_constr_grp_hinge(8, vap_black, vap, 0.4) %>%
+    add_constr_grp_inv_hinge(-10, vap_black, vap, 0.1) %>%
     # reward districts with hispanic vap % below 30% and above 70%, enforcing barrier in between
     add_constr_grp_hinge(5, vap_hisp, vap, 0.7) %>%
     add_constr_grp_hinge(-8, vap_hisp, vap, 0.3) %>%
@@ -52,11 +52,21 @@ n_steps <- (sum(map_south$pop)/attr(map, "pop_bounds")[2]) %>% floor()
 
 plans_south <- redist_smc(map_south,
     counties = pseudo_county,
-    nsims = nsims, n_steps = n_steps,
+    nsims = nsims,
+    runs = 2L, ncores = 4,
+    n_steps = n_steps,
     constraints = constraints,
     pop_temper = 0.06,
     seq_alpha = 0.65)
 
+plans_south <- plans_south %>%
+    mutate(hvap = group_frac(map_south, vap_hisp, vap),
+           bvap = group_frac(map_south, vap_black, vap),
+           dem16 = group_frac(map_south, adv_16, arv_16 + adv_16),
+           dem18 = group_frac(map_south, adv_18, arv_18 + adv_18),
+           dem20 = group_frac(map_south, adv_20, arv_20 + adv_20))
+
+summary(plans_south)
 #############################################################
 
 # Cluster #2: North Florida
@@ -89,11 +99,11 @@ constraints <- redist_constr(map_north) %>%
     ) %>%
     # reward districts with black vap % below 15% and above 30%, enforcing barrier in between
     add_constr_grp_hinge(
-        12,
+        10,
         vap_black,
         total_pop = vap,
         tgts_group = c(0.30)) %>%
-    add_constr_grp_hinge(-15, vap_black, vap, 0.15) %>%
+    add_constr_grp_hinge(-12, vap_black, vap, 0.15) %>%
     # constrain the unassigned area be on the border, to ensure contiguity
     add_constr_custom(strength = 10, function(plan, distr) {
         ifelse(any(plan[border_idxs] == 0), 0, 1)
@@ -102,9 +112,19 @@ constraints <- redist_constr(map_north) %>%
 n_steps <- (sum(map_north$pop)/attr(map, "pop_bounds")[2]) %>% floor()
 
 plans_north <- redist_smc(map_north, counties = pseudo_county,
-    nsims = nsims, n_steps = n_steps,
+    nsims = nsims,
+    runs = 2L, ncores = 4,
+    n_steps = n_steps,
     constraints = constraints)
 
+plans_north <- plans_north %>%
+    mutate(hvap = group_frac(map_north, vap_hisp, vap),
+           bvap = group_frac(map_north, vap_black, vap),
+           dem16 = group_frac(map_north, adv_16, arv_16 + adv_16),
+           dem18 = group_frac(map_north, adv_18, arv_18 + adv_18),
+           dem20 = group_frac(map_north, adv_20, arv_20 + adv_20))
+
+summary(plans_north)
 #############################################################
 
 ## Combine North and South Clusters
@@ -116,7 +136,7 @@ fl_plan_list <- list(list(map = map_south, plans = plans_south),
     list(map = map_north, plans = plans_north))
 
 prep_mat <- prep_particles(map = map, map_plan_list = fl_plan_list,
-    uid = row_id, dist_keep = dist_keep, nsims = nsims)
+    uid = row_id, dist_keep = dist_keep, nsims = nsims*2)
 
 #############################################################
 
@@ -137,7 +157,7 @@ constraints <- redist_constr(map) %>%
         total_pop = vap,
         tgts_group = c(0.40))
 
-plans <- redist_smc(map, nsims = nsims, runs = 2L, ncores = 4,
+plans <- redist_smc(map, nsims = nsims*2, runs = 2L, ncores = 4,
     counties = pseudo_county,
     constraints = constraints,
     init_particles = prep_mat,

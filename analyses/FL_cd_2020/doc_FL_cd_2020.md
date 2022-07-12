@@ -22,7 +22,7 @@ Data for Florida's 2020 congressional district map comes from the [Dave's Redist
 We estimate CVAP populations with the [cvap](https://github.com/christopherkenny/cvap) R package. We also pre-process the map to split it into clusters for simulation, which has a slight effect on the types of redistrict plans that will be sampled.
 
 ## Simulation Notes
-We sample 35,000 districting plans for Florida across two independent runs of the SMC algorithm, and then thin the sample down to 5,000 plans. Due to the size, shape, and complexity of Florida, we split the simulations into multiple steps.
+We sample 160,000 districting plans for Florida across two independent runs of the SMC algorithm, and then thin the sample down to 5,000 plans. Due to the size, shape, and complexity of Florida, we split the simulations into multiple steps.
 
 1. Regional clustering
 First, we cluster Florida counties into 3 regions--Southern Florida, Northern Florida, and Central Florida--with the following county assignments:
