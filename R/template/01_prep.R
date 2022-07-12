@@ -46,10 +46,10 @@ if (!file.exists(here(shp_path))) {
         rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
 
     # add municipalities
-    d_muni <- make_from_baf("``STATE``", "INCPLACE_CDP", "VTD")  %>%
+    d_muni <- make_from_baf("``STATE``", "INCPLACE_CDP", "VTD", year = ``YEAR``)  %>%
         mutate(GEOID = paste0(censable::match_fips("``STATE``"), vtd)) %>%
         select(-vtd)
-    d_cd <- make_from_baf("``STATE``", "CD", "VTD")  %>%
+    d_cd <- make_from_baf("``STATE``", "CD", "VTD", year = ``YEAR``)  %>%
         transmute(GEOID = paste0(censable::match_fips("``STATE``"), vtd),
                   cd_``OLDYEAR`` = as.integer(cd))
     ``state``_shp <- left_join(``state``_shp, d_muni, by = "GEOID") %>%
