@@ -32,7 +32,7 @@ init_analysis <- function(state, type = "cd", year = 2020, overwrite = FALSE) {
             str_replace_all("``SLUG``", slug) %>%
             str_replace_all("``STATE``", state) %>%
             str_replace_all("``YEAR``", year) %>%
-            str_replace_all("``OLDYEAR``", as.integer(year) - 10) %>%
+            str_replace_all("``OLDYEAR``", as.character(as.integer(year) - 10)) %>%
             str_replace_all("``YR``", str_sub(year, 3)) %>%
             str_replace_all("``state``", str_to_lower(state)) %>%
             str_replace_all("``state_name``",
