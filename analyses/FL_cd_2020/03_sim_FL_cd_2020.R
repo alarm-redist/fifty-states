@@ -20,7 +20,6 @@ cli_process_start("Running simulations for {.pkg FL_cd_2020}")
 
 map_south <- map %>% filter(region == "South")
 map_south <- set_pop_tol(map_south, cluster_pop_tol)
-attr(map_south, "pop_bounds") <-  attr(map, "pop_bounds")
 
 ########################################################################
 
@@ -73,7 +72,6 @@ summary(plans_south)
 
 map_north <- map %>% filter(region == "North")
 map_north <- set_pop_tol(map_north, cluster_pop_tol)
-attr(map_north, "pop_bounds") <-  attr(map, "pop_bounds")
 
 ########################################################################
 
