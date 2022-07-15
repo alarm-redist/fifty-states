@@ -22,18 +22,18 @@ map_south$boundary <- map_south$tract %in% seam_south
 
 cons_south <- redist_constr(map_south) %>%
     add_constr_grp_hinge(
-        strength = 20,
+        strength = 10,
         group_pop = vap_hisp,
         total_pop = vap,
     ) %>%
     add_constr_grp_hinge(
-        strength = -15,
+        strength = -7.5,
         group_pop = vap_hisp,
         total_pop = vap,
         tgts_group = .3
     ) %>%
     add_constr_grp_hinge(
-        strength = -15,
+        strength = -7.5,
         group_pop = vap_hisp,
         total_pop = vap,
         tgts_group = .2
@@ -49,10 +49,10 @@ set.seed(2020)
 
 plans_south <- redist_smc(
     map_south,
-    nsims = 5e3, runs = 2L, ncores = 8,
+    nsims = 1e4, runs = 2L, ncores = 8,
     counties = pseudo_county,
     constraints = cons_south,
-    n_steps = 27, pop_temper = 0.005, seq_alpha = 0.7
+    n_steps = 27, pop_temper = 0.005, seq_alpha = 0.95
 )
 
 # simulate large bay area ----
@@ -93,14 +93,38 @@ map_bay$boundary <- map_bay$tract %in% seam_bay
 
 cons_bay <- redist_constr(map_bay) %>%
     add_constr_grp_hinge(
-        strength = 50,
+        strength = 10,
         group_pop = vap_hisp,
-        total_pop = vap
+        total_pop = vap,
     ) %>%
     add_constr_grp_hinge(
-        strength = 50,
+        strength = -7.5,
+        group_pop = vap_hisp,
+        total_pop = vap,
+        tgts_group = .3
+    ) %>%
+    add_constr_grp_hinge(
+        strength = -7.5,
+        group_pop = vap_hisp,
+        total_pop = vap,
+        tgts_group = .2
+    ) %>%
+    add_constr_grp_hinge(
+        strength = 10,
         group_pop = vap_asian,
-        total_pop = vap
+        total_pop = vap,
+    ) %>%
+    add_constr_grp_hinge(
+        strength = -7.5,
+        group_pop = vap_asian,
+        total_pop = vap,
+        tgts_group = .3
+    ) %>%
+    add_constr_grp_hinge(
+        strength = -7.5,
+        group_pop = vap_asian,
+        total_pop = vap,
+        tgts_group = .2
     ) %>%
     add_constr_custom(
         strength = 10,
@@ -112,14 +136,14 @@ set.seed(2020)
 
 plans_bay <- redist_smc(
     map_bay,
-    nsims = 5e3, runs = 2L, ncores = 8,
+    nsims = 1e4, runs = 2L, ncores = 8,
     counties = pseudo_county,
     constraints = cons_bay,
-    n_steps = 15
+    n_steps = 15, pop_temper = 0.0025
 )
 
 
-# pull it all together ----
+`# pull it all together ----
 init <- prep_particles(
     map = map,
     map_plan_list = list(
@@ -134,7 +158,7 @@ init <- prep_particles(
     ),
     uid = uid,
     dist_keep = keep,
-    nsims = 5e3 * 2
+    nsims = 1e4 * 2
 )
 
 
@@ -142,7 +166,7 @@ set.seed(2020)
 
 plans <- redist_smc(
     map,
-    nsims = 1e4, runs = 2L, ncores = 8,
+    nsims = 2e4, runs = 2L, ncores = 8,
     counties = county,
     init_particles = init
     )
