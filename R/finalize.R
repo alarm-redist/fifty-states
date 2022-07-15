@@ -63,8 +63,12 @@ pub_dataverse = function(slug, path_map, path_plans, path_stats) {
 
     dv_id <- "doi:10.7910/DVN/SLCD3E"
     dv_set <- get_dataset(dv_id)
-    existing <- filter(dv_set$files, str_detect(filename, slug)) %>%
-        arrange(filename)
+    if (length(dv_set$files) > 0) {
+        existing <- dplyr::filter(dv_set$files, str_detect(filename, slug)) %>%
+            dplyr::arrange(filename)
+    } else {
+        existing = data.frame()
+    }
 
     if (nrow(existing) > 0)
         cli_abort("Files for {.pkg {slug}} already exist on the dataverse.")
