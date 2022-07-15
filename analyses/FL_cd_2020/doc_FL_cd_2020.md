@@ -12,7 +12,7 @@ In Florida, according to [the state constitution Art. III §§ 20](http://www.le
 
 
 ### Interpretation of requirements
-We enforce a maximum population deviation of 2%.
+We enforce a maximum population deviation of 0.5%.
 
 ## Data Sources
 Data for Florida comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
