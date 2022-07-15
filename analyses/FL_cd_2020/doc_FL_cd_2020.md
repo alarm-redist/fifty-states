@@ -36,7 +36,7 @@ Central Florida: Brevard, Citrus, Flagler, Hernando, Hillsborough, Indian River,
 County assignments were based on the collections of counties that define Metropolitan and Combined Statistical Areas and on past and current Congressional district maps.
 
 2. Simulating Northern and Southern Florida
-We run simulations first in Northern and Southern Florida. These simulations run the SMC algorithm within each cluster with a 1.75% population tolerance. Because each cluster will have leftover population, we apply an additional constraint that encourages unassigned areas to be set on each cluster's border with the Central Florida cluster, thereby avoiding district discontiguities.
+We run simulations first in Northern and Southern Florida. These simulations run the SMC algorithm within each cluster with a 0.5% population tolerance. Because each cluster will have leftover population, we apply an additional constraint that encourages unassigned areas to be set on each cluster's border with the Central Florida cluster, thereby avoiding district discontiguities.
 
 In both the Northern Florida cluster and the Southern Florida cluster, we apply Gibbs constraints to encourage the formation of Black and Hispanic opportunity districts. To balance county and municipality splits, we create pseudocounties for use in the county constraint, which leads to fewer municipality splits than using only a county constraint.
 
