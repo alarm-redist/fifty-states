@@ -21,7 +21,11 @@ Data for California comes from the ALARM Project's [2020 Redistricting Data File
 Islands were connected to their nearest point within county on the mainland.
 
 ## Simulation Notes
-We sample 5,000 districting plans for California. To balance county and municipality splits, we create pseudocounties for use in the county constraint. These are counties are Alameda County, Contra Costa County, Fresno County, Kern County, Los Angeles County, Orange County, Riverside County, Sacramento County, San Bernardino County, San Diego County, San Francisco County, San Joaquin County, San Mateo County, Santa Clara County, and Ventura County, which are larger than a congressional district in population.
+We sample 10,000 districting plans in each cluster across 2 indpenednet runs of the SMC algorithm.
+We next sample 20,000 districting plans for California across 2 independent runs of the SMC algorithm for the remainder.
+We then thin the sample to down to 5,000 plans.
+To balance county and municipality splits, we create pseudocounties for use in the county constraint. These are counties are Alameda County, Contra Costa County, Fresno County, Kern County, Los Angeles County, Orange County, Riverside County, Sacramento County, San Bernardino County, San Diego County, San Francisco County, San Joaquin County, San Mateo County, Santa Clara County, and Ventura County, which are larger than a congressional district in population.
+A small population tempering value was used for each cluster to avoid losing diversity at the final step based on initial runs.
 
 ### 1. Clustering Procedure
 First, we run partial SMC in two pieces: the south and the Bay Area. The counties in each cluster are:
