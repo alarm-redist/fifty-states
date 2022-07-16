@@ -173,6 +173,11 @@ plans <- redist_smc(
 
 attr(plans, "prec_pop") <- map$pop
 
+plans <- plans %>%
+    group_by(chain) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
+    ungroup()
+
 plans <- match_numbers(plans, 'cd_2020')
 
 cli_process_done()
@@ -199,23 +204,32 @@ if (interactive()) {
 
     redist.plot.hist(plans %>% group_by(draw) %>%
         mutate(hisp_dem = sum((vap_hisp/total_vap > 0.5) & e_dvs > 0.5)), qty = hisp_dem) +
-        labs(x = "Number of Hispanic and Dem. Majority")
-
+        labs(x = "Number of Hispanic and Dem. Majority") +
     redist.plot.hist(plans %>% group_by(draw) %>%
         mutate(hisp_dem = sum((vap_hisp/total_vap > 0.4) & e_dvs > 0.5)), qty = hisp_dem) +
-        labs(x = "Number of Hispanic > 40% and Dem. Majority")
-
+        labs(x = "Number of Hispanic > 40% and Dem. Majority") +
+    redist.plot.hist(plans %>% group_by(draw) %>%
+                             mutate(hisp_dem = sum((vap_hisp/total_vap > 0.3) & e_dvs > 0.5)), qty = hisp_dem) +
+        labs(x = "Number of Hispanic > 30% and Dem. Majority") +
     redist.plot.hist(plans %>% group_by(draw) %>%
         mutate(ha_dem = sum(((vap_hisp + vap_asian)/total_vap > 0.5) & e_dvs > 0.5)), qty = ha_dem) +
-        labs(x = "Number of Hispanic + Asian and Dem. Majority")
-
+        labs(x = "Number of Hispanic + Asian and Dem. Majority") +
+    redist.plot.hist(plans %>% group_by(draw) %>%
+                             mutate(hisp_dem = sum(((vap_hisp + vap_asian)/total_vap > 0.4) & e_dvs > 0.5)), qty = hisp_dem) +
+        labs(x = "Number of Hispanic + Asian > 40% and Dem. Majority") +
+    redist.plot.hist(plans %>% group_by(draw) %>%
+                             mutate(hisp_dem = sum(((vap_hisp + vap_asian)/total_vap > 0.3) & e_dvs > 0.5)), qty = hisp_dem) +
+        labs(x = "Number of Hispanic + Asian > 30% and Dem. Majority") +
     redist.plot.hist(plans %>% group_by(draw) %>%
         mutate(asian_dem = sum((vap_asian/total_vap > 0.5) & e_dvs > 0.5)), qty = asian_dem) +
-        labs(x = "Number of Asian and Dem. Majority")
-
+        labs(x = "Number of Asian and Dem. Majority") +
+    redist.plot.hist(plans %>% group_by(draw) %>%
+                             mutate(hisp_dem = sum((vap_asian/total_vap > 0.4) & e_dvs > 0.5)), qty = hisp_dem) +
+        labs(x = "Number of Asian > 40% and Dem. Majority") +
     redist.plot.hist(plans %>% group_by(draw) %>%
         mutate(coalition_dem = sum(((vap_asian + vap_hisp + vap_black)/total_vap > 0.5) & e_dvs > 0.5)), qty = coalition_dem) +
-        labs(x = "Number of Hispanic + Asian + Black and Dem. Majority")
+        labs(x = "Number of Hispanic + Asian + Black and Dem. Majority") &
+        theme_bw()
 
 
     enac_sum <- plans %>%
@@ -240,8 +254,7 @@ if (interactive()) {
         geom_hline(yintercept = 0.5, linetype = "dotted") +
         geom_text(data = enac_sum, aes(x = hisp_rank, label = round(e_dvs, 2)),
             vjust = 3, y = Inf, size = 2.5, fontface = "bold", lineheight = 0.8, alpha = 0.8,
-            color = ifelse(subset_ref(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C"))
-
+            color = ifelse(subset_ref(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C")) +
     redist.plot.distr_qtys(plans, vap_asian/total_vap,
         color_thresh = NULL,
         color = ifelse(subset_sampled(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C"),
@@ -252,8 +265,7 @@ if (interactive()) {
         geom_hline(yintercept = 0.5, linetype = "dotted") +
         geom_text(data = enac_sum, aes(x = asian_rank, label = round(e_dvs, 2)),
             vjust = 3, y = Inf, size = 2.5, fontface = "bold", lineheight = 0.8, alpha = 0.8,
-            color = ifelse(subset_ref(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C"))
-
+            color = ifelse(subset_ref(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C")) +
     redist.plot.distr_qtys(plans, (vap_asian + vap_hisp)/total_vap,
         color_thresh = NULL,
         color = ifelse(subset_sampled(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C"),
@@ -264,8 +276,7 @@ if (interactive()) {
         geom_hline(yintercept = 0.5, linetype = "dotted") +
         geom_text(data = enac_sum, aes(x = ha_rank, label = round(e_dvs, 2)),
             vjust = 3, y = Inf, size = 2.5, fontface = "bold", lineheight = 0.8, alpha = 0.8,
-            color = ifelse(subset_ref(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C"))
-
+            color = ifelse(subset_ref(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C")) +
     redist.plot.distr_qtys(plans, (vap_asian + vap_hisp + vap_black)/total_vap,
         color_thresh = NULL,
         color = ifelse(subset_sampled(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C"),
@@ -273,8 +284,7 @@ if (interactive()) {
         scale_y_continuous("Percent Coalition by VAP") +
         labs(title = "CA Enacted versus Simulations") +
         scale_color_manual(values = c(cd_2020 = "black")) +
-        geom_hline(yintercept = 0.5, linetype = "dotted")
-
+        geom_hline(yintercept = 0.5, linetype = "dotted") +
     redist.plot.distr_qtys(plans %>% number_by(e_dvs), (vap_asian + vap_hisp + vap_black)/total_vap, sort = FALSE,
         color_thresh = NULL,
         color = ifelse(subset_sampled(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C"),
