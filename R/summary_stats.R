@@ -82,7 +82,7 @@ add_summary_stats <- function(plans, map, ...) {
                       e_dvs = dem,
                       pr_dem = dem > 0.5,
                       e_dem = sum(dem > 0.5, na.rm=T),
-                      pbias = -pbias[1], # flip so dem = negative (only for old redist versioning)
+                      pbias = pbias[1],
                       egap = egap[1])
     })
 
