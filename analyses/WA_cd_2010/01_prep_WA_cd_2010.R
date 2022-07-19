@@ -77,6 +77,7 @@ if (!file.exists(here(shp_path))) {
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     #might need to remove
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
+      st_make_valid() %>%
       wa_shp <- rmapshaper::ms_simplify(wa_shp, keep = 0.05,
       keep_shapes = TRUE) %>%
      suppressWarnings()
@@ -127,7 +128,8 @@ if (!file.exists(here(shp_path))) {
 
     # disconnect water
     d_bigwater <- filter(d_water, as.numeric(st_area(d_water)) > 1e7) %>%
-      summarize() %>%
+      summarize() %>% st_make_valid() %>%
+      rmapshaper::ms_simplify(keep = 0.05) %>%
       st_snap(wa_shp$geometry, tolerance = 100) %>% # 100 ft
       st_buffer(1.0)
     geom_adj <- st_difference(wa_shp, d_bigwater$geometry)
