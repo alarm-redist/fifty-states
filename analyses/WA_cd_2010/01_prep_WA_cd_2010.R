@@ -171,7 +171,7 @@ if (!file.exists(here(shp_path))) {
     # reconnect precincts across county borders by roads
     geom_roads_ferries <- c(d_roads$geometry, d_ferries$geometry)
     rel_roads_ferries <- st_crosses(geom_roads_ferries, wa_shp)
-    for (i in seq_along(rel_roads)) {
+    for (i in seq_along(rel_roads_ferries)) {
       rel_i <- rel_roads_ferries[[i]]
       if (length(rel_i) == 1) next
       for (j in rel_i) {
