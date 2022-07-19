@@ -21,11 +21,11 @@ path_data <- download_redistricting_file("WA", "data-raw/WA", year = 2010)
 
 # download the enacted plan.
 url <- "https://redistricting.lls.edu/wp-content/uploads/wa_2010_congress_2012-02-07_2021-12-31.zip"
-path_enacted <- "data-raw/WA/WA_enacted.zip"
+path_enacted <- "data-raw/WA/WA_enacted_2010.zip"
 download(url, here(path_enacted))
-unzip(here(path_enacted), exdir = here(dirname(path_enacted), "WA_enacted"))
+unzip(here(path_enacted), exdir = here(dirname(path_enacted), "WA_enacted_2010"))
 file.remove(path_enacted)
-path_enacted <- "data-raw/WA/WA_enacted/CONG_AMEND_FINAL.shp"
+path_enacted <- "data-raw/WA/WA_enacted_2010/CONG_AMEND_FINAL.shp"
 
 #download ferry routes
 url <- "https://data.wsdot.wa.gov/geospatial/DOT_TDO/FerryRoutes/FerryRoutes.zip"
@@ -49,7 +49,19 @@ if (!file.exists(here(shp_path))) {
     wa_shp <- read_csv(here(path_data)) %>%
         join_vtd_shapefile(year = 2010) %>%
         st_transform(EPSG$WA)  %>%
-        rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
+        rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID")) %>%
+        relocate(GEOID, .before=state)
+
+    # fill Mt. Rainier hole
+    geom_pierce = filter(wa_shp, county=="053") %>%
+        summarize() %>%
+        pull(geometry)
+    geom_pierce_nohole = lapply(geom_pierce, function(x) x[1]) %>%
+        st_multipolygon() %>%
+        st_sfc(crs=st_crs(geom_pierce))
+    geom_hole = st_difference(geom_pierce_nohole, geom_pierce)
+    wa_shp$geometry[st_geometry_type(wa_shp$geometry) == "GEOMETRYCOLLECTION"] = geom_hole
+
 
     # add municipalities
     d_muni <- make_from_baf("WA", "INCPLACE_CDP", "VTD", year = 2010)  %>%
@@ -75,14 +87,12 @@ if (!file.exists(here(shp_path))) {
     redistmetrics::prep_perims(shp = wa_shp, perim_path = here(perim_path)) %>% invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    #might need to remove
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
-      st_make_valid() %>%
-      wa_shp <- rmapshaper::ms_simplify(wa_shp, keep = 0.05,
-      keep_shapes = TRUE) %>%
-     suppressWarnings()
+        wa_shp <- rmapshaper::ms_simplify(wa_shp, keep = 0.05,
+                                          keep_shapes = TRUE) %>%
+            suppressWarnings()
     }
-    
+
     # for geographic links
     #need to use 2011 data due to 2010 not being available
     d_roads <- tigris::primary_secondary_roads("53", year = 2011) %>%
@@ -99,7 +109,7 @@ if (!file.exists(here(shp_path))) {
     # WSF (ferries) is part of the state highway system but doesn't show up in TIGER
     if (FALSE) {
       library(ggplot2)
-      
+
       p <- ggplot(wa_shp, aes(fill = county)) +
         geom_sf(size = 0.05, color = "white") +
         geom_sf(data = d_water, size = 0.0, fill = "white", color = NA) +
@@ -110,17 +120,17 @@ if (!file.exists(here(shp_path))) {
         scale_fill_manual(values = sf.colors(39, categorical = TRUE), guide = "none") +
         scale_alpha_continuous(range = c(0, 1), guide = "none") +
         theme_void()
-      
+
       p + geom_sf_text(aes(label = str_glue("{county}\n{vtd}")), size = 2.2, color = "black",
                        data = filter(wa_shp, area_land >= 5e8))
-      
+
       plot_zoom <- function(cty) {
         bbox <- st_bbox(filter(wa_shp, county == paste(cty, "County")))
         p +
           coord_sf(xlim = bbox[c(1, 3)], ylim = bbox[c(2, 4)])
       }
     }
-    
+
     # create adjacency graph
     wa_shp <- st_make_valid(wa_shp)
     sf::sf_use_s2(FALSE)
@@ -138,12 +148,12 @@ if (!file.exists(here(shp_path))) {
       st_buffer(filter(wa_shp, !GEOID %in% geom_adj$GEOID), -50)
     )
     geom_adj <- slice(geom_adj, match(wa_shp$GEOID, geom_adj$GEOID))
-    
+
     adj_nowater <- redist.adjacency(wa_shp)
     adj_0 <- redist.adjacency(geom_adj)
     wa_shp$adj <- adj_0
 
-    
+
     # disconnect all counties
     # Since counties follow the Cascade crest and the Columbia river,
     #   this will take care of major geographic barriers. Smaller features,
@@ -157,7 +167,7 @@ if (!file.exists(here(shp_path))) {
         wa_shp$adj <- remove_edge(wa_shp$adj, rep(i, length(diff_cty)), adj_i[diff_cty])
       }
     }
-    
+
     # reconnect precincts across county borders by roads
     geom_roads_ferries <- c(d_roads$geometry, d_ferries$geometry)
     rel_roads_ferries <- st_crosses(geom_roads_ferries, wa_shp)
@@ -171,12 +181,12 @@ if (!file.exists(here(shp_path))) {
         }
       }
     }
-    
+
     # manual connections
     add_update_edge <- function(vtd1, vtd2) {
       wa_shp$adj <<- add_edge(wa_shp$adj, which(wa_shp$GEOID == vtd1), which(wa_shp$GEOID == vtd2))
     }
-    
+
     # Vashon and N Seattle
     add_update_edge("53033WV0732", "53033000514")
     add_update_edge("53033001818", "53033001817")
@@ -184,27 +194,27 @@ if (!file.exists(here(shp_path))) {
     add_update_edge("53033WV0733", "53033000853")
     add_update_edge("53033WV0933", "53033002416")
     add_update_edge("53033WV0930", "53033003014")
-    
+
     # Bremerton
     add_update_edge("53035000007", "53035000006")
-    
+
     # Harstine Island
     add_update_edge("53045000114", "53045000113")
-    
+
     # Fox, McNeil, and Ketron islands
     add_update_edge("53053026350", "53053026342")
     add_update_edge("53053028575", "53053028542")
     add_update_edge("53053028571", "53053028574")
-    
+
     # Point Roberts
     add_update_edge("53073000101", "53073000102")
-    
+
     # manual connection helpers
     if (FALSE) {
       redist.plot.adj(wa_shp, wa_shp$adj, centroids = F)
       x <- redist:::contiguity(wa_shp$adj, rep(1, length(wa_shp$adj)))
       unique(wa_shp$county[x > 1])
-      
+
       idx <- which(x > 1 & str_detect(wa_shp$county, "King"))
       bbox <- st_bbox(st_buffer(wa_shp$geometry[idx], 6000))
       lbls <- rep("", nrow(wa_shp))
@@ -217,11 +227,11 @@ if (!file.exists(here(shp_path))) {
         coord_sf(xlim = bbox[c(1, 3)], ylim = bbox[c(2, 4)]) +
         geom_sf_text(aes(label = lbls), size = 2.5) +
         theme_void()
-      
+
       table(redist:::contiguity(wa_shp$adj, wa_shp$cd_2010))
     }
-    
-    
+
+
     wa_shp <- wa_shp %>%
         fix_geo_assignment(muni)
 
@@ -229,7 +239,7 @@ if (!file.exists(here(shp_path))) {
       suppressWarnings()
     write_rds(wa_shp, here(shp_path), compress = "gz")
     cli_process_done()
-    
+
 } else {
     wa_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong WA} shapefile")
