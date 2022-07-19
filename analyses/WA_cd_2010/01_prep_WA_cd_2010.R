@@ -76,12 +76,9 @@ if (!file.exists(here(shp_path))) {
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     #might need to remove
-    if (requireNamespace("rmapshaper", quietly = TRUE)) {
-      st_make_valid() %>%
-      wa_shp <- rmapshaper::ms_simplify(wa_shp, keep = 0.05,
-      keep_shapes = TRUE) %>%
+     wa_shp <- st_make_valid(wa_shp) %>%
+     rmapshaper::ms_simplify(keep = 0.05, keep_shapes = TRUE) %>%
      suppressWarnings()
-    }
     
     # for geographic links
     #need to use 2011 data due to 2010 not being available
@@ -161,7 +158,7 @@ if (!file.exists(here(shp_path))) {
     # reconnect precincts across county borders by roads
     geom_roads_ferries <- c(d_roads$geometry, d_ferries$geometry)
     rel_roads_ferries <- st_crosses(geom_roads_ferries, wa_shp)
-    for (i in seq_along(rel_roads)) {
+    for (i in seq_along(rel_roads_ferries)) {
       rel_i <- rel_roads_ferries[[i]]
       if (length(rel_i) == 1) next
       for (j in rel_i) {
