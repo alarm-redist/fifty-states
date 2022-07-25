@@ -22,18 +22,18 @@ map_south$boundary <- map_south$tract %in% seam_south
 
 cons_south <- redist_constr(map_south) %>%
     add_constr_grp_hinge(
-        strength = 10,
+        strength = 9,
         group_pop = vap_hisp,
         total_pop = vap,
     ) %>%
     add_constr_grp_hinge(
-        strength = -7.5,
+        strength = -6.8,
         group_pop = vap_hisp,
         total_pop = vap,
         tgts_group = .3
     ) %>%
     add_constr_grp_hinge(
-        strength = -7.5,
+        strength = -6.8,
         group_pop = vap_hisp,
         total_pop = vap,
         tgts_group = .2
@@ -75,15 +75,20 @@ seam_bay <- sapply(
         c("Stanislaus County", "Calaveras County"),
         c("Stanislaus County", "Tuolumne County"),
         c("Merced County", "Mariposa County"),
+        c('Merced County', 'Fresno County'),
         c("Madera County", "Mariposa County"),
         c("Madera County", "Tuolumne County"),
         c("Madera County", "Mono County"),
-        c("Fresno County", "Mono County"),
-        c("Fresno County", "Inyo County"),
-        c("Tulare County", "Inyo County"),
-        c("Tulare County", "Kern County"),
-        c("Kings County", "Kern County"),
-        c("Monterey County", "San Luis Obispo County")
+        c('Madera County', 'Fresno County'),
+        c('San Benito County', 'Fresno County'),
+        # c("Fresno County", "Mono County"),
+        # c("Fresno County", "Inyo County"),
+        # c("Tulare County", "Inyo County"),
+        # c("Tulare County", "Kern County"),
+        # c("Kings County", "Kern County"),
+        c("Monterey County", "San Luis Obispo County"),
+        c("Monterey County", "Kings County"),
+        c("Monterey County", "Kern County")
     ),
     FUN = \(x) seam_geom(adj = map$adj, shp = map, admin = "county", seam = x) %>%
         pull(tract)
@@ -139,7 +144,7 @@ plans_bay <- redist_smc(
     nsims = 1e4, runs = 2L, ncores = 8,
     counties = pseudo_county,
     constraints = cons_bay,
-    n_steps = 15, pop_temper = 0.0025
+    n_steps = 13, pop_temper = 0.0025
 )
 
 
@@ -203,31 +208,31 @@ if (interactive()) {
     library(patchwork)
 
     redist.plot.hist(plans %>% group_by(draw) %>%
-        mutate(hisp_dem = sum((vap_hisp/total_vap > 0.5) & e_dvs > 0.5)), qty = hisp_dem) +
+                         mutate(hisp_dem = sum((vap_hisp/total_vap > 0.5) & e_dvs > 0.5)), qty = hisp_dem) +
         labs(x = "Number of Hispanic and Dem. Majority") +
-    redist.plot.hist(plans %>% group_by(draw) %>%
-        mutate(hisp_dem = sum((vap_hisp/total_vap > 0.4) & e_dvs > 0.5)), qty = hisp_dem) +
+        redist.plot.hist(plans %>% group_by(draw) %>%
+                             mutate(hisp_dem = sum((vap_hisp/total_vap > 0.4) & e_dvs > 0.5)), qty = hisp_dem) +
         labs(x = "Number of Hispanic > 40% and Dem. Majority") +
-    redist.plot.hist(plans %>% group_by(draw) %>%
+        redist.plot.hist(plans %>% group_by(draw) %>%
                              mutate(hisp_dem = sum((vap_hisp/total_vap > 0.3) & e_dvs > 0.5)), qty = hisp_dem) +
         labs(x = "Number of Hispanic > 30% and Dem. Majority") +
-    redist.plot.hist(plans %>% group_by(draw) %>%
-        mutate(ha_dem = sum(((vap_hisp + vap_asian)/total_vap > 0.5) & e_dvs > 0.5)), qty = ha_dem) +
+        redist.plot.hist(plans %>% group_by(draw) %>%
+                             mutate(ha_dem = sum(((vap_hisp + vap_asian)/total_vap > 0.5) & e_dvs > 0.5)), qty = ha_dem) +
         labs(x = "Number of Hispanic + Asian and Dem. Majority") +
-    redist.plot.hist(plans %>% group_by(draw) %>%
+        redist.plot.hist(plans %>% group_by(draw) %>%
                              mutate(hisp_dem = sum(((vap_hisp + vap_asian)/total_vap > 0.4) & e_dvs > 0.5)), qty = hisp_dem) +
         labs(x = "Number of Hispanic + Asian > 40% and Dem. Majority") +
-    redist.plot.hist(plans %>% group_by(draw) %>%
+        redist.plot.hist(plans %>% group_by(draw) %>%
                              mutate(hisp_dem = sum(((vap_hisp + vap_asian)/total_vap > 0.3) & e_dvs > 0.5)), qty = hisp_dem) +
         labs(x = "Number of Hispanic + Asian > 30% and Dem. Majority") +
-    redist.plot.hist(plans %>% group_by(draw) %>%
-        mutate(asian_dem = sum((vap_asian/total_vap > 0.5) & e_dvs > 0.5)), qty = asian_dem) +
+        redist.plot.hist(plans %>% group_by(draw) %>%
+                             mutate(asian_dem = sum((vap_asian/total_vap > 0.5) & e_dvs > 0.5)), qty = asian_dem) +
         labs(x = "Number of Asian and Dem. Majority") +
-    redist.plot.hist(plans %>% group_by(draw) %>%
+        redist.plot.hist(plans %>% group_by(draw) %>%
                              mutate(hisp_dem = sum((vap_asian/total_vap > 0.4) & e_dvs > 0.5)), qty = hisp_dem) +
         labs(x = "Number of Asian > 40% and Dem. Majority") +
-    redist.plot.hist(plans %>% group_by(draw) %>%
-        mutate(coalition_dem = sum(((vap_asian + vap_hisp + vap_black)/total_vap > 0.5) & e_dvs > 0.5)), qty = coalition_dem) +
+        redist.plot.hist(plans %>% group_by(draw) %>%
+                             mutate(coalition_dem = sum(((vap_asian + vap_hisp + vap_black)/total_vap > 0.5) & e_dvs > 0.5)), qty = coalition_dem) +
         labs(x = "Number of Hispanic + Asian + Black and Dem. Majority") &
         theme_bw()
 
@@ -235,60 +240,60 @@ if (interactive()) {
     enac_sum <- plans %>%
         subset_ref() %>%
         mutate(minority = (total_vap - vap_white)/(total_vap),
-            dist_lab = str_pad(district, width = 2, pad = "0"),
-            minority_rank = rank(minority), # ascending order
-            hisp_rank = rank(vap_hisp),
-            asian_rank = rank(vap_asian),
-            ha_rank = rank(vap_hisp + vap_asian),
-            coalition_rank = rank(vap_hisp + vap_asian + vap_black),
-            compact_rank = rank(comp_polsby)
+               dist_lab = str_pad(district, width = 2, pad = "0"),
+               minority_rank = rank(minority), # ascending order
+               hisp_rank = rank(vap_hisp),
+               asian_rank = rank(vap_asian),
+               ha_rank = rank(vap_hisp + vap_asian),
+               coalition_rank = rank(vap_hisp + vap_asian + vap_black),
+               compact_rank = rank(comp_polsby)
         )
 
     redist.plot.distr_qtys(plans, vap_hisp/total_vap,
-        color_thresh = NULL,
-        color = ifelse(subset_sampled(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C"),
-        size = 0.5, alpha = 0.5) +
+                           color_thresh = NULL,
+                           color = ifelse(subset_sampled(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C"),
+                           size = 0.5, alpha = 0.5) +
         scale_y_continuous("Percent Hispanic by VAP") +
         labs(title = "CA Enacted versus Simulations") +
         scale_color_manual(values = c(cd_2020 = "black")) +
         geom_hline(yintercept = 0.5, linetype = "dotted") +
         geom_text(data = enac_sum, aes(x = hisp_rank, label = round(e_dvs, 2)),
-            vjust = 3, y = Inf, size = 2.5, fontface = "bold", lineheight = 0.8, alpha = 0.8,
-            color = ifelse(subset_ref(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C")) +
-    redist.plot.distr_qtys(plans, vap_asian/total_vap,
-        color_thresh = NULL,
-        color = ifelse(subset_sampled(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C"),
-        size = 0.5, alpha = 0.5) +
+                  vjust = 3, y = Inf, size = 2.5, fontface = "bold", lineheight = 0.8, alpha = 0.8,
+                  color = ifelse(subset_ref(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C")) +
+        redist.plot.distr_qtys(plans, vap_asian/total_vap,
+                               color_thresh = NULL,
+                               color = ifelse(subset_sampled(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C"),
+                               size = 0.5, alpha = 0.5) +
         scale_y_continuous("Percent Asian by VAP") +
         labs(title = "CA Enacted versus Simulations") +
         scale_color_manual(values = c(cd_2020 = "black")) +
         geom_hline(yintercept = 0.5, linetype = "dotted") +
         geom_text(data = enac_sum, aes(x = asian_rank, label = round(e_dvs, 2)),
-            vjust = 3, y = Inf, size = 2.5, fontface = "bold", lineheight = 0.8, alpha = 0.8,
-            color = ifelse(subset_ref(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C")) +
-    redist.plot.distr_qtys(plans, (vap_asian + vap_hisp)/total_vap,
-        color_thresh = NULL,
-        color = ifelse(subset_sampled(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C"),
-        size = 0.5, alpha = 0.5) +
+                  vjust = 3, y = Inf, size = 2.5, fontface = "bold", lineheight = 0.8, alpha = 0.8,
+                  color = ifelse(subset_ref(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C")) +
+        redist.plot.distr_qtys(plans, (vap_asian + vap_hisp)/total_vap,
+                               color_thresh = NULL,
+                               color = ifelse(subset_sampled(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C"),
+                               size = 0.5, alpha = 0.5) +
         scale_y_continuous("Percent Hispanic or Asian by VAP") +
         labs(title = "CA Enacted versus Simulations") +
         scale_color_manual(values = c(cd_2020 = "black")) +
         geom_hline(yintercept = 0.5, linetype = "dotted") +
         geom_text(data = enac_sum, aes(x = ha_rank, label = round(e_dvs, 2)),
-            vjust = 3, y = Inf, size = 2.5, fontface = "bold", lineheight = 0.8, alpha = 0.8,
-            color = ifelse(subset_ref(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C")) +
-    redist.plot.distr_qtys(plans, (vap_asian + vap_hisp + vap_black)/total_vap,
-        color_thresh = NULL,
-        color = ifelse(subset_sampled(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C"),
-        size = 0.5, alpha = 0.5) +
+                  vjust = 3, y = Inf, size = 2.5, fontface = "bold", lineheight = 0.8, alpha = 0.8,
+                  color = ifelse(subset_ref(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C")) +
+        redist.plot.distr_qtys(plans, (vap_asian + vap_hisp + vap_black)/total_vap,
+                               color_thresh = NULL,
+                               color = ifelse(subset_sampled(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C"),
+                               size = 0.5, alpha = 0.5) +
         scale_y_continuous("Percent Coalition by VAP") +
         labs(title = "CA Enacted versus Simulations") +
         scale_color_manual(values = c(cd_2020 = "black")) +
         geom_hline(yintercept = 0.5, linetype = "dotted") +
-    redist.plot.distr_qtys(plans %>% number_by(e_dvs), (vap_asian + vap_hisp + vap_black)/total_vap, sort = FALSE,
-        color_thresh = NULL,
-        color = ifelse(subset_sampled(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C"),
-        size = 0.5, alpha = 0.5) +
+        redist.plot.distr_qtys(plans %>% number_by(e_dvs), (vap_asian + vap_hisp + vap_black)/total_vap, sort = FALSE,
+                               color_thresh = NULL,
+                               color = ifelse(subset_sampled(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C"),
+                               size = 0.5, alpha = 0.5) +
         scale_y_continuous("Percent Coalition by VAP") +
         labs(title = "CA Enacted versus Simulations") +
         scale_color_manual(values = c(cd_2020 = "black")) +

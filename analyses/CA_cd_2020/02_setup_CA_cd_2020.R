@@ -13,34 +13,38 @@ map <- map %>%
         pop_muni = get_target(map)))
 
 map <- map %>%
-    mutate(uid = row_number())
+    mutate(
+        uid = row_number(),
+        across(contains(c("_16", "_18", "_20")), \(x) coalesce(x, 0)),
+        ndv = coalesce(ndv, 0),
+        nrv = coalesce(nrv, 0)
+    )
 
-map <- map %>%
-    mutate(across(contains(c("_16", "_18", "_20")), \(x) coalesce(x, 0)))
-map <- map %>%
-    mutate(ndv = coalesce(ndv, 0),
-        nrv = coalesce(nrv, 0))
-
-
+counties_south <- c("Los Angeles County", "San Bernardino County", "Orange County",
+                   "Riverside County", "San Diego County", "Imperial County")
 map_south <- map %>%
     `attr<-`("existing_col", NULL) %>%
-    filter(county %in% c("Los Angeles County", "San Bernardino County", "Orange County",
-        "Riverside County", "San Diego County", "Imperial County")) %>%
+    filter(county %in% counties_south) %>%
     `attr<-`("ndists", 29) %>%
     `attr<-`("pop_bounds", attr(map, "pop_bounds"))
 
+counties_bay <- c("Alameda County", "Contra Costa County", #"Fresno County", "Kings County",
+                  "Madera County", "Madera County", "Merced County", "Monterey County",
+                  "Sacramento County", "San Benito County", "San Francisco County",
+                  "San Joaquin County", "San Mateo County", "Santa Clara County",
+                  "Santa Cruz County", "Solano County", "Stanislaus County", #"Tulare County",
+                  "Yolo County")
+
 map_bay <- map %>%
     `attr<-`("existing_col", NULL) %>%
-    filter(county %in% c("Alameda County", "Contra Costa County", "Fresno County", "Kings County",
-        "Madera County", "Madera County", "Merced County", "Monterey County",
-        "Sacramento County", "San Benito County", "San Francisco County",
-        "San Joaquin County", "San Mateo County", "Santa Clara County",
-        "Santa Cruz County", "Solano County", "Stanislaus County", "Tulare County",
-        "Yolo County")) %>%
-    `attr<-`("ndists", 17) %>%
+    filter(county %in% counties_bay) %>%
+    `attr<-`("ndists", 14) %>%
     `attr<-`("pop_bounds", attr(map, "pop_bounds"))
 
-
+map <- map %>%
+    mutate(cluster = case_when(county %in% counties_bay ~ 'Bay',
+                               county %in% counties_south ~ 'South',
+                               TRUE ~ 'Remainder'))
 
 # Add an analysis name attribute
 attr(map, "analysis_name") <- "CA_2020"
