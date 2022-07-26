@@ -61,7 +61,7 @@ download_dataverse = function(slug, get_doc=FALSE) {
     list(map=map, plans=plans, stats=stats, doc=doc)
 }
 
-fix_state = function(state, type = "cd", year = 2020) {
+fix_state = function(state, type = "cd", year = 2020, wait = TRUE) {
     state <- str_to_upper(state)
     cli::cli_h1(state)
     year <- as.character(as.integer(year))
@@ -169,5 +169,10 @@ fix_state = function(state, type = "cd", year = 2020) {
 
     dataverse::add_dataset_file(path_zip, dataset=dv_id, description=readable)
     cli::cli_alert_success("Uploaded new files.")
+
+    time = round(nrow(stats) / 1500)
+    Sys.sleep(time)
+
+    cli::cli_alert_success("Waited {time}s for ingest.")
 }
 
