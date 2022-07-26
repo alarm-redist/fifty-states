@@ -176,5 +176,7 @@ fix_state = function(state, type = "cd", year = 2020, wait = TRUE) {
 
         cli::cli_alert_success("Waited {time}s for ingest.")
     }
+
+    invisible(TRUE)
 }
 
