@@ -170,9 +170,11 @@ fix_state = function(state, type = "cd", year = 2020, wait = TRUE) {
     dataverse::add_dataset_file(path_zip, dataset=dv_id, description=readable)
     cli::cli_alert_success("Uploaded new files.")
 
-    time = round(nrow(stats) / 1500)
-    Sys.sleep(time)
+    if (isTRUE(wait)) {
+        time = round(nrow(stats) / 1500)
+        Sys.sleep(time)
 
-    cli::cli_alert_success("Waited {time}s for ingest.")
+        cli::cli_alert_success("Waited {time}s for ingest.")
+    }
 }
 
