@@ -45,7 +45,6 @@ perim_path <- "data-out/WA_2010/perim.rds"
 if (!file.exists(here(shp_path))) {
   cli_process_start("Preparing {.strong WA} shapefile")
   # read in redistricting data
-  # removed: , col_types = cols(GEOID20 = "c")
   wa_shp <- read_csv(here(path_data)) %>%
     join_vtd_shapefile(year = 2010) %>%
     st_transform(EPSG$WA)  %>%
@@ -227,7 +226,6 @@ if (!file.exists(here(shp_path))) {
   add_update_edge("53031WVPACO", "5300909262")
   
   #King County
-  #continue
   add_update_edge("53033WVS361", "53033332200")
   add_update_edge("53033WVPS30", "53033WVPS33")
   add_update_edge("53033303PS67", "5033330846")
@@ -239,13 +237,13 @@ if (!file.exists(here(shp_path))) {
   add_update_edge("53033WVPSNP", "53033330856")
   add_update_edge("53033331818", "53033331817")
 
-  #053
+  #Pierce County
   add_update_edge("53053WVROCB", "5305353211")
   
-  #055
+  #San Juan County
   add_update_edge("5305555015", "5305555004")
   
-  #061
+  #Snohomish County
   add_update_edge("53061WVPGWY", "53061WVPG32")
   
   # manual connection helpers
