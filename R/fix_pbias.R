@@ -67,6 +67,8 @@ fix_state = function(state, type = "cd", year = 2020, wait = TRUE) {
     year <- as.character(as.integer(year))
     slug <- str_glue("{state}_{type}_{year}")
 
+    Sys.sleep(5)
+
     d = download_dataverse(slug)
     cli::cli_alert_success("Downloaded old files from Dataverse.")
     plans = d$plans
@@ -148,7 +150,7 @@ fix_state = function(state, type = "cd", year = 2020, wait = TRUE) {
                     ">"="Delete files manually. Then run
                     {.code {cmd}}"))
     }
-    Sys.sleep(5)
+    Sys.sleep(7)
     if (length(id_stats) > 0) {
         success = dataverse::delete_file(id_stats)
         if (!success) {
@@ -171,7 +173,7 @@ fix_state = function(state, type = "cd", year = 2020, wait = TRUE) {
     cli::cli_alert_success("Uploaded new files.")
 
     if (isTRUE(wait)) {
-        time = round(nrow(stats) / 1500)
+        time = round(nrow(stats) / 750)
         Sys.sleep(time)
 
         cli::cli_alert_success("Waited {time}s for ingest.")
@@ -180,3 +182,5 @@ fix_state = function(state, type = "cd", year = 2020, wait = TRUE) {
     invisible(TRUE)
 }
 
+
+# map(state.abb, possibly(fix_state, FALSE, quiet=FALSE))
