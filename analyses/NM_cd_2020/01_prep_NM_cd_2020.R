@@ -64,7 +64,7 @@ if (!file.exists(here(shp_path))) {
         .after = cd_2010)
 
     # Create perimeters in case shapes are simplified
-    redist.prep.polsbypopper(shp = nm_shp,
+    redistmetrics::prep_perims(shp = nm_shp,
         perim_path = here(perim_path)) %>%
         invisible()
 
