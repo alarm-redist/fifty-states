@@ -10,17 +10,11 @@ constr <- redist_constr(map) %>%
   add_constr_grp_hinge(10.0, vap - vap_white, vap, c(0.52, 0.35, 0.25)) %>%
   add_constr_grp_hinge(-8.0, vap - vap_white, vap, c(0.35, 0.25))
 
-# TODO customize as needed. Recommendations:
-#  - For many districts / tighter population tolerances, try setting
-#  `pop_temper=0.01` and nudging upward from there. Monitor the output for
-#  efficiency!
+
 #  - Monitor the output (i.e. leave `verbose=TRUE`) to ensure things aren't breaking
-#  - Don't change the number of simulations unless you have a good reason
-#  - If the sampler freezes, try turning off the county split constraint to see
-#  if that's the problem.
 #  - Ask for help!
 set.seed(2010)
-plans <- redist_smc(map, nsims = 5e3, counties = county, constraints = constr)
+plans <- redist_smc(map, nsims = 5e3, counties = pseudo_county, constraints = constr) %>% match_numbers("cd_2010")
 # IF CORES OR OTHER UNITS HAVE BEEN MERGED:
 # make sure to call `pullback()` on this plans object!
 
@@ -34,6 +28,10 @@ cli_process_done()
 
 # Compute summary statistics -----
 cli_process_start("Computing summary statistics for {.pkg WA_cd_2010}")
+
+#Team will change for us to use 2010 data
+map$ndv <- map$adv_16
+map$nrv <- map$arv_16
 
 plans <- add_summary_stats(plans, map)
 
