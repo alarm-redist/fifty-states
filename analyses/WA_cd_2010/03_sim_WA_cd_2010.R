@@ -29,10 +29,6 @@ cli_process_done()
 # Compute summary statistics -----
 cli_process_start("Computing summary statistics for {.pkg WA_cd_2010}")
 
-#Team will change for us to use 2010 data
-map$ndv <- map$adv_16
-map$nrv <- map$arv_16
-
 plans <- add_summary_stats(plans, map)
 
 # Output the summary statistics. Do not edit this path.
