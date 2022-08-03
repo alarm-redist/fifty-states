@@ -26,7 +26,7 @@ plans <- redist_smc(map,
 # Subset < 1% of plans that are not performing
 n_perf <- plans %>%
     mutate(bvap = group_frac(map, vap_black, vap),
-           ndshare = group_frac(map, ndv, nrv + ndv)) %>%
+        ndshare = group_frac(map, ndv, nrv + ndv)) %>%
     group_by(draw) %>%
     summarize(n_blk_perf = sum(bvap > 0.3 & ndshare > 0.5))
 stopifnot(mean(n_perf$n_blk_perf == 0) <= 0.01) # stop if more than 1%
@@ -49,7 +49,7 @@ cli_process_done()
 # Compute summary statistics -----
 cli_process_start("Computing summary statistics for {.pkg SC_cd_2010}")
 
-# to check convergence
+plans <- add_summary_stats(plans, map) # to check convergence
 plans_5k <- add_summary_stats(plans_5k, map)
 
 # Output the summary statistics. Do not edit this path.
