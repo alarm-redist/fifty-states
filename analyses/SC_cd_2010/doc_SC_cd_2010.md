@@ -16,7 +16,7 @@ https://redistricting.schouse.gov/archives/2011/6334-1500-2011-Redistricting-Gui
 We do not adhere to all criteria in the guidelines. We include the following constraints:
 
 1. We enforce a maximum population deviation of 0.5%.
-2. We impose a hinge constraint on the Black Voting Age Population so that it encourages districts with BVAP above 40%, but districts with BVAP of 30% or less are not penalized as much.
+2. We impose a hinge constraint on the Black Voting Age Population so that it encourages districts with BVAP above 50%, but districts with BVAP of 30% or less are not penalized as much. This ensures that districts with high BVAP are able to elect their candidate of choice. 
 3. We impose a municipality-split constraint to lower the number of municipality splits.
 
 ## Data Sources
@@ -26,5 +26,4 @@ Data for South Carolina comes from the ALARM Project's [2020 Redistricting Data 
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 6,000 districting plans for South Carolina.
-No special techniques were needed to produce the sample.
+We sample 6,000 districting plans across two independent runs of the SMC algorithm. We then remove all plans that do not contain any district that has both a BVAP of over 30% and an average voteshare that is more Democratic than Republican. This remove occurs after verifying that such plans comprise less than 1% of the 6,000 plans. We then thin the sample down to exactly 5,000 plans.
