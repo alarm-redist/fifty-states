@@ -40,29 +40,29 @@ perim_path <- "data-out/``STATE``_``YEAR``/perim.rds"
 if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong ``STATE``} shapefile")
     # read in redistricting data
-    ``state``_shp <- read_csv(here(path_data), col_types = cols(GEOID20 = "c")) %>%
+    ``state``_shp <- read_csv(here(path_data), col_types = cols(GEOID``YR`` = "c")) %>%
         join_vtd_shapefile() %>%
         st_transform(EPSG$``STATE``)  %>%
         rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
 
     # add municipalities
-    d_muni <- make_from_baf("``STATE``", "INCPLACE_CDP", "VTD")  %>%
+    d_muni <- make_from_baf("``STATE``", "INCPLACE_CDP", "VTD", year = ``YEAR``)  %>%
         mutate(GEOID = paste0(censable::match_fips("``STATE``"), vtd)) %>%
         select(-vtd)
-    d_cd <- make_from_baf("``STATE``", "CD", "VTD")  %>%
+    d_cd <- make_from_baf("``STATE``", "CD", "VTD", year = ``YEAR``)  %>%
         transmute(GEOID = paste0(censable::match_fips("``STATE``"), vtd),
-                  cd_2010 = as.integer(cd))
+                  cd_``OLDYEAR`` = as.integer(cd))
     ``state``_shp <- left_join(``state``_shp, d_muni, by = "GEOID") %>%
         left_join(d_cd, by="GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
-        relocate(muni, county_muni, cd_2010, .after = county)
+        relocate(muni, county_muni, cd_``OLDYEAR``, .after = county)
 
     # add the enacted plan
     cd_shp <- st_read(here(path_enacted))
     ``state``_shp <- ``state``_shp %>%
-        mutate(cd_2020 = as.integer(cd_shp$DISTRICT)[
+        mutate(cd_``YEAR`` = as.integer(cd_shp$DISTRICT)[
             geo_match(``state``_shp, cd_shp, method = "area")],
-            .after = cd_2010)
+            .after = cd_``OLDYEAR``)
 
     # TODO any additional columns or data you want to add should go here
 

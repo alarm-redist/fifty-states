@@ -10,7 +10,7 @@ Both the `redist_plans` and `redist_map` object are intended to be used with the
 ### Codebook for summary statistics
 
 * `draw`: unique identifier for each sample. Non-numeric draw names are real-world plans, e.g., `cd_2010` for an enacted 2010 plan.
-* `district`: a district identifier. District numbers are functionally assigned at random and do not correspond to real-world plans.
+* `district`: a district identifier. District numbers roughly match those in the enacted plan, but the correspondence is not perfect.
 * `chain`: a number identifying the run of the redistricting algorithm used to produce this draw. Used for diagnostic purposes.
 * `pop_overlap`: a number indicating the fraction of people in this plan who reside in the same-numbered district in the enacted plan.
 * `total_pop`: the total population of each district.
