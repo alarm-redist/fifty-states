@@ -26,4 +26,5 @@ Data for South Carolina comes from the ALARM Project's [2020 Redistricting Data 
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 6,000 districting plans across two independent runs of the SMC algorithm. We then remove all plans that do not contain any district that has both a BVAP of over 30% and an average voteshare that is more Democratic than Republican. This remove occurs after verifying that such plans comprise less than 1% of the 6,000 plans. We then thin the sample down to exactly 5,000 plans.
+We sample 6,000 districting plans across two independent runs of the SMC algorithm. We then remove all plans that do not contain any district that has both a BVAP of over 30% and an average vote share that is more Democratic than Republican. This removal occurs after verifying that such plans comprise less than 1% of the 6,000 plans. We then thin the sample down to exactly 5,000 plans. We also set the population tempering to 0.01 to avoid bottlenecks.
+
