@@ -11,7 +11,7 @@ In Florida, according to [the state constitution Art. III §§ 20](http://www.le
 6. preserve county and municipality boundaries as much as possible
 
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 
 ## Data Sources

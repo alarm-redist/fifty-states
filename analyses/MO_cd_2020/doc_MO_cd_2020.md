@@ -7,7 +7,7 @@ In [Missouri](https://revisor.mo.gov/main/OneSection.aspx?section=III%20%20%2045
 1. have equal populations
 1. be geographically compact
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%. 
 We apply a basic county constraint to be in line with the splits in the plan, though there is no legal requirement.
 We add a VRA constraint targeting one BVAP opportunity district.

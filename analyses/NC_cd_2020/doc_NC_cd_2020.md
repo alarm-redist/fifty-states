@@ -9,7 +9,7 @@ In North Carolina, under [North Carolina State Constitution Article II Sections 
 4. preserve county boundaries as much as possible
 
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 We add a hinge Gibbs constraint targeting the same number of majority-minority districts as the enacted plan. We also apply a hinge Gibbs constraint to discourage packing of minority voters.
 

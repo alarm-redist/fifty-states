@@ -3,7 +3,7 @@
 ## Redistricting requirements
 In Tennessee, there are no rules for redistricting Congressional districts ([NCSL](https://www.ncsl.org/research/redistricting/redistricting-criteria.aspx)).
 
-### Interpretation of requirements
+### Algorithmic Constraints
 
 Although there are no rules, in practice, the state does avoid splitting its boundaries. The 2010 map split 8 of its 95 counties, and split only 4 of the 228 municipalities in our data, and only 2 of the 20 largest municipalities. That said, the 2020 map split the city of Nashville, splitting its county into three congressional districts, showing that these practices are not set in stone.
 

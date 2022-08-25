@@ -12,7 +12,7 @@ In Michigan, districts must:
 Based on the current plan, two districts should be majority-minority in order to comply with the Voting Rights Act.
 
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 We apply a county/municipality constraint, as described below. 
 We target a 52-62% minority share in two districts.

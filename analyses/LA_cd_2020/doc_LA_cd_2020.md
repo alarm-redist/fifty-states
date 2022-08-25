@@ -10,7 +10,7 @@ In Louisiana, according to [Louisiana Joint Rule No. 21](https://www.legis.la.go
 5. preserve the cores of traditional district alignments
 
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%. We add a hinge Gibbs constraint targeting the same number of majority-minority districts as the enacted plan. We also apply a hinge Gibbs constraint to discourage packing of minority voters.
 
 ## Data Sources

@@ -11,7 +11,7 @@
 1. connect counties based on highways (72-1506(9)).
 
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 
 ## Data Sources

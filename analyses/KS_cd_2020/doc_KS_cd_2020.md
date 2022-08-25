@@ -11,7 +11,7 @@ In Kansas, according to the [Proposed Guidelines and Criteria for 2022 Kansas Co
 6. preserve communities of social, cultural, racial, ethnic, and economic interest to the extent possible
 
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%. We add a county constraint.
 
 ## Data Sources

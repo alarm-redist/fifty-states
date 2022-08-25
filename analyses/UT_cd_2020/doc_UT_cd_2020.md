@@ -14,7 +14,7 @@ In Utah, districts must, under [legislation code 20A-20-302](https://le.utah.gov
     e. achieve boundary agreement among different types of districts
     f. prohibit the purposeful or undue favoring or disfavoring of incumbents, candidates or prospective candidates, and political parties
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5% (which ensures that the total population deviation as defined by Utah legislation does not exceed 1%).
 We constrain the number of "pseudo-county" divisions (see below for an explanation of pseudo-county).
 We perform cores-based simulations, thereby preserving cores of prior districts.

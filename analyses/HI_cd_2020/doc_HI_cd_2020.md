@@ -10,7 +10,7 @@ In Hawaii, under [HRS Title 1 S25](https://www.capitol.hawaii.gov/hrscurrent/Vol
 1. avoid mixing substantially different socioeconomic regions (25-2(b)(6))
 
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 We use Census tracts are in accordance with (25-2(b)(4)).
 We use municipalities to attempt to follow (25-2(b)(6)) in absence of regional knowledge.
