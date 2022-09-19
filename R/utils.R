@@ -68,7 +68,7 @@ join_vtd_shapefile <- function(data, year = 2020) {
                             download(url = str_glue('https://www2.census.gov/geo/tiger/TIGER2010/VTD/2010/tl_2010_{state_fp}{cty}_vtd10.zip'),
                                      path = temp)
                             unzip(temp,  exdir = dirname(temp))
-                            sf::st_read(str_glue('{dirname(temp)}/tl_2010_{state_fp}{cty}_vtd10.shp')) %>%
+                            sf::st_read(str_glue('{dirname(temp)}/tl_2010_{state_fp}{cty}_vtd10.shp'), quiet = TRUE) %>%
                                 dplyr::transmute(
                                     GEOID10 = GEOID10,
                                     geometry = geometry
