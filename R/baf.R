@@ -119,7 +119,6 @@ read_baf_cd113 <- function(state) {
         path, col_types = c(BLOCKID = 'c', CD113 = 'i')
     ) %>%
         rename(
-            GEOID = BLOCKID,
             cd_2010 = CD113
         )
 }
