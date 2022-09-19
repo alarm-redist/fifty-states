@@ -13,6 +13,10 @@ make_from_baf <- function(state, from = "INCPLACE_CDP", to = "VTD", year = 2020)
         baf <- PL94171::pl_get_baf(state, cache_to = here(str_glue("data-raw/{state}/{state}_baf.rds")))
     } else {
         baf <- get_baf_10(state, cache_to = here(str_glue("data-raw/{state}/{state}_baf_10.rds")))
+        if ('VTD' %in% names(baf)) {
+            baf[['VTD']] <- baf[['VTD']] %>%
+                mutate(DISTRICT = str_pad_l0(DISTRICT, 3))
+        }
     }
 
     if (is.character(from)) {
