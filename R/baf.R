@@ -83,3 +83,39 @@ get_baf_10 <- function(state, geographies = NULL, cache_to = NULL, refresh = FAL
   withr::deferred_clear()
   out
 }
+
+#' Download 2010 Block Assignment File to 113th Congressional Districts
+#'
+#' @return path to new zip directory, invisibly
+#' @export
+download_baf_cd113 <- function() {
+    zip_dir <- fs::dir_create('data-raw/ZZ_baf_cd113')
+    zip_url <- 'https://www2.census.gov/programs-surveys/decennial/rdo/mapping-files/2013/113-congressional-district-bef/cd113.zip'
+    zip_path <- paste0(zip_dir, '/cd113.zip')
+    download(url = zip_url, path = zip_path)
+    utils::unzip(zip_path, exdir = zip_dir)
+    invisible(zip_dir)
+}
+
+
+#' Use a Block Assignment File to Create New Geographies
+#'
+#' @param state the state abbreviation
+#'
+#' @return a tibble with block equivalency for 2010 block GEOIDs to CD113 (2013)
+#' @export
+read_baf_cd113 <- function(state) {
+    if (!fs::dir_exists('data-raw/ZZ_baf_cd113')) {
+        download_baf_cd113()
+    }
+
+    path <- stringr::str_glue('data-raw/ZZ_baf_cd113/{censable::match_fips(state)}_{censable::match_abb(state)}_CD113.txt')
+
+    read_csv(
+        path, col_types = c(BLOCKID = 'c', CD113 = 'i')
+    ) %>%
+        rename(
+            GEOID = BLOCKID,
+            cd_2010 = CD113
+        )
+}
