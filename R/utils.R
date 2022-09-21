@@ -70,7 +70,7 @@ join_vtd_shapefile <- function(data, year = 2020) {
                             unzip(temp,  exdir = dirname(temp))
                             sf::st_read(str_glue('{dirname(temp)}/tl_2010_{state_fp}{cty}_vtd10.shp')) %>%
                                 dplyr::transmute(
-                                    GEOID10 = GEOID10,
+                                    GEOID10 = str_c(str_sub(GEOID10, end = 5), str_pad_l0(str_sub(GEOID10, start = 6), 6)),
                                     geometry = geometry
                                 )
                         })
@@ -78,7 +78,7 @@ join_vtd_shapefile <- function(data, year = 2020) {
 
         geom_d <- do.call('rbind', files)
         left_join(data %>% mutate(GEOID10 = paste0(
-            str_pad_l0(state, 2),  str_pad_l0(county, 3), str_pad_l0(vtd, 3)
+            str_pad_l0(state, 2),  str_pad_l0(county, 3), str_pad_l0(vtd, 6)
             )), geom_d, by = "GEOID10") %>%
             sf::st_as_sf()
     } else {
