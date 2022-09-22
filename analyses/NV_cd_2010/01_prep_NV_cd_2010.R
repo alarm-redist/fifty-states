@@ -25,7 +25,7 @@ path_enacted <- "data-raw/NV/NV_enacted.zip"
 download(url, here(path_enacted))
 unzip(here(path_enacted), exdir = here(dirname(path_enacted), "NV_enacted"))
 file.remove(path_enacted)
-path_enacted <- "data-raw/NV/NV_enacted/Congressional.shp" # TODO use actual SHP
+path_enacted <- "data-raw/NV/NV_enacted/Congressional.shp"
 
 # Compile raw data into a final shapefile for analysis -----
 shp_path <- "data-out/NV_2010/shp_vtd.rds"
