@@ -5,7 +5,7 @@
 cli_process_start("Creating {.cls redist_map} object for {.pkg NV_cd_2010}")
 
 map <- redist_map(nv_shp, pop_tol = 0.005,
-                  existing_plan = cd_2010, adj = nv_shp$adj)
+    existing_plan = cd_2010, adj = nv_shp$adj)
 
 # Make pseudo counties with default settings
 map <- map %>%
