@@ -67,7 +67,7 @@ if (!file.exists(here(shp_path))) {
     # TODO any additional columns or data you want to add should go here
 
     # Create perimeters in case shapes are simplified
-    redist.prep.polsbypopper(shp = ``state``_shp,
+    redistmetrics::prep_perims(shp = ``state``_shp,
                              perim_path = here(perim_path)) %>%
         invisible()
 

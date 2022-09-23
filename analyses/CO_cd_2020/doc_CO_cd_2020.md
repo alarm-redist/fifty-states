@@ -12,7 +12,7 @@ In Colorado, districts must:
 1. not be drawn protect incumbents
 
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 
 ## Data Sources

@@ -5,7 +5,7 @@ In Wisconsin, districts must:
 
 1. have equal populations
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 We add a county/municipality constraint as described below.
 

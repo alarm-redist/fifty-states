@@ -9,7 +9,7 @@ In ``STATE NAME``, districts must:
 1. preserve county and municipality boundaries as much as possible
 
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of X.X%.
 
 ## Data Sources

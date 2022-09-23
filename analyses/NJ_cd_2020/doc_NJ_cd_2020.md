@@ -6,7 +6,7 @@ In New Jersey, districts must:
 1. be contiguous
 1. have equal populations
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 We use a pseudo-county constraint described below which attempts to mimic the norms in New Jersey of generally preserving county and municipal boundaries.
 

@@ -9,7 +9,7 @@
 1. districts must be made of contiguous counties (I 1-4)
 
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 We simulate at the county level.
 

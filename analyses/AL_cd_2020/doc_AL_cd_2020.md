@@ -11,7 +11,7 @@ In Alabama, according to the [Reapportionment Committee Redistricting Guidelines
 6. avoid competition between incumbents
 
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%. We add a hinge Gibbs constraint targeting the same number of majority-minority districts as the enacted plan. We also apply a hinge Gibbs constraint to discourage packing of minority voters.
 
 ## Data Sources

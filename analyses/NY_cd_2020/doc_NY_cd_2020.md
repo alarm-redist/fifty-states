@@ -13,7 +13,7 @@
 1. not abridge minority group vote power (III.4(c)(1))
 
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 We preserve cores of the many geographic regions by using a pseudo county constraint.
 

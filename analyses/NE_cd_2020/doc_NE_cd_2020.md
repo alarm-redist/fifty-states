@@ -11,7 +11,7 @@ In Nebraska, districts must, under a [legislative resolution](https://nebraskale
 1. not be drawn using partisan information
 
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 We apply a county constraint.
 We preprocess the map to ensure the cores of prior districts are preserved, as described below.

@@ -9,7 +9,7 @@ In Rhode Island, according to the [Rhode Island Laws, Chapter 100, Section 2](ht
 4. preserve state senate district boundaries as much as possible
 
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 We add a VRA constraint targeting one minority opportunity district.
 

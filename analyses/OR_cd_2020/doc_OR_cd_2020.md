@@ -11,7 +11,7 @@ In Oregon, districts must, under Or. Rev. Stat. § 188.010:
 
 Additionally, districts may not favor any political party or incumbent, and may not dilute the voting strength of any language or ethnic minority group.
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 We apply a county/municipality constraint, as described below.
 To reflect the transportation links constraint, we remove edges in the adjacency graph for counties not connected by a state or federal highway.

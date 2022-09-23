@@ -11,7 +11,7 @@ In California, under [Article XXI](https://leginfo.legislature.ca.gov/faces/code
 1. comply with the Voting Rights Act (2d2)
 
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%. We add a pseudo-county constraint, as described below. We add VRA constraints encouraging Hispanic VAP and Asian VAP majorities in districts.
 
 ## Data Sources
