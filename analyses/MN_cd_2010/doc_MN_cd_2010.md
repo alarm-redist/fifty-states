@@ -9,11 +9,13 @@ In Minnesota, districts must:
 4. be geographically compact
 5. preserve political subdivisions and communities of interest as possible avoid pairing incumbents but also cannot give unfair advantage to incumbents (least important criteria)
 
+https://www.ncsl.org/Portals/1/Documents/Redistricting/DistrictingPrinciplesFor2010andBeyond-9.pdf
+
 ### Interpretation of requirements
 We do not adhere to all criteria in the guidelines. We include the following constraints:
 
 1. We enforce a maximum population deviation of 0.5%. 
-2. We use a pseudo-county constraint to help preseve county, city, and township boundaries.
+2. We use a pseudo-county constraint to help preserve county and municipality boundaries.
 
 ## Data Sources
 Data for Minnesota comes from the ALARM Project's [2010 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
@@ -22,4 +24,4 @@ Data for Minnesota comes from the ALARM Project's [2010 Redistricting Data Files
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 5,000 districting plans  for Minnesota across two independent runs of the SMC algorithm. Municipailtiy 
+We sample 5,000 districting plans  for Minnesota across two independent runs of the SMC algorithm.  We use a pseudo-county constraint to limit the county and municipality splits. Municipality lines used are in , which are all counties with populations larger than 60% the target population for district.

@@ -28,4 +28,3 @@ save_summary_stats(plans, "data-out/MN_2010/MN_cd_2010_stats.csv")
 cli_process_done()
 
 validate_analysis(plans, map)
-
