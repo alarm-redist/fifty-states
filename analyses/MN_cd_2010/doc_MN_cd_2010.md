@@ -7,9 +7,10 @@ In Minnesota, districts must:
 2, have equal populations
 3. comply with VRA section 2
 4. be geographically compact
-5. preserve political subdivisions and communities of interest as possible avoid pairing incumbents but also cannot give unfair advantage to incumbents (least important criteria)
+5. preserve political subdivisions and communities of interest as possible 
+6. avoid pairing incumbents but also cannot give unfair advantage to incumbents (least important criteria)
 
-https://www.ncsl.org/Portals/1/Documents/Redistricting/DistrictingPrinciplesFor2010andBeyond-9.pdf
+https://www.mncourts.gov/mncourtsgov/media/CIOMediaLibrary/2011Redistricting/A110152Order11-4-11.pdf
 
 ### Interpretation of requirements
 We do not adhere to all criteria in the guidelines. We include the following constraints:
