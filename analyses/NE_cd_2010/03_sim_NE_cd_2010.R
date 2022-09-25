@@ -10,7 +10,7 @@ set.seed(2010)
 
 merge_idx <- attr(map_cores, "merge_idx")
 constr <- redist_constr(map_cores) %>%
-    add_constr_custom(1.5, function(plan, i) {
+    add_constr_custom(1.0, function(plan, i) {
         sum(tapply(map$county, plan[merge_idx] == i, n_distinct) - 1L)
     })
 
@@ -37,11 +37,3 @@ plans <- add_summary_stats(plans, map)
 save_summary_stats(plans, "data-out/NE_2010/NE_cd_2010_stats.csv")
 
 cli_process_done()
-
-# Extra validation plots for custom constraints -----
-# TODO remove this section if no custom constraints
-if (interactive()) {
-    library(ggplot2)
-    library(patchwork)
-
-}
