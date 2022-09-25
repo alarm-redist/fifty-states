@@ -17,11 +17,11 @@ We apply a county constraint.
 We preprocess the map to ensure the cores of prior districts are preserved, as described below.
 
 ## Data Sources
-Data for Nebraska comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
+Data for Nebraska comes from the ALARM Project's [Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
 
 ## Pre-processing Notes
 To preserve the cores of prior districts, we merge all precincts which are more than two precincts away from a district border under the 2000 plan.
 
 ## Simulation Notes
 We sample 5,000 districting plans for Nebraska.
-In addition to a county constraint applied to the residual counties left over from the cores operation, we apply an additional Gibbs constraint of strength 2 to avoid splitting counties.
+In addition to a county constraint applied to the residual counties left over from the cores operation, we apply an additional Gibbs constraint of strength 1.5 to avoid splitting counties.
