@@ -10,7 +10,7 @@ set.seed(2010)
 
 merge_idx <- attr(map_cores, "merge_idx")
 constr <- redist_constr(map_cores) %>%
-    add_constr_custom(1.0, function(plan, i) {
+    add_constr_custom(0.8, function(plan, i) {
         sum(tapply(map$county, plan[merge_idx] == i, n_distinct) - 1L)
     })
 
