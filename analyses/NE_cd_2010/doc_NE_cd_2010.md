@@ -24,5 +24,5 @@ To preserve the cores of prior districts, we merge all precincts which are more 
 Precincts in counties which are split by existing district boundaries are merged only within their county.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Nebraska.
-In addition to a county constraint applied to the residual counties left over from the cores operation, we apply an additional Gibbs constraint of strength 0.8 to avoid splitting counties.
+We sample 5,000 districting plans for Nebraska across four independent runs of the SMC algorithm.
+In addition to a county constraint applied to the residual counties left over from the cores operation, we apply an additional Gibbs constraint of strength 0.75 to avoid splitting counties.
