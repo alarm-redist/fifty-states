@@ -6,7 +6,7 @@ In Massachusetts, districts must:
 1. be contiguous
 1. have equal populations
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 We use the basic algorithmic county constraint applied to pseudo counties, as Congressional plans in MA do seem to follow county and municipal boundaries, despite no legal constraint. Pseudo counties are constructed by following municipal boundaries in counties larger than a district and county lines.
 

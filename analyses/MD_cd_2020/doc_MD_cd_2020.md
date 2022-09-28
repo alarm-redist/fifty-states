@@ -10,7 +10,7 @@
 1. not consider incumbent or partisan information (C.1.b.i., C.1.b.ii.)
 
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 
 ## Data Sources

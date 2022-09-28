@@ -19,7 +19,7 @@ cli_process_start("Downloading files for {.pkg VA_cd_2020}")
 
 path_data <- download_redistricting_file("VA", "data-raw/VA")
 
-url <- "https://redistrictingdatahub.org/download/?datasetid=33553&document=%2Fweb_ready_stage%2Flegislative%2F2021_adopted_plans%2Fva_cong_adopted_2021.zip"
+url <- "https://dl.boxcloud.com/zip_download/zip_download?ProgressReportingKey=5A9CC158FE2DCF60713C56229863A5C0&d=153073836778&ZipFileName=SCV%20Final%20Shape%20%26%20Block%20Files.zip&Timestamp=1659990432&SharedLink=https%3A%2F%2Fvacourts.box.com%2Fs%2F2t0xgsmshemsveou2jx55h6tl38ml8jx&HMAC2=8c474c4a21100a056013473a2d36587a176cd737d62389f21f6d85d39f7a1403"
 path_enacted <- "data-raw/VA/VA_enacted.zip"
 download(url, here(path_enacted))
 unzip(here(path_enacted), exdir = here(dirname(path_enacted), "VA_enacted"))

@@ -8,8 +8,14 @@ cli_process_start("Running simulations for {.pkg UT_cd_2020}")
 
 set.seed(2020)
 
-plans <- redist_smc(map, nsims = 3e3,
-    runs = 2L, counties = pseudo_county)
+plans <- redist_smc(
+    map_merge, nsims = 3e3,
+    runs = 2L,
+    counties = pseudo_county
+    ) %>%
+    pullback()
+
+attr(plans, "prec_pop") <- map$pop
 
 plans <- match_numbers(plans, "cd_2020")
 

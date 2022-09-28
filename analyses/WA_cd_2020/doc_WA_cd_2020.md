@@ -11,7 +11,7 @@ In Washington, districts must, under [Article 2, Section 43 of the constitution]
 1. "provide fair and effective representation and ... encourage electoral competition"
 
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 We apply a county/municipality constraint, as described below.
 To reflect the barriers and contiguity requirements, we remove edges across water regions and mountains in the adjacency graph, but reconnect precincts which are linked by a bridge, highway, or ferry.

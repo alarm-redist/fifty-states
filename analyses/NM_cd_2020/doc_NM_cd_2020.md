@@ -11,7 +11,7 @@ In New Mexico, districts must, under [legislation code SB 304](https://www.nmleg
 
 Additionally, race-neutral districting principles shall not be subordinated to racial considerations
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 We constrain the number of county divisions to 1 less than the number of Congressional Districts.
 We perform cores-based simulations, thereby preserving cores of prior districts.

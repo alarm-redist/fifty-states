@@ -3,7 +3,7 @@
 ## Redistricting requirements
 In Connecticut, there are no state law requirements for congressional districts
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%, which is in line with the low population deviation observed in the 2000 and 2010 congressional district plans.
 We use a pseudo-county constraint described below which attempts to mimic the norms in Connecticut of generally preserving county and municipal boundaries.
 

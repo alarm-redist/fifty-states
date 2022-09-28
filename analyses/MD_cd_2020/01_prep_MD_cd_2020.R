@@ -19,9 +19,15 @@ cli_process_start("Downloading files for {.pkg MD_cd_2020}")
 
 path_data <- download_redistricting_file("MD", "data-raw/MD")
 
-path_baf <- "data-raw/MD/LRACPROPOSEDCONGRESSPLAN2.xlsx"
-if (!file.exists(path_baf)) {
+path_baf_old <- "data-raw/MD/LRACPROPOSEDCONGRESSPLAN2.xlsx"
+if (!file.exists(path_baf_old)) {
     url <- "https://redistricting.mgaleg.maryland.gov/MD-Proposed-Plans-Data/LRACPROPOSEDCONGRESSPLAN2.xlsx"
+    download(url, path_baf_old)
+}
+
+path_baf <- "data-raw/MD/SB1012-2022-Md-Congress-BEQ.xlsx"
+if (!file.exists(path_baf)) {
+    url <- "https://mgaleg.maryland.gov/other/redistricting/sb1012-congress/SB1012-downloads/SB1012-2022-Md-Congress-BEQ.xlsx"
     download(url, path_baf)
 }
 
@@ -52,7 +58,25 @@ if (!file.exists(here(shp_path))) {
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2010, .after = county)
 
-    # Add enacted ----
+    # Add enacted before court ----
+    baf <- readxl::read_xlsx(path_baf_old) %>% rename(GEOID = Block, district = `DistrictID:1`)
+    baf_vtd <- PL94171::pl_get_baf("MD", geographies = "VTD")$VTD %>%
+        rename(GEOID = BLOCKID, county = COUNTYFP, vtd = DISTRICT)
+    baf <- baf %>% left_join(baf_vtd, by = "GEOID")
+    baf <- baf %>% select(-GEOID) %>%
+        mutate(GEOID = paste0("24", county, vtd)) %>%
+        select(-county, vtd)
+
+    baf <- baf %>%
+        group_by(GEOID) %>%
+        summarize(district = Mode(district))
+
+    baf <- baf %>% select(GEOID, cd_2020_legislature = district)
+
+    md_shp <- md_shp %>% left_join(baf, by = "GEOID")
+
+
+    # add enacted- ---
     baf <- readxl::read_xlsx(path_baf) %>% rename(GEOID = Block, district = `DistrictID:1`)
     baf_vtd <- PL94171::pl_get_baf("MD", geographies = "VTD")$VTD %>%
         rename(GEOID = BLOCKID, county = COUNTYFP, vtd = DISTRICT)

@@ -11,7 +11,7 @@ In Iowa, districts must:
     1. perimeter compactness, which measures the total perimeter of all districts
 
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.01%, given strict historical deviation standards.
 We also merge VTDs into counties and run the simulation at the county level.
 For compactness, we increase the `compactness` parameter to 1.1, which does not create too much inefficiency.

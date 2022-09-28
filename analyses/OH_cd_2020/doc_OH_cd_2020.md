@@ -12,7 +12,7 @@ In Ohio, districts must, under [Article XIX of the Ohio Constitution](https://ww
 1. additionally preserve county and municipality boundaries where possible
 
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 We employ a variety of anti-split constraints, both in pre-processing and in simulation, as detailed below.
 Ohio also has one VRA district in Cuyahoga county.

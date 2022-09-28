@@ -63,11 +63,30 @@ pub_dataverse = function(slug, path_map, path_plans, path_stats) {
 
     dv_id <- "doi:10.7910/DVN/SLCD3E"
     dv_set <- get_dataset(dv_id)
-    existing <- filter(dv_set$files, str_detect(filename, slug)) %>%
-        arrange(filename)
+    if (length(dv_set$files) > 0) {
+        existing <- dplyr::filter(dv_set$files, str_detect(filename, slug)) %>%
+            dplyr::arrange(filename)
+    } else {
+        existing = data.frame()
+    }
 
     if (nrow(existing) > 0)
         cli_abort("Files for {.pkg {slug}} already exist on the dataverse.")
 
     invisible(add_dataset_file(path_zip, dataset = dv_id, description = readable))
+}
+
+doc_render <- function(slug) {
+    path_stage = file.path(tempdir(), slug)
+    if (dir.exists(path_stage)) unlink(path_stage, recursive=TRUE)
+    dir.create(path_stage)
+    doc1 <- read_lines(here(str_glue("analyses/{slug}/doc_{slug}.md")))
+    readable <- str_trim(str_sub(doc1[1], 2))
+    doc2 <- read_lines(here("R/template/dataverse_addendum.md")) %>%
+        str_replace_all("``SLUG``", slug)
+    path_doc = file.path(path_stage, str_glue("{slug}_doc.md"))
+    write_lines(c(doc1, "", doc2), path_doc)
+    out <- knitr::pandoc(path_doc, "html")
+    file.remove(path_doc)
+    out
 }

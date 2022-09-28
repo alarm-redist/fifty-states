@@ -9,7 +9,7 @@ In Georgia, districts must, under the 2021-22 Guidelines for the House Legislati
 4. preserve county and municipality boundaries as much as possible
 5. avoid the unnecessary pairing of incumbents
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 
 ## Data Sources

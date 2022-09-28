@@ -4,7 +4,7 @@
 In Texas, districts must meet US constitutional requirements, but there are 
 [no state-specific statutes](https://redistricting.capitol.texas.gov/reqs#congress-section).
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 
 ## Data Sources

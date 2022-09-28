@@ -9,7 +9,7 @@ In Nevada, districts must:
 1. preserve county and municipality boundaries as much as possible
 1. preserve communities of interest.
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 We use a county constraint to avoid splitting counties, municipalities, and potential COIs.
 
