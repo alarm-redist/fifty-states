@@ -3,7 +3,7 @@
 ## Redistricting requirements
 In Arkansas, there are no state law requirements for congressional districts.
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%, which is in line with the low deviation seen in past congressional district maps.
 We limit the number of county/municipality splits, which is in line with the small number of county/municipality splits observed in past congressional district maps.
 

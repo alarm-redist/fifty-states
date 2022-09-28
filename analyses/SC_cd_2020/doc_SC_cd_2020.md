@@ -12,7 +12,7 @@ South Carolina has no state constitution or statute for redistricting. However, 
 
 The House guidelines state that if the criteria come into conflict, federal law (including the VRA) and population parity should be prioritized over others.
 
-### Interpretation of requirements
+### Algorithmic Constraints
 
 We do not adhere to all criteria in the guidelines. We include the following constraints:
 

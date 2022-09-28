@@ -9,7 +9,7 @@ In Kentucky, under the Criteria and Standards for Congressional Redistricting ad
 4. preserve county and municipality boundaries as much as possible
 5. preserve communities of interest as much as possible
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%. We use a pseudo-county constraint described below which attempts to mimic the norms in Kentucky of generally preserving county, city, and township boundaries.
 
 ## Data Sources

@@ -58,12 +58,11 @@ if (!file.exists(here(shp_path))) {
         st_transform(EPSG$UT) %>%
         st_make_valid()
     ut_shp <- ut_shp %>%
-        mutate(ut_2020 = as.integer(ut_shp$DISTRICTNO)[
-            geo_match(ut_shp, cd_shp, method = "area")],
+        mutate(cd_2020 = as.integer(cd_shp$DISTRICTNO)[geo_match(ut_shp, cd_shp, method = "area")],
         .after = cd_2010)
 
     # Create perimeters in case shapes are simplified
-    redist.prep.polsbypopper(shp = ut_shp,
+    redistmetrics::prep_perims(shp = ut_shp,
         perim_path = here(perim_path)) %>%
         invisible()
 

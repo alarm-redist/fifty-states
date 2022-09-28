@@ -13,7 +13,7 @@ Furthermore, the following principles guide redistricting in Minnesota which sti
 7. not unduly protect nor defeat incumbents
 ([Order of the Special Redistricting Panel, Hippert vs. Ritchie, No. A11-152](https://www.mncourts.gov/mncourtsgov/media/CIOMediaLibrary/2011Redistricting/A110152Order9-12-11.pdf))
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.1%.
 We use a pseudo-county constraint described below which attempts to mimic the norms in Minnesota of generally preserving county, city, and township boundaries.
 

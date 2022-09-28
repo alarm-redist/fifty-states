@@ -10,7 +10,7 @@ In Mississippi, [under Mississippi Code 5-3-123](https://advance.lexis.com/docum
 1. comply with the Voting Rights Act of 1965
 
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 We ensure that there is a majority minority district with at least 55% VAP.
 

@@ -10,7 +10,7 @@ In Arizona, districts must, [under the state constitution](https://www.azleg.gov
 1. favor competitive districts to the extent practicable
 
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 We add a county/municipality constraint, as described below.
 We add a VRA constraint targeting two majority-HVAP districts which are also substantially majority-minority.

@@ -6,7 +6,7 @@ In New Hampshire, districts must:
 1. be contiguous
 1. have equal populations
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 
 ## Data Sources

@@ -7,7 +7,7 @@ In Illinois, districts must, under Ill. Const. Art. IV, § 3:
 2. have equal populations
 3. be geographically compact
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 
 ## Data Sources

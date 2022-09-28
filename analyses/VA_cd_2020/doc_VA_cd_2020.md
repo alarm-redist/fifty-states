@@ -9,7 +9,7 @@ In Virginia, districts must, under Va. Code Ann. § 24.2-304.04:
 4. preserve county and municipality boundaries as much as possible
 5. "not, when considered on a statewide basis, unduly favor or disfavor any political party"
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 
 ## Data Sources

@@ -21,7 +21,8 @@ plans <- plans %>%
     group_by(draw) %>%
     mutate(vap_black = max(vap_black)) %>%
     ungroup() %>%
-    filter(vap_black > 0.3 | draw == "cd_2020")
+    filter(vap_black > 0.3 | draw == "cd_2020") %>%
+    select(-vap_black)
 
 plans <- plans %>%
     group_by(chain) %>%

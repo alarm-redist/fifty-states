@@ -8,7 +8,7 @@
 1. be geographically compact (C)
 1. preserve county and municipality boundaries as much as possible (C)
 
-### Interpretation of requirements
+### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 We apply a county/municipality constraint, as described below.
 
