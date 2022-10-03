@@ -25,4 +25,4 @@ Precincts in counties which are split by existing district boundaries are merged
 
 ## Simulation Notes
 We sample 5,000 districting plans for Nebraska across four independent runs of the SMC algorithm.
-In addition to a county constraint applied to the residual counties left over from the cores operation, we apply an additional Gibbs constraint of strength 0.75 to avoid splitting counties.
+We apply a county constraint applied to the residual counties left over from the cores operation.
