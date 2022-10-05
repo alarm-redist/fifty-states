@@ -17,7 +17,7 @@ suppressMessages({
 # Download necessary files for analysis -----
 cli_process_start("Downloading files for {.pkg ``SLUG``}")
 
-path_data <- download_redistricting_file("``STATE``", "data-raw/``STATE``")
+path_data <- download_redistricting_file("``STATE``", "data-raw/``STATE``", year = ``YEAR``)
 
 # download the enacted plan.
 # TODO try to find a download URL at <https://redistricting.lls.edu/state/``state_name``/>
@@ -41,7 +41,7 @@ if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong ``STATE``} shapefile")
     # read in redistricting data
     ``state``_shp <- read_csv(here(path_data), col_types = cols(GEOID``YR`` = "c")) %>%
-        join_vtd_shapefile() %>%
+        join_vtd_shapefile(year = ``YEAR``) %>%
         st_transform(EPSG$``STATE``)  %>%
         rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
 
