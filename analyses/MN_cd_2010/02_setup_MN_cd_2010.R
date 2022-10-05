@@ -14,9 +14,6 @@ map <- map %>%
 # Add an analysis name attribute
 attr(map, "analysis_name") <- "MN_2010"
 
-# Fix labeling
-map$state <- "MN"
-
 # Output the redist_map object. Do not edit this path.
 write_rds(map, "data-out/MN_2010/MN_cd_2010_map.rds", compress = "xz")
 cli_process_done()

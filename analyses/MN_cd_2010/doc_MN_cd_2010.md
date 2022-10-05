@@ -25,6 +25,4 @@ Data for Minnesota comes from the ALARM Project's [2010 Redistricting Data Files
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Minnesota across two independent runs of the SMC algorithm. We use a pseudo-county constraint to balance the county and municipality splits, viewing counties with populations larger than 60% of the target population through their municipalties instead of 
-
-Municipality lines used are in , which are all counties with populations larger than 60% the target population for district.
+We sample 5,000 districting plans for Minnesota across two independent runs of the SMC algorithm. To balance county and municipality splits, we create pseudocounties for use in the county constraint. These are counties, outside of Dakota County, Hennepin County, Ramsey, which are the counties with populations larger than 60% the target population for districts. Within Allegheny County, Montgomery County, and Philadelphia County, each municipality is its own pseudocounty as well. 
