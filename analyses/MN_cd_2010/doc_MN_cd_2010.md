@@ -4,7 +4,7 @@
 In Minnesota, districts must:
 
 1. be contiguous
-2, have equal populations
+2. have equal populations
 3. comply with VRA section 2
 4. be geographically compact
 5. preserve political subdivisions and communities of interest as possible 
@@ -25,4 +25,6 @@ Data for Minnesota comes from the ALARM Project's [2010 Redistricting Data Files
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 5,000 districting plans  for Minnesota across two independent runs of the SMC algorithm.  We use a pseudo-county constraint to limit the county and municipality splits. Municipality lines used are in , which are all counties with populations larger than 60% the target population for district.
+We sample 5,000 districting plans for Minnesota across two independent runs of the SMC algorithm. We use a pseudo-county constraint to balance the county and municipality splits, viewing counties with populations larger than 60% of the target population through their municipalties instead of 
+
+Municipality lines used are in , which are all counties with populations larger than 60% the target population for district.

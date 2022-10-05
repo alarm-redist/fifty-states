@@ -66,7 +66,6 @@ if (!file.exists(here(shp_path))) {
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         mn_shp <- rmapshaper::ms_simplify(mn_shp, keep = 0.05,
             keep_shapes = TRUE) %>%
