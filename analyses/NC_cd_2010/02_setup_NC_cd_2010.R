@@ -11,9 +11,13 @@ map <- map %>%
     mutate(pseudo_county = pick_county_muni(map, counties = county, munis = muni,
         pop_muni = get_target(map)))
 
+# Fix labeling
+map$state[1] <- "NC"
+
 # Add an analysis name attribute
 attr(map, "analysis_name") <- "NC_2010"
 
 # Output the redist_map object. Do not edit this path.
 write_rds(map, "data-out/NC_2010/NC_cd_2010_map.rds", compress = "xz")
 cli_process_done()
+

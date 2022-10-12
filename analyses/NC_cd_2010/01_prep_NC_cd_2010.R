@@ -17,7 +17,7 @@ suppressMessages({
 # Download necessary files for analysis -----
 cli_process_start("Downloading files for {.pkg NC_cd_2010}")
 
-path_data <- download_redistricting_file("NC", "data-raw/NC", year = 2010)
+path_data <- download_redistricting_file("NC", "data-raw/NC", year = 2010, overwrite = T)
 
 # download the enacted plan.
 # 2010 plan from https://redistricting.lls.edu/state/north-carolina/
