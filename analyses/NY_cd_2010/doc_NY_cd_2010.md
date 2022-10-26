@@ -1,7 +1,7 @@
 # 2010 New York Congressional Districts
 
 ## Redistricting requirements
-In New York, districts must, per judicial order:
+In New York, districts must, per [judicial order](https://redistricting.lls.edu/wp-content/uploads/NY-favors-20120319-cong-opinion.pdf):
 
 1. be contiguous
 2. have equal populations
