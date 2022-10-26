@@ -20,16 +20,12 @@ cli_process_start("Downloading files for {.pkg NY_cd_2010}")
 path_data <- download_redistricting_file("NY", "data-raw/NY", year = 2010)
 
 # download the enacted plan.
-# TODO try to find a download URL at <https://redistricting.lls.edu/state/new york/>
 url <- "https://redistricting.lls.edu/wp-content/uploads/ny_2010_congress_2012-03-19_2021-12-31.zip"
 path_enacted <- "data-raw/NY/NY_enacted.zip"
 download(url, here(path_enacted))
 unzip(here(path_enacted), exdir = here(dirname(path_enacted), "NY_enacted"))
 file.remove(path_enacted)
 path_enacted <- "data-raw/NY/NY_enacted/2012_Congress.shp" # TODO use actual SHP
-
-# TODO other files here (as necessary). All paths should start with `path_`
-# If large, consider checking to see if these files exist before downloading
 
 cli_process_done()
 
@@ -64,15 +60,12 @@ if (!file.exists(here(shp_path))) {
             geo_match(ny_shp, cd_shp, method = "area")],
         .after = cd_2000)
 
-    # TODO any additional columns or data you want to add should go here
-
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = ny_shp,
         perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         ny_shp <- rmapshaper::ms_simplify(ny_shp, keep = 0.05,
             keep_shapes = TRUE) %>%
@@ -83,8 +76,6 @@ if (!file.exists(here(shp_path))) {
 
     # create adjacency graph
     ny_shp$adj <- redist.adjacency(ny_shp)
-
-    # TODO any custom adjacency graph edits here
 
     ny_shp <- ny_shp %>%
         fix_geo_assignment(muni)
