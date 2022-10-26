@@ -12,7 +12,7 @@ In New York, districts must:
 7. not abridge minority group voting power
 
 ### Algorithmic Constraints
-We enforce a maximum population deviation of X.X%.
+We enforce a maximum population deviation of 0.5%.
 
 ## Data Sources
 Data for New York comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
@@ -21,5 +21,6 @@ Data for New York comes from the ALARM Project's [2020 Redistricting Data Files]
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 5,000 districting plans for New York.
+We sample 40,000 districting plans for New York over two runs of the SMC algorithm and thin the sample down to 5,000 plans.
+
 No special techniques were needed to produce the sample.
