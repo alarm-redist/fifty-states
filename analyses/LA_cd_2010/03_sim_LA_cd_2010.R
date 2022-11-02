@@ -53,7 +53,7 @@ if (interactive()) {
         size = 0.5, alpha = 0.5) +
         scale_y_continuous("Percent Black by VAP") +
         labs(title = "Louisiana Proposed Plan versus Simulations") +
-        scale_color_manual(values = c(cd_2020_prop = "black")) +
+        scale_color_manual(values = c(cd_2010_prop = "black")) +
         theme_bw()
 
     # Minority VAP Performance Plot
@@ -63,7 +63,7 @@ if (interactive()) {
         size = 0.5, alpha = 0.5) +
         scale_y_continuous("Minority Percentage by VAP") +
         labs(title = "Louisiana Proposed Plan versus Simulations") +
-        scale_color_manual(values = c(cd_2020_prop = "black")) +
+        scale_color_manual(values = c(cd_2010_prop = "black")) +
         theme_bw()
 
     # Dem seats by BVAP rank -- numeric
