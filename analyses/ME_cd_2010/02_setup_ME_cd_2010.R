@@ -10,7 +10,7 @@ map <- redist_map(me_shp, pop_tol = 0.005,
 # Add an analysis name attribute
 attr(map, "analysis_name") <- "ME_2010"
 
-map$state <- 'ME'
+map$state <- "ME"
 
 # Output the redist_map object. Do not edit this path.
 write_rds(map, "data-out/ME_2010/ME_cd_2010_map.rds", compress = "xz")
