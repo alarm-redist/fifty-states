@@ -54,11 +54,10 @@ if (!file.exists(here(shp_path))) {
         relocate(muni, county_muni, cd_2000, .after = county)
 
     # add the enacted plan
-    cd_shp <- st_read(here(path_enacted))
+    baf_cd113 <- make_from_baf('ME', from = read_baf_cd113('ME'), year = 2010) %>%
+        rename(GEOID = vtd) %>% mutate(GEOID = paste0('23', GEOID))
     me_shp <- me_shp %>%
-        mutate(cd_2010 = as.integer(cd_shp$DISTRICT)[
-            geo_match(me_shp, cd_shp, method = "area")],
-            .after = cd_2000)
+        left_join(baf_cd113, by = "GEOID")
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = me_shp,
@@ -66,7 +65,6 @@ if (!file.exists(here(shp_path))) {
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         me_shp <- rmapshaper::ms_simplify(me_shp, keep = 0.05,
                                                  keep_shapes = TRUE) %>%
@@ -82,8 +80,6 @@ if (!file.exists(here(shp_path))) {
 
     me_shp <- me_shp %>%
         fix_geo_assignment(muni)
-
-    me_shp$state <- "ME"
 
     write_rds(me_shp, here(shp_path), compress = "gz")
     cli_process_done()
