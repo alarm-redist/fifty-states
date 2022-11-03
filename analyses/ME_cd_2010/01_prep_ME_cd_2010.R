@@ -25,7 +25,7 @@ path_enacted <- "data-raw/ME/ME_enacted.zip"
 download(url, here(path_enacted))
 unzip(here(path_enacted), exdir = here(dirname(path_enacted), "ME_enacted"))
 file.remove(path_enacted)
-path_enacted <- "data-raw/ME/ME_enacted/Maine_US_Congressional_Districts_2011_GeoLibrary.shp" # TODO use actual SHP
+path_enacted <- "data-raw/ME/ME_enacted/Maine_US_Congressional_Districts_2011_GeoLibrary.shp"
 
 cli_process_done()
 
