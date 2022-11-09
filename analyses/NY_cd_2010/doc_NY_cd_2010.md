@@ -21,7 +21,7 @@ Data for New York comes from the ALARM Project's [2010 Redistricting Data Files]
 We use a county constraint to preserve district cores, since districts are generally structured around counties.
 
 ## Simulation Notes
-We sample 40,000 districting plans for New York over two runs of the SMC algorithm and thin the sample down to 5,000 plans.
+We sample 60,000 districting plans for New York over two runs of the SMC algorithm and thin the sample down to 5,000 plans.
 
 No special techniques were needed to produce the sample.
 
