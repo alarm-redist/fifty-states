@@ -37,4 +37,3 @@ thinned_plans <- add_summary_stats(thinned_plans, map)
 save_summary_stats(plans, "data-out/NY_2010/NY_cd_2010_stats.csv")
 
 cli_process_done()
-
