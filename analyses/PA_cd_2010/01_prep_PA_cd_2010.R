@@ -20,16 +20,12 @@ cli_process_start("Downloading files for {.pkg PA_cd_2010}")
 path_data <- download_redistricting_file("PA", "data-raw/PA", year = 2010)
 
 # download the enacted plan.
-# TODO try to find a download URL at <https://redistricting.lls.edu/state/pennsylvania/>
 url <- "https://redistricting.lls.edu/wp-content/uploads/pa_2010_congress_2011-12-22_2018-02-19.zip"
 path_enacted <- "data-raw/PA/PA_enacted.zip"
 download(url, here(path_enacted))
 unzip(here(path_enacted), exdir = here(dirname(path_enacted), "PA_enacted"))
 file.remove(path_enacted)
-path_enacted <- "data-raw/PA/PA_enacted/BlockLevelFinalCongressionalPlan21Dec2011.shp" # TODO use actual SHP
-
-# TODO other files here (as necessary). All paths should start with `path_`
-# If large, consider checking to see if these files exist before downloading
+path_enacted <- "data-raw/PA/PA_enacted/BlockLevelFinalCongressionalPlan21Dec2011.shp"
 
 cli_process_done()
 
@@ -64,7 +60,6 @@ if (!file.exists(here(shp_path))) {
             geo_match(pa_shp, cd_shp, method = "area")],
             .after = cd_2000)
 
-    # TODO any additional columns or data you want to add should go here
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = pa_shp,
@@ -72,7 +67,6 @@ if (!file.exists(here(shp_path))) {
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         pa_shp <- rmapshaper::ms_simplify(pa_shp, keep = 0.05,
                                                  keep_shapes = TRUE) %>%
@@ -81,8 +75,6 @@ if (!file.exists(here(shp_path))) {
 
     # create adjacency graph
     pa_shp$adj <- redist.adjacency(pa_shp)
-
-    # TODO any custom adjacency graph edits here
 
     pa_shp <- pa_shp %>%
         fix_geo_assignment(muni)

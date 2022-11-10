@@ -6,19 +6,17 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg PA_cd_2010}")
 
-
-constr <- redist_constr(map) %>%
-    add_constr_splits(0.25, coalesce(map$county_muni, "<bg>"))
-
 set.seed(2010)
 plans <- redist_smc(map,
                     nsims = 1e4, runs = 2L,
                     counties = pseudo_county,
-                    verbose = TRUE, ncores = 16) %>%
+                    ncores = 16) %>%
     match_numbers("cd_2010")
 
-# IF CORES OR OTHER UNITS HAVE BEEN MERGED:
-# make sure to call `pullback()` on this plans object!
+plans <- plans %>%
+    group_by(chain) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>%
+    ungroup()
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
