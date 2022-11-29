@@ -15,5 +15,5 @@ Data for Wisconsin comes from the ALARM Project's [2010 Redistricting Data Files
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Wisconsin.
+We sample 10,000 districting plans for Wisconsin over 2 independent runs of the SMC algorithm.
 No special techniques were needed to produce the sample.

@@ -8,8 +8,8 @@ cli_process_start("Running simulations for {.pkg WI_cd_2010}")
 
 set.seed(2010)
 plans <- redist_smc(map, nsims = 5e3,
-                    counties = pseudo_county,
-                    runs = 2L, verbose = TRUE, ncores = 16) %>%
+    counties = pseudo_county,
+    runs = 2L, verbose = TRUE, ncores = 16) %>%
     match_numbers("cd_2010")
 
 cli_process_done()
