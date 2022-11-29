@@ -6,10 +6,10 @@ In Wisconsin, districts must:
 1. have equal populations
 
 ### Algorithmic Constraints
-We enforce a maximum population deviation of X.X%.
+We enforce a maximum population deviation of 0.5% and add a pseudo-county constraint to reduce county and municipality splits. Since Milwaukee County has a greater population than the target district population, we split Milwaukee County by municipality lines.
 
 ## Data Sources
-Data for Wisconsin comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
+Data for Wisconsin comes from the ALARM Project's [2010 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
 
 ## Pre-processing Notes
 No manual pre-processing decisions were necessary.
