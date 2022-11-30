@@ -14,5 +14,5 @@ Data for Utah comes from the ALARM Project's [Redistricting Data Files](https://
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Utah across two independent runs of the SMC algorithm
+We sample 5,000 districting plans for Utah across two independent runs of the SMC algorithm.
 No special techniques were needed to produce the sample.
