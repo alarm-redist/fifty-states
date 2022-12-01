@@ -72,7 +72,7 @@ if (!file.exists(here(shp_path))) {
     }
 
     # create adjacency graph
-    ar_shp$adj <- redist.adjacency(ar_shp)
+    ar_shp$adj <- redist.adjacency(st_make_valid(ar_shp))
 
     ar_shp <- ar_shp %>%
         fix_geo_assignment(muni)
