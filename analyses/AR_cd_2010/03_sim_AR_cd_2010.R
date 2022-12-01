@@ -28,9 +28,3 @@ save_summary_stats(plans, "data-out/AR_2010/AR_cd_2010_stats.csv")
 cli_process_done()
 
 # Extra validation plots for custom constraints -----
-# TODO remove this section if no custom constraints
-if (interactive()) {
-    library(ggplot2)
-    library(patchwork)
-
-}
