@@ -10,17 +10,17 @@ cli_process_start("Running simulations for {.pkg NC_cd_2010}")
 set.seed(12345)
 
 constr <- redist_constr(map) %>%
-    add_constr_splits(1, admin = county) %>%
+    # add_constr_splits(0.25, admin = county) %>%
     add_constr_grp_hinge(8, vap - vap_white, vap, 0.52) %>%
     add_constr_grp_hinge(-8, vap - vap_white, vap, 0.35) %>%
     add_constr_grp_inv_hinge(8, vap - vap_white, vap, 0.62)
 
-plans <- redist_smc(map, nsims = 30e3,
+plans <- redist_smc(map, nsims = 50e3,
                     runs = 2L,
                     ncores = 2L,
                     counties = county,
                     constraints = constr,
-                    pop_temper = 0.03)
+                    pop_temper = 0.05)
 
 plans <- match_numbers(plans, "cd_2010")
 
