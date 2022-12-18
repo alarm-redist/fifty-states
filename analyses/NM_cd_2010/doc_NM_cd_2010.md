@@ -15,7 +15,7 @@ In New Mexico, according to the [New Mexico Legislative Council Guidelines](http
 We enforce a maximum population deviation of 0.5%.
 
 ## Data Sources
-Data for New Mexico comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
+Data for New Mexico comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/). Data for the 2010 New Mexico enacted congressional map comes from [All About Redistricting](https://redistricting.lls.edu/state/new-mexico/?cycle=2010&level=Congress&startdate=2011-12-29).
 
 ## Pre-processing Notes
 To preserve the cores of prior districts, we merge all precincts which are more than two precincts away from a district border under the 2000 plan.

@@ -4,20 +4,16 @@
 ###############################################################################
 cli_process_start("Creating {.cls redist_map} object for {.pkg NM_cd_2010}")
 
-# TODO any pre-computation (usually not necessary)
-
+# Define map
 map <- redist_map(nm_shp, pop_tol = 0.005,
     existing_plan = cd_2010, adj = nm_shp$adj)
 
-# TODO any filtering, cores, merging, etc.
-
-# TODO remove if not necessary. Adjust pop_muni as needed to balance county/muni splits
-# make pseudo counties with default settings
+# Set up cores objects
 map <- map %>%
-    mutate(pseudo_county = pick_county_muni(map, counties = county, munis = muni,
-                                            pop_muni = get_target(map)))
-# IF MERGING CORES OR OTHER UNITS:
-# make a new `map_cores` object that is merged & used for simulating. You can set `drop_geom=TRUE` for this.
+    mutate(cores = make_cores(boundary = 2))
+
+# merge by both cores and county to preserve county contiguity
+map_cores <- merge_by(map, cores, county)
 
 # Add an analysis name attribute
 attr(map, "analysis_name") <- "NM_2010"

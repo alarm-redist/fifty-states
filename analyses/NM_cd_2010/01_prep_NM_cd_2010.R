@@ -20,12 +20,12 @@ cli_process_start("Downloading files for {.pkg NM_cd_2010}")
 path_data <- download_redistricting_file("NM", "data-raw/NM", year = 2010)
 
 # download the enacted plan.
-url <- "https://www.nmlegis.gov/Redistricting2011/Documents/cd_court_ordered_shapefile.zip"
+url <- "https://redistricting.lls.edu/wp-content/uploads/nm_2010_congress_2011-12-29_2021-12-31.zip"
 path_enacted <- "data-raw/NM/NM_enacted.zip"
 download(url, here(path_enacted))
 unzip(here(path_enacted), exdir = here(dirname(path_enacted), "NM_enacted"))
 file.remove(path_enacted)
-path_enacted <- "data-raw/NM/NM_enacted/cd_court_ordered.shp" # TODO use actual SHP
+path_enacted <- "data-raw/NM/NM_enacted/CD_187963_2_Egolf_Executive.shp"
 
 cli_process_done()
 
@@ -57,11 +57,9 @@ if (!file.exists(here(shp_path))) {
     cd_shp <- st_read(here(path_enacted))
     cd_shp <- st_transform(cd_shp, st_crs(nm_shp))
     nm_shp <- nm_shp %>%
-        mutate(cd_2010 = as.integer(cd_shp$DISTRICT)[
+        mutate(cd_2010 = as.integer(cd_shp$OBJECTID)[
             geo_match(nm_shp, cd_shp, method = "area")],
             .after = cd_2000)
-
-    # TODO any additional columns or data you want to add should go here
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = nm_shp,
@@ -69,17 +67,14 @@ if (!file.exists(here(shp_path))) {
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
-        nm_shp <- rmapshaper::ms_simplify(nm_shp, keep = 0.05,
-                                                 keep_shapes = TRUE) %>%
+        al_shp <- rmapshaper::ms_simplify(al_shp, keep = 0.05,
+                                          keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 
     # create adjacency graph
     nm_shp$adj <- redist.adjacency(nm_shp)
-
-    # TODO any custom adjacency graph edits here
 
     nm_shp <- nm_shp %>%
         fix_geo_assignment(muni)
