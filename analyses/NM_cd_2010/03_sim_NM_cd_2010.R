@@ -13,10 +13,10 @@ constr <- redist_constr(map_cores) %>%
 
 set.seed(2010)
 plans <- redist_smc(map_cores,
-                    nsims = 2500,
-                    runs = 2L,
-                    counties = county,
-                    constr = constr) %>%
+    nsims = 2500,
+    runs = 2L,
+    counties = county,
+    constr = constr) %>%
     pullback(map)
 plans <- match_numbers(plans, "cd_2010")
 
