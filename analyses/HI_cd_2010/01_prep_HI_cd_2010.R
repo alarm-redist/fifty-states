@@ -49,7 +49,7 @@ if (!file.exists(here(shp_path))) {
     d_cd <- get_baf_10("HI", "CD")[[1]] %>%
         rename(GEOID = BLOCKID, cd_2000 = DISTRICT)
     hi_shp <- left_join(hi_shp, d_muni, by = "GEOID") %>%
-        left_join(d_cd, by="GEOID") %>%
+        left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2000, .after = county)
 
@@ -59,7 +59,7 @@ if (!file.exists(here(shp_path))) {
     honolulu <- hi_shp %>% filter(county == "003") %>%
         mutate(cd_2010 = as.integer(cd_shp$USDist)[
             geo_match(honolulu, cd_shp, method = "area")],
-            .after = cd_2000)
+        .after = cd_2000)
     rest_shp <- hi_shp %>%
         filter(county != "003") %>%
         mutate(cd_2010 = 2, .after = cd_2000)
@@ -71,22 +71,22 @@ if (!file.exists(here(shp_path))) {
         mutate(tract = str_sub(GEOID, 1, 11)) %>%
         group_by(tract) %>%
         summarize(cd_2000 = Mode(cd_2000),
-                  cd_2010 = Mode(cd_2010),
-                  muni = Mode(muni),
-                  state = unique(state),
-                  county = unique(county),
-                  across(where(is.numeric), sum)
+            cd_2010 = Mode(cd_2010),
+            muni = Mode(muni),
+            state = unique(state),
+            county = unique(county),
+            across(where(is.numeric), sum)
         )
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = hi_shp,
-                             perim_path = here(perim_path)) %>%
+        perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         hi_shp <- rmapshaper::ms_simplify(hi_shp, keep = 0.05,
-                                                 keep_shapes = TRUE) %>%
+            keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 
