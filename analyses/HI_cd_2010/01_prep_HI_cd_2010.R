@@ -20,16 +20,12 @@ cli_process_start("Downloading files for {.pkg HI_cd_2010}")
 path_data <- download_redistricting_file("HI", "data-raw/HI", year = 2010, type = "block", overwrite = TRUE)
 
 # download the enacted plan.
-# TODO try to find a download URL at <https://redistricting.lls.edu/state/hawaii/>
 url <- "https://redistricting.lls.edu/wp-content/uploads/hi_2010_congress_2011-09-26_2021-12-31.zip"
 path_enacted <- "data-raw/HI/HI_enacted.zip"
 download(url, here(path_enacted))
 unzip(here(path_enacted), exdir = here(dirname(path_enacted), "HI_enacted"))
 file.remove(path_enacted)
-path_enacted <- "data-raw/HI/HI_enacted/congress11.shp" # TODO use actual SHP
-
-# TODO other files here (as necessary). All paths should start with `path_`
-# If large, consider checking to see if these files exist before downloading
+path_enacted <- "data-raw/HI/HI_enacted/congress11.shp"
 
 cli_process_done()
 
@@ -69,6 +65,8 @@ if (!file.exists(here(shp_path))) {
         mutate(cd_2010 = 2, .after = cd_2000)
     hi_shp <- rbind(rest_shp, honolulu)
 
+    # group from block-level to tract-level
+
     hi_shp <- hi_shp %>%
         mutate(tract = str_sub(GEOID, 1, 11)) %>%
         group_by(tract) %>%
@@ -80,16 +78,12 @@ if (!file.exists(here(shp_path))) {
                   across(where(is.numeric), sum)
         )
 
-
-    # TODO any additional columns or data you want to add should go here
-
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = hi_shp,
                              perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         hi_shp <- rmapshaper::ms_simplify(hi_shp, keep = 0.05,
                                                  keep_shapes = TRUE) %>%
@@ -99,7 +93,7 @@ if (!file.exists(here(shp_path))) {
     # create adjacency graph
     hi_shp$adj <- redist.adjacency(hi_shp)
 
-    # TODO any custom adjacency graph edits here
+    # Link islands
 
     island_codes <- tribble(
         ~v1, ~v2,
@@ -116,7 +110,6 @@ if (!file.exists(here(shp_path))) {
     island_codes$v1 <- which(hi_shp$tract %in% island_codes$v1)[order(na.omit(match(hi_shp$tract, island_codes$v1)))]
     island_codes$v2 <- which(hi_shp$tract %in% island_codes$v2)[order(na.omit(match(hi_shp$tract, island_codes$v2)))]
 
-    suggested_edges <- suggest_component_connection(hi_shp, hi_shp$adj, as.integer(hi_shp$county))
     hi_shp$adj <- hi_shp$adj %>% add_edge(island_codes$v1, island_codes$v2, zero = TRUE)
 
     hi_shp <- hi_shp %>%
