@@ -25,7 +25,7 @@ path_enacted <- "data-raw/AL/AL_enacted.zip"
 download(url, here(path_enacted))
 unzip(here(path_enacted), exdir = here(dirname(path_enacted), "AL_enacted"))
 file.remove(path_enacted)
-path_enacted <- "data-raw/AL/AL_enacted/68b815c2-a1f7-4b05-b530-84c1f624fe6b202048-1-ihxzzh.0q5k.shp" # TODO use actual SHP
+path_enacted <- "data-raw/AL/AL_enacted/68b815c2-a1f7-4b05-b530-84c1f624fe6b202048-1-ihxzzh.0q5k.shp"
 
 cli_process_done()
 
@@ -47,28 +47,28 @@ if (!file.exists(here(shp_path))) {
         select(-vtd)
     d_cd <- make_from_baf("AL", "CD", "VTD", year = 2010)  %>%
         transmute(GEOID = paste0(censable::match_fips("AL"), vtd),
-                  cd_2000 = as.integer(cd))
+            cd_2000 = as.integer(cd))
     al_shp <- left_join(al_shp, d_muni, by = "GEOID") %>%
-        left_join(d_cd, by="GEOID") %>%
+        left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2000, .after = county)
 
     # add the enacted plan
     cd_shp <- st_read(here(path_enacted))
     al_shp <- al_shp %>%
-        mutate(cd_2010 = as.integer(cd_shp$DISTNAME %>% substr(1,1))[
+        mutate(cd_2010 = as.integer(cd_shp$DISTNAME %>% substr(1, 1))[
             geo_match(al_shp, cd_shp, method = "area")],
-            .after = cd_2000)
+        .after = cd_2000)
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = al_shp,
-                             perim_path = here(perim_path)) %>%
+        perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         al_shp <- rmapshaper::ms_simplify(al_shp, keep = 0.05,
-                                                 keep_shapes = TRUE) %>%
+            keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 
