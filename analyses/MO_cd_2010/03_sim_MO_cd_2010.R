@@ -14,7 +14,7 @@ constr <- redist_constr(map) %>%
 set.seed(2010)
 
 plans <- redist_smc(map, nsims = 5e3, runs = 2L, ncores = 8, seq_alpha = 0.95,
-                    counties = county, constraints = constr)
+    counties = county, constraints = constr)
 
 plans <- plans %>%
     mutate(vap_black = group_frac(map, vap_black, vap)) %>%
@@ -53,9 +53,9 @@ if (interactive()) {
     library(patchwork)
 
     redist.plot.distr_qtys(plans, vap_black/total_vap,
-                           color_thresh = NULL,
-                           color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, "#3D77BB", "#B25D4C"),
-                           size = 0.5, alpha = 0.5) +
+        color_thresh = NULL,
+        color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, "#3D77BB", "#B25D4C"),
+        size = 0.5, alpha = 0.5) +
         scale_y_continuous("Percent Black by VAP") +
         labs(title = "Approximate Performance") +
         scale_color_manual(values = c(cd_2020 = "black")) +
