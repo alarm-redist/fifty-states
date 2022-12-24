@@ -1,14 +1,15 @@
 # 2010 West Virginia Congressional Districts
 
 ## Redistricting requirements
-[In West Virginia, under the state constitution, districts must](http://www.wvlegislature.gov/WVCODE/WV_CON.cfm):
-1. be contiguous (I 1-4)
-1. have equal populations (I 1-4)
-1. be geographically compact (I 1-4)
-1. districts must be made of contiguous counties (I 1-4)
+[In West Virginia, according to [W.V. Const. art. I, § 4](https://www.wvlegislature.gov/WVCODE/Code.cfm?chap=01&art=2), districts must:
+
+1. be made of contiguous counties
+1. have equal populations
+1. be geographically compact
 
 ### Interpretation of requirements
 We enforce a maximum population deviation of 0.5%.
+We also merge VTDs into counties and run the simulation at the county level.
 
 ## Data Sources
 Data for West Virginia comes from the ALARM Project's [Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).

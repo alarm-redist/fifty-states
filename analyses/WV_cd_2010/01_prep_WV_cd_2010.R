@@ -56,8 +56,24 @@ if (!file.exists(here(shp_path))) {
     # add the enacted plan
     baf_cd113 <- make_from_baf("WV", from = read_baf_cd113("WV"), year = 2010) %>%
         rename(GEOID = vtd) %>% mutate(GEOID = paste0("54", GEOID))
-    ct_shp <- ct_shp %>%
+    wv_shp <- wv_shp %>%
         left_join(baf_cd113, by = "GEOID")
+
+    # prepare columns for merge by county
+    col_names <- as.vector(colnames(wv_shp))
+    mergeable_col_names <- c("state", "county", "cd_2010", "cd_2000")
+    sf_col_names <- c("muni", "county_muni", "GEOID", "geometry", "vtd")
+    summable_col_names <- col_names[!col_names %in% c(mergeable_col_names, sf_col_names)]
+
+    # extract columns that should not be summed
+    data_without_sf <- st_drop_geometry(wv_shp)
+    cols_to_merge <- select(data_without_sf[!duplicated(data_without_sf$county), ], any_of(mergeable_col_names))
+
+    # merge counties and sum over all other columns
+    merged_county_sf <- wv_shp %>% group_by(county) %>%  summarize(across(any_of(summable_col_names), sum))
+
+    # merge non-summed columns
+    wv_shp <- merge(merged_county_sf, cols_to_merge, by = "county")
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = wv_shp,
@@ -74,10 +90,8 @@ if (!file.exists(here(shp_path))) {
     # create adjacency graph
     wv_shp$adj <- redist.adjacency(wv_shp)
 
-    wv_shp <- wv_shp %>%
-        fix_geo_assignment(muni)
-
     write_rds(wv_shp, here(shp_path), compress = "gz")
+
     cli_process_done()
 } else {
     wv_shp <- read_rds(here(shp_path))

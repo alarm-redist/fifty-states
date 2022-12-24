@@ -9,7 +9,6 @@ map <- redist_map(wv_shp, pop_tol = 0.005,
 
 # Add an analysis name attribute
 attr(map, "analysis_name") <- "WV_2010"
-
 map$state <- "WV"
 
 # Output the redist_map object. Do not edit this path.
