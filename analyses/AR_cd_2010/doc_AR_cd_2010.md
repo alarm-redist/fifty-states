@@ -5,7 +5,7 @@ In Arkansas, there are no state law requirements for congressional districts.
 
 ### Interpretation of requirements
 We enforce a maximum population deviation of 0.5%, which is in line with the low deviation seen in past congressional district maps.
-We limit the number of county/municipality splits, which is in line with the small number of county/municipality splits observed in past congressional district maps.
+We use a standard algorithmic county constraint and limit the number of county/municipality splits, which is in line with the small number of county/municipality splits observed in past congressional district maps.
 
 ## Data Sources
 Data for Arkansas comes from the ALARM Project's [Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
