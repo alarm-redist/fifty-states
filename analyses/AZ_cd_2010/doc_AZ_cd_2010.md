@@ -13,8 +13,7 @@ In Arizona, districts must:
 ### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 We add a county/municipality constraint, as described below.
-We add a VRA constraint targeting two majority-HVAP districts which are also substantially majority-minority.
-Not every plans is guaranteed to have two majority-HVAP districts, however.
+We add a hinge Gibbs constraint targeting two majority-HVAP districts, one within Maricopa County and one outside of it (as exist in the enacted plan.) However, not all plans are guaranteed to have two majority-HVAP districts.
 
 ## Data Sources
 Data for Arizona comes from the ALARM Project's [Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
@@ -27,14 +26,10 @@ We sample 32,000 districting plans for Arizona across four independent runs of t
 To satisfy the Voting Rights Act constraint, we run the simulation in two steps.
 
 #### 1. Simulate three districts outside of Maricopa County
-We target a Hispanic-majority district outside of Maricopa county (HVAP 53-58%).
-However, most realized districts, while electing Democratic candidates, have a lower HVAP.
-We avoid splitting municipalities in this region.
-
+We target a Hispanic-majority district outside of Maricopa County (HVAP 50-55%). We avoid splitting municipalities in this region.
 
 #### 2. Simulate six more districts in the remainder of the map
-We target 1 Hispanic-majority district in Maricopa county (HVAP 53-58%).
-We are able to realize this target values.
+We target 1 Hispanic-majority district in Maricopa County (HVAP 50-55%).
 
 To balance county and municipality splits, we create pseudocounties for use in the county constraint.
 These are counties outside Maricopa County and Pima County, which are larger than a congressional district in population.

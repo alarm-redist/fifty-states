@@ -27,9 +27,6 @@ unzip(here(path_enacted), exdir = here(dirname(path_enacted), "AZ_enacted"))
 file.remove(path_enacted)
 path_enacted <- "data-raw/AZ/AZ_enacted/Final_Congressional_Districts-shp.shp"
 
-# TODO other files here (as necessary). All paths should start with `path_`
-# If large, consider checking to see if these files exist before downloading
-
 cli_process_done()
 
 # Compile raw data into a final shapefile for analysis -----
@@ -50,9 +47,9 @@ if (!file.exists(here(shp_path))) {
         select(-vtd)
     d_cd <- make_from_baf("AZ", "CD", "VTD", year = 2010)  %>%
         transmute(GEOID = paste0(censable::match_fips("AZ"), vtd),
-                  cd_2000 = as.integer(cd))
+            cd_2000 = as.integer(cd))
     az_shp <- left_join(az_shp, d_muni, by = "GEOID") %>%
-        left_join(d_cd, by="GEOID") %>%
+        left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2000, .after = county)
 
@@ -64,13 +61,13 @@ if (!file.exists(here(shp_path))) {
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = az_shp,
-                             perim_path = here(perim_path)) %>%
+        perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         az_shp <- rmapshaper::ms_simplify(az_shp, keep = 0.05,
-                                                 keep_shapes = TRUE) %>%
+            keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 

@@ -24,9 +24,9 @@ border_idxs <- as_tibble(map) %>%
 
 constr <- redist_constr(map_nomaricopa) %>%
     add_constr_compet(15, ndv, nrv) %>%
-    add_constr_grp_hinge(30, vap_hisp, vap, 0.53) %>%
-    add_constr_grp_hinge(-30, vap_hisp, vap, 0.28) %>%
-    add_constr_grp_inv_hinge(10, vap_hisp, vap, 0.58) %>%
+    add_constr_grp_hinge(20, vap_hisp, vap, 0.5) %>%
+    add_constr_grp_hinge(-30, vap_hisp, vap, 0.25) %>%
+    add_constr_grp_inv_hinge(-10, vap_hisp, vap, 0.55) %>%
     add_constr_custom(100, function(plan, distr) {
         ifelse(any(plan[border_idxs] == 0), 0, 1)
     }) %>%
@@ -34,8 +34,18 @@ constr <- redist_constr(map_nomaricopa) %>%
 
 set.seed(2010)
 plans_nomaricopa <- redist_smc(map_nomaricopa, nsims = 1500, runs = 8L, n_steps = 3,
-                               counties = county_muni, constraints = constr,
-                               pop_temper = 0.02, seq_alpha = 0.99, verbose = TRUE)
+    counties = county_muni, constraints = constr,
+    pop_temper = 0.03, seq_alpha = 0.99, verbose = TRUE)
+
+# diagnostic check on HVAP
+if (FALSE) {
+    plot(constr)
+    plans_nomaricopa %>%
+        mutate(hisp = group_frac(map_nomaricopa, vap_hisp, vap),
+            min = 1 - group_frac(map_nomaricopa, vap_white, vap)) %>%
+        filter(district > 0) %>%
+        plot(hisp, geom = "boxplot")
+}
 
 # subsample 8k to init next stage
 init_m <- matrix(0, nrow = nrow(map), ncol = Nsim_final)
@@ -46,16 +56,16 @@ init_m[match(map_nomaricopa$GEOID, map$GEOID), ] <- as.matrix(plans_nomaricopa)[
 ## Finish simulations ------
 constr <- redist_constr(map) %>%
     add_constr_compet(15, ndv, nrv) %>%
-    add_constr_grp_hinge(20, vap_hisp, vap, 0.53) %>%
-    add_constr_grp_hinge(-22, vap_hisp, vap, 0.35) %>%
-    add_constr_grp_inv_hinge(10, vap_hisp, vap, 0.58) %>%
+    add_constr_grp_hinge(40, vap_hisp, vap, 0.5) %>%
+    add_constr_grp_hinge(-40, vap_hisp, vap, 0.3) %>%
+    add_constr_grp_inv_hinge(10, vap_hisp, vap, 0.55) %>%
     suppressWarnings()
 
 set.seed(2010)
 
 plans <- redist_smc(map, nsims = 8e3, runs = 4L, counties = pseudo_county,
-                    constraints = constr, init_particles = init_m, pop_temper = 0.03,
-                    seq_alpha = 0.9, verbose = TRUE) %>%
+    constraints = constr, init_particles = init_m, pop_temper = 0.03,
+    seq_alpha = 0.99, verbose = TRUE) %>%
     group_by(chain) %>%
     filter(as.integer(draw) < min(as.integer(draw)) + 1250) %>% # thin samples
     ungroup()
@@ -92,27 +102,27 @@ if (interactive()) {
     plans_no <- redist_smc(map, nsims = 1e3, counties = pseudo_county) %>%
         add_summary_stats(map)
     p1 <- plot(plans, ndshare, geom = "boxplot") +
-        geom_hline(yintercept = 0.5, lty = "dashed", color = "red") +
-        scale_y_continuous("Democratic share", labels = scales::percent) +
-        labs(title = "With competitiveness")
+        ggplot2::geom_hline(yintercept = 0.5, lty = "dashed", color = "red") +
+        ggplot2::scale_y_continuous("Democratic share", labels = scales::percent) +
+        ggplot2::labs(title = "With competitiveness")
     p2 <- plot(plans_no, ndshare, geom = "boxplot") +
-        geom_hline(yintercept = 0.5, lty = "dashed", color = "red") +
-        scale_y_continuous("Democratic share", labels = scales::percent) +
-        labs(title = "Without competitiveness")
-    p1 + p2 + plot_layout(guides = "collect")
+        ggplot2::geom_hline(yintercept = 0.5, lty = "dashed", color = "red") +
+        ggplot2::scale_y_continuous("Democratic share", labels = scales::percent) +
+        ggplot2::labs(title = "Without competitiveness")
+    p1 + p2 + patchwork::plot_layout(guides = "collect")
 
     # VRA
     plans %>%
         mutate(min = vap_hisp/total_vap) %>%
         number_by(min) %>%
         redist.plot.distr_qtys(ndshare, sort = "none", geom = "boxplot") +
-        labs(x = "Districts, ordered by HVAP", y = "Average Democratic share")
+        ggplot2::labs(x = "Districts, ordered by HVAP", y = "Average Democratic share")
 
     redist.plot.distr_qtys(plans, vap_hisp/total_vap,
-                           color_thresh = NULL,
-                           color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, "#3D77BB", "#B25D4C"),
-                           size = 0.1) +
-        scale_y_continuous("Percent Hispanic by VAP") +
-        labs(title = "Approximate Performance") +
-        scale_color_manual(values = c(cd_2020_prop = "black"))
+        color_thresh = NULL,
+        color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, "#3D77BB", "#B25D4C"),
+        size = 0.1) +
+        ggplot2::scale_y_continuous("Percent Hispanic by VAP") +
+        ggplot2::labs(title = "Approximate Performance") +
+        ggplot2::scale_color_manual(values = c(cd_2010_prop = "black"))
 }
