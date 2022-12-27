@@ -102,13 +102,13 @@ if (interactive()) {
     plans_no <- redist_smc(map, nsims = 1e3, counties = pseudo_county) %>%
         add_summary_stats(map)
     p1 <- plot(plans, ndshare, geom = "boxplot") +
-        ggplot2::geom_hline(yintercept = 0.5, lty = "dashed", color = "red") +
-        ggplot2::scale_y_continuous("Democratic share", labels = scales::percent) +
-        ggplot2::labs(title = "With competitiveness")
+        geom_hline(yintercept = 0.5, lty = "dashed", color = "red") +
+        scale_y_continuous("Democratic share", labels = scales::percent) +
+        labs(title = "With competitiveness")
     p2 <- plot(plans_no, ndshare, geom = "boxplot") +
-        ggplot2::geom_hline(yintercept = 0.5, lty = "dashed", color = "red") +
-        ggplot2::scale_y_continuous("Democratic share", labels = scales::percent) +
-        ggplot2::labs(title = "Without competitiveness")
+        geom_hline(yintercept = 0.5, lty = "dashed", color = "red") +
+        scale_y_continuous("Democratic share", labels = scales::percent) +
+        labs(title = "Without competitiveness")
     p1 + p2 + patchwork::plot_layout(guides = "collect")
 
     # VRA
@@ -116,13 +116,13 @@ if (interactive()) {
         mutate(min = vap_hisp/total_vap) %>%
         number_by(min) %>%
         redist.plot.distr_qtys(ndshare, sort = "none", geom = "boxplot") +
-        ggplot2::labs(x = "Districts, ordered by HVAP", y = "Average Democratic share")
+        labs(x = "Districts, ordered by HVAP", y = "Average Democratic share")
 
     redist.plot.distr_qtys(plans, vap_hisp/total_vap,
         color_thresh = NULL,
         color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, "#3D77BB", "#B25D4C"),
         size = 0.1) +
-        ggplot2::scale_y_continuous("Percent Hispanic by VAP") +
-        ggplot2::labs(title = "Approximate Performance") +
-        ggplot2::scale_color_manual(values = c(cd_2010_prop = "black"))
+        scale_y_continuous("Percent Hispanic by VAP") +
+        labs(title = "Approximate Performance") +
+        scale_color_manual(values = c(cd_2010_prop = "black"))
 }
