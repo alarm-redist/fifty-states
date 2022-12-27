@@ -25,8 +25,8 @@ border_idxs <- as_tibble(map) %>%
 constr <- redist_constr(map_nomaricopa) %>%
     add_constr_compet(15, ndv, nrv) %>%
     add_constr_grp_hinge(20, vap_hisp, vap, 0.5) %>%
-    add_constr_grp_hinge(-30, vap_hisp, vap, 0.25) %>%
-    add_constr_grp_inv_hinge(-10, vap_hisp, vap, 0.55) %>%
+    add_constr_grp_hinge(-20, vap_hisp, vap, 0.3) %>%
+    add_constr_grp_inv_hinge(5, vap_hisp, vap, 0.55) %>%
     add_constr_custom(100, function(plan, distr) {
         ifelse(any(plan[border_idxs] == 0), 0, 1)
     }) %>%
@@ -35,7 +35,7 @@ constr <- redist_constr(map_nomaricopa) %>%
 set.seed(2010)
 plans_nomaricopa <- redist_smc(map_nomaricopa, nsims = 1500, runs = 8L, n_steps = 3,
     counties = county_muni, constraints = constr,
-    pop_temper = 0.03, seq_alpha = 0.99, verbose = TRUE)
+    pop_temper = 0.05, verbose = TRUE)
 
 # diagnostic check on HVAP
 if (FALSE) {
@@ -56,16 +56,16 @@ init_m[match(map_nomaricopa$GEOID, map$GEOID), ] <- as.matrix(plans_nomaricopa)[
 ## Finish simulations ------
 constr <- redist_constr(map) %>%
     add_constr_compet(15, ndv, nrv) %>%
-    add_constr_grp_hinge(40, vap_hisp, vap, 0.5) %>%
-    add_constr_grp_hinge(-40, vap_hisp, vap, 0.3) %>%
-    add_constr_grp_inv_hinge(10, vap_hisp, vap, 0.55) %>%
+    add_constr_grp_hinge(20, vap_hisp, vap, 0.5) %>%
+    add_constr_grp_hinge(-20, vap_hisp, vap, 0.3) %>%
+    add_constr_grp_inv_hinge(5, vap_hisp, vap, 0.55) %>%
     suppressWarnings()
 
 set.seed(2010)
 
 plans <- redist_smc(map, nsims = 8e3, runs = 4L, counties = pseudo_county,
-    constraints = constr, init_particles = init_m, pop_temper = 0.03,
-    seq_alpha = 0.99, verbose = TRUE) %>%
+    constraints = constr, init_particles = init_m, pop_temper = 0.05,
+    verbose = TRUE) %>%
     group_by(chain) %>%
     filter(as.integer(draw) < min(as.integer(draw)) + 1250) %>% # thin samples
     ungroup()
