@@ -14,7 +14,7 @@ In Iowa, districts must:
 We enforce a maximum population deviation of 0.01%.
 
 ## Data Sources
-Data for Iowa comes from the ALARM Project's [2010 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
+Data for Iowa comes from https://redistricting.lls.edu/wp-content/uploads/ia_2010_congress_2011-04-19_2021-12-31.zip
 
 ## Pre-processing Notes
 Shape file was grouped by county to prevent county splits.
