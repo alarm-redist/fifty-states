@@ -20,16 +20,13 @@ cli_process_start("Downloading files for {.pkg IA_cd_2010}")
 path_data <- download_redistricting_file("IA", "data-raw/IA", year = 2010)
 
 # download the enacted plan.
-# TODO try to find a download URL at <https://redistricting.lls.edu/state/iowa/>
-url <- "https://redistricting.lls.edu/wp-content/uploads/`state`_2020_congress_XXXXX.zip"
+url <- "https://redistricting.lls.edu/wp-content/uploads/ia_2010_congress_2011-04-19_2021-12-31.zip"
 path_enacted <- "data-raw/IA/IA_enacted.zip"
 download(url, here(path_enacted))
 unzip(here(path_enacted), exdir = here(dirname(path_enacted), "IA_enacted"))
 file.remove(path_enacted)
-path_enacted <- "data-raw/IA/IA_enacted/XXXXXXX.shp" # TODO use actual SHP
+path_enacted <- "data-raw/IA/IA_enacted/IA_Congress_2013.shp"
 
-# TODO other files here (as necessary). All paths should start with `path_`
-# If large, consider checking to see if these files exist before downloading
 
 cli_process_done()
 
@@ -40,7 +37,7 @@ perim_path <- "data-out/IA_2010/perim.rds"
 if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong IA} shapefile")
     # read in redistricting data
-    ia_shp <- read_csv(here(path_data), col_types = cols(GEOID10 = "c")) %>%
+    ia_shp <- read_csv(here(path_data)) %>%
         join_vtd_shapefile(year = 2010) %>%
         st_transform(EPSG$IA)  %>%
         rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
@@ -64,7 +61,12 @@ if (!file.exists(here(shp_path))) {
             geo_match(ia_shp, cd_shp, method = "area")],
             .after = cd_2000)
 
-    # TODO any additional columns or data you want to add should go here
+    # group by county to avoid county splits
+    ia_shp <- ia_shp %>%
+        group_by(state, county) %>%
+        summarize(cd_2010 = cd_2010[1],
+                  across(pop:nrv, sum)) %>%
+        ungroup()
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = ia_shp,
@@ -72,7 +74,6 @@ if (!file.exists(here(shp_path))) {
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         ia_shp <- rmapshaper::ms_simplify(ia_shp, keep = 0.05,
                                                  keep_shapes = TRUE) %>%
@@ -81,11 +82,6 @@ if (!file.exists(here(shp_path))) {
 
     # create adjacency graph
     ia_shp$adj <- redist.adjacency(ia_shp)
-
-    # TODO any custom adjacency graph edits here
-
-    ia_shp <- ia_shp %>%
-        fix_geo_assignment(muni)
 
     write_rds(ia_shp, here(shp_path), compress = "gz")
     cli_process_done()

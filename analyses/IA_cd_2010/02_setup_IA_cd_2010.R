@@ -4,18 +4,16 @@
 ###############################################################################
 cli_process_start("Creating {.cls redist_map} object for {.pkg IA_cd_2010}")
 
-# TODO any pre-computation (usually not necessary)
+# DONE any pre-computation (usually not necessary)
+#   Did not do anything
 
-map <- redist_map(ia_shp, pop_tol = 0.005,
-    existing_plan = cd_2010, adj = ia_shp$adj)
+# pop tol set lower because of no county split constraints
+map <- redist_map(ia_shp, pop_tol = 0.0001,
+                  existing_plan = cd_2010, adj = ia_shp$adj)
 
-# TODO any filtering, cores, merging, etc.
+# DONE any filtering, cores, merging, etc.
+#   did not do anything
 
-# TODO remove if not necessary. Adjust pop_muni as needed to balance county/muni splits
-# make pseudo counties with default settings
-map <- map %>%
-    mutate(pseudo_county = pick_county_muni(map, counties = county, munis = muni,
-                                            pop_muni = get_target(map)))
 # IF MERGING CORES OR OTHER UNITS:
 # make a new `map_cores` object that is merged & used for simulating. You can set `drop_geom=TRUE` for this.
 

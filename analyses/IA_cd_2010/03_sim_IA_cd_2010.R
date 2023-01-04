@@ -6,27 +6,11 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg IA_cd_2010}")
 
-# TODO any pre-computation (VRA targets, etc.)
-
-# TODO customize as needed. Recommendations:
-#  - For many districts / tighter population tolerances, try setting
-#  `pop_temper=0.01` and nudging upward from there. Monitor the output for
-#  efficiency!
-#  - Monitor the output (i.e. leave `verbose=TRUE`) to ensure things aren't breaking
-#  - Don't change the number of simulations unless you have a good reason
-#  - If the sampler freezes, try turning off the county split constraint to see
-#  if that's the problem.
-#  - Ask for help!
-set.seed(2010)
-plans <- redist_smc(map, nsims = 5e3, counties = county)
-# IF CORES OR OTHER UNITS HAVE BEEN MERGED:
-# make sure to call `pullback()` on this plans object!
-plans <- match_numbers(plans, "cd_2010")
+plans <- redist_smc(map, nsims = 2500, runs = 2, compactness = 1.1, seq_alpha = 0.9)
+plans <- match_numbers(plans, map$cd_2010)
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
-
-# TODO add any reference plans that aren't already included
 
 # Output the redist_map object. Do not edit this path.
 write_rds(plans, here("data-out/IA_2010/IA_cd_2010_plans.rds"), compress = "xz")
@@ -35,17 +19,45 @@ cli_process_done()
 # Compute summary statistics -----
 cli_process_start("Computing summary statistics for {.pkg IA_cd_2010}")
 
-plans <- add_summary_stats(plans, map)
+# special functions to calculate compactness metrics
+M_PER_MI <- 1609.34
+comp_lw <- function(map, plans = redist:::cur_plans()) {
+    m <- as.matrix(plans)
+    n_distr <- attr(map, "ndists")
+    lw <- matrix(0, nrow = n_distr, ncol = ncol(m))
+    for (i in seq_len(ncol(m))) {
+        for (j in seq_len(n_distr)) {
+            bbox <- st_bbox(map[m[, i] == j, ])
+            lw[j, i] <- abs((bbox["xmax"] - bbox["xmin"]) -
+                                (bbox["ymax"] - bbox["ymin"]))/M_PER_MI
+        }
+    }
+    as.numeric(lw)
+}
+
+plans <- add_summary_stats(plans, map,
+                           comp_lw = comp_lw(map),
+                           area = tally_var(map, as.numeric(st_area(geometry)) ),
+                           comp_perim = sqrt(4*pi*area/comp_polsby)/M_PER_MI) # based on definition
 
 # Output the summary statistics. Do not edit this path.
 save_summary_stats(plans, "data-out/IA_2010/IA_cd_2010_stats.csv")
 
 cli_process_done()
 
+map$state <- 'IA'
+
 # Extra validation plots for custom constraints -----
-# TODO remove this section if no custom constraints
 if (interactive()) {
     library(ggplot2)
     library(patchwork)
 
+    plans_sum <- plans %>%
+        group_by(draw) %>%
+        summarize(comp_lw = sum(comp_lw),
+                  comp_perim = sum(comp_perim))
+    p_lw <- hist(plans_sum, comp_lw, bins = 40) + labs(title = "Length-width compactness") + theme_bw()
+    p_perim <- hist(plans_sum, comp_perim, bins = 40) + labs(title = "Perimeter compactness") + theme_bw()
+    p <- p_lw + p_perim + plot_layout(guides = "collect")
+    ggsave("data-raw/IA/validation_comp.png", width = 10, height = 5)
 }
