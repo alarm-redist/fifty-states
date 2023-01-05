@@ -45,7 +45,6 @@ save_summary_stats(plans, "data-out/IA_2010/IA_cd_2010_stats.csv")
 
 cli_process_done()
 
-map$state <- 'IA'
 
 # Extra validation plots for custom constraints -----
 if (interactive()) {
