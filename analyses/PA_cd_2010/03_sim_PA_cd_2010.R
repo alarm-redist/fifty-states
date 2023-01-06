@@ -34,9 +34,3 @@ plans <- add_summary_stats(plans, map)
 save_summary_stats(plans, "data-out/PA_2010/PA_cd_2010_stats.csv")
 
 cli_process_done()
-
-# Extra validation plots for custom constraints -----
-if (interactive()) {
-    library(ggplot2)
-    library(patchwork)
-}
