@@ -20,16 +20,12 @@ cli_process_start("Downloading files for {.pkg GA_cd_2010}")
 path_data <- download_redistricting_file("GA", "data-raw/GA", year = 2010)
 
 # download the enacted plan.
-# TODO try to find a download URL at <https://redistricting.lls.edu/state/georgia/>
-url <- "https://redistricting.lls.edu/wp-content/uploads/`state`_2020_congress_XXXXX.zip"
+url <- "https://redistricting.lls.edu/wp-content/uploads/ga_2010_congress_2011-12-23_2021-12-31.zip"
 path_enacted <- "data-raw/GA/GA_enacted.zip"
 download(url, here(path_enacted))
 unzip(here(path_enacted), exdir = here(dirname(path_enacted), "GA_enacted"))
 file.remove(path_enacted)
-path_enacted <- "data-raw/GA/GA_enacted/XXXXXXX.shp" # TODO use actual SHP
-
-# TODO other files here (as necessary). All paths should start with `path_`
-# If large, consider checking to see if these files exist before downloading
+path_enacted <- "data-raw/GA/GA_enacted/CONGPROP2.shp"
 
 cli_process_done()
 
@@ -64,7 +60,8 @@ if (!file.exists(here(shp_path))) {
             geo_match(ga_shp, cd_shp, method = "area")],
             .after = cd_2000)
 
-    # TODO any additional columns or data you want to add should go here
+    # fix labeling
+    ga_shp$state <- "GA"
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = ga_shp,
@@ -72,7 +69,6 @@ if (!file.exists(here(shp_path))) {
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         ga_shp <- rmapshaper::ms_simplify(ga_shp, keep = 0.05,
                                                  keep_shapes = TRUE) %>%
@@ -81,8 +77,6 @@ if (!file.exists(here(shp_path))) {
 
     # create adjacency graph
     ga_shp$adj <- redist.adjacency(ga_shp)
-
-    # TODO any custom adjacency graph edits here
 
     ga_shp <- ga_shp %>%
         fix_geo_assignment(muni)
@@ -93,3 +87,17 @@ if (!file.exists(here(shp_path))) {
     ga_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong GA} shapefile")
 }
+
+### troubleshooting disconnected precincts
+discon <- c(1042) #DeKalb County
+
+# empty geometries?
+ga_shp[discon,]$geometry
+
+# this might give you an error
+ga_shp[discon,] %>% plot()
+
+# this should not give you an error
+ga_shp[1:5,] %>% plot()
+
+ga_shp[discon,] %>% View() #missing cd_2010 and vtd
