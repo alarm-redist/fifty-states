@@ -40,7 +40,7 @@ perim_path <- "data-out/VA_2010/perim.rds"
 if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong VA} shapefile")
     # read in redistricting data
-    va_shp <- read_csv(here(path_data), col_types = cols(GEOID = "c")) %>%
+    va_shp <- read_csv(here(path_data)) %>%
         join_vtd_shapefile(year = 2010) %>%
         st_transform(EPSG$VA)  %>%
         rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
@@ -60,7 +60,7 @@ if (!file.exists(here(shp_path))) {
     # add the enacted plan
     cd_shp <- st_read(here(path_enacted))
     va_shp <- va_shp %>%
-        mutate(cd_2010 = as.integer(cd_shp$DISTRICT)[
+        mutate(cd_2010 = as.integer(cd_shp$District)[
             geo_match(va_shp, cd_shp, method = "area")],
             .after = cd_2000)
 
