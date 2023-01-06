@@ -20,16 +20,12 @@ cli_process_start("Downloading files for {.pkg VA_cd_2010}")
 path_data <- download_redistricting_file("VA", "data-raw/VA", year = 2010)
 
 # download the enacted plan.
-# TODO try to find a download URL at <https://redistricting.lls.edu/state/virginia/>
-url <- "https://redistricting.lls.edu/wp-content/uploads/va_2010_congress_2016-01-07_2021-12-31.zip"
+url <- "https://redistricting.lls.edu/wp-content/uploads/va_2010_congress_2012-03-14_2016-01-07.zip"
 path_enacted <- "data-raw/VA/VA_enacted.zip"
 download(url, here(path_enacted))
 unzip(here(path_enacted), exdir = here(dirname(path_enacted), "VA_enacted"))
 file.remove(path_enacted)
-path_enacted <- "data-raw/VA/VA_enacted/Mod_16_shpfile.shp" # TODO use actual SHP
-
-# TODO other files here (as necessary). All paths should start with `path_`
-# If large, consider checking to see if these files exist before downloading
+path_enacted <- "data-raw/VA/VA_enacted/HB251_Bell.shp" # TODO use actual SHP
 
 cli_process_done()
 
@@ -60,11 +56,9 @@ if (!file.exists(here(shp_path))) {
     # add the enacted plan
     cd_shp <- st_read(here(path_enacted))
     va_shp <- va_shp %>%
-        mutate(cd_2010 = as.integer(cd_shp$District)[
+        mutate(cd_2010 = as.integer(cd_shp$DISTRICT)[
             geo_match(va_shp, cd_shp, method = "area")],
             .after = cd_2000)
-
-    # TODO any additional columns or data you want to add should go here
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = va_shp,
@@ -72,7 +66,6 @@ if (!file.exists(here(shp_path))) {
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         va_shp <- rmapshaper::ms_simplify(va_shp, keep = 0.05,
                                                  keep_shapes = TRUE) %>%
@@ -81,8 +74,6 @@ if (!file.exists(here(shp_path))) {
 
     # create adjacency graph
     va_shp$adj <- redist.adjacency(va_shp)
-
-    # TODO any custom adjacency graph edits here
 
     va_shp <- va_shp %>%
         fix_geo_assignment(muni)
