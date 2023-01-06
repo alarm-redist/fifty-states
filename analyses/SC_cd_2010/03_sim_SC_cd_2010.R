@@ -92,4 +92,14 @@ if (interactive()) {
         group_by(draw) %>%
         summarize(n_black_perf = sum(vap_black/total_vap > 0.3 & ndshare > 0.5)) %>%
         count(n_black_perf)
+
+    redist.plot.hist(plans = plans_5k, qty = e_dem) +
+        # scale_x_continuous(name = 'Expected Number of Democratic Districts') +
+        theme_bw()
+
+    redist.plot.plans(plans, draw = 100, shp = map, qty = ndv/(ndv + nrv), ) +
+        # scale_fill_party_c() +
+        # theme_map() +
+        theme(legend.position = "right") +
+        labs(title = "")
 }
