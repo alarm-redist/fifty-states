@@ -21,12 +21,12 @@ path_data <- download_redistricting_file("VA", "data-raw/VA", year = 2010)
 
 # download the enacted plan.
 # TODO try to find a download URL at <https://redistricting.lls.edu/state/virginia/>
-url <- "https://redistricting.lls.edu/wp-content/uploads/`state`_2020_congress_XXXXX.zip"
+url <- "https://redistricting.lls.edu/wp-content/uploads/va_2010_congress_2016-01-07_2021-12-31.zip"
 path_enacted <- "data-raw/VA/VA_enacted.zip"
 download(url, here(path_enacted))
 unzip(here(path_enacted), exdir = here(dirname(path_enacted), "VA_enacted"))
 file.remove(path_enacted)
-path_enacted <- "data-raw/VA/VA_enacted/XXXXXXX.shp" # TODO use actual SHP
+path_enacted <- "data-raw/VA/VA_enacted/Mod_16_shpfile.shp" # TODO use actual SHP
 
 # TODO other files here (as necessary). All paths should start with `path_`
 # If large, consider checking to see if these files exist before downloading
@@ -40,7 +40,7 @@ perim_path <- "data-out/VA_2010/perim.rds"
 if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong VA} shapefile")
     # read in redistricting data
-    va_shp <- read_csv(here(path_data), col_types = cols(GEOID10 = "c")) %>%
+    va_shp <- read_csv(here(path_data), col_types = cols(GEOID = "c")) %>%
         join_vtd_shapefile(year = 2010) %>%
         st_transform(EPSG$VA)  %>%
         rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))

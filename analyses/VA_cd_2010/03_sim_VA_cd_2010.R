@@ -6,8 +6,6 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg VA_cd_2010}")
 
-# TODO any pre-computation (VRA targets, etc.)
-
 # TODO customize as needed. Recommendations:
 #  - For many districts / tighter population tolerances, try setting
 #  `pop_temper=0.01` and nudging upward from there. Monitor the output for
