@@ -9,7 +9,6 @@ In Arizona, districts must:
 1. preserve county and municipality boundaries as much as possible
 1. favor competitive districts to the extent practicable
 
-
 ### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 We add a county/municipality constraint, as described below.
@@ -29,7 +28,7 @@ To satisfy the Voting Rights Act constraint, we run the simulation in two steps.
 We target a Hispanic-majority district outside of Maricopa County (HVAP 50-55%). We avoid splitting municipalities in this region.
 
 #### 2. Simulate six more districts in the remainder of the map
-We target 1 Hispanic-majority district in Maricopa County (HVAP 50-55%).
+We target 1 Hispanic-majority district in Maricopa County (HVAP 50-55%), and only accept plans where the district with the second-highest HVAP exceeds 30%.
 
 To balance county and municipality splits, we create pseudocounties for use in the county constraint.
 These are counties outside Maricopa County and Pima County, which are larger than a congressional district in population.

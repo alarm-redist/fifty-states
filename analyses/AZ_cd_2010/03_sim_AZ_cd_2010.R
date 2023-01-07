@@ -24,8 +24,8 @@ border_idxs <- as_tibble(map) %>%
 
 constr <- redist_constr(map_nomaricopa) %>%
     add_constr_compet(15, ndv, nrv) %>%
-    add_constr_grp_hinge(20, vap_hisp, vap, 0.5) %>%
-    add_constr_grp_hinge(-20, vap_hisp, vap, 0.3) %>%
+    add_constr_grp_hinge(15, vap_hisp, vap, 0.5) %>%
+    add_constr_grp_hinge(-15, vap_hisp, vap, 0.3) %>%
     add_constr_grp_inv_hinge(5, vap_hisp, vap, 0.55) %>%
     add_constr_custom(100, function(plan, distr) {
         ifelse(any(plan[border_idxs] == 0), 0, 1)
@@ -56,8 +56,8 @@ init_m[match(map_nomaricopa$GEOID, map$GEOID), ] <- as.matrix(plans_nomaricopa)[
 ## Finish simulations ------
 constr <- redist_constr(map) %>%
     add_constr_compet(15, ndv, nrv) %>%
-    add_constr_grp_hinge(20, vap_hisp, vap, 0.5) %>%
-    add_constr_grp_hinge(-20, vap_hisp, vap, 0.3) %>%
+    add_constr_grp_hinge(15, vap_hisp, vap, 0.5) %>%
+    add_constr_grp_hinge(-15, vap_hisp, vap, 0.3) %>%
     add_constr_grp_inv_hinge(5, vap_hisp, vap, 0.55) %>%
     suppressWarnings()
 
@@ -65,9 +65,19 @@ set.seed(2010)
 
 plans <- redist_smc(map, nsims = 8e3, runs = 4L, counties = pseudo_county,
     constraints = constr, init_particles = init_m, pop_temper = 0.05,
-    verbose = TRUE) %>%
+    verbose = TRUE)
+
+# keep only plans where the second-highest-HVAP district has HVAP > 30%
+plans <- plans %>%
+    mutate(second_hisp = group_frac(map, vap_hisp, vap)) %>%
+    group_by(draw) %>%
+    mutate(second_hisp = Rfast::nth(.data$second_hisp, k = 2, descending = TRUE)) %>%
+    ungroup() %>%
+    filter(second_hisp > 0.3 | draw == "cd_2010")
+
+plans <- plans %>%
     group_by(chain) %>%
-    filter(as.integer(draw) < min(as.integer(draw)) + 1250) %>% # thin samples
+    filter(as.integer(droplevels(draw)) < min(as.integer(droplevels(draw))) + 1250) %>% # thin samples
     ungroup()
 
 plans <- match_numbers(plans, "cd_2010")
@@ -125,4 +135,9 @@ if (interactive()) {
         scale_y_continuous("Percent Hispanic by VAP") +
         labs(title = "Approximate Performance") +
         scale_color_manual(values = c(cd_2010_prop = "black"))
+
+    # Check proportion of two-party vote in second-highest HVAP district
+    second_hvap_districts <- subset_sampled(plans[group_frac(map, vap_hisp, vap, .data = plans) == plans$second_hisp, ])
+    print(sum((second_hvap_districts$ndv/(second_hvap_districts$ndv + second_hvap_districts$nrv)) > 0.3)/5000)
+    print(sum(second_hvap_districts$ndv > second_hvap_districts$nrv)/5000)
 }

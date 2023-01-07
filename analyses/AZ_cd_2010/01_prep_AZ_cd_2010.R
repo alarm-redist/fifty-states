@@ -11,6 +11,7 @@ suppressMessages({
     library(geomander)
     library(cli)
     library(here)
+    library(Rfast) # used in this set of simulations
     devtools::load_all() # load utilities
 })
 
