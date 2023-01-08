@@ -1,7 +1,7 @@
 # 2010 Virginia Congressional Districts
 
 ## Redistricting requirements
-In Virginia, districts must, under Commitee Resolution No. 1 adopted by the Senate and House Committees on Privileges and Elections in 2001:
+In Virginia, districts must, under [Commitee Resolution No. 1](https://www.virginiaredistricting.org/2010/data/publications/2011Draw1.pdf) adopted by the Senate and House Committees on Privileges and Elections in 2001:
 
 1. be contiguous
 2. have equal populations
