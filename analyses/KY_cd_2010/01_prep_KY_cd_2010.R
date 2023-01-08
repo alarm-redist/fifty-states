@@ -21,15 +21,12 @@ path_data <- download_redistricting_file("KY", "data-raw/KY", year = 2010)
 
 # download the enacted plan.
 # TODO try to find a download URL at <https://redistricting.lls.edu/state/kentucky/>
-url <- "https://redistricting.lls.edu/wp-content/uploads/`state`_2020_congress_XXXXX.zip"
+url <- "https://redistricting.lls.edu/wp-content/uploads/ky_2010_congress_2012-02-10_2021-12-31.zip"
 path_enacted <- "data-raw/KY/KY_enacted.zip"
 download(url, here(path_enacted))
 unzip(here(path_enacted), exdir = here(dirname(path_enacted), "KY_enacted"))
 file.remove(path_enacted)
-path_enacted <- "data-raw/KY/KY_enacted/XXXXXXX.shp" # TODO use actual SHP
-
-# TODO other files here (as necessary). All paths should start with `path_`
-# If large, consider checking to see if these files exist before downloading
+path_enacted <- "data-raw/KY/KY_enacted/CH302C02.shp" # TODO use actual SHP
 
 cli_process_done()
 
@@ -40,7 +37,7 @@ perim_path <- "data-out/KY_2010/perim.rds"
 if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong KY} shapefile")
     # read in redistricting data
-    ky_shp <- read_csv(here(path_data), col_types = cols(GEOID10 = "c")) %>%
+    ky_shp <- read_csv(here(path_data)) %>%
         join_vtd_shapefile(year = 2010) %>%
         st_transform(EPSG$KY)  %>%
         rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
