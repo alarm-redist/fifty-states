@@ -21,12 +21,12 @@ path_data <- download_redistricting_file("CO", "data-raw/CO", year = 2010)
 
 # download the enacted plan.
 # TODO try to find a download URL at <https://redistricting.lls.edu/state/colorado/>
-url <- "https://redistricting.lls.edu/wp-content/uploads/`state`_2020_congress_XXXXX.zip"
+url <- "https://redistricting.lls.edu/wp-content/uploads/co_2010_congress_2011-12-05_2021-12-31.zip"
 path_enacted <- "data-raw/CO/CO_enacted.zip"
 download(url, here(path_enacted))
 unzip(here(path_enacted), exdir = here(dirname(path_enacted), "CO_enacted"))
 file.remove(path_enacted)
-path_enacted <- "data-raw/CO/CO_enacted/XXXXXXX.shp" # TODO use actual SHP
+path_enacted <- "data-raw/CO/CO_enacted/Moreno_South_Shapefiles.shp" # TODO use actual SHP
 
 # TODO other files here (as necessary). All paths should start with `path_`
 # If large, consider checking to see if these files exist before downloading
@@ -40,7 +40,7 @@ perim_path <- "data-out/CO_2010/perim.rds"
 if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong CO} shapefile")
     # read in redistricting data
-    co_shp <- read_csv(here(path_data), col_types = cols(GEOID10 = "c")) %>%
+    co_shp <- read_csv(here(path_data)) %>%
         join_vtd_shapefile(year = 2010) %>%
         st_transform(EPSG$CO)  %>%
         rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
