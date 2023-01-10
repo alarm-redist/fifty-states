@@ -10,7 +10,7 @@ set.seed(2010)
 
 # Global settings
 cluster_tol <- .005
-nsims <- 30000
+nsims <- 15000
 
 map$row_num <- 1:nrow(map)
 
@@ -36,28 +36,30 @@ constraints <- redist_constr(map_south) %>%
     # encourage Hispanic VAP <30% and >70%
     add_constr_grp_hinge(5, vap_hisp, vap, 0.7) %>%
     add_constr_grp_hinge(-8, vap_hisp, vap, 0.3) %>%
-    # push unassigned area to border for later assignment
-    add_constr_custom(strength = 8, function(plan, distr) {
-        ifelse(any(plan[border_south] == 0), 0, 1)
-    })
+    add_constr_custom(
+        strength = 50,
+        fn = function(plan, distr) {
+            as.numeric(!any(plan[map_south$cluster_edge] == 1))
+        }
+    )
 
-n_steps <- (sum(map_south$pop)/attr(map, "pop_bounds")[2]) %>% floor()
+n_steps <- (sum(map_south$pop)/attr(map, "pop_bounds")[2]) %>% floor() - 2
 
 plans_south <- redist_smc(map_south,
-                          counties = pseudo_county,
-                          nsims = nsims/2,
-                          runs = 2L, ncores = 3L,
-                          n_steps = n_steps,
-                          constraints = constraints,
-                          pop_temper = 0.01,
-                          verbose = T)
+    counties = pseudo_county,
+    nsims = nsims,
+    runs = 2L, ncores = 7L,
+    n_steps = n_steps,
+    constraints = constraints,
+    pop_temper = 0.01,
+    verbose = T)
 
 plans_south <- plans_south %>%
     mutate(hvap = group_frac(map_south, vap_hisp, vap),
-           bvap = group_frac(map_south, vap_black, vap),
-           dem16 = group_frac(map_south, adv_16, arv_16 + adv_16),
-           dem18 = group_frac(map_south, adv_18, arv_18 + adv_18),
-           dem20 = group_frac(map_south, adv_20, arv_20 + adv_20))
+        bvap = group_frac(map_south, vap_black, vap),
+        dem16 = group_frac(map_south, adv_16, arv_16 + adv_16),
+        dem18 = group_frac(map_south, adv_18, arv_18 + adv_18),
+        dem20 = group_frac(map_south, adv_20, arv_20 + adv_20))
 
 summary(plans_south)
 
@@ -94,27 +96,30 @@ constraints <- redist_constr(map_north) %>%
         tgts_group = c(0.30)) %>%
     add_constr_grp_hinge(-12, vap_black, vap, 0.15) %>%
     # constrain the unassigned area be on the border, to ensure contiguity
-    add_constr_custom(strength = 10, function(plan, distr) {
-        ifelse(any(plan[border_north] == 0), 0, 1)
-    })
+    add_constr_custom(
+        strength = 10,
+        fn = function(plan, distr) {
+            as.numeric(!any(plan[map_north$cluster_edge] == 0))
+        }
+    )
 
 n_steps <- (sum(map_north$pop)/attr(map, "pop_bounds")[2]) %>% floor()
 
 plans_north <- redist_smc(map_north,
-                          counties = pseudo_county,
-                          nsims = nsims/2,
-                          runs = 2L, ncores = 3L,
-                          n_steps = n_steps,
-                          constraints = constraints,
-                          pop_temper = 0.01,
-                          verbose = T)
+    counties = pseudo_county,
+    nsims = nsims,
+    runs = 2L, ncores = 7L,
+    n_steps = n_steps - 1,
+    constraints = constraints,
+    pop_temper = 0.01,
+    verbose = T)
 
 plans_north <- plans_north %>%
     mutate(hvap = group_frac(map_north, vap_hisp, vap),
-           bvap = group_frac(map_north, vap_black, vap),
-           dem16 = group_frac(map_north, adv_16, arv_16 + adv_16),
-           dem18 = group_frac(map_north, adv_18, arv_18 + adv_18),
-           dem20 = group_frac(map_north, adv_20, arv_20 + adv_20))
+        bvap = group_frac(map_north, vap_black, vap),
+        dem16 = group_frac(map_north, adv_16, arv_16 + adv_16),
+        dem18 = group_frac(map_north, adv_18, arv_18 + adv_18),
+        dem20 = group_frac(map_north, adv_20, arv_20 + adv_20))
 
 summary(plans_north)
 
@@ -124,18 +129,18 @@ plans_north <- plans_north %>% filter(draw != "cd_2010")
 plans_south <- plans_south %>% filter(draw != "cd_2010")
 
 plans_south$dist_keep <- ifelse(plans_south$district == 0, FALSE, TRUE)
-plans_north$dist_keep <- ifelse(plans_north$district == 6, FALSE, TRUE)
+plans_north$dist_keep <- ifelse(plans_north$district == 0, FALSE, TRUE)
 
-fl_plan_list <- list(list(map = map_south, plans = plans_south),
-                     list(map = map_north, plans = plans_north))
+prep_mat <- prep_particles(map = map,
+    map_plan_list = list(
+        list(map = map_south, plans = plans_south),
+        list(map = map_north, plans = plans_north)),
+    uid = row_num,
+    dist_keep = dist_keep,
+    nsims = nsims*2)
 
 rm(plans_south)
 rm(plans_north)
-
-prep_mat <- prep_particles(map = map, map_plan_list = fl_plan_list,
-                           uid = row_num, dist_keep = dist_keep, nsims = nsims)
-
-rm(fl_plan_list)
 
 # Central Florida
 
@@ -154,11 +159,13 @@ constraints <- redist_constr(map) %>%
         total_pop = vap,
         tgts_group = c(0.40))
 
-plans_one_run <- redist_smc(map, nsims = nsims, runs = 1L, ncores = 3L,
-                    counties = pseudo_county,
-                    constraints = constraints,
-                    init_particles = prep_mat,
-                    pop_temper = 0.01, verbose = T)  %>%
+plans <- redist_smc(map, nsims = nsims*2, runs = 1L, ncores = 1L,
+    counties = pseudo_county,
+    constraints = constraints,
+    pop_temper = .01,
+    init_particles = prep_mat, verbose = T)
+
+plans <- plans %>%
     group_by(chain) %>%
     filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
     ungroup()

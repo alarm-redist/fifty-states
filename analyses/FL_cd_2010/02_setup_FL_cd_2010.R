@@ -11,19 +11,23 @@ map <- redist_map(fl_shp, pop_tol = 0.005,
 
 map <- map %>%
     mutate(pseudo_county = pick_county_muni(map, counties = county, munis = muni,
-                                            pop_muni = get_target(map)))
+        pop_muni = get_target(map)))
 
 clust_south <- sort(c("Miami-Dade County", "Broward County", "Palm Beach County", "Monroe County", "Collier County", "Hendry County",
-                      "Glades County", "Martin County", "Lee County", "Charlotte County", "St. Lucie County", "Okeechobee County",
-                      "Hardee County", "Sarasota County", "Manatee County", "DeSoto County", "Highlands County"))
+    "Glades County", "Martin County", "Lee County", "Charlotte County", "St. Lucie County", "Okeechobee County",
+    "Hardee County", "Sarasota County", "Manatee County", "DeSoto County", "Highlands County"))
 
-clust_south <- stringr::str_sub(sapply(clust_south, function(x) {tigris::lookup_code("FL", x)}), -5, -3)
+clust_south <- stringr::str_sub(sapply(clust_south, function(x) {
+    tigris::lookup_code("FL", x)
+}), -5, -3)
 
 clust_central <- sort(c("Orange County", "Seminole County", "Osceola County", "Lake County", "Polk County", "Hillsborough County", "Pinellas County",
-                        "Pasco County", "Hernando County", "Citrus County", "Sumter County", "Lake County", "Volusia County",
-                        "Flagler County", "Brevard County", "Indian River County"))
+    "Pasco County", "Hernando County", "Citrus County", "Sumter County", "Lake County", "Volusia County",
+    "Flagler County", "Brevard County", "Indian River County"))
 
-clust_central <- stringr::str_sub(sapply(clust_central, function(x) {tigris::lookup_code("FL", x)}), -5, -3)
+clust_central <- stringr::str_sub(sapply(clust_central, function(x) {
+    tigris::lookup_code("FL", x)
+}), -5, -3)
 
 clust_north <- sort(unique(map$county[-which(map$county %in% c(clust_south, clust_central))]))
 

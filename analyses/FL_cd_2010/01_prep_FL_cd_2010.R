@@ -51,9 +51,9 @@ if (!file.exists(here(shp_path))) {
         select(-vtd)
     d_cd <- make_from_baf("FL", "CD", "VTD", year = 2010)  %>%
         transmute(GEOID = paste0(censable::match_fips("FL"), vtd),
-                  cd_2000 = as.integer(cd))
+            cd_2000 = as.integer(cd))
     fl_shp <- left_join(fl_shp, d_muni, by = "GEOID") %>%
-        left_join(d_cd, by="GEOID") %>%
+        left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2000, .after = county)
 
@@ -62,20 +62,20 @@ if (!file.exists(here(shp_path))) {
     fl_shp <- fl_shp %>%
         mutate(cd_2010 = as.integer(cd_shp$DISTRICT)[
             geo_match(fl_shp, cd_shp, method = "area")],
-            .after = cd_2000)
+        .after = cd_2000)
 
     # TODO any additional columns or data you want to add should go here
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = fl_shp,
-                             perim_path = here(perim_path)) %>%
+        perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         fl_shp <- rmapshaper::ms_simplify(fl_shp, keep = 0.05,
-                                                 keep_shapes = TRUE) %>%
+            keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 
