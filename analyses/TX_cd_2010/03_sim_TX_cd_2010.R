@@ -4,8 +4,7 @@
 ###############################################################################
 
 cluster_pop_tol <- 0.0025
-# nsims <- 12500
-nsims <- 7000
+nsims <- 12500
 pop_temp <- 0.03
 sa_city <- 0.99
 sa <- 0.95
@@ -63,7 +62,7 @@ add_constr_grp_hinge(
     3,
     cvap_black,
     total_pop = cvap,
-    tgts_group = c(0.50)) %>%
+    tgts_group = c(0.45)) %>%
     add_constr_custom(strength = 10, function(plan, distr) {
         ifelse(any(plan[border_idxs] == 0), 0, 1)
     })
@@ -191,14 +190,10 @@ add_constr_grp_hinge(
                              0.70) %>%
 # BLACK
     add_constr_grp_hinge(
-        5,
+        3,
         cvap_black,
         total_pop = cvap,
         tgts_group = c(0.45)) %>%
-    add_constr_grp_hinge(-3,
-                         cvap_black,
-                         cvap,
-                         0.35) %>%
     add_constr_custom(strength = 10, function(plan, distr) {
         ifelse(any(plan[border_idxs] == 0), 0, 1)
     })
@@ -253,16 +248,16 @@ constraints <- redist_constr(map) %>%
     #########################################################
 # HISPANIC
 add_constr_grp_hinge(
-    3,
+    4,
     cvap_hisp,
     total_pop = cvap,
     tgts_group = c(0.45)
 ) %>%
-    add_constr_grp_hinge(-3,
+    add_constr_grp_hinge(-4,
                          cvap_hisp,
                          cvap,
                          0.35) %>%
-    add_constr_grp_inv_hinge(3,
+    add_constr_grp_inv_hinge(4,
                              cvap_hisp,
                              cvap,
                              0.70) %>%

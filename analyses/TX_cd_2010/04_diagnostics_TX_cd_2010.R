@@ -140,6 +140,10 @@ psum <- plans %>%
         )/total_cvap) > 0.5)
     )
 
+# correct reference plan label
+plans <- plans %>%
+    mutate(draw = ifelse(draw == "cd_2010)", "cd_2010", paste0("", draw)))
+
 plans %>%
     filter(draw == "cd_2010)") %>%
     mutate(bvap_pct = cvap_black/total_cvap) %>%
