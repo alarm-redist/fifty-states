@@ -1,17 +1,16 @@
 # 2010 Virginia Congressional Districts
 
 ## Redistricting requirements
-In Virginia, districts must, under the 2001 Commitee Resolution No. 1 of the Senate and House Committees on Privileges and Elections:
+In Virginia, districts must, under [Commitee Resolution No. 1](https://www.virginiaredistricting.org/2010/data/publications/2011Draw1.pdf) adopted by the Senate and House Committees on Privileges and Elections in 2001:
 
 1. be contiguous
 2. have equal populations
 3. be geographically compact
 4. preserve county and municipality boundaries as much as possible
-5. preserve communities of interest as defined by criteria that "may include, among others, economic factors, social factors, cultural factors, geographic features, governmental jurisdictions and service delivery areas, political beliefs, voting trends, and incumbency considerations"
-
+5. preserve communities of interest, as defined by criteria that "may include, among others, economic factors, social factors, cultural factors, geographic features, governmental jurisdictions and service delivery areas, political beliefs, voting trends, and incumbency considerations"
 
 ### Algorithmic Constraints
-We enforce a maximum population deviation of 0.5%.
+We enforce a maximum population deviation of 0.5%. We use a pseudo-county constraint described below which attempts to mimic the norms in Virginia of generally preserving county, city, and township boundaries.
 
 ## Data Sources
 Data for Virginia comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
