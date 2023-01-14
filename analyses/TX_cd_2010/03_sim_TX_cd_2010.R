@@ -291,36 +291,39 @@ plans <- plans %>%
     mutate(district = as.numeric(district)) %>%
     add_reference(ref_plan = as.numeric(map$cd_2010))
 
-# plans <- plans %>%
-#     group_by(chain) %>%
-#     filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
-#     ungroup()
+plans_5k <- plans %>%
+    group_by(chain) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
+    ungroup()
 
+# correct reference plan label
+plans_5k <- plans_5k %>%
+    mutate(draw = ifelse(draw == "cd_2010)", "cd_2010", paste0("", draw)))
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
 
 # Output the redist_map object. Do not edit this path.
-write_rds(plans, here("data-out/TX_2010/TX_cd_2010_plans.rds"), compress = "xz")
+write_rds(plans_5k, here("data-out/TX_2010/TX_cd_2010_plans.rds"), compress = "xz")
 cli_process_done()
 
 # Compute summary statistics -----
 cli_process_start("Computing summary statistics for {.pkg TX_cd_2010}")
 
-plans <- add_summary_stats(plans, map) %>%
+plans_5k <- add_summary_stats(plans_5k, map) %>%
     mutate(total_cvap = tally_var(map, cvap), .after = total_vap)
 
-summary(plans)
+summary(plans_5k)
 
 # cvap columns
 cvap_cols <- names(map)[tidyselect::eval_select(starts_with("cvap_"), map)]
 for (col in rev(cvap_cols)) {
-    plans <- mutate(plans, {{ col }} := tally_var(map, map[[col]]), .after = vap_two)
+    plans_5k <- mutate(plans_5k, {{ col }} := tally_var(map, map[[col]]), .after = vap_two)
 }
 
 # Output the summary statistics. Do not edit this path.
-save_summary_stats(plans, "data-out/TX_2010/TX_cd_2010_stats.csv")
+save_summary_stats(plans_5k, "data-out/TX_2010/TX_cd_2010_stats.csv")
 
 cli_process_done()
 
-validate_analysis(plans, map)
+validate_analysis(plans_5k, map)
