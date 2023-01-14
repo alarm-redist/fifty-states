@@ -60,11 +60,9 @@ if (!file.exists(here(shp_path))) {
     # add the enacted plan
     cd_shp <- st_read(here(path_enacted))
     co_shp <- co_shp %>%
-        mutate(cd_2010 = as.integer(cd_shp$DISTRICT)[
+        mutate(cd_2010 = as.integer(cd_shp$District_1)[
             geo_match(co_shp, cd_shp, method = "area")],
             .after = cd_2000)
-
-    # TODO any additional columns or data you want to add should go here
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = co_shp,
@@ -72,7 +70,6 @@ if (!file.exists(here(shp_path))) {
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         co_shp <- rmapshaper::ms_simplify(co_shp, keep = 0.05,
                                                  keep_shapes = TRUE) %>%
@@ -81,8 +78,6 @@ if (!file.exists(here(shp_path))) {
 
     # create adjacency graph
     co_shp$adj <- redist.adjacency(co_shp)
-
-    # TODO any custom adjacency graph edits here
 
     co_shp <- co_shp %>%
         fix_geo_assignment(muni)

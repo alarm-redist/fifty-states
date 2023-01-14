@@ -10,7 +10,7 @@ In Colorado, districts must, under Section 47 of the [2016 Colorado Revised Stat
 1. preserve whole communities of interest
 
 ### Algorithmic Constraints
-We enforce a maximum population deviation of 0.5%.
+We enforce a maximum population deviation of 0.5%. We use a pseudo-county constraint described below which attempts to mimic the norms in Colorado of generally preserving county, city, and township boundaries.
 
 ## Data Sources
 Data for Colorado comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
