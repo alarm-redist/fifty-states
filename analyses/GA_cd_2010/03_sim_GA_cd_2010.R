@@ -6,39 +6,22 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg GA_cd_2010}")
 
-# from the 2020 ones
 constr <- redist_constr(map) %>%
-    add_constr_grp_hinge(20, vap_black, vap, 0.50) %>%
-    add_constr_grp_hinge(-20, vap_black, vap, 0.45) %>%
-    add_constr_grp_inv_hinge(10, vap_black, vap, 0.60)
+    add_constr_grp_hinge(20, vap_black, vap, 0.47) %>%
+    add_constr_grp_hinge(-20, vap_black, vap, 0.38) %>%
+    add_constr_grp_inv_hinge(12, vap_black, vap, 0.61)
 
-# TODO any pre-computation (VRA targets, etc.)
-
-# TODO customize as needed. Recommendations:
-#  - For many districts / tighter population tolerances, try setting
-#  `pop_temper=0.01` and nudging upward from there. Monitor the output for
-#  efficiency!
-#  - Monitor the output (i.e. leave `verbose=TRUE`) to ensure things aren't breaking
-#  - Don't change the number of simulations unless you have a good reason
-#  - If the sampler freezes, try turning off the county split constraint to see
-#  if that's the problem.
-#  - Ask for help!
 set.seed(2010)
-plans <- redist_smc(map,
-    nsims = 3000,
-    runs = 2L,
-    #pop_temper =  0.01,
-    counties = county,
-    constrants = constr
-    )
-# IF CORES OR OTHER UNITS HAVE BEEN MERGED:
-# make sure to call `pullback()` on this plans object!
+plans <- redist_smc(map, nsims = 1e4, runs =2L, countries = county, constraints = constr,
+                    pop_temper = 0.04) #%>%
+    #group_by(chain) %>%
+    #filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>%
+    #ungroup()
+
 plans <- match_numbers(plans, "cd_2010")
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
-
-# TODO add any reference plans that aren't already included
 
 # Output the redist_map object. Do not edit this path.
 write_rds(plans, here("data-out/GA_2010/GA_cd_2010_plans.rds"), compress = "xz")
@@ -61,13 +44,31 @@ if (interactive()) {
 
     validate_analysis(plans, map)
 
-    redist.plot.distr_qtys(plans, vap_black / total_vap,
-                           color_thresh = NULL,
-                           color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, '#3D77BB', '#B25D4C'),
-                           size = 0.5, alpha = 0.5) +
-        scale_y_continuous('Percent Black by VAP') +
-        labs(title = 'Approximate Performance') +
-        scale_color_manual(values = c(cd_2020_prop = 'black')) +
-        ggredist::theme_r21()
-    ggsave("figs/performance.pdf", height = 7, width = 7)
+    redist.plot.distr_qtys(
+        plans, vap_black/total_vap,
+        color_thresh = NULL,
+        color = ifelse(
+            subset_sampled(plans)$ndv > subset_sampled(plans)$nrv,
+            "#3D77BB", "#B25D4C"),
+        size = 0.5, alpha = 0.5) +
+        scale_y_continuous("Percent Black by VAP") +
+        labs(title = "Partisanship of seats by BVAP rank") +
+        scale_color_manual(values = c(cd_2010 = "black"))
+
+    # Dem seats by BVAP rank -- numeric
+    plans %>%
+        group_by(draw) %>%
+        mutate(bvap = vap_black/total_vap, bvap_rank = rank(bvap)) %>%
+        subset_sampled() %>%
+        select(draw, district, bvap, bvap_rank, ndv, nrv) %>%
+        mutate(dem = ndv > nrv) %>%
+        group_by(bvap_rank) %>%
+        summarize(dem = mean(dem))
+
+    # Total Black districts that are performing
+    plans %>%
+        subset_sampled() %>%
+        group_by(draw) %>%
+        summarize(n_black_perf = sum(vap_black/total_vap > 0.3 & ndshare > 0.5)) %>%
+        count(n_black_perf)
 }

@@ -36,7 +36,7 @@ perim_path <- "data-out/GA_2010/perim.rds"
 if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong GA} shapefile")
     # read in redistricting data
-    ga_shp <- read_csv(here(path_data), col_types = cols(GEOID10 = "c")) %>%
+    ga_shp <- read_csv(here(path_data)) %>%
         join_vtd_shapefile(year = 2010) %>%
         st_transform(EPSG$GA)  %>%
         rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
@@ -63,6 +63,9 @@ if (!file.exists(here(shp_path))) {
     # fix labeling
     ga_shp$state <- "GA"
 
+    # eliminate empty shapes
+    ga_shp <- ga_shp %>% filter(!st_is_empty(geometry))
+
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = ga_shp,
                              perim_path = here(perim_path)) %>%
@@ -87,17 +90,3 @@ if (!file.exists(here(shp_path))) {
     ga_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong GA} shapefile")
 }
-
-### troubleshooting disconnected precincts
-discon <- c(1042) #DeKalb County
-
-# empty geometries?
-ga_shp[discon,]$geometry
-
-# this might give you an error
-ga_shp[discon,] %>% plot()
-
-# this should not give you an error
-ga_shp[1:5,] %>% plot()
-
-ga_shp[discon,] %>% View() #missing cd_2010 and vtd
