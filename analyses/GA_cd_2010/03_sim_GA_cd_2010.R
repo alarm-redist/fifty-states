@@ -7,12 +7,12 @@
 cli_process_start("Running simulations for {.pkg GA_cd_2010}")
 
 constr <- redist_constr(map) %>%
-    add_constr_grp_hinge(20, vap_black, vap, 0.47) %>%
-    add_constr_grp_hinge(-20, vap_black, vap, 0.38) %>%
+    add_constr_grp_hinge(20, vap_black, vap, 0.45) %>%
+    add_constr_grp_hinge(-20, vap_black, vap, 0.37) %>%
     add_constr_grp_inv_hinge(12, vap_black, vap, 0.61)
 
 set.seed(2010)
-plans <- redist_smc(map, nsims = 1e4, runs =2L, countries = county, constraints = constr,
+plans <- redist_smc(map, nsims = 1e4, runs =2L, counties = county, constraints = constr,
                     pop_temper = 0.04) #%>%
     #group_by(chain) %>%
     #filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>%
