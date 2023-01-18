@@ -10,7 +10,7 @@ set.seed(2010)
 
 # Global settings
 cluster_tol <- .005
-nsims <- 15000
+nsims <- 20000
 
 map$row_num <- 1:nrow(map)
 
@@ -27,7 +27,7 @@ z <- geomander::seam_geom(map$adj, map, admin = "cluster_edge", seam = c(0, 1))
 
 z <- z[z$cluster_edge == 1, ]
 
-border_south <- which(map_south$row_num %in% z$row_num)
+map_south$cluster_edge <- map_south$row_num %in% z$row_num
 
 constraints <- redist_constr(map_south) %>%
     # encourage Black VAP <10% and >40%
@@ -37,21 +37,22 @@ constraints <- redist_constr(map_south) %>%
     add_constr_grp_hinge(5, vap_hisp, vap, 0.7) %>%
     add_constr_grp_hinge(-8, vap_hisp, vap, 0.3) %>%
     add_constr_custom(
-        strength = 50,
+        strength = 10,
         fn = function(plan, distr) {
-            as.numeric(!any(plan[map_south$cluster_edge] == 1))
+            as.numeric(!any(plan[map_south$cluster_edge] == 0))
         }
     )
 
-n_steps <- (sum(map_south$pop)/attr(map, "pop_bounds")[2]) %>% floor() - 2
+n_steps <- (sum(map_south$pop)/attr(map, "pop_bounds")[2]) %>% floor()
 
 plans_south <- redist_smc(map_south,
     counties = pseudo_county,
     nsims = nsims,
     runs = 2L, ncores = 7L,
     n_steps = n_steps,
+    seq_alpha = .8,
     constraints = constraints,
-    pop_temper = 0.01,
+    pop_temper = 0.015,
     verbose = T)
 
 plans_south <- plans_south %>%
@@ -78,7 +79,7 @@ z <- geomander::seam_geom(map$adj, map, admin = "cluster_edge", seam = c(0, 1))
 
 z <- z[z$cluster_edge == 1, ]
 
-border_north <- which(map_north$row_num %in% z$row_num)
+map_north$cluster_edge <- map_north$row_num %in% z$row_num
 
 constraints <- redist_constr(map_north) %>%
     # reward districts with hispanic vap % above 45%
@@ -109,7 +110,7 @@ plans_north <- redist_smc(map_north,
     counties = pseudo_county,
     nsims = nsims,
     runs = 2L, ncores = 7L,
-    n_steps = n_steps - 1,
+    n_steps = n_steps,
     constraints = constraints,
     pop_temper = 0.01,
     verbose = T)
@@ -139,8 +140,8 @@ prep_mat <- prep_particles(map = map,
     dist_keep = dist_keep,
     nsims = nsims*2)
 
-rm(plans_south)
-rm(plans_north)
+# rm(plans_south)
+# rm(plans_north)
 
 # Central Florida
 
@@ -159,10 +160,8 @@ constraints <- redist_constr(map) %>%
         total_pop = vap,
         tgts_group = c(0.40))
 
-plans <- redist_smc(map, nsims = nsims*2, runs = 1L, ncores = 1L,
+plans <- redist_smc(map, nsims = nsims*2, runs = 2L, ncores = 7L,
     counties = pseudo_county,
-    constraints = constraints,
-    pop_temper = .01,
     init_particles = prep_mat, verbose = T)
 
 plans <- plans %>%
