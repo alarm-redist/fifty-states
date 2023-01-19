@@ -17,8 +17,7 @@ suppressMessages({
 # Download necessary files for analysis -----
 cli_process_start("Downloading files for {.pkg IL_cd_2010}")
 
-#path_data <- download_redistricting_file("IL", "data-raw/IL", year = 2010)
-path_data <- download_redistricting_file("IL", "data-raw/IL", year = 2010, overwrite = TRUE)
+path_data <- download_redistricting_file("IL", "data-raw/IL", year = 2010)
 
 # download the enacted plan.
 url <- "https://redistricting.lls.edu/wp-content/uploads/il_2010_congress_2011-06-24_2021-12-31.zip"
@@ -34,10 +33,12 @@ cli_process_done()
 shp_path <- "data-out/IL_2010/shp_vtd.rds"
 perim_path <- "data-out/IL_2010/perim.rds"
 
+fs::dir_create('data-raw/IL')
+
 if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong IL} shapefile")
     # read in redistricting data
-    il_shp <- read_csv(here(path_data)) %>%
+    il_shp <- read_csv(here(path_data), col_types = cols(GEOID10 = "c")) %>%
         join_vtd_shapefile(year = 2010) %>%
         st_transform(EPSG$IL)  %>%
         rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
@@ -50,7 +51,7 @@ if (!file.exists(here(shp_path))) {
         transmute(GEOID = paste0(censable::match_fips("IL"), vtd),
                   cd_2000 = as.integer(cd))
     il_shp <- left_join(il_shp, d_muni, by = "GEOID") %>%
-        left_join(d_cd, by="GEOID") %>%
+        left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2000, .after = county)
 
