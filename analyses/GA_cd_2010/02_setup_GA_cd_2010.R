@@ -7,10 +7,6 @@ cli_process_start("Creating {.cls redist_map} object for {.pkg GA_cd_2010}")
 map <- redist_map(ga_shp, pop_tol = 0.005,
     existing_plan = cd_2010, adj = ga_shp$adj)
 
-# make pseudo counties with default settings
-map <- map %>%
-    mutate(pseudo_county = pick_county_muni(map, counties = county, munis = muni, pop_muni = 0.8*get_target(map)))
-
 # Add an analysis name attribute
 attr(map, "analysis_name") <- "GA_2010"
 
