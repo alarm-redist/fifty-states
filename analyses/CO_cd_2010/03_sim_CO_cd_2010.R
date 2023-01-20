@@ -6,8 +6,12 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg CO_cd_2010}")
 
+constr <- redist_constr(map) %>%
+    add_constr_splits(strength = 1, admin = map$county_muni)
+
 set.seed(2010)
-plans <- redist_smc(map, nsims = 5e3, runs = 2L, counties = pseudo_county) %>%
+plans <- redist_smc(map, nsims = 5e3, runs = 2L, counties = pseudo_county,
+                    constraints = constr) %>%
     group_by(chain) %>%
     filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>%
     ungroup()
@@ -35,5 +39,5 @@ cli_process_done()
 if (interactive()) {
     library(ggplot2)
     library(patchwork)
-
+    validate_analysis(plans, map %>% mutate(state = "CO"))
 }
