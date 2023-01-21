@@ -16,5 +16,4 @@ Data for New Jersey comes from the ALARM Project's [2010 Redistricting Data File
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 5,000 districting plans for New Jersey.
-No special techniques were needed to produce the sample.
+We sample 10,000 districting plans for New Jersey across two independent runs of the SMC algorithm, and then thin the sample to down to 5,000 plans. To balance county and municipality splits, we create pseudocounties for use in the county constraint. These are counties, outside of Bergen, Burlington, Camden, Essex, Hudson, Mercer, Middlesex, Monmouth, Morris, Ocean, Passaic, and Union County, which are the counties larger than 50% of the target district population. WithinBergen, Burlington, Camden, Essex, Hudson, Mercer, Middlesex, Monmouth, Morris, Ocean, Passaic, and Union County, which are the counties larger than 50% of the target district population, each municipality is its own pseudocounty as well.
