@@ -6,11 +6,10 @@ In Georgia, under the 2011-12 Guidelines for the House Legislative and Congressi
 1. be contiguous
 2. have equal populations
 3. be geographically compact
-4. comply with VRA section 2
-5. preserve political subdivisions and communities of interest 
-6. avoid pairing incumbents 
+4. preserve political subdivisions and communities of interest 
+5. avoid pairing incumbents 
 
-https://www.dropbox.com/s/i8zqyivtr8iozs8/GeorgiaSenateCommitteeGuidelines2011-12.pdf
+[Guidelines for the House Legislative and Congressional Reapportionment Committee](https://www.dropbox.com/s/i8zqyivtr8iozs8/GeorgiaSenateCommitteeGuidelines2011-12.pdf)
 
 ### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
