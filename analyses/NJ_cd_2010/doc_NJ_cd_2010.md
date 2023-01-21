@@ -3,11 +3,12 @@
 ## Redistricting requirements
 In New Jersey, districts must:
 
-1. have equal populations
-2. comply with section 2 of the voting rights act
+1. be contiguous
+2. have equal populations
 
-### Algorithmic Constraints
+### Interpretation of requirements
 We enforce a maximum population deviation of 0.5%.
+We use a pseudo-county constraint described below which attempts to mimic the norms in New Jersey of generally preserving county and municipal boundaries.
 
 ## Data Sources
 Data for New Jersey comes from the ALARM Project's [2010 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
