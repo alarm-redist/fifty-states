@@ -33,15 +33,15 @@ if (!file.exists(here(shp_path))) {
         st_transform(EPSG$MA)  %>%
         rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
 
-    # add municipalities
-    d_muni <- make_from_baf("MA", "INCPLACE_CDP", "VTD", year = 2010)  %>%
-        mutate(GEOID = paste0(censable::match_fips("MA"), vtd)) %>%
-        select(-vtd)
     d_cd <- make_from_baf("MA", "CD", "VTD", year = 2010)  %>%
         transmute(GEOID = paste0(censable::match_fips("MA"), vtd),
                   cd_2000 = as.integer(cd))
-    ma_shp <- left_join(ma_shp, d_muni, by = "GEOID") %>%
-        left_join(d_cd, by="GEOID") %>%
+    # add municipalities
+    geom_muni <- tigris::county_subdivisions(state="MA", year=2011)
+    ma_shp$muni <- geom_muni$NAME[geomander::geo_match(ma_shp, geom_muni, method="area")] %>%
+        na_if("County subdivisions not defined")
+
+    ma_shp <- left_join(ma_shp, d_cd, by="GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2000, .after = county)
 
