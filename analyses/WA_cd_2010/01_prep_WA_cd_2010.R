@@ -211,8 +211,6 @@ if (!file.exists(here(shp_path))) {
     # Clark County
     add_update_edge("53011WVCR49", "53011011090")
 
-    # TODO Finish Clark
-
     # Grays Harbor County
     add_update_edge("53027WVPO24", "53027027045")
 
@@ -224,12 +222,8 @@ if (!file.exists(here(shp_path))) {
     add_update_edge("53029WVPTSU", "53029029032")
     add_update_edge("53029WVSKGB", "53029029057")
 
-    # TODO Add others from Island
-
     # Jefferson County
     add_update_edge("53031WVPACO", "53009009262")
-
-    # TODO jefferson
 
     # King County
     add_update_edge("53033WVS361", "53033332200")
@@ -245,8 +239,6 @@ if (!file.exists(here(shp_path))) {
 
     # Pierce County
     add_update_edge("53053WVROCB", "53053053211")
-
-    # TODO Pierce
 
     # San Juan County
     add_update_edge("53055055015", "53055055004")
