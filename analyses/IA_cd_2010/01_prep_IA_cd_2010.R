@@ -48,9 +48,9 @@ if (!file.exists(here(shp_path))) {
         select(-vtd)
     d_cd <- make_from_baf("IA", "CD", "VTD", year = 2010)  %>%
         transmute(GEOID = paste0(censable::match_fips("IA"), vtd),
-                  cd_2000 = as.integer(cd))
+            cd_2000 = as.integer(cd))
     ia_shp <- left_join(ia_shp, d_muni, by = "GEOID") %>%
-        left_join(d_cd, by="GEOID") %>%
+        left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2000, .after = county)
 
@@ -59,24 +59,24 @@ if (!file.exists(here(shp_path))) {
     ia_shp <- ia_shp %>%
         mutate(cd_2010 = as.integer(cd_shp$DISTRICT)[
             geo_match(ia_shp, cd_shp, method = "area")],
-            .after = cd_2000)
+        .after = cd_2000)
 
     # group by county to avoid county splits
     ia_shp <- ia_shp %>%
         group_by(state, county) %>%
         summarize(cd_2010 = cd_2010[1],
-                  across(pop:nrv, sum)) %>%
+            across(pop:nrv, sum)) %>%
         ungroup()
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = ia_shp,
-                             perim_path = here(perim_path)) %>%
+        perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         ia_shp <- rmapshaper::ms_simplify(ia_shp, keep = 0.05,
-                                                 keep_shapes = TRUE) %>%
+            keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 

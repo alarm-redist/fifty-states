@@ -6,8 +6,16 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg IA_cd_2010}")
 
-plans <- redist_smc(map, nsims = 2500, runs = 2, compactness = 1.1, seq_alpha = 0.9)
+set.seed(2010)
+
+plans <- redist_smc(map, nsims = 4000, runs = 4, compactness = 1.1, seq_alpha = 0.9)
 plans <- match_numbers(plans, map$cd_2010)
+
+# thin out the runs
+plans <- plans %>%
+    group_by(chain) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 1250) %>% # thin samples
+    ungroup()
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
@@ -29,16 +37,16 @@ comp_lw <- function(map, plans = redist:::cur_plans()) {
         for (j in seq_len(n_distr)) {
             bbox <- st_bbox(map[m[, i] == j, ])
             lw[j, i] <- abs((bbox["xmax"] - bbox["xmin"]) -
-                                (bbox["ymax"] - bbox["ymin"]))/M_PER_MI
+                (bbox["ymax"] - bbox["ymin"]))/M_PER_MI
         }
     }
     as.numeric(lw)
 }
 
 plans <- add_summary_stats(plans, map,
-                           comp_lw = comp_lw(map),
-                           area = tally_var(map, as.numeric(st_area(geometry)) ),
-                           comp_perim = sqrt(4*pi*area/comp_polsby)/M_PER_MI) # based on definition
+    comp_lw = comp_lw(map),
+    area = tally_var(map, as.numeric(st_area(geometry))),
+    comp_perim = sqrt(4*pi*area/comp_polsby)/M_PER_MI) # based on definition
 
 # Output the summary statistics. Do not edit this path.
 save_summary_stats(plans, "data-out/IA_2010/IA_cd_2010_stats.csv")
@@ -54,7 +62,7 @@ if (interactive()) {
     plans_sum <- plans %>%
         group_by(draw) %>%
         summarize(comp_lw = sum(comp_lw),
-                  comp_perim = sum(comp_perim))
+            comp_perim = sum(comp_perim))
     p_lw <- hist(plans_sum, comp_lw, bins = 40) + labs(title = "Length-width compactness") + theme_bw()
     p_perim <- hist(plans_sum, comp_perim, bins = 40) + labs(title = "Perimeter compactness") + theme_bw()
     p <- p_lw + p_perim + plot_layout(guides = "collect")
