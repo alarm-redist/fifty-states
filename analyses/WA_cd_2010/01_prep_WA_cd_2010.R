@@ -68,7 +68,7 @@ if (!file.exists(here(shp_path))) {
         select(-vtd)
     d_cd <- make_from_baf("WA", "CD", "VTD", year = 2010)  %>%
         transmute(GEOID = paste0(censable::match_fips("WA"), vtd),
-                  cd_2000 = as.integer(cd))
+            cd_2000 = as.integer(cd))
     wa_shp <- left_join(wa_shp, d_muni, by = "GEOID") %>%
         left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
@@ -79,7 +79,7 @@ if (!file.exists(here(shp_path))) {
     wa_shp <- wa_shp %>%
         mutate(cd_2010 = as.integer(cd_shp$District_N)[
             geo_match(wa_shp, cd_shp, method = "area")],
-            .after = cd_2000)
+        .after = cd_2000)
 
 
     # Create perimeters in case shapes are simplified
@@ -88,7 +88,7 @@ if (!file.exists(here(shp_path))) {
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         wa_shp <- rmapshaper::ms_simplify(wa_shp, keep = 0.05,
-                                          keep_shapes = TRUE) %>%
+            keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 
@@ -113,15 +113,15 @@ if (!file.exists(here(shp_path))) {
             geom_sf(size = 0.05, color = "white") +
             geom_sf(data = d_water, size = 0.0, fill = "white", color = NA) +
             geom_sf(size = 0.7, color = "red", fill = NA, inherit.aes = FALSE,
-                    data = summarize(group_by(wa_shp, cd_2010), is_coverage = TRUE)) +
+                data = summarize(group_by(wa_shp, cd_2010), is_coverage = TRUE)) +
             geom_sf(size = 0.4, color = "black", inherit.aes = FALSE,
-                    data = filter(d_roads, RTTYP %in% c("I", "U", "S"))) +
+                data = filter(d_roads, RTTYP %in% c("I", "U", "S"))) +
             scale_fill_manual(values = sf.colors(39, categorical = TRUE), guide = "none") +
             scale_alpha_continuous(range = c(0, 1), guide = "none") +
             theme_void()
 
         p + geom_sf_text(aes(label = str_glue("{county}\n{vtd}")), size = 2.2, color = "black",
-                         data = filter(wa_shp, area_land >= 5e8))
+            data = filter(wa_shp, area_land >= 5e8))
 
         plot_zoom <- function(cty) {
             bbox <- st_bbox(filter(wa_shp, county == paste(cty, "County")))
@@ -209,21 +209,27 @@ if (!file.exists(here(shp_path))) {
     add_update_edge("53073000101", "53073000102")
 
     # Clark County
-    add_update_edge("53011WVCR49", "5301111090")
+    add_update_edge("53011WVCR49", "53011011090")
+
+    # TODO Finish Clark
 
     # Grays Harbor County
-    add_update_edge("53027WVPO24", "5302727045")
+    add_update_edge("53027WVPO24", "53027027045")
 
     # Island County
-    add_update_edge("53029WVSTJF", "5302929027")
+    add_update_edge("53029WVSTJF", "53029029027")
     add_update_edge("53061WVPG21", "53061WVPGED")
-    add_update_edge("53029WVPUGS", "5302929040")
-    add_update_edge("53029WVHOLH", "5302929023")
-    add_update_edge("53029WVPTSU", "5302929032")
-    add_update_edge("53029WVSKGB", "5302929057")
+    add_update_edge("53029WVPUGS", "53029029040")
+    add_update_edge("53029WVHOLH", "53029029023")
+    add_update_edge("53029WVPTSU", "53029029032")
+    add_update_edge("53029WVSKGB", "53029029057")
+
+    # TODO Add others from Island
 
     # Jefferson County
-    add_update_edge("53031WVPACO", "5300909262")
+    add_update_edge("53031WVPACO", "53009009262")
+
+    # TODO jefferson
 
     # King County
     add_update_edge("53033WVS361", "53033332200")
@@ -238,10 +244,12 @@ if (!file.exists(here(shp_path))) {
     add_update_edge("53033331818", "53033331817")
 
     # Pierce County
-    add_update_edge("53053WVROCB", "5305353211")
+    add_update_edge("53053WVROCB", "53053053211")
+
+    # TODO Pierce
 
     # San Juan County
-    add_update_edge("5305555015", "5305555004")
+    add_update_edge("53055055015", "53055055004")
 
     # Snohomish County
     add_update_edge("53061WVPGWY", "53061WVPG32")
@@ -252,8 +260,8 @@ if (!file.exists(here(shp_path))) {
         x <- redist:::contiguity(wa_shp$adj, rep(1, length(wa_shp$adj)))
         unique(wa_shp$county[x > 1])
 
-        idx <- which(x > 1 & str_detect(wa_shp$county, "033"))
-        bbox <- st_bbox(st_buffer(wa_shp$geometry[idx], 500))
+        idx <- which(x > 1 & str_detect(wa_shp$county, "055"))
+        bbox <- st_bbox(st_buffer(wa_shp$geometry[idx], 800))
         lbls <- rep("", nrow(wa_shp))
         adj_idxs <- c(idx, unlist(adj_nowater[idx]) + 1L)
         # adj_idxs = c(adj_idxs, unlist(adj_nowater[adj_idxs]) + 1L)
