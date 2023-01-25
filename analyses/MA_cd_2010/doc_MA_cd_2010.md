@@ -21,5 +21,5 @@ Data for Massachusetts comes from the ALARM Project's [2020 Redistricting Data F
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Massachusetts over two runs.
+We sample 7,500 districting plans for Massachusetts over two runs.
 No special techniques were needed to produce the sample.
