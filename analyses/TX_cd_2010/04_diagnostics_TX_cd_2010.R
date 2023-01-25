@@ -8,27 +8,27 @@ library(patchwork)
 i <- 25
 p1 <- redist.plot.plans(houston_plans, draws = i, m1) +
     geom_sf(data = m1 %>% filter(get_plans_matrix(houston_plans)[, i] == 0),
-            fill = "black")
+        fill = "black")
 i <- 35
 p2 <- redist.plot.plans(houston_plans, draws = i, m1) +
     geom_sf(data = m1 %>% filter(get_plans_matrix(houston_plans)[, i] == 0),
-            fill = "black")
+        fill = "black")
 i <- 45
 p3 <- redist.plot.plans(houston_plans, draws = i, m1) +
     geom_sf(data = m1 %>% filter(get_plans_matrix(houston_plans)[, i] == 0),
-            fill = "black")
+        fill = "black")
 i <- 11
 p4 <- redist.plot.plans(houston_plans, draws = i, m1) +
     geom_sf(data = m1 %>% filter(get_plans_matrix(houston_plans)[, i] == 0),
-            fill = "black")
+        fill = "black")
 i <- 8
 p5 <- redist.plot.plans(houston_plans, draws = i, m1) +
     geom_sf(data = m1 %>% filter(get_plans_matrix(houston_plans)[, i] == 0),
-            fill = "black")
+        fill = "black")
 i <- 5
 p6 <- redist.plot.plans(houston_plans, draws = i, m1) +
     geom_sf(data = m1 %>% filter(get_plans_matrix(houston_plans)[, i] == 0),
-            fill = "black")
+        fill = "black")
 
 ggsave("data-raw/houston.pdf", (p1 + p2 + p3)/(p4 + p5 + p6), width = 20, height = 20)
 
@@ -109,9 +109,9 @@ psum <- plans %>%
     summarise(
         all_hcvap = sum((cvap_hisp/total_cvap) > 0.4),
         dem_hcvap = sum((cvap_hisp/total_cvap) > 0.4 &
-                            (ndv > nrv)),
+            (ndv > nrv)),
         rep_hcvap = sum((cvap_hisp/total_cvap) > 0.4 &
-                            (nrv > ndv))
+            (nrv > ndv))
     )
 
 p1 <- redist.plot.hist(psum, all_hcvap)
@@ -126,14 +126,14 @@ psum <- plans %>%
     summarise(
         all_hcvap = sum((cvap_hisp/total_cvap) > 0.4),
         dem_hcvap = sum((cvap_hisp/total_cvap) > 0.4 &
-                            (ndv > nrv)),
+            (ndv > nrv)),
         rep_hcvap = sum((cvap_hisp/total_cvap) > 0.4 &
-                            (nrv > ndv)),
+            (nrv > ndv)),
         all_bcvap = sum((cvap_black/total_cvap) > 0.4),
         dem_bcvap = sum((cvap_black/total_cvap) > 0.4 &
-                            (ndv > nrv)),
+            (ndv > nrv)),
         rep_bcvap = sum((cvap_black/total_cvap) > 0.4 &
-                            (nrv > ndv)),
+            (nrv > ndv)),
         mmd_all = sum(cvap_nonwhite/total_cvap > 0.5),
         mmd_coalition = sum(((
             cvap_hisp + cvap_black
@@ -141,8 +141,8 @@ psum <- plans %>%
     )
 
 # correct reference plan label
-plans <- plans %>%
-    mutate(draw = ifelse(draw == "cd_2010)", "cd_2010", paste0("", draw)))
+# plans <- plans %>%
+#     mutate(draw = ifelse(draw == "cd_2010)", "cd_2010", paste0("", draw)))
 
 plans %>%
     filter(draw == "cd_2010)") %>%
@@ -164,7 +164,7 @@ ggsave("bcvap_zoom.pdf", p)
 p <- plans %>%
     group_by(draw) %>%
     mutate(cvap_nonwhite = total_cvap - cvap_white,
-           cvap_nw_prop = cvap_nonwhite/total_cvap)  %>%
+        cvap_nw_prop = cvap_nonwhite/total_cvap)  %>%
     redist.plot.distr_qtys(
         cvap_nw_prop,
         color = ifelse(
@@ -195,3 +195,25 @@ p6 <-
     redist.plot.hist(psum, dem_bcvap) + labs(x = "BCVAP > 0.4 & Dem. > Rep.", y = NULL)
 
 ggsave("data-raw/hist.pdf", p0/p1/p2/p3/p4/p5/p6, height = 9)
+
+library(ggthemes)
+enacted <- plans %>% filter(draw == "cd_2010)")
+enacted_map <- tx_shp %>%
+    group_by(cd_2010) %>%
+    summarise(geom = st_union(geometry),
+        cvap_black = sum(cvap_black),
+        cvap_hisp = sum(cvap_hisp),
+        total_cvap = sum(cvap))
+enacted_map %>% filter(cd_2010 %in% c("15", "20", "21", "27", "28", "34", "35")) %>%
+    mutate(prop_black = cvap_black/total_cvap,
+        prop_hisp = cvap_hisp/total_cvap) %>%
+    ggplot(aes(fill = prop_hisp)) +
+    geom_sf() +
+    scale_fill_viridis_c("% Hispanic (2010)",
+        labels = scales::percent_format(accuracy = 1),
+        direction = 1,
+        limits = c(0, 1)) +
+    geom_sf_label(aes(label = cd_2010),
+        label.padding = unit(0.1, "lines"), size = 4, fill = "white") +
+    theme_map() +
+    theme(legend.position = "bottom")
