@@ -22,4 +22,5 @@ No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
 We sample 7,500 districting plans for Massachusetts over two runs.
+We then thinned the number of samples to 5,000.
 No special techniques were needed to produce the sample.
