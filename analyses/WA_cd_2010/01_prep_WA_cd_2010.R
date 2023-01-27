@@ -252,8 +252,8 @@ if (!file.exists(here(shp_path))) {
         x <- redist:::contiguity(wa_shp$adj, rep(1, length(wa_shp$adj)))
         unique(wa_shp$county[x > 1])
 
-        idx <- which(x > 1 & str_detect(wa_shp$county, "055"))
-        bbox <- st_bbox(st_buffer(wa_shp$geometry[idx], 800))
+        idx <- which(x > 1 & str_detect(wa_shp$county, "011"))
+        bbox <- st_bbox(st_buffer(wa_shp$geometry[idx], 4000))
         lbls <- rep("", nrow(wa_shp))
         adj_idxs <- c(idx, unlist(adj_nowater[idx]) + 1L)
         # adj_idxs = c(adj_idxs, unlist(adj_nowater[adj_idxs]) + 1L)
