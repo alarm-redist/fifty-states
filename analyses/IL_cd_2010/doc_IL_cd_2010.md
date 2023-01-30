@@ -4,7 +4,6 @@
 In Illinois, districts must:
 
 1. have equal populations
-2. comply with VRA section 2
 
 
 ### Algorithmic Constraints

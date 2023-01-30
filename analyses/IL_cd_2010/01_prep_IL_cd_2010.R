@@ -42,6 +42,9 @@ if (!file.exists(here(shp_path))) {
         st_transform(EPSG$IL)  %>%
         rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
 
+    # Fix labeling
+    il_shp$state <- "IL"
+
     # add municipalities
     d_muni <- make_from_baf("IL", "INCPLACE_CDP", "VTD", year = 2010)  %>%
         mutate(GEOID = paste0(censable::match_fips("IL"), vtd)) %>%
