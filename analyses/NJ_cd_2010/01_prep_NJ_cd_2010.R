@@ -25,6 +25,7 @@ path_enacted <- "data-raw/NJ/NJ_enacted.zip"
 download(url, here(path_enacted))
 unzip(here(path_enacted), exdir = here(dirname(path_enacted), "NJ_enacted"))
 file.remove(path_enacted)
+
 path_enacted <- "data-raw/NJ/NJ_enacted/NJCD_2011_PLAN_SHAPE_FILE.shp"
 
 cli_process_done()
