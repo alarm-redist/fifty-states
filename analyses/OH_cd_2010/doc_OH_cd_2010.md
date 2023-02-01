@@ -4,10 +4,9 @@
 In Ohio, districts must:
 
 1. be contiguous
-1. have equal populations
-1. be geographically compact
-1. preserve county and municipality boundaries as much as possible
-
+2. have equal populations
+3. be geographically compact
+4. preserve political subdivisions
 
 ### Algorithmic Constraints
 We enforce a maximum population deviation of 0.05%. We use a pseudo-county constraint to help preserve county and municipality boundaries. See '02_setup_OH_cd_2010.R' file.
