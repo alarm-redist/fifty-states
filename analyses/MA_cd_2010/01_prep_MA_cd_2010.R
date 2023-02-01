@@ -36,6 +36,7 @@ if (!file.exists(here(shp_path))) {
     d_cd <- make_from_baf("MA", "CD", "VTD", year = 2010)  %>%
         transmute(GEOID = paste0(censable::match_fips("MA"), vtd),
                   cd_2000 = as.integer(cd))
+
     # add municipalities
     geom_muni <- tigris::county_subdivisions(state="MA", year=2011)
     ma_shp$muni <- geom_muni$NAME[geomander::geo_match(ma_shp, geom_muni, method="area")] %>%
@@ -53,13 +54,13 @@ if (!file.exists(here(shp_path))) {
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = ma_shp,
-                             perim_path = here(perim_path)) %>%
+                               perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         ma_shp <- rmapshaper::ms_simplify(ma_shp, keep = 0.05,
-                                                 keep_shapes = TRUE) %>%
+                                          keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 
