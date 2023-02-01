@@ -28,7 +28,10 @@ cli_process_start("Computing summary statistics for {.pkg MD_cd_2010}")
 
 plans <- add_summary_stats(plans, map)
 
+plans <- plans |> select(-ends_with('.y')) |> rename_with(.fn = \(x) str_sub(x, end = -3), .cols = ends_with('.x'))
+
 # Output the summary statistics. Do not edit this path.
 save_summary_stats(plans, "data-out/MD_2010/MD_cd_2010_stats.csv")
 
 cli_process_done()
+

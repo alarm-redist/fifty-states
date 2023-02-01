@@ -84,3 +84,4 @@ if (!file.exists(here(shp_path))) {
     md_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong MD} shapefile")
 }
+
