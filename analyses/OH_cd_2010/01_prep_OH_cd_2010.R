@@ -70,8 +70,6 @@ if (!file.exists(here(shp_path))) {
     # create adjacency graph
     oh_shp$adj <- redist.adjacency(oh_shp)
 
-    # TODO any custom adjacency graph edits here
-
     oh_shp <- oh_shp %>%
         fix_geo_assignment(muni)
 
