@@ -25,10 +25,8 @@ path_enacted <- "data-raw/NJ/NJ_enacted.zip"
 download(url, here(path_enacted))
 unzip(here(path_enacted), exdir = here(dirname(path_enacted), "NJ_enacted"))
 file.remove(path_enacted)
-path_enacted <- "data-raw/NJ/NJ_enacted/XXXXXXX.shp" # TODO use actual SHP
 
-# TODO other files here (as necessary). All paths should start with `path_`
-# If large, consider checking to see if these files exist before downloading
+path_enacted <- "data-raw/NJ/NJ_enacted/NJCD_2011_PLAN_SHAPE_FILE.shp"
 
 cli_process_done()
 
@@ -50,9 +48,9 @@ if (!file.exists(here(shp_path))) {
         select(-vtd)
     d_cd <- make_from_baf("NJ", "CD", "VTD", year = 2010)  %>%
         transmute(GEOID = paste0(censable::match_fips("NJ"), vtd),
-                  cd_2000 = as.integer(cd))
+            cd_2000 = as.integer(cd))
     nj_shp <- left_join(nj_shp, d_muni, by = "GEOID") %>%
-        left_join(d_cd, by="GEOID") %>%
+        left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2000, .after = county)
 
@@ -61,27 +59,25 @@ if (!file.exists(here(shp_path))) {
     nj_shp <- nj_shp %>%
         mutate(cd_2010 = as.integer(cd_shp$DISTRICT)[
             geo_match(nj_shp, cd_shp, method = "area")],
-            .after = cd_2000)
+        .after = cd_2000)
 
-    # TODO any additional columns or data you want to add should go here
+    # fix labeling
+    nj_shp$state <- "NJ"
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = nj_shp,
-                             perim_path = here(perim_path)) %>%
+        perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         nj_shp <- rmapshaper::ms_simplify(nj_shp, keep = 0.05,
-                                                 keep_shapes = TRUE) %>%
+            keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 
     # create adjacency graph
     nj_shp$adj <- redist.adjacency(nj_shp)
-
-    # TODO any custom adjacency graph edits here
 
     nj_shp <- nj_shp %>%
         fix_geo_assignment(muni)
