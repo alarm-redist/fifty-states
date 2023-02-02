@@ -19,12 +19,11 @@ cli_process_start("Downloading files for {.pkg GA_cd_2020}")
 
 path_data <- download_redistricting_file("GA", "data-raw/GA")
 
-url <- "https://www.legis.ga.gov/api/document/docs/default-source/reapportionment-document-library/cong-s18-p1-shape-export.zip?sfvrsn=c33543b3_2"
+url <- "https://www.legis.ga.gov/api/document/docs/default-source/reapportionment-document-library/congress/congress-prop1-2021-shape.zip?sfvrsn=2045df27_2"
 path_enacted <- "data-raw/GA/GA_enacted.zip"
 download(url, here(path_enacted))
 unzip(here(path_enacted), exdir = here(dirname(path_enacted), "GA_enacted"))
-file.remove(path_enacted)
-path_enacted <- "data-raw/GA/GA_enacted/cong-s18-p1-SHAPE-export.shp"
+path_enacted <- "data-raw/GA/GA_enacted/CONGRESS-PROP1-2021-shape.shp"
 
 cli_process_done()
 
@@ -54,13 +53,14 @@ if (!file.exists(here(shp_path))) {
 
     # add 2020 enacted plan
     cd_shp <- st_read(here(path_enacted))
-    cd_shp <- st_transform(cd_shp, crs = st_crs(ga_shp))
+    cd_shp <- st_transform(cd_shp, crs = st_crs(ga_shp)) %>%
+        arrange(DISTRICT)
     ga_shp <- mutate(ga_shp,
                      cd_2020 = geo_match(ga_shp, cd_shp, method = "area"),
                      .after = cd_2010)
 
     # Create perimeters in case shapes are simplified
-    redist.prep.polsbypopper(shp = ga_shp,
+    prep_perims(shp = ga_shp,
         perim_path = here(perim_path)) %>%
         invisible()
 
