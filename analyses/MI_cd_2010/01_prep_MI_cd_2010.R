@@ -41,41 +41,43 @@ if (!file.exists(here(shp_path))) {
         transmute(GEOID = paste0(censable::match_fips("MI"), vtd),
                   cd_2000 = as.integer(cd))
     mi_shp <- left_join(mi_shp, d_muni, by = "GEOID") %>%
-        left_join(d_cd, by="GEOID") %>%
+        left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2000, .after = county)
 
 
     # add the enacted plan
-    baf_cd113 <- make_from_baf('MI', from = read_baf_cd113('MI'), year = 2010) %>%
+    baf_cd113 <- make_from_baf("MI", from = read_baf_cd113("MI"), year = 2010) %>%
         rename(GEOID = vtd) %>%
-        mutate(GEOID = paste0('26', GEOID))
+        mutate(GEOID = paste0("26", GEOID))
 
     mi_shp <- mi_shp %>%
         left_join(baf_cd113, by = "GEOID")
 
-    # TODO any additional columns or data you want to add should go here
+    mi_shp <- mi_shp %>%
+        mutate(
+            cd_2010 = as.integer(cd_2010)
+        )
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = mi_shp,
-                             perim_path = here(perim_path)) %>%
+                               perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         mi_shp <- rmapshaper::ms_simplify(mi_shp, keep = 0.05,
-                                                 keep_shapes = TRUE) %>%
+                                          keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 
     # create adjacency graph
     mi_shp$adj <- redist.adjacency(mi_shp)
 
-    #Rename cd_2010 Column
-    mi_shp <- mi_shp %>%
-        select(-ends_with(".y")) %>%
-        rename(cd_2010 = cd_2010.x)
+    for (i in which(is.na(mi_shp$cd_2010))) {
+        mi_shp$cd_2010[i] <- Mode(mi_shp$cd_2010[mi_shp$adj[[i]] + 1])
+    }
 
     mi_shp <- mi_shp %>%
         fix_geo_assignment(muni)

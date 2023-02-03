@@ -16,9 +16,19 @@ cli_process_start("Running simulations for {.pkg MI_cd_2010}")
 #  - Don't change the number of simulations unless you have a good reason
 #  - If the sampler freezes, try turning off the county split constraint to see
 #  if that's the problem.
+
+constr <- redist_constr(map) %>%
+    add_constr_grp_hinge(13, vap - vap_white, vap, 0.52) %>%
+    add_constr_grp_hinge(-13, vap - vap_white, vap, 0.3) %>%
+    add_constr_grp_inv_hinge(8, vap - vap_white, vap, 0.62)
+
 #  - Ask for help!
 set.seed(2010)
-plans <- redist_smc(map, nsims = 2500, runs = 2L, counties = county)
+plans <- redist_smc(map, nsims = 8000, runs = 4, counties = pseudo_county, constraints = constr) %>%
+    group_by(chain) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 1250) %>% # thin samples
+    ungroup()
+
 # IF CORES OR OTHER UNITS HAVE BEEN MERGED:
 # make sure to call `pullback()` on this plans object!
 plans <- match_numbers(plans, "cd_2010")
