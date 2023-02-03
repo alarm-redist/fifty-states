@@ -64,8 +64,6 @@ if (!file.exists(here(shp_path))) {
                                perim_path = here(perim_path)) %>%
         invisible()
 
-    # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         mi_shp <- rmapshaper::ms_simplify(mi_shp, keep = 0.05,
                                           keep_shapes = TRUE) %>%
