@@ -1,6 +1,6 @@
 ###############################################################################
-# Download and prepare data for `NE_cd_2020` analysis
-# © ALARM Project, December 2021
+# Download and prepare data for `NE_cd_2010` analysis
+# © ALARM Project, September 2022
 ###############################################################################
 
 suppressMessages({
@@ -15,47 +15,50 @@ suppressMessages({
 })
 
 # Download necessary files for analysis -----
-cli_process_start("Downloading files for {.pkg NE_cd_2020}")
+cli_process_start("Downloading files for {.pkg NE_cd_2010}")
 
-path_data <- download_redistricting_file("NE", "data-raw/NE")
+path_data <- download_redistricting_file("NE", "data-raw/NE", year = 2010)
 
-url <- "https://redistricting.lls.edu/wp-content/uploads/ne_2020_congress_2021-09-30_2031-06-30.zip"
+# download the enacted plan.
+url <- "https://redistricting.lls.edu/wp-content/uploads/ne_2010_congress_2011-05-26_2021-12-31.zip"
 path_enacted <- "data-raw/NE/NE_enacted.zip"
 download(url, here(path_enacted))
 unzip(here(path_enacted), exdir = here(dirname(path_enacted), "NE_enacted"))
 file.remove(path_enacted)
-path_enacted <- "data-raw/NE/NE_enacted/CONG21-39002(1)/CONG21-39002(1).shp"
+path_enacted <- "data-raw/NE/NE_enacted/US_Congressional_Boundary.shp"
 
 cli_process_done()
 
 # Compile raw data into a final shapefile for analysis -----
-shp_path <- "data-out/NE_2020/shp_vtd.rds"
-perim_path <- "data-out/NE_2020/perim.rds"
+shp_path <- "data-out/NE_2010/shp_vtd.rds"
+perim_path <- "data-out/NE_2010/perim.rds"
 
 if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong NE} shapefile")
     # read in redistricting data
-    ne_shp <- read_csv(here(path_data), col_types = cols(GEOID20 = "c")) %>%
-        join_vtd_shapefile() %>%
+    ne_shp <- read_csv(here(path_data)) %>%
+        join_vtd_shapefile(year = 2010) %>%
         st_transform(EPSG$NE)  %>%
         rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
 
     # add municipalities
-    d_muni <- make_from_baf("NE", "INCPLACE_CDP", "VTD")  %>%
+    d_muni <- make_from_baf("NE", "INCPLACE_CDP", "VTD", year = 2010)  %>%
         mutate(GEOID = paste0(censable::match_fips("NE"), vtd)) %>%
         select(-vtd)
-    d_cd <- make_from_baf("NE", "CD", "VTD")  %>%
+    d_cd <- make_from_baf("NE", "CD", "VTD", year = 2010)  %>%
         transmute(GEOID = paste0(censable::match_fips("NE"), vtd),
-            cd_2010 = as.integer(cd))
+            cd_2000 = as.integer(cd))
     ne_shp <- left_join(ne_shp, d_muni, by = "GEOID") %>%
         left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
-        relocate(muni, county_muni, cd_2010, .after = county)
+        relocate(muni, county_muni, cd_2000, .after = county)
 
+    # add the enacted plan
     cd_shp <- st_read(here(path_enacted))
-    ne_shp <- mutate(ne_shp,
-        cd_2020 = cd_shp$DISTRICT[geo_match(ne_shp, cd_shp, method = "area")],
-        .after = cd_2010)
+    ne_shp <- ne_shp %>%
+        mutate(cd_2010 = as.integer(cd_shp$District_1)[
+            geo_match(ne_shp, cd_shp, method = "area")],
+        .after = cd_2000)
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = ne_shp,
