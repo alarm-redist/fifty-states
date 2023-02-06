@@ -77,6 +77,28 @@ if (!file.exists(here(shp_path))) {
         mi_shp$cd_2010[i] <- Mode(mi_shp$cd_2010[mi_shp$adj[[i]] + 1])
     }
 
+    #Check for missing connections
+    if (FALSE) {
+        redist.plot.adj(mi_shp, mi_shp$adj, centroids = F)
+        x <- redist:::contiguity(mi_shp$adj, rep(1, length(mi_shp$adj)))
+        unique(mi_shp$county[x > 1])
+
+        idx <- which(x > 1 & str_detect(mi_shp$county, "055"))
+        bbox <- st_bbox(st_buffer(mi_shp$geometry[idx], 800))
+        lbls <- rep("", nrow(wa_shp))
+        adj_idxs <- c(idx, unlist(adj_nowater[idx]) + 1L)
+        # adj_idxs = c(adj_idxs, unlist(adj_nowater[adj_idxs]) + 1L)
+        lbls[adj_idxs] <- wa_shp$GEOID[adj_idxs]
+        ggplot(wa_shp) +
+            geom_sf(aes(fill = x > 1), size = 0.1) +
+            geom_sf(data = d_water, size = 0.0, fill = "#ffffff55", color = NA) +
+            coord_sf(xlim = bbox[c(1, 3)], ylim = bbox[c(2, 4)]) +
+            geom_sf_text(aes(label = lbls), size = 2.5) +
+            theme_void()
+
+        table(redist:::contiguity(mi_shp$adj, mi_shp$cd_2010))
+    }
+
     mi_shp <- mi_shp %>%
         fix_geo_assignment(muni)
 
