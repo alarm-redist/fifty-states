@@ -34,18 +34,17 @@ if (!file.exists(here(shp_path))) {
         st_transform(EPSG$OH)  %>%
         rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
 
+    # add municipalities
+    d_muni <- make_from_baf("OH", "INCPLACE_CDP", "VTD", year = 2010)  %>%
+        mutate(GEOID = paste0(censable::match_fips("OH"), vtd)) %>%
+        select(-vtd)
+
     d_cd <- make_from_baf("OH", "CD", "VTD", year = 2010)  %>%
         transmute(GEOID = paste0(censable::match_fips("OH"), vtd),
                   cd_2000 = as.integer(cd))
 
-    # add municipalities
-
-    geom_muni <- tigris::county_subdivisions(state="OH", year=2011)
-    oh_shp$muni <- geom_muni$NAME[geomander::geo_match(oh_shp, geom_muni, method="area")] %>%
-        na_if("County subdivisions not defined")
-
-    oh_shp <- left_join(oh_shp, d_cd, by = "GEOID") %>%
-        left_join(d_cd, by="GEOID") %>%
+    oh_shp <- left_join(oh_shp, d_muni, by = "GEOID") %>%
+        left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2000, .after = county)
 

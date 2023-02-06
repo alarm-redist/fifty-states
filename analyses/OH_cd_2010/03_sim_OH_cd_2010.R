@@ -31,5 +31,3 @@ plans <- add_summary_stats(plans, map)
 save_summary_stats(plans, "data-out/OH_2010/OH_cd_2010_stats.csv")
 
 cli_process_done()
-
-+# Extra validation plots for custom constraints
