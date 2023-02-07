@@ -27,6 +27,14 @@ unzip(here(path_enacted), exdir = here(dirname(path_enacted), "RI_enacted"))
 file.remove(path_enacted)
 path_enacted <- "data-raw/RI/RI_enacted/2a3f5ece-e912-4099-9a63-56417f74a25e202044-1-zjh6dc.92ezj.shp"
 
+# download enacted state senate plan
+url_sd <- "https://redistricting.lls.edu/wp-content/uploads/ri_2010_state_upper_2012-02-08_2021-12-31.zip"
+path_enacted_sd <- "data-raw/RI/RI_enacted_sd.zip"
+download(url_sd, here(path_enacted_sd))
+unzip(here(path_enacted_sd), exdir = here(dirname(path_enacted_sd), "RI_enacted_sd"))
+file.remove(path_enacted_sd)
+path_enacted_sd <- "data-raw/RI/RI_enacted_sd/Senate_Districts.shp"
+
 cli_process_done()
 
 # Compile raw data into a final shapefile for analysis -----
@@ -65,6 +73,13 @@ if (!file.exists(here(shp_path))) {
         mutate(cd_2010 = as.integer(cd_shp$DISTRICT)[
             geo_match(ri_shp, cd_shp, method = "area")],
         .after = cd_2000)
+
+    # add state senate districts
+    sd_shp <- st_read(here(path_enacted_sd))
+    ri_shp <- ri_shp %>%
+        mutate(sd_2010 = as.integer(sd_shp$DISTRICT)[
+            geo_match(ri_shp, sd_shp, method = "area")],
+        .after = cd_2010)
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = ri_shp,
