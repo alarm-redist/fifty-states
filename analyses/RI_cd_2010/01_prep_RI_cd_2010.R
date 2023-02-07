@@ -70,14 +70,14 @@ if (!file.exists(here(shp_path))) {
     # add the enacted plan
     cd_shp <- st_read(here(path_enacted))
     ri_shp <- ri_shp %>%
-        mutate(cd_2010 = as.integer(cd_shp$DISTRICT)[
+        mutate(cd_2010 = as.integer(cd_shp$CD115FP)[
             geo_match(ri_shp, cd_shp, method = "area")],
         .after = cd_2000)
 
     # add state senate districts
     sd_shp <- st_read(here(path_enacted_sd))
     ri_shp <- ri_shp %>%
-        mutate(sd_2010 = as.integer(sd_shp$DISTRICT)[
+        mutate(sd_2010 = as.integer(sd_shp$SLDUST)[
             geo_match(ri_shp, sd_shp, method = "area")],
         .after = cd_2010)
 
