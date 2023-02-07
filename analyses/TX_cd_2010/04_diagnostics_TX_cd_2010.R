@@ -43,11 +43,11 @@ library(patchwork)
 
 ## local results
 d1 <- redist.plot.distr_qtys(
-    plans,
+    plans_5k,
     cvap_black/total_cvap,
     color_thresh = NULL,
     color = ifelse(
-        subset_sampled(plans)$ndv > subset_sampled(plans)$nrv,
+        subset_sampled(plans_5k)$ndv > subset_sampled(plans_5k)$nrv,
         "#3D77BB",
         "#B25D4C"
     ),
@@ -59,11 +59,11 @@ d1 <- redist.plot.distr_qtys(
     scale_color_manual(values = c(cd_2020_prop = "black"))
 
 d2 <- redist.plot.distr_qtys(
-    plans,
+    plans_5k,
     cvap_hisp/total_cvap,
     color_thresh = NULL,
     color = ifelse(
-        subset_sampled(plans)$ndv > subset_sampled(plans)$nrv,
+        subset_sampled(plans_5k)$ndv > subset_sampled(plans_5k)$nrv,
         "#3D77BB",
         "#B25D4C"
     ),
@@ -76,11 +76,11 @@ d2 <- redist.plot.distr_qtys(
 
 d3 <-
     redist.plot.distr_qtys(
-        plans,
+        plans_5k,
         (cvap_hisp + cvap_black)/total_cvap,
         color_thresh = NULL,
         color = ifelse(
-            subset_sampled(plans)$ndv > subset_sampled(plans)$nrv,
+            subset_sampled(plans_5k)$ndv > subset_sampled(plans_5k)$nrv,
             "#3D77BB",
             "#B25D4C"
         ),
@@ -104,7 +104,7 @@ ggsave(
     width = 9
 )
 
-psum <- plans %>%
+psum <- plans_5k %>%
     group_by(draw) %>%
     summarise(
         all_hcvap = sum((cvap_hisp/total_cvap) > 0.4),
@@ -120,7 +120,7 @@ p3 <- redist.plot.hist(psum, rep_hcvap)
 
 ggsave("data-raw/hist.pdf", p1/p2/p3)
 
-psum <- plans %>%
+psum <- plans_5k %>%
     group_by(draw) %>%
     mutate(cvap_nonwhite = total_cvap - cvap_white) %>%
     summarise(
@@ -129,10 +129,10 @@ psum <- plans %>%
             (ndv > nrv)),
         rep_hcvap = sum((cvap_hisp/total_cvap) > 0.4 &
             (nrv > ndv)),
-        all_bcvap = sum((cvap_black/total_cvap) > 0.4),
-        dem_bcvap = sum((cvap_black/total_cvap) > 0.4 &
+        all_bcvap = sum((cvap_black/total_cvap) > 0.35),
+        dem_bcvap = sum((cvap_black/total_cvap) > 0.35 &
             (ndv > nrv)),
-        rep_bcvap = sum((cvap_black/total_cvap) > 0.4 &
+        rep_bcvap = sum((cvap_black/total_cvap) > 0.35 &
             (nrv > ndv)),
         mmd_all = sum(cvap_nonwhite/total_cvap > 0.5),
         mmd_coalition = sum(((
@@ -140,11 +140,7 @@ psum <- plans %>%
         )/total_cvap) > 0.5)
     )
 
-# correct reference plan label
-# plans <- plans %>%
-#     mutate(draw = ifelse(draw == "cd_2010)", "cd_2010", paste0("", draw)))
-
-plans %>%
+plans_5k %>%
     filter(draw == "cd_2010)") %>%
     mutate(bvap_pct = cvap_black/total_cvap) %>%
     arrange(desc(bvap_pct)) %>%
@@ -161,14 +157,14 @@ p <- redist.plot.map(
 )
 ggsave("bcvap_zoom.pdf", p)
 
-p <- plans %>%
+p <- plans_5k %>%
     group_by(draw) %>%
     mutate(cvap_nonwhite = total_cvap - cvap_white,
         cvap_nw_prop = cvap_nonwhite/total_cvap)  %>%
     redist.plot.distr_qtys(
         cvap_nw_prop,
         color = ifelse(
-            subset_sampled(plans)$ndv > subset_sampled(plans)$nrv,
+            subset_sampled(plans_5k)$ndv > subset_sampled(plans_5k)$nrv,
             "#3D77BB",
             "#B25D4C"
         ),
@@ -197,14 +193,35 @@ p6 <-
 ggsave("data-raw/hist.pdf", p0/p1/p2/p3/p4/p5/p6, height = 9)
 
 library(ggthemes)
+
+# enacted districts + demographic stats
 enacted <- plans %>% filter(draw == "cd_2010)")
 enacted_map <- tx_shp %>%
     group_by(cd_2010) %>%
     summarise(geom = st_union(geometry),
         cvap_black = sum(cvap_black),
+        pct_black = sum(cvap_black) / sum(cvap),
         cvap_hisp = sum(cvap_hisp),
+        pct_hisp = sum(cvap_hisp) / sum(cvap),
+        cvap_white = sum(cvap_white),
+        cvap_nonwhite = sum(cvap) - sum(cvap_white),
+        pct_nonwhite = cvap_nonwhite / sum(cvap),
         total_cvap = sum(cvap))
-enacted_map %>% filter(cd_2010 %in% c("15", "20", "21", "27", "28", "34", "35")) %>%
+
+# districts of interest
+districts <- c("2", "7", "9", "18", "22", "29", "14", "36", "8", "10")
+
+# map of precincts
+all_precincts <- tx_shp %>%
+    mutate(pct_black = cvap_black / cvap,
+           pct_hisp = cvap_hisp / cvap,
+           pct_nonwhite = (cvap - cvap_white) / cvap)
+
+precincts <- all_precincts %>%
+    filter(cd_2010 %in% districts)
+
+# map of specific enacted districts, racial heat map
+enacted_map %>% filter(cd_2010 %in% districts) %>%
     mutate(prop_black = cvap_black/total_cvap,
         prop_hisp = cvap_hisp/total_cvap) %>%
     ggplot(aes(fill = prop_hisp)) +
@@ -215,5 +232,125 @@ enacted_map %>% filter(cd_2010 %in% c("15", "20", "21", "27", "28", "34", "35"))
         limits = c(0, 1)) +
     geom_sf_label(aes(label = cd_2010),
         label.padding = unit(0.1, "lines"), size = 4, fill = "white") +
+    theme_map() +
+    theme(legend.position = "bottom")
+
+# overlay districts on precincts
+precincts %>% ggplot(aes(fill = pct_hisp)) +
+    geom_sf() +
+    scale_fill_viridis_c("% Hispanic (2010)",
+                         labels = scales::percent_format(accuracy = 1),
+                         direction = 1,
+                         limits = c(0, 1)) +
+    geom_sf(data = enacted_map %>% filter(cd_2010 %in% districts),
+            alpha = 0, linewidth = 0.5, color = "#ff7f00") +
+    geom_sf_label(data = enacted_map %>% filter(cd_2010 %in% districts), aes(label = cd_2010),
+                  label.padding = unit(0.1, "lines"), size = 4, fill = "white") +
+    theme_map() +
+    theme(legend.position = "bottom")
+
+# boxplot of black cvap percentage
+p <- redist.plot.distr_qtys(
+    plans,
+    cvap_black / total_cvap,
+    geom = "boxplot",
+    size = 0.5,
+    alpha = 0.5
+) +
+    scale_y_continuous("Percent Black by CVAP") +
+    labs(title = "TX Proposed Plan versus Simulations")
+
+# boxplot of hispanic cvap percentage
+p <- redist.plot.distr_qtys(
+    plans,
+    cvap_hisp / total_cvap,
+    geom = "boxplot",
+    size = 0.5,
+    alpha = 0.5
+) +
+    scale_y_continuous("Percent Hispanic by CVAP") +
+    labs(title = "TX Proposed Plan versus Simulations")
+
+# boxplot of hcvap + bcvap percentage
+p <- redist.plot.distr_qtys(
+    plans,
+    (cvap_hisp + cvap_black) / total_cvap,
+    geom = "boxplot",
+    size = 0.5,
+    alpha = 0.5
+) +
+    scale_y_continuous("Percent HCVAP + BCVAP") +
+    labs(title = "TX Proposed Plan versus Simulations")
+
+# rank by bcvap and democratic
+plans %>%
+    group_by(draw) %>%
+    mutate(bcvap = cvap_black/total_cvap, bcvap_rank = rank(bcvap)) %>%
+    subset_sampled() %>%
+    select(draw, district, bcvap, bcvap_rank, ndv, nrv) %>%
+    mutate(dem = ndv > nrv) %>%
+    group_by(bcvap_rank) %>%
+    summarize(dem = mean(dem))
+
+# rank by hispanic and republican
+plans %>%
+    group_by(draw) %>%
+    mutate(hcvap = cvap_hisp/total_cvap, hcvap_rank = rank(hcvap)) %>%
+    subset_sampled() %>%
+    select(draw, district, hcvap, hcvap_rank, ndv, nrv) %>%
+    mutate(rep = ndv < nrv) %>%
+    group_by(hcvap_rank) %>%
+    summarize(rep = mean(rep))
+
+# simulated draws
+shp <- tx_shp
+shp$dist <- get_plans_matrix(plans)[,5000]
+shp_dist <- shp %>%
+    group_by(dist) %>%
+    summarize(
+        geom = st_union(geometry),
+        pct_hisp = sum(cvap_hisp) / sum(cvap),
+        pct_black = sum(cvap_black) / sum(cvap),
+        pct_nonwhite = (sum(cvap) - sum(cvap_white)) / sum(cvap) )
+shp_dist_filter <- shp_dist %>%
+    filter(dist %in% districts)
+precincts %>% ggplot(aes(fill = pct_nonwhite)) +
+    geom_sf() +
+    scale_fill_viridis_c("% Black (2010)",
+                         labels = scales::percent_format(accuracy = 1),
+                         direction = 1,
+                         limits = c(0, 1)) +
+    geom_sf(data = shp_dist_filter,
+            alpha = 0, linewidth = 0.5, color = "#ff7f00") +
+    geom_sf_label(data = shp_dist_filter, aes(label = dist),
+                  label.padding = unit(0.1, "lines"), size = 1, fill = "white") +
+    theme_map() +
+    theme(legend.position = "bottom")
+
+# nonwhite percentage with enacted district overlay
+all_precincts %>% ggplot(aes(fill = pct_nonwhite)) +
+    geom_sf() +
+    scale_fill_viridis_c("% Nonwhite (2010)",
+                         labels = scales::percent_format(accuracy = 1),
+                         direction = 1,
+                         limits = c(0, 1)) +
+    geom_sf(data = enacted_map,
+            alpha = 0, linewidth = 0.5, color = "#ff7f00") +
+    geom_sf_label(data = enacted_map, aes(label = cd_2010),
+                  label.padding = unit(0.1, "lines"), size = 1, fill = "white") +
+    theme_map() +
+    theme(legend.position = "bottom")
+
+# hcvap + bcvap percentage with enacted district overlay
+all_precincts %>% ggplot(aes(fill = pct_black + pct_hisp)) +
+    geom_sf() +
+    scale_fill_viridis_c("% HCVAP + BCVAP (2010)",
+                         labels = scales::percent_format(accuracy = 1),
+                         direction = 1,
+                         limits = c(0, 1)) +
+    geom_sf(data = enacted_map,
+            alpha = 0, linewidth = 0.5, color = "#ff7f00") +
+    geom_sf_label(data = enacted_map, aes(label = cd_2010),
+                  label.padding = unit(0.1, "lines"), size = 1, fill = "white") +
     theme_map() +
     theme(legend.position = "bottom")

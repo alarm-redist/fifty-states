@@ -272,16 +272,16 @@ constraints <- redist_constr(map) %>%
     #########################################################
     # HISPANIC
     add_constr_grp_hinge(
-        4,
+        3,
         cvap_hisp,
         total_pop = cvap,
         tgts_group = c(0.45)
     ) %>%
-    add_constr_grp_hinge(-4,
+    add_constr_grp_hinge(-3,
         cvap_hisp,
         cvap,
         0.35) %>%
-    add_constr_grp_inv_hinge(4,
+    add_constr_grp_inv_hinge(3,
         cvap_hisp,
         cvap,
         0.70) %>%
@@ -306,7 +306,7 @@ set.seed(2010)
 plans <- redist_smc(map, nsims = nsims*2, runs = 2L,
     counties = pseudo_county, verbose = TRUE,
     constraints = constraints, init_particles = prep_mat,
-    pop_temper = pop_temp - 0.01, seq_alpha = sa)
+    pop_temper = pop_temp - 0.015, seq_alpha = sa)
 plans <- match_numbers(plans, "cd_2010")
 
 plans <- plans %>% filter(draw != "cd_2010")
@@ -316,56 +316,35 @@ plans <- plans %>%
     add_reference(ref_plan = as.numeric(map$cd_2010))
 
 # thin sample
-# plans_5k <- plans %>%
-#     group_by(chain) %>%
-#     filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
-#     ungroup()
+plans_5k <- plans %>%
+    group_by(chain) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
+    ungroup()
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
 
 # Output the redist_map object. Do not edit this path.
-write_rds(plans, here("data-out/TX_2010/TX_cd_2010_plans.rds"), compress = "xz")
+write_rds(plans_5k, here("data-out/TX_2010/TX_cd_2010_plans.rds"), compress = "xz")
 cli_process_done()
 
 # Compute summary statistics -----
 cli_process_start("Computing summary statistics for {.pkg TX_cd_2010}")
 
-plans <- add_summary_stats(plans, map) %>%
+plans_5k <- add_summary_stats(plans_5k, map) %>%
     mutate(total_cvap = tally_var(map, cvap), .after = total_vap)
 
-# plans_5k <- add_summary_stats(plans_5k, map) %>%
-#     mutate(total_cvap = tally_var(map, cvap), .after = total_vap)
-
-summary(plans)
+summary(plans_5k)
 
 # cvap columns
 cvap_cols <- names(map)[tidyselect::eval_select(starts_with("cvap_"), map)]
 for (col in rev(cvap_cols)) {
-    plans <- mutate(plans, {{ col }} := tally_var(map, map[[col]]), .after = vap_two)
+    plans_5k <- mutate(plans_5k, {{ col }} := tally_var(map, map[[col]]), .after = vap_two)
 }
 
 # Output the summary statistics. Do not edit this path.
-save_summary_stats(plans, "data-out/TX_2010/TX_cd_2010_stats.csv")
+save_summary_stats(plans_5k, "data-out/TX_2010/TX_cd_2010_stats.csv")
 
 cli_process_done()
 
-validate_analysis(plans, map)
-
-# plans_5k <- add_summary_stats(plans_5k, map) %>%
-#     mutate(total_cvap = tally_var(map, cvap), .after = total_vap)
-#
-# summary(plans_5k)
-#
-# # cvap columns
-# cvap_cols <- names(map)[tidyselect::eval_select(starts_with("cvap_"), map)]
-# for (col in rev(cvap_cols)) {
-#     plans_5k <- mutate(plans_5k, {{ col }} := tally_var(map, map[[col]]), .after = vap_two)
-# }
-#
-# # Output the summary statistics. Do not edit this path.
-# save_summary_stats(plans_5k, "data-out/TX_2010/TX_cd_2010_stats.csv")
-#
-# cli_process_done()
-#
-# validate_analysis(plans_5k, map)
+validate_analysis(plans_5k, map)

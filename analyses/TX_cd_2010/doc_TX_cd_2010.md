@@ -16,7 +16,7 @@ We estimate CVAP populations with the `cvap` R package.
 We also pre-process the map to split it into clusters for simulation, which has a slight effect on the types of district plans that will be sampled.
 
 ## Simulation Notes
-We sample 50,000 districting plans for Texas across two independent runs of the SMC algorithm. We use a pseudo-county constraint to limit the county and municipality splits. Due to the size and complexity of Texas, we split the simulations into multiple steps. 
+We sample 50,000 districting plans for Texas across two independent runs of the SMC algorithm, and then thin the sample to down to 5,000 plans. We use a pseudo-county constraint to limit the county and municipality splits. Due to the size and complexity of Texas, we split the simulations into multiple steps. 
 
 ### 1. Clustering procedure
 First, we run simulations in three major metropolitan areas: Greater Houston, a combination of Greater San Antonio and Austin, and Dallas-Fort Worth. We use collections of counties that define the Metropolitan Statistical Areas.
@@ -38,4 +38,4 @@ These simulations run the SMC algorithm within each cluster with a 0.25% populat
 In each cluster, we apply hinge Gibbs constraints of strength 3 to encourage the formation of Hispanic CVAP opportunity districts. In Houston and Dallas, we also apply a hinge Gibbs constraint of strength 3 to encourage the formation of Black CVAP opportunity districts. These districts nudge the formation of opportunity districts are above 35%, and penalize districts with minority populations above 70%.
 
 ### 2. Combination procedure
-Then, these partial map simulations are combined to run statewide simulations. We again apply Gibbs hinge constraints to encourage the formation of minority opportunity districts, with strength 4 to further encourage Hispanic CVAP opportunity districts.
+Then, these partial map simulations are combined to run statewide simulations. We again apply Gibbs hinge constraints to encourage the formation of minority opportunity districts, with strength 3 to further encourage Hispanic CVAP opportunity districts.
