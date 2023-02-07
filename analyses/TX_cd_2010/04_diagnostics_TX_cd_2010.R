@@ -200,12 +200,12 @@ enacted_map <- tx_shp %>%
     group_by(cd_2010) %>%
     summarise(geom = st_union(geometry),
         cvap_black = sum(cvap_black),
-        pct_black = sum(cvap_black) / sum(cvap),
+        pct_black = sum(cvap_black)/sum(cvap),
         cvap_hisp = sum(cvap_hisp),
-        pct_hisp = sum(cvap_hisp) / sum(cvap),
+        pct_hisp = sum(cvap_hisp)/sum(cvap),
         cvap_white = sum(cvap_white),
         cvap_nonwhite = sum(cvap) - sum(cvap_white),
-        pct_nonwhite = cvap_nonwhite / sum(cvap),
+        pct_nonwhite = cvap_nonwhite/sum(cvap),
         total_cvap = sum(cvap))
 
 # districts of interest
@@ -213,9 +213,9 @@ districts <- c("2", "7", "9", "18", "22", "29", "14", "36", "8", "10")
 
 # map of precincts
 all_precincts <- tx_shp %>%
-    mutate(pct_black = cvap_black / cvap,
-           pct_hisp = cvap_hisp / cvap,
-           pct_nonwhite = (cvap - cvap_white) / cvap)
+    mutate(pct_black = cvap_black/cvap,
+        pct_hisp = cvap_hisp/cvap,
+        pct_nonwhite = (cvap - cvap_white)/cvap)
 
 precincts <- all_precincts %>%
     filter(cd_2010 %in% districts)
@@ -239,20 +239,20 @@ enacted_map %>% filter(cd_2010 %in% districts) %>%
 precincts %>% ggplot(aes(fill = pct_hisp)) +
     geom_sf() +
     scale_fill_viridis_c("% Hispanic (2010)",
-                         labels = scales::percent_format(accuracy = 1),
-                         direction = 1,
-                         limits = c(0, 1)) +
+        labels = scales::percent_format(accuracy = 1),
+        direction = 1,
+        limits = c(0, 1)) +
     geom_sf(data = enacted_map %>% filter(cd_2010 %in% districts),
-            alpha = 0, linewidth = 0.5, color = "#ff7f00") +
+        alpha = 0, linewidth = 0.5, color = "#ff7f00") +
     geom_sf_label(data = enacted_map %>% filter(cd_2010 %in% districts), aes(label = cd_2010),
-                  label.padding = unit(0.1, "lines"), size = 4, fill = "white") +
+        label.padding = unit(0.1, "lines"), size = 4, fill = "white") +
     theme_map() +
     theme(legend.position = "bottom")
 
 # boxplot of black cvap percentage
 p <- redist.plot.distr_qtys(
     plans,
-    cvap_black / total_cvap,
+    cvap_black/total_cvap,
     geom = "boxplot",
     size = 0.5,
     alpha = 0.5
@@ -263,7 +263,7 @@ p <- redist.plot.distr_qtys(
 # boxplot of hispanic cvap percentage
 p <- redist.plot.distr_qtys(
     plans,
-    cvap_hisp / total_cvap,
+    cvap_hisp/total_cvap,
     geom = "boxplot",
     size = 0.5,
     alpha = 0.5
@@ -274,7 +274,7 @@ p <- redist.plot.distr_qtys(
 # boxplot of hcvap + bcvap percentage
 p <- redist.plot.distr_qtys(
     plans,
-    (cvap_hisp + cvap_black) / total_cvap,
+    (cvap_hisp + cvap_black)/total_cvap,
     geom = "boxplot",
     size = 0.5,
     alpha = 0.5
@@ -304,26 +304,26 @@ plans %>%
 
 # simulated draws
 shp <- tx_shp
-shp$dist <- get_plans_matrix(plans)[,5000]
+shp$dist <- get_plans_matrix(plans)[, 5000]
 shp_dist <- shp %>%
     group_by(dist) %>%
     summarize(
         geom = st_union(geometry),
-        pct_hisp = sum(cvap_hisp) / sum(cvap),
-        pct_black = sum(cvap_black) / sum(cvap),
-        pct_nonwhite = (sum(cvap) - sum(cvap_white)) / sum(cvap) )
+        pct_hisp = sum(cvap_hisp)/sum(cvap),
+        pct_black = sum(cvap_black)/sum(cvap),
+        pct_nonwhite = (sum(cvap) - sum(cvap_white))/sum(cvap))
 shp_dist_filter <- shp_dist %>%
     filter(dist %in% districts)
 precincts %>% ggplot(aes(fill = pct_nonwhite)) +
     geom_sf() +
     scale_fill_viridis_c("% Black (2010)",
-                         labels = scales::percent_format(accuracy = 1),
-                         direction = 1,
-                         limits = c(0, 1)) +
+        labels = scales::percent_format(accuracy = 1),
+        direction = 1,
+        limits = c(0, 1)) +
     geom_sf(data = shp_dist_filter,
-            alpha = 0, linewidth = 0.5, color = "#ff7f00") +
+        alpha = 0, linewidth = 0.5, color = "#ff7f00") +
     geom_sf_label(data = shp_dist_filter, aes(label = dist),
-                  label.padding = unit(0.1, "lines"), size = 1, fill = "white") +
+        label.padding = unit(0.1, "lines"), size = 1, fill = "white") +
     theme_map() +
     theme(legend.position = "bottom")
 
@@ -331,13 +331,13 @@ precincts %>% ggplot(aes(fill = pct_nonwhite)) +
 all_precincts %>% ggplot(aes(fill = pct_nonwhite)) +
     geom_sf() +
     scale_fill_viridis_c("% Nonwhite (2010)",
-                         labels = scales::percent_format(accuracy = 1),
-                         direction = 1,
-                         limits = c(0, 1)) +
+        labels = scales::percent_format(accuracy = 1),
+        direction = 1,
+        limits = c(0, 1)) +
     geom_sf(data = enacted_map,
-            alpha = 0, linewidth = 0.5, color = "#ff7f00") +
+        alpha = 0, linewidth = 0.5, color = "#ff7f00") +
     geom_sf_label(data = enacted_map, aes(label = cd_2010),
-                  label.padding = unit(0.1, "lines"), size = 1, fill = "white") +
+        label.padding = unit(0.1, "lines"), size = 1, fill = "white") +
     theme_map() +
     theme(legend.position = "bottom")
 
@@ -345,12 +345,12 @@ all_precincts %>% ggplot(aes(fill = pct_nonwhite)) +
 all_precincts %>% ggplot(aes(fill = pct_black + pct_hisp)) +
     geom_sf() +
     scale_fill_viridis_c("% HCVAP + BCVAP (2010)",
-                         labels = scales::percent_format(accuracy = 1),
-                         direction = 1,
-                         limits = c(0, 1)) +
+        labels = scales::percent_format(accuracy = 1),
+        direction = 1,
+        limits = c(0, 1)) +
     geom_sf(data = enacted_map,
-            alpha = 0, linewidth = 0.5, color = "#ff7f00") +
+        alpha = 0, linewidth = 0.5, color = "#ff7f00") +
     geom_sf_label(data = enacted_map, aes(label = cd_2010),
-                  label.padding = unit(0.1, "lines"), size = 1, fill = "white") +
+        label.padding = unit(0.1, "lines"), size = 1, fill = "white") +
     theme_map() +
     theme(legend.position = "bottom")
