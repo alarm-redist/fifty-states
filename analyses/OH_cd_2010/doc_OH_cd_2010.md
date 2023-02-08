@@ -1,7 +1,7 @@
 # 2010 Ohio Congressional Districts
 
 ## Redistricting requirements
-In Ohio, districts must, Under HB 319 https://legiscan.com/OH/text/HB319/2011:
+In Ohio, districts must, under [HB 319](https://legiscan.com/OH/text/HB319/2011):
 
 1. be contiguous
 2. have equal populations
@@ -9,7 +9,7 @@ In Ohio, districts must, Under HB 319 https://legiscan.com/OH/text/HB319/2011:
 4. preserve political subdivisions
 
 ### Algorithmic Constraints
-We enforce a maximum population deviation of 0.5%. We use a pseudo-county constraint to help preserve county and municipality boundaries. See '02_setup_OH_cd_2010.R' file.
+We enforce a maximum population deviation of 0.5%. We use a pseudo-county constraint to help preserve county and municipality boundaries.
 
 ## Data Sources
 Data for Ohio comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
