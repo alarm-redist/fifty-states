@@ -19,7 +19,7 @@ suppressMessages({
 # Download necessary files for analysis -----
 cli_process_start("Downloading files for {.pkg TX_cd_2010}")
 
-path_data <- download_redistricting_file("TX", "data-raw/TX", year = 2010, overwrite = TRUE)
+path_data <- download_redistricting_file("TX", "data-raw/TX", year = 2010)
 
 # download the enacted plan.
 url <- "https://redistricting.lls.edu/wp-content/uploads/tx_2010_congress_2012-02-28_2021-12-31.zip"

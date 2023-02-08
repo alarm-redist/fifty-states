@@ -9,11 +9,10 @@ In Texas, districts must meet US constitutional requirements, but there are
 We enforce a maximum population deviation of 0.5%.
 
 ## Data Sources
-Data for Texas comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
+Data for Texas comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/). We estimate CVAP populations with the `cvap` R package.
 
 ## Pre-processing Notes
-We estimate CVAP populations with the `cvap` R package.
-We also pre-process the map to split it into clusters for simulation, which has a slight effect on the types of district plans that will be sampled.
+We pre-process the map to split it into clusters for simulation, which has a slight effect on the types of district plans that will be sampled.
 
 ## Simulation Notes
 We sample 50,000 districting plans for Texas across two independent runs of the SMC algorithm, and then thin the sample to down to 5,000 plans. We use a pseudo-county constraint to limit the county and municipality splits. Due to the size and complexity of Texas, we split the simulations into multiple steps. 

@@ -24,7 +24,6 @@ clust1 <- c("015", "039", "071", "157",
     "167", "201", "291", "339", "473")
 
 m1 <- map %>% filter(county %in% clust1)
-attr(m1, "pop_bounds") <-  attr(map, "pop_bounds")
 m1 <- set_pop_tol(m1, cluster_pop_tol)
 
 ########################################################################
@@ -103,7 +102,6 @@ clust4 <- c("013", "019", "029", "091", "187",
 clust2 <- c(clust2, clust4)
 
 m2 <- map %>% filter(county %in% clust2)
-attr(m2, "pop_bounds") <-  attr(map, "pop_bounds")
 m2 <- set_pop_tol(m2, cluster_pop_tol)
 
 ########################################################################
@@ -170,7 +168,6 @@ clust3 <- c("085", "113", "121", "139", "231",
     "439", "497")
 
 m3 <- map %>% filter(county %in% clust3)
-attr(m3, "pop_bounds") <-  attr(map, "pop_bounds")
 m3 <- set_pop_tol(m3, cluster_pop_tol)
 
 ########################################################################
@@ -255,7 +252,7 @@ prep_mat <- prep_particles(map = map, map_plan_list = tx_plan_list,
 
 ## Check contiguity
 if (FALSE) {
-    test_vec <- sapply(1:ncol(prep_mat), function(i) {
+    test_vec <- sapply(seq_len(ncol(prep_mat)), function(i) {
         cat(i, "\n")
         z <- map %>%
             mutate(ex_dist = ifelse(prep_mat[, i] == 0, 1, 0))
