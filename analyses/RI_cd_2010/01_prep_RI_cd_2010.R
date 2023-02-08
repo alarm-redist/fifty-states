@@ -96,6 +96,12 @@ if (!file.exists(here(shp_path))) {
     # create adjacency graph
     ri_shp$adj <- redist.adjacency(ri_shp)
 
+    # fix contiguity
+    # add Judith Point - Block Island ferry
+    ri_shp$adj <- add_edge(ri_shp$adj, 25156, 25180)
+    # Connect island in Money Swamp Pond
+    ri_shp$adj <- add_edge(ri_shp$adj, 21986, 21884)
+
     ri_shp <- ri_shp %>%
         fix_geo_assignment(muni)
 

@@ -35,7 +35,7 @@ if (interactive()) {
     library(patchwork)
 
     plans %>%
-        mutate(sd_split = county_splits(map, map$sd_2020)) %>%
+        mutate(sd_split = county_splits(map, map$sd_2010)) %>%
         group_by(draw) %>%
         summarize(sd_split = sd_split[1]) %>%
         hist(sd_split) +
