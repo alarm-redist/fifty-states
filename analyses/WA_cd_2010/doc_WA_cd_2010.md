@@ -1,7 +1,7 @@
 # 2010 Washington Congressional Districts
 
 ## Redistricting requirements
-In Washington, districts must according to HCR 4409 [https://apps.leg.wa.gov/billsummary/?BillNumber=4409&Year=2011&Initiative=false]:
+In Washington, districts must according to HCR 4409 (https://apps.leg.wa.gov/billsummary/?BillNumber=4409&Year=2011&Initiative=false):
 
 1. be contiguous
 2. have equal populations
