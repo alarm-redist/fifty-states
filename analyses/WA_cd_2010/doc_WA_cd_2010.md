@@ -8,7 +8,7 @@ In Washington, districts must according to [RCW 44.05.090](https://app.leg.wa.go
 3. be geographically compact
 4. preserve county and municipality boundaries as much as possible
 5. not be connected across geographic barriers, although ferries across water may establish contiguity
-6. provide fair and effective representation and ... encourage electoral competition"
+6. "provide fair and effective representation and ... encourage electoral competition"
 
 ### Interpretation of requirements
 We enforce a maximum population deviation of 0.5%. 
