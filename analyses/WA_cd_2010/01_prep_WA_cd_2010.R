@@ -187,26 +187,15 @@ if (!file.exists(here(shp_path))) {
     }
 
     # Vashon and N Seattle
-    add_update_edge("53033WV0732", "53033000514")
-    add_update_edge("53033001818", "53033001817")
-    add_update_edge("53033WV0734", "53033001150")
-    add_update_edge("53033WV0733", "53033000853")
-    add_update_edge("53033WV0933", "53033002416")
-    add_update_edge("53033WV0930", "53033003014")
+
 
     # Bremerton
-    add_update_edge("53035000007", "53035000006")
 
     # Harstine Island
-    add_update_edge("53045000114", "53045000113")
 
     # Fox, McNeil, and Ketron islands
-    add_update_edge("53053026350", "53053026342")
-    add_update_edge("53053028575", "53053028542")
-    add_update_edge("53053028571", "53053028574")
 
     # Point Roberts
-    add_update_edge("53073000101", "53073000102")
 
     # Clark County
     add_update_edge("53011WVCR49", "53011011090")
@@ -215,27 +204,31 @@ if (!file.exists(here(shp_path))) {
     add_update_edge("53027WVPO24", "53027027045")
 
     # Island County
-    add_update_edge("53029WVSTJF", "53029029027")
+    # Check this one
+    add_update_edge("53029WVSTJF", "53029029001")
     add_update_edge("53061WVPG21", "53061WVPGED")
-    add_update_edge("53029WVPUGS", "53029029040")
+    add_update_edge("53061WVPTSU", "53029029053")
+    add_update_edge("53029WVSKGB", "53057057124")
     add_update_edge("53029WVHOLH", "53029029023")
-    add_update_edge("53029WVPTSU", "53029029032")
-    add_update_edge("53029WVSKGB", "53029029057")
+    add_update_edge("53029WVPUGS", "53029029011")
+    add_update_edge("53029WVPTSU", "53029029053")
 
     # Jefferson County
     add_update_edge("53031WVPACO", "53009009262")
 
     # King County
-    add_update_edge("53033WVS361", "53033332200")
     add_update_edge("53033WVPS30", "53033WVPS33")
-    add_update_edge("53033303PS67", "5033330846")
-    add_update_edge("53033WVPSB9", "53033WVPS34")
-    add_update_edge("53033WVLW37", "53033330273")
-    add_update_edge("53033WVPSB7", "53033331057")
-    add_update_edge("53033WVLW41", "53033331010")
-    add_update_edge("53033WVL327", "53033330003")
+    add_update_edge("53033WVS361", "53033332209")
+    add_update_edge("53033WVPS30", "53033330954")
+    add_update_edge("53031WVPACO", "53009009262")
+    add_update_edge("53033WVLW41", "53033330989")
+    add_update_edge("53033WVLW37", "53033WVLW41")
     add_update_edge("53033WVPSNP", "53033330856")
-    add_update_edge("53033331818", "53033331817")
+    add_update_edge("53033WVPSB9", "53033WVPSNP")
+    add_update_edge("53033WVPSB7", "53033331059")
+    add_update_edge("53033331818", "53033331317")
+    add_update_edge("53033WVL327", "53033330003")
+
 
     # Pierce County
     add_update_edge("53053WVROCB", "53053053211")
@@ -252,8 +245,8 @@ if (!file.exists(here(shp_path))) {
         x <- redist:::contiguity(wa_shp$adj, rep(1, length(wa_shp$adj)))
         unique(wa_shp$county[x > 1])
 
-        idx <- which(x > 1 & str_detect(wa_shp$county, "011"))
-        bbox <- st_bbox(st_buffer(wa_shp$geometry[idx], 4000))
+        idx <- which(x > 1 & str_detect(wa_shp$county, "033"))
+        bbox <- st_bbox(st_buffer(wa_shp$geometry[idx], 2000))
         lbls <- rep("", nrow(wa_shp))
         adj_idxs <- c(idx, unlist(adj_nowater[idx]) + 1L)
         # adj_idxs = c(adj_idxs, unlist(adj_nowater[adj_idxs]) + 1L)
@@ -262,7 +255,7 @@ if (!file.exists(here(shp_path))) {
             geom_sf(aes(fill = x > 1), size = 0.1) +
             geom_sf(data = d_water, size = 0.0, fill = "#ffffff55", color = NA) +
             coord_sf(xlim = bbox[c(1, 3)], ylim = bbox[c(2, 4)]) +
-            geom_sf_text(aes(label = lbls), size = 2.5) +
+            geom_sf_text(aes(label = lbls), size = 2) +
             theme_void()
 
         table(redist:::contiguity(wa_shp$adj, wa_shp$cd_2010))
