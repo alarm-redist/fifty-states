@@ -17,7 +17,7 @@ suppressMessages({
 # Download necessary files for analysis -----
 cli_process_start("Downloading files for {.pkg RI_cd_2010}")
 
-path_data <- download_redistricting_file("RI", "data-raw/RI", type = 'block', year = 2010)
+path_data <- download_redistricting_file("RI", "data-raw/RI", type = "block", year = 2010)
 
 # download the enacted plan.
 url <- "https://redistricting.lls.edu/wp-content/uploads/ri_2010_congress_2012-02-08_2021-12-31.zip"
@@ -60,7 +60,7 @@ if (!file.exists(here(shp_path))) {
         transmute(
             GEOID = BLOCKID,
             cd_2000 = as.integer(DISTRICT)
-            )
+        )
 
     ri_shp <- left_join(ri_shp, d_muni, by = "GEOID") %>%
         left_join(d_cd, by = "GEOID") %>%
@@ -79,8 +79,8 @@ if (!file.exists(here(shp_path))) {
             across(where(is.numeric), sum)
         ) %>%
         left_join(y = tinytiger::tt_tracts("RI", year = 2010) %>%
-                      select(GEOID = GEOID10),
-                  by = c("GEOID")) %>%
+            select(GEOID = GEOID10),
+        by = c("GEOID")) %>%
         st_as_sf() %>%
         st_transform(EPSG$RI)  %>%
         rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
@@ -90,7 +90,7 @@ if (!file.exists(here(shp_path))) {
         transmute(
             GEOID = str_sub(BLOCKID, 1, 11),
             cd_2010 = as.integer(cd_2010)
-            ) %>%
+        ) %>%
         group_by(GEOID) %>%
         summarize(cd_2010 = Mode(cd_2010))
     ri_shp <- ri_shp %>%
@@ -101,7 +101,7 @@ if (!file.exists(here(shp_path))) {
     ri_shp <- ri_shp %>%
         mutate(ssd_2010 = as.integer(ssd_shp$SLDUST)[
             geo_match(ri_shp, ssd_shp, method = "area")],
-            .after = cd_2010)
+        .after = cd_2010)
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = ri_shp,

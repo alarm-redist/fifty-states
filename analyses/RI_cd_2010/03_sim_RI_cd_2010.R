@@ -35,11 +35,11 @@ if (interactive()) {
     library(patchwork)
 
     plans %>%
-        mutate(sd_split = county_splits(map, map$sd_2010)) %>%
+        mutate(ssd_split = county_splits(map, map$ssd_2010)) %>%
         group_by(draw) %>%
-        summarize(sd_split = sd_split[1]) %>%
-        hist(sd_split) +
-        labs(title = "Senate district splits") +
+        summarize(ssd_split = ssd_split[1]) %>%
+        hist(ssd_split) +
+        labs(title = "State Senate District Splits") +
         theme_bw() +
         theme(aspect.ratio = 3/4)
 }
