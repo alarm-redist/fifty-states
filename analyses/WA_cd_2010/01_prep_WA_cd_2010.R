@@ -186,17 +186,6 @@ if (!file.exists(here(shp_path))) {
         wa_shp$adj <<- add_edge(wa_shp$adj, which(wa_shp$GEOID == vtd1), which(wa_shp$GEOID == vtd2))
     }
 
-    # Vashon and N Seattle
-
-
-    # Bremerton
-
-    # Harstine Island
-
-    # Fox, McNeil, and Ketron islands
-
-    # Point Roberts
-
     # Clark County
     add_update_edge("53011WVCR49", "53011011090")
 
