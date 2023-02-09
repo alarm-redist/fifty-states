@@ -17,7 +17,7 @@ suppressMessages({
 # Download necessary files for analysis -----
 cli_process_start("Downloading files for {.pkg RI_cd_2010}")
 
-path_data <- download_redistricting_file("RI", "data-raw/RI", year = 2010)
+path_data <- download_redistricting_file("RI", "data-raw/RI", type = 'block', year = 2010)
 
 # download the enacted plan.
 url <- "https://redistricting.lls.edu/wp-content/uploads/ri_2010_congress_2012-02-08_2021-12-31.zip"
@@ -28,12 +28,12 @@ file.remove(path_enacted)
 path_enacted <- "data-raw/RI/RI_enacted/2a3f5ece-e912-4099-9a63-56417f74a25e202044-1-zjh6dc.92ezj.shp"
 
 # download enacted state senate plan
-url_sd <- "https://redistricting.lls.edu/wp-content/uploads/ri_2010_state_upper_2012-02-08_2021-12-31.zip"
-path_enacted_sd <- "data-raw/RI/RI_enacted_sd.zip"
-download(url_sd, here(path_enacted_sd))
-unzip(here(path_enacted_sd), exdir = here(dirname(path_enacted_sd), "RI_enacted_sd"))
-file.remove(path_enacted_sd)
-path_enacted_sd <- "data-raw/RI/RI_enacted_sd/Senate_Districts.shp"
+url_ssd <- "https://redistricting.lls.edu/wp-content/uploads/ri_2010_state_upper_2012-02-08_2021-12-31.zip"
+path_enacted_ssd <- "data-raw/RI/RI_enacted_ssd.zip"
+download(url_ssd, here(path_enacted_ssd))
+unzip(here(path_enacted_ssd), exdir = here(dirname(path_enacted_ssd), "RI_enacted_ssd"))
+file.remove(path_enacted_ssd)
+path_enacted_ssd <- "data-raw/RI/RI_enacted_ssd/Senate_Districts.shp"
 
 cli_process_done()
 
@@ -44,10 +44,7 @@ perim_path <- "data-out/RI_2010/perim.rds"
 if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong RI} shapefile")
     # read in redistricting block data
-    redistricting_data <- read.csv("https://raw.githubusercontent.com/alarm-redist/census-2020/main/census-vest-2010/ri_2010_block.csv")
-    redistricting_data$GEOID <- as.character(redistricting_data$GEOID)
-    redistricting_data$county <- as.character(redistricting_data$county)
-    ri_shp <- redistricting_data %>%
+    ri_shp <- read_csv(path_data, col_types = cols(GEOID = "c")) %>%
         left_join(y = tigris::blocks("RI", year = 2010), by = c("GEOID" = "GEOID10")) %>%
         st_as_sf() %>%
         st_transform(EPSG$RI)  %>%
@@ -58,28 +55,53 @@ if (!file.exists(here(shp_path))) {
     matches_muni <- geomander::geo_match(from = ri_shp, to = place_shp, tiebreaker = FALSE)
     matches_muni[matches_muni < 0] <- NA
     d_muni <- tibble(GEOID = ri_shp$GEOID, muni = place_shp$PLACENS10[matches_muni])
+
     d_cd <- get_baf_10(state = "RI", "CD")[[1]]  %>%
-        transmute(GEOID = BLOCKID,
-            cd_2000 = as.integer(DISTRICT))
+        transmute(
+            GEOID = BLOCKID,
+            cd_2000 = as.integer(DISTRICT)
+            )
 
     ri_shp <- left_join(ri_shp, d_muni, by = "GEOID") %>%
         left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2000, .after = county)
 
-    # add the enacted plan
-    cd_shp <- st_read(here(path_enacted))
     ri_shp <- ri_shp %>%
-        mutate(cd_2010 = as.integer(cd_shp$CD115FP)[
-            geo_match(ri_shp, cd_shp, method = "area")],
-        .after = cd_2000)
+        as_tibble() %>%
+        mutate(GEOID = str_sub(GEOID, 1, 11)) %>%
+        group_by(GEOID) %>%
+        summarize(
+            state = state[1],
+            county = county[1],
+            muni = Mode(muni),
+            cd_2000 = Mode(cd_2000),
+            across(where(is.numeric), sum)
+        ) %>%
+        left_join(y = tinytiger::tt_tracts("RI", year = 2010) %>%
+                      select(GEOID = GEOID10),
+                  by = c("GEOID")) %>%
+        st_as_sf() %>%
+        st_transform(EPSG$RI)  %>%
+        rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
+
+    # add the enacted plan
+    baf_cd113 <- read_baf_cd113("RI") %>%
+        transmute(
+            GEOID = str_sub(BLOCKID, 1, 11),
+            cd_2010 = as.integer(cd_2010)
+            ) %>%
+        group_by(GEOID) %>%
+        summarize(cd_2010 = Mode(cd_2010))
+    ri_shp <- ri_shp %>%
+        left_join(baf_cd113, by = "GEOID")
 
     # add state senate districts
-    sd_shp <- st_read(here(path_enacted_sd))
+    ssd_shp <- st_read(here(path_enacted_ssd))
     ri_shp <- ri_shp %>%
-        mutate(sd_2010 = as.integer(sd_shp$SLDUST)[
-            geo_match(ri_shp, sd_shp, method = "area")],
-        .after = cd_2010)
+        mutate(ssd_2010 = as.integer(ssd_shp$SLDUST)[
+            geo_match(ri_shp, ssd_shp, method = "area")],
+            .after = cd_2010)
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = ri_shp,
@@ -98,9 +120,7 @@ if (!file.exists(here(shp_path))) {
 
     # fix contiguity
     # add Judith Point - Block Island ferry
-    ri_shp$adj <- add_edge(ri_shp$adj, 25156, 25180)
-    # Connect island in Money Swamp Pond
-    ri_shp$adj <- add_edge(ri_shp$adj, 21986, 21884)
+    ri_shp$adj <- add_edge(ri_shp$adj, 243, 244)
 
     ri_shp <- ri_shp %>%
         fix_geo_assignment(muni)

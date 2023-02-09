@@ -9,7 +9,7 @@ cli_process_start("Running simulations for {.pkg RI_cd_2010}")
 set.seed(2010)
 
 # Minimize the number of state senate district splits
-plans <- redist_smc(map, nsims = 2500, runs = 2L, counties = sd_2010)
+plans <- redist_smc(map, nsims = 1250, runs = 4L, counties = ssd_2010)
 plans <- match_numbers(plans, "cd_2010")
 
 cli_process_done()
