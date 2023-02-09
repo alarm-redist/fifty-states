@@ -19,5 +19,5 @@ Data for Rhode Island comes from the ALARM Project's [Redistricting Data Files](
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Rhode Island across two independent runs of the SMC algorithm.
+We sample 5,000 districting plans for Rhode Island across four independent runs of the SMC algorithm.
 We assign state senate districts to act like counties so that the simulations minimize the number of state senate district splits.
