@@ -1,7 +1,7 @@
 # 2010 Michigan Congressional Districts
 
 ## Redistricting requirements
-According to http://www.legislature.mi.gov/(S(xxvumgge0jwzkeswmwt0bh4v))/mileg.aspx?page=GetObject&objectname=mcl-Article-IV-6, in Michigan, districts must:
+in Michigan, according to (http://www.legislature.mi.gov/(S(xxvumgge0jwzkeswmwt0bh4v))/mileg.aspx?page=GetObject&objectname=mcl-Article-IV-6), districts must:
 
 1. be contiguous
 2. have equal populations
@@ -21,5 +21,4 @@ No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
 We sample 8,000 districting plans for Michigan across four independent runs of the SMC algorithm and then thinned our results to 5,000 simulations.
-
 To balance county and municipality splits, we create pseudocounties for use in the county constraint, which leads to fewer municipality splits than using a county constraint. Note that Wayne County, Oakland County, and Macomb County must all be split due to their large populations, although within the counties, we avoid splitting any municipality.
