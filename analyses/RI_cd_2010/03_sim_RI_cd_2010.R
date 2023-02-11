@@ -9,7 +9,7 @@ cli_process_start("Running simulations for {.pkg RI_cd_2010}")
 set.seed(2010)
 
 constr <- redist_constr(map) %>%
-    add_constr_total_splits(strength = 0.5, admin = ssd_2010)
+    add_constr_splits(strength = 0.5, admin = ssd_2010)
 
 # Minimize the number of state senate district splits
 plans <- redist_smc(map, nsims = 1250, runs = 4L, counties = county, constraints = constr)
