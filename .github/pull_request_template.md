@@ -13,7 +13,7 @@ Copy the output of `summary(plans)` here. Keep the backticks on the lines above 
 - [ ] I have followed the [instructions](https://github.com/alarm-redist/fifty-states/blob/main/CONTRIBUTING.md)
 - [ ] I have updated the [tracker](https://docs.google.com/spreadsheets/d/1k_tYLoE49W_DCK1tcWbouoYZFI9WD76oayEt5TOmJg4/edit#gid=453387933)
 - [ ] All `TODO` lines from the template code have been removed
-- [ ] I have merged in the master branch and then recalculated summary statistics
+- [ ] I have merged in the main branch and then recalculated summary statistics
 - [ ] I have run `enforce_style()` to format my code
 - [ ] The documentation copied above is up-to-date 
 - [ ] There are no data files in this pull request
