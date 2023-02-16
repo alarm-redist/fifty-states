@@ -9,7 +9,7 @@ map <- redist_map(co_shp, pop_tol = 0.005,
 
 map <- map %>%
     mutate(pseudo_county = pick_county_muni(map, counties = county, munis = muni,
-                                            pop_muni = get_target(map)))
+                                            pop_muni = get_target(map) * 0.5))
 
 # Add an analysis name attribute
 attr(map, "analysis_name") <- "CO_2010"

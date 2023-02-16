@@ -1,7 +1,7 @@
 # 2010 Colorado Congressional Districts
 
 ## Redistricting requirements
-In Colorado, districts must, under Section 47 of the [2016 Colorado Revised Statutes](https://leg.colorado.gov/sites/default/files/images/olls/crs2016-title-00.pdf):
+In Colorado, districts must, under Article V, Section 47 of the [2016 Colorado Revised Statutes](https://leg.colorado.gov/sites/default/files/images/olls/crs2016-title-00.pdf):
 
 1. be contiguous
 1. have equal populations
@@ -20,4 +20,4 @@ No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
 We sample 10,000 districting plans for Colorado across two independent runs of the SMC algorithm, and then thin the sample down to 5,000 plans.
-To balance county and municipality splits, we create pseudocounties for use in the county constraint, which leads to fewer municipality splits than using a county constraint.
+To balance county and municipality splits, we create pseudocounties for use in the county constraint, which leads to fewer municipality splits than using a county constraint. Note that Adams, Arapahoe, El Paso, and Jefferson Counties and the city of Denver must be split due to their large populations, although within the counties, we avoid splitting any municipality.
