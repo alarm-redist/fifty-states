@@ -26,7 +26,7 @@ cli_process_start("Computing summary statistics for {.pkg KY_cd_2020}")
 plans <- add_summary_stats(plans, map)
 
 # remove NA columns
-summary(select(plans, -arv_18, -adv_18, -arv_20, -adv_20, -pr_dem))
+summary(plans)
 
 # Output the summary statistics. Do not edit this path.
 save_summary_stats(plans, "data-out/KY_2020/KY_cd_2020_stats.csv")
