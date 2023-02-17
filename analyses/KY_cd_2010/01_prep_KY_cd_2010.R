@@ -84,13 +84,6 @@ if (!file.exists(here(shp_path))) {
     ky_shp <- ky_shp %>%
         left_join(baf_cd113, by = "GEOID")
 
-    # # add the enacted plan
-    # cd_shp <- st_read(here(path_enacted))
-    # ky_shp <- ky_shp %>%
-    #     mutate(cd_2010 = as.integer(cd_shp$DISTRICT)[
-    #         geo_match(ky_shp, cd_shp, method = "area")],
-    #         .after = cd_2000)
-
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = ky_shp,
         perim_path = here(perim_path)) %>%
