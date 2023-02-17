@@ -43,16 +43,16 @@ if (!file.exists(here(shp_path))) {
         rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
 
     # add municipalities
-    place_shp <- tinytiger::tt_places('KY', year = 2010)
+    place_shp <- tinytiger::tt_places("KY", year = 2010)
     matches_muni <- geomander::geo_match(from = ky_shp, to = place_shp, tiebreaker = FALSE)
     matches_muni[matches_muni < 0] <- NA
     d_muni <- tibble(GEOID = ky_shp$GEOID, muni = place_shp$PLACENS10[matches_muni])
-    d_cd <- get_baf_10(state = 'KY', "CD")[[1]]  %>%
+    d_cd <- get_baf_10(state = "KY", "CD")[[1]]  %>%
         transmute(GEOID = BLOCKID,
-                  cd_2000 = as.integer(DISTRICT))
+            cd_2000 = as.integer(DISTRICT))
 
     ky_shp <- left_join(ky_shp, d_muni, by = "GEOID") %>%
-        left_join(d_cd, by="GEOID") %>%
+        left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2000, .after = county)
 
@@ -68,8 +68,8 @@ if (!file.exists(here(shp_path))) {
             across(where(is.numeric), sum)
         ) %>%
         left_join(y = tinytiger::tt_tracts("KY", year = 2010) %>%
-                      select(GEOID = GEOID10),
-                  by = c("GEOID")) %>%
+            select(GEOID = GEOID10),
+        by = c("GEOID")) %>%
         st_as_sf() %>%
         st_transform(EPSG$KY)  %>%
         rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
@@ -93,13 +93,13 @@ if (!file.exists(here(shp_path))) {
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = ky_shp,
-                             perim_path = here(perim_path)) %>%
+        perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         ky_shp <- rmapshaper::ms_simplify(ky_shp, keep = 0.05,
-                                                 keep_shapes = TRUE) %>%
+            keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 

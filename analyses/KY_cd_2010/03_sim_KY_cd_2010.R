@@ -36,5 +36,5 @@ cli_process_done()
 if (interactive()) {
     library(ggplot2)
     library(patchwork)
-    validate_analysis(plans, map)
+    validate_analysis(plans, map %>% mutate(state = "KY"))
 }
