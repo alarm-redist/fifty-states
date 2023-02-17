@@ -11,7 +11,7 @@ constr <- redist_constr(map) %>%
 
 set.seed(2010)
 plans <- redist_smc(map, nsims = 5e3, runs = 2L, counties = pseudo_county,
-                    constraints = constr) %>%
+    constraints = constr) %>%
     group_by(chain) %>%
     filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>%
     ungroup()
@@ -33,11 +33,3 @@ plans <- add_summary_stats(plans, map)
 save_summary_stats(plans, "data-out/CO_2010/CO_cd_2010_stats.csv")
 
 cli_process_done()
-
-# Extra validation plots for custom constraints -----
-# TODO remove this section if no custom constraints
-if (interactive()) {
-    library(ggplot2)
-    library(patchwork)
-    validate_analysis(plans, map %>% mutate(state = "CO"))
-}

@@ -20,16 +20,12 @@ cli_process_start("Downloading files for {.pkg CO_cd_2010}")
 path_data <- download_redistricting_file("CO", "data-raw/CO", year = 2010)
 
 # download the enacted plan.
-# TODO try to find a download URL at <https://redistricting.lls.edu/state/colorado/>
 url <- "https://redistricting.lls.edu/wp-content/uploads/co_2010_congress_2011-12-05_2021-12-31.zip"
 path_enacted <- "data-raw/CO/CO_enacted.zip"
 download(url, here(path_enacted))
 unzip(here(path_enacted), exdir = here(dirname(path_enacted), "CO_enacted"))
 file.remove(path_enacted)
 path_enacted <- "data-raw/CO/CO_enacted/Moreno_South_Shapefiles/Moreno_South_Shapefiles.shp" # TODO use actual SHP
-
-# TODO other files here (as necessary). All paths should start with `path_`
-# If large, consider checking to see if these files exist before downloading
 
 cli_process_done()
 
@@ -51,9 +47,9 @@ if (!file.exists(here(shp_path))) {
         select(-vtd)
     d_cd <- make_from_baf("CO", "CD", "VTD", year = 2010)  %>%
         transmute(GEOID = paste0(censable::match_fips("CO"), vtd),
-                  cd_2000 = as.integer(cd))
+            cd_2000 = as.integer(cd))
     co_shp <- left_join(co_shp, d_muni, by = "GEOID") %>%
-        left_join(d_cd, by="GEOID") %>%
+        left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2000, .after = county)
 
@@ -62,17 +58,17 @@ if (!file.exists(here(shp_path))) {
     co_shp <- co_shp %>%
         mutate(cd_2010 = as.integer(cd_shp$District_1)[
             geo_match(co_shp, cd_shp, method = "area")],
-            .after = cd_2000)
+        .after = cd_2000)
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = co_shp,
-                             perim_path = here(perim_path)) %>%
+        perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         co_shp <- rmapshaper::ms_simplify(co_shp, keep = 0.05,
-                                                 keep_shapes = TRUE) %>%
+            keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 
