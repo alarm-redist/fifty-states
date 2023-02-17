@@ -7,16 +7,15 @@
 cli_process_start("Running simulations for {.pkg GA_cd_2010}")
 
 constr <- redist_constr(map) %>%
-    add_constr_grp_hinge(20, vap_black, vap, 0.47) %>%
-    add_constr_grp_hinge(-20, vap_black, vap, 0.38) %>%
-    add_constr_grp_inv_hinge(12, vap_black, vap, 0.61)
+    add_constr_grp_hinge(18, vap_black, vap, 0.43) %>%
+    add_constr_grp_hinge(-18, vap_black, vap, 0.34) %>%
+    add_constr_grp_inv_hinge(9, vap_black, vap, 0.61)
 
 set.seed(2010)
-plans <- redist_smc(map, nsims = 1e4, runs = 2L, counties = county, constraints = constr,
-                    pop_temper = 0.04) #%>%
-    #group_by(chain) %>%
-    #filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>%
-    #ungroup()
+plans <- redist_smc(map, nsims = 3e4, runs = 2L, counties = county, constraints = constr) %>%
+    group_by(chain) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>%
+    ungroup()
 plans <- match_numbers(plans, "cd_2010")
 
 cli_process_done()
@@ -43,13 +42,16 @@ if (interactive()) {
 
     validate_analysis(plans, map)
 
-    redist.plot.distr_qtys(plans, vap_black / total_vap,
-                           color_thresh = NULL,
-                           color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, '#3D77BB', '#B25D4C'),
-                           size = 0.5, alpha = 0.5) +
-        scale_y_continuous('Percent Black by VAP') +
-        labs(title = 'Partisanship of seats by BVAP rank') +
-        scale_color_manual(values = c(cd_2010_prop = 'black'))
+    redist.plot.distr_qtys(
+        plans, vap_black/total_vap,
+        color_thresh = NULL,
+        color = ifelse(
+            subset_sampled(plans)$ndv > subset_sampled(plans)$nrv,
+            "#3D77BB", "#B25D4C"),
+        size = 0.5, alpha = 0.5) +
+        scale_y_continuous("Percent Black by VAP") +
+        labs(title = "Partisanship of seats by BVAP rank") +
+        scale_color_manual(values = c(cd_2010 = "black"))
 
     # Dem seats by BVAP rank -- numeric
     plans %>%
