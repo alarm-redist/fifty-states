@@ -11,6 +11,7 @@ suppressMessages({
     library(geomander)
     library(cli)
     library(here)
+    library(cvap)
     devtools::load_all() # load utilities
 })
 
@@ -64,7 +65,35 @@ if (!file.exists(here(shp_path))) {
             geo_match(fl_shp, cd_shp, method = "area")],
         .after = cd_2000)
 
-    # TODO any additional columns or data you want to add should go here
+    # get CVAP
+    key <- "bcf78c9653d485182b0e51980a0d123b95c3ccf1"
+    tidycensus::census_api_key(key)
+    state <- "FL"
+    path_cvap <- here(paste0("data-raw/", state, "/cvap.rds"))
+
+    if (!file.exists(path_cvap)) {
+        cvap <-
+            cvap::cvap_distribute_censable(state, year = 2010) %>% select(GEOID, starts_with("cvap"))
+        vtd_baf <- get_baf_10(state)$VTD
+        cvap <- cvap %>%
+            left_join(vtd_baf %>% rename(GEOID = BLOCKID),
+                      by = "GEOID")
+        cvap <- cvap %>%
+            mutate(GEOID = paste0(COUNTYFP, "00", DISTRICT)) %>%
+            select(GEOID, starts_with("cvap"))
+        cvap <- cvap %>%
+            group_by(GEOID) %>%
+            summarize(across(.fns = sum))
+        saveRDS(cvap, path_cvap, compress = "xz")
+    } else {
+        cvap <- read_rds(path_cvap)
+    }
+
+    cvap <- cvap %>% mutate(GEOID = paste0("12", GEOID))
+
+    fl_shp <- fl_shp %>%
+        left_join(cvap, by = "GEOID") %>%
+        st_as_sf()
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = fl_shp,
