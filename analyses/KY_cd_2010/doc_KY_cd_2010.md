@@ -1,7 +1,7 @@
 # 2010 Kentucky Congressional Districts
 
 ## Redistricting requirements
-In Kentucky, under the Criteria and Standards for Congressional Redistricting adopted by Interim Joint Committee on State Government’s Redistricting Subcommittee in 1991, districts must:
+In Kentucky, under the [Criteria and Standards for Congressional Redistricting](https://web.archive.org/web/20220101204327/http://ncsl.org/Portals/1/Documents/Redistricting/Redistricting_2010.pdf) adopted by Interim Joint Committee on State Government’s Redistricting Subcommittee in 1991, districts must:
 
 1. be contiguous
 2. have equal populations

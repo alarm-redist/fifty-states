@@ -25,16 +25,9 @@ cli_process_start("Computing summary statistics for {.pkg KY_cd_2010}")
 
 plans <- add_summary_stats(plans, map)
 
-summary(plans)
+summary(select(plans, -pr_dem))
 
 # Output the summary statistics. Do not edit this path.
 save_summary_stats(plans, "data-out/KY_2010/KY_cd_2010_stats.csv")
 
 cli_process_done()
-
-# Extra validation plots for custom constraints -----
-if (interactive()) {
-    library(ggplot2)
-    library(patchwork)
-    validate_analysis(plans, map %>% mutate(state = "KY"))
-}
