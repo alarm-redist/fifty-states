@@ -29,6 +29,8 @@ cli_process_start("Computing summary statistics for {.pkg CO_cd_2010}")
 
 plans <- add_summary_stats(plans, map)
 
+summary(plans)
+
 # Output the summary statistics. Do not edit this path.
 save_summary_stats(plans, "data-out/CO_2010/CO_cd_2010_stats.csv")
 
