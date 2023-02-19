@@ -6,7 +6,7 @@ In Rhode Island, according to [Chapter 106, Section 2 of the 2011 Rhode Island L
 1. be contiguous
 1. have equal populations
 1. be geographically compact
-1. preserve state senate districts as much as possible
+1. preserve state senate districts as much as possible. In particular, plans ought to avoid the creation of voting districts composed of fewer than one hundred (100) potential voters with respect to the division of state house and state senate districts.
 
 
 ### Algorithmic Constraints
@@ -19,5 +19,4 @@ Data for Rhode Island comes from the ALARM Project's [Redistricting Data Files](
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Rhode Island across four independent runs of the SMC algorithm.
-We assign state senate districts to act like counties so that the simulations minimize the number of state senate district splits.
+We sample 6,000 districting plans for Rhode Island across four independent runs of the SMC algorithm and then thin down to 5,000 plans districting which do not result in the creation of voting districts composed of fewer than 100 residents located in a unique combination of state house, state senate, and congressional district.
