@@ -14,11 +14,11 @@ plans <- redist_smc(map, nsims = 1500, runs = 4L, counties = county)
 # used in forming CDs in each plan.
 plans <- plans %>% mutate(min_ssd_overlap = 0)
 plans_mat <- get_plans_matrix(plans)
-for (i in seq(length(plans_mat[1,]))) {
-    ssd_overlap <- redist.dist.pop.overlap(plan_old = map$ssd_2010, plan_new = plans_mat[,i], total_pop = map, normalize_rows = NULL)
+for (i in seq(length(plans_mat[1, ]))) {
+    ssd_overlap <- redist.dist.pop.overlap(plan_old = map$ssd_2010, plan_new = plans_mat[, i], total_pop = map, normalize_rows = NULL)
     min_overlap <- min(ssd_overlap[ssd_overlap > 0])
-    plans[2*i - 1,] <- plans[2*i - 1,] %>% mutate(min_ssd_overlap = min_overlap)
-    plans[2*i,] <- plans[2*i,] %>% mutate(min_ssd_overlap = min_overlap)
+    plans[2*i - 1, ] <- plans[2*i - 1, ] %>% mutate(min_ssd_overlap = min_overlap)
+    plans[2*i, ] <- plans[2*i, ] %>% mutate(min_ssd_overlap = min_overlap)
 }
 
 # keep only plans where the smallest SSD division has more than 100 residents.
@@ -63,7 +63,7 @@ if (interactive()) {
         theme(aspect.ratio = 3/4)
 
     plans %>%
-        hist(min_ssd_overlap, breaks = seq(0, max(plans$min_ssd_overlap)+500, 500)) +
+        hist(min_ssd_overlap, breaks = seq(0, max(plans$min_ssd_overlap) + 500, 500)) +
         scale_x_continuous(breaks = seq(0, max(plans$min_ssd_overlap), 2000)) +
         labs(title = "Smallest SSD Voting District in any CD") +
         theme_bw() +

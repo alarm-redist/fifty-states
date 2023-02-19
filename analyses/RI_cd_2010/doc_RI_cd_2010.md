@@ -19,4 +19,4 @@ Data for Rhode Island comes from the ALARM Project's [Redistricting Data Files](
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 6,000 districting plans for Rhode Island across four independent runs of the SMC algorithm and then thin down to 5,000 plans districting which do not result in the creation of voting districts composed of fewer than 100 residents located in a unique combination of state house, state senate, and congressional district.
+We sample 6,000 districting plans for Rhode Island across four independent runs of the SMC algorithm and then thin down to 5,000 districting plans which do not contain fewer than 100 residents from a single state senate district that is included in a proposed congressional district.
