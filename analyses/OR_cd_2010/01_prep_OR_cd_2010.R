@@ -81,7 +81,6 @@ if (!file.exists(here(shp_path))) {
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         or_shp <- rmapshaper::ms_simplify(or_shp, keep = 0.05,
                                           keep_shapes = TRUE) %>%
@@ -90,6 +89,26 @@ if (!file.exists(here(shp_path))) {
 
     # create adjacency graph
     or_shp$adj <- redist.adjacency(or_shp)
+
+    disconn_cty <- function(adj, cty1, cty2) {
+        v1 <- which(or_shp$county == str_c(cty1, " County"))
+        if (length(v1) == 0) stop(cty1, "not found")
+        v2 <- which(or_shp$county == str_c(cty2, " County"))
+        if (length(v2) == 0) stop(cty1, "not found")
+        vs <- tidyr::crossing(v1, v2)
+        remove_edge(adj, vs$v1, vs$v2)
+    }
+    or_shp$adj <- or_shp$adj %>%
+        disconn_cty("Curry", "Josephine") %>%
+        disconn_cty("Benton", "Lane") %>%
+        disconn_cty("Polk", "Lincoln") %>%
+        disconn_cty("Marion", "Jefferson") %>%
+        disconn_cty("Marion", "Wasco") %>%
+        disconn_cty("Wallowa", "Baker") %>%
+        disconn_cty("Morrow", "Grant") %>%
+        disconn_cty("Crook", "Grant") %>%
+        disconn_cty("Deschutes", "Harney") %>%
+        disconn_cty("Deschutes", "Linn")
 
     or_shp <- or_shp %>%
         fix_geo_assignment(muni)
