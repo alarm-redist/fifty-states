@@ -1,7 +1,7 @@
 # 2010 Michigan Congressional Districts
 
 ## Redistricting requirements
-in Michigan, according to (http://www.legislature.mi.gov/(S(xxvumgge0jwzkeswmwt0bh4v))/mileg.aspx?page=GetObject&objectname=mcl-Article-IV-6), districts must:
+in Michigan, according to [Article IV, Section 6](http://www.legislature.mi.gov/(S(xxvumgge0jwzkeswmwt0bh4v))/mileg.aspx?page=GetObject&objectname=mcl-Article-IV-6) of the state constitution, districts must:
 
 1. be contiguous
 2. have equal populations
@@ -11,7 +11,7 @@ in Michigan, according to (http://www.legislature.mi.gov/(S(xxvumgge0jwzkeswmwt0
 
 
 ### Algorithmic Constraints
-We enforce a maximum population deviation of 0.5%. We applied a constraint to limit county and municipality splits (see '02_setup_MI_cd_2010.R' file).
+We enforce a maximum population deviation of 0.5%. We use a pseudo-county constraint to help preserve county and municipality boundaries, as described below.
 
 ## Data Sources
 Data for Michigan comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).

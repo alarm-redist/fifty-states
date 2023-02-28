@@ -99,6 +99,16 @@ if (!file.exists(here(shp_path))) {
         table(redist:::contiguity(mi_shp$adj, mi_shp$cd_2010))
     }
 
+    # Connect Charlevoix
+    idx_1 <- which(mi_shp$GEOID == "26029029017")
+    idx_2 <- which(mi_shp$GEOID == "26029029016")
+    mi_shp$adj <- add_edge(mi_shp$adj, idx_1, idx_2)
+
+    # Connect UP
+    idx_1 <- which(mi_shp$GEOID == "26047047022")
+    idx_2 <- which(mi_shp$GEOID == "26097097010")
+    mi_shp$adj <- add_edge(mi_shp$adj, idx_1, idx_2)
+
     mi_shp <- mi_shp %>%
         fix_geo_assignment(muni)
 

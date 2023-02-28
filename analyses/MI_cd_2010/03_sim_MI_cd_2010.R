@@ -12,7 +12,7 @@ constr <- redist_constr(map) %>%
     add_constr_grp_inv_hinge(8, vap - vap_white, vap, 0.62)
 
 set.seed(2010)
-plans <- redist_smc(map, nsims = 8000, runs = 4, counties = pseudo_county, constraints = constr) %>%
+plans <- redist_smc(map, nsims = 8000, runs = 4, ncores = 1, counties = pseudo_county, constraints = constr)%>%
     group_by(chain) %>%
     filter(as.integer(draw) < min(as.integer(draw)) + 1250) %>% # thin samples
     ungroup()
