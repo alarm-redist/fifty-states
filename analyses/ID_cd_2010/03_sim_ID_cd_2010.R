@@ -8,9 +8,9 @@ cli_process_start("Running simulations for {.pkg ID_cd_2010}")
 
 set.seed(2010)
 plans <- redist_smc(map,
-                    nsims = 15e3,
-                    runs = 2L,
-                    counties = county_muni)
+    nsims = 15e3,
+    runs = 2L,
+    counties = county_muni)
 
 plans <- match_numbers(plans, "cd_2010")
 
@@ -42,4 +42,3 @@ if (interactive()) {
         theme_void() +
         guides(fill = "none")
 }
-
