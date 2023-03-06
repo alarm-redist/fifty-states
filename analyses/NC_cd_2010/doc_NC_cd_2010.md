@@ -18,5 +18,5 @@ Data for North Carolina comes from the ALARM Project's [2020 Redistricting Data 
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 5,000 districting plans for North Carolina.
+We sample 24,000 districting plans for North Carolina, and thin to 5,000 final plans.
 No special techniques were needed to produce the sample.
