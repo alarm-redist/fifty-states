@@ -1,23 +1,19 @@
 ###############################################################################
-# Set up redistricting simulation for `NC_cd_2010`
-# © ALARM Project, April 2022
+# Set up redistricting simulation for `TX_cd_2010`
+# © ALARM Project, December 2022
 ###############################################################################
-cli_process_start("Creating {.cls redist_map} object for {.pkg NC_cd_2010}")
+cli_process_start("Creating {.cls redist_map} object for {.pkg TX_cd_2010}")
 
-map <- redist_map(nc_shp, pop_tol = 0.005,
-    existing_plan = cd_2010, adj = nc_shp$adj)
+map <- redist_map(tx_shp, pop_tol = 0.005,
+    existing_plan = cd_2010, adj = tx_shp$adj)
 
 map <- map %>%
     mutate(pseudo_county = pick_county_muni(map, counties = county, munis = muni,
         pop_muni = get_target(map)))
 
-# Fix labeling
-map$state[1] <- "NC"
-
 # Add an analysis name attribute
-attr(map, "analysis_name") <- "NC_2010"
+attr(map, "analysis_name") <- "TX_2010"
 
 # Output the redist_map object. Do not edit this path.
-write_rds(map, "data-out/NC_2010/NC_cd_2010_map.rds", compress = "xz")
+write_rds(map, "data-out/TX_2010/TX_cd_2010_map.rds", compress = "xz")
 cli_process_done()
-

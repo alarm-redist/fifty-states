@@ -54,11 +54,11 @@ if (!file.exists(here(shp_path))) {
 
     cd_shp <- st_read(here(path_enacted))
     ne_shp <- mutate(ne_shp,
-        cd_2020 = geo_match(ne_shp, cd_shp, method = "area"),
+        cd_2020 = cd_shp$DISTRICT[geo_match(ne_shp, cd_shp, method = "area")],
         .after = cd_2010)
 
     # Create perimeters in case shapes are simplified
-    redist.prep.polsbypopper(shp = ne_shp,
+    redistmetrics::prep_perims(shp = ne_shp,
         perim_path = here(perim_path)) %>%
         invisible()
 
