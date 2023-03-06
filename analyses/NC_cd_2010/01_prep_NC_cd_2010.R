@@ -19,10 +19,6 @@ cli_process_start("Downloading files for {.pkg NC_cd_2010}")
 
 path_data <- download_redistricting_file("NC", "data-raw/NC", year = 2010)
 
-# download the enacted plan.
-# 2010 plan from https://redistricting.lls.edu/state/north-carolina/
-path_enacted <- "data-raw/NC/NC_enacted/Rucho_Lewis_Congress_3.shp"
-
 cli_process_done()
 
 # Compile raw data into a final shapefile for analysis -----
@@ -38,16 +34,16 @@ if (!file.exists(here(shp_path))) {
         rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
 
     # add municipalities
-    d_muni <- make_from_baf("NC", "INCPLACE_CDP", "VTD")  %>%
+    d_muni <- make_from_baf("NC", "INCPLACE_CDP", "VTD", year = 2010)  %>%
         mutate(GEOID = paste0(censable::match_fips("NC"), vtd)) %>%
         select(-vtd)
-    d_cd <- make_from_baf("NC", "CD", "VTD")  %>%
+    d_cd <- make_from_baf("NC", "CD", "VTD", year = 2010)  %>%
         transmute(GEOID = paste0(censable::match_fips("NC"), vtd),
-            cd_2010 = as.integer(cd))
+            cd_2000 = as.integer(cd))
     nc_shp <- left_join(nc_shp, d_muni, by = "GEOID") %>%
         left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
-        relocate(muni, county_muni, cd_2010, .after = county)
+        relocate(muni, county_muni, cd_2000, .after = county)
 
     # add the enacted plan
     baf_cd113 <- make_from_baf("NC", from = read_baf_cd113("NC"), year = 2010) %>%
@@ -58,9 +54,15 @@ if (!file.exists(here(shp_path))) {
         )
     nc_shp <- nc_shp %>%
         left_join(baf_cd113, by = "GEOID")
+    nc_shp <- nc_shp %>%
+        relocate(cd_2000, cd_2010, .after = cd_2000)
+
+    # remove fully NA columns
+    nc_shp <- nc_shp %>%
+        select(-adv_18, -arv_18)
 
     # Create perimeters in case shapes are simplified
-    redist.prep.polsbypopper(shp = nc_shp,
+    redistmetrics::prep_perims(shp = nc_shp,
         perim_path = here(perim_path)) %>%
         invisible()
 
