@@ -33,6 +33,9 @@ if (!file.exists(here(shp_path))) {
         st_transform(EPSG$MI)  %>%
         rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
 
+    mi_shp <- mi_shp %>%
+        filter(ALAND10 >= AWATER10 | pop > 0)
+
     # add municipalities
     d_muni <- make_from_baf("MI", "INCPLACE_CDP", "VTD", year = 2010)  %>%
         mutate(GEOID = paste0(censable::match_fips("MI"), vtd)) %>%
