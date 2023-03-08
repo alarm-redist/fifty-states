@@ -10,7 +10,7 @@ map <- redist_map(ca_shp, pop_tol = 0.005,
 # make pseudo counties with default settings
 map <- map %>%
     mutate(pseudo_county = pick_county_muni(map, counties = county, munis = muni,
-                                            pop_muni = get_target(map)))
+        pop_muni = get_target(map)))
 
 map <- map %>%
     mutate(
@@ -21,7 +21,7 @@ map <- map %>%
     )
 
 counties_south <- c("037", "071", "059",
-                    "065", "073", "025")
+    "065", "073", "025")
 map_south <- map %>%
     `attr<-`("existing_col", NULL) %>%
     filter(county %in% counties_south) %>%
@@ -29,10 +29,10 @@ map_south <- map %>%
     `attr<-`("pop_bounds", attr(map, "pop_bounds"))
 
 counties_bay <- c("001", "013", "039",
-                  "047", "053", "067",
-                  "069", "075", "077",
-                  "081", "085", "087",
-                  "095", "099", "113")
+    "047", "053", "067",
+    "069", "075", "077",
+    "081", "085", "087",
+    "095", "099", "113")
 map_bay <- map %>%
     `attr<-`("existing_col", NULL) %>%
     filter(county %in% counties_bay) %>%
@@ -41,8 +41,8 @@ map_bay <- map %>%
 
 map <- map %>%
     mutate(cluster = case_when(county %in% counties_bay ~ "Bay",
-                               county %in% counties_south ~ "South",
-                               TRUE ~ "Remainder"))
+        county %in% counties_south ~ "South",
+        TRUE ~ "Remainder"))
 
 # Add an analysis name attribute
 attr(map, "analysis_name") <- "CA_2010"

@@ -28,9 +28,6 @@ file.remove(path_enacted)
 path_enacted <- "data-raw/CA/CA_enacted/viz_20110728_q2_cd_finaldraft_shp/20110727_q2_congressional_final_draft.shp"
 path_dbf <- "data-raw/CA/CA_enacted/viz_20110728_q2_cd_finaldraft_shp/20110727_Q2_CONGRESSIONAL_FINAL_DRAFT.DBF"
 
-# TODO other files here (as necessary). All paths should start with `path_`
-# If large, consider checking to see if these files exist before downloading
-
 cli_process_done()
 
 # Compile raw data into a final shapefile for analysis -----
@@ -52,7 +49,7 @@ if (!file.exists(here(shp_path))) {
     d_cd <- get_baf_10("CA", "CD")[[1]] %>%
         rename(GEOID = BLOCKID, cd_2000 = DISTRICT)
     ca_shp <- left_join(ca_shp, d_muni, by = "GEOID") %>%
-        left_join(d_cd, by="GEOID") %>%
+        left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2000, .after = county)
 
@@ -62,13 +59,13 @@ if (!file.exists(here(shp_path))) {
         mutate(GEOID = str_sub(GEOID, 1, 11)) %>%
         group_by(GEOID) %>%
         summarize(cd_2000 = Mode(cd_2000),
-                  muni = Mode(muni),
-                  state = unique(state),
-                  county = unique(county),
-                  across(where(is.numeric), sum)
+            muni = Mode(muni),
+            state = unique(state),
+            county = unique(county),
+            across(where(is.numeric), sum)
         ) %>%
         left_join(y = tinytiger::tt_tracts("CA", year = 2010) %>%
-                  select(GEOID = GEOID10), by = c("GEOID")) %>%
+            select(GEOID = GEOID10), by = c("GEOID")) %>%
         st_as_sf() %>%
         st_transform(EPSG$CA)
 
@@ -86,14 +83,13 @@ if (!file.exists(here(shp_path))) {
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = ca_shp,
-                             perim_path = here(perim_path)) %>%
+        perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         ca_shp <- rmapshaper::ms_simplify(ca_shp, keep = 0.05,
-                                                 keep_shapes = TRUE) %>%
+            keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 
@@ -103,6 +99,8 @@ if (!file.exists(here(shp_path))) {
     # connect islands
     nbrs <- geomander::suggest_component_connection(ca_shp, ca_shp$adj)
     ca_shp$adj <- add_edge(ca_shp$adj, nbrs$x, nbrs$y)
+
+    ca_shp$adj <- add_edge(ca_shp$adj, 6479, 6834)
 
     ca_shp <- ca_shp %>%
         fix_geo_assignment(muni)
