@@ -8,7 +8,7 @@ cli_process_start("Running simulations for {.pkg CA_cd_2010}")
 
 nsim <- 12500
 
-# simulate southern CA ----
+# Simulate southern CA ----
 seam_south <- sapply(
     list(
         c("037", "111"),
@@ -62,7 +62,7 @@ plans_south <- redist_smc(
 
 write_rds(plans_south, here("data-raw/CA/plans_south.rds"), compress = "xz")
 
-# simulate large bay area ----
+# Simulate large bay area ----
 seam_bay <- sapply(
     list(
         c("075", "041"),
@@ -155,7 +155,7 @@ plans_bay <- redist_smc(
 write_rds(plans_bay, here("data-raw/CA/plans_bay.rds"), compress = "xz")
 
 
-# pull it all together ----
+# Pull it all together ----
 init <- prep_particles(
     map = map,
     map_plan_list = list(
@@ -186,7 +186,7 @@ plans <- redist_smc(
 
 attr(plans, "prec_pop") <- map$pop
 
-# thin plans
+# Thin plans
 plans_5k <- plans %>%
     group_by(chain) %>%
     filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
@@ -245,6 +245,7 @@ if (interactive()) {
             mutate(coalition_dem = sum(((vap_asian + vap_hisp + vap_black)/total_vap > 0.5) & e_dvs > 0.5)), qty = coalition_dem) +
         labs(x = "Number of Hispanic + Asian + Black and Dem. Majority") &
         theme_bw()
+
     ggsave("data-raw/CA/hist_5k.pdf", p1, width = 11, height = 8)
 
 
@@ -309,6 +310,7 @@ if (interactive()) {
         labs(title = "CA Enacted versus Simulations") +
         scale_color_manual(values = c(cd_2020 = "black")) +
         geom_hline(yintercept = 0.5, linetype = "dotted")
+
     ggsave("data-raw/CA/boxplot.pdf", p2, width = 11, height = 8)
 
 }
