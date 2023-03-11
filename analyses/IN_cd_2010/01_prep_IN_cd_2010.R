@@ -35,7 +35,7 @@ cli_process_done()
 shp_path <- "data-out/IN_2010/shp_vtd.rds"
 perim_path <- "data-out/IN_2010/perim.rds"
 
-if (file.exists(here(shp_path))) {
+if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong IN} shapefile")
     # read in redistricting data
     in_shp <- read_csv(here(path_data)) %>%
