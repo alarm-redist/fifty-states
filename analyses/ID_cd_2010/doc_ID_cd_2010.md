@@ -20,6 +20,6 @@ Data for Idaho comes from the [Loyala Law School (LLS) All About Redistricting](
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 15,000 districting plans for Idaho, across 2 independent runs of the SMC algorithm.
+We sample 15,000 districting plans for Idaho, across 2 independent runs of the SMC algorithm, and then thin to 5,000 sampled population.
 We sample using the standard algorithmic municipality constraint.
 No special techniques were needed to produce the sample.
