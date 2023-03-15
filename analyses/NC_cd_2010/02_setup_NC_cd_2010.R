@@ -16,4 +16,3 @@ attr(map, "analysis_name") <- "NC_2010"
 # Output the redist_map object. Do not edit this path.
 write_rds(map, "data-out/NC_2010/NC_cd_2010_map.rds", compress = "xz")
 cli_process_done()
-

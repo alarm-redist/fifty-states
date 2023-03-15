@@ -14,11 +14,11 @@ constr <- redist_constr(map) %>%
     add_constr_grp_inv_hinge(8, vap - vap_white, vap, 0.62)
 
 plans <- redist_smc(map, nsims = 12e3,
-                    runs = 2L,
-                    ncores = 2L,
-                    counties = county,
-                    constraints = constr,
-                    pop_temper = 0.01)
+    runs = 2L,
+    ncores = 2L,
+    counties = county,
+    constraints = constr,
+    pop_temper = 0.05)
 
 plans <- match_numbers(plans, "cd_2010")
 
@@ -29,7 +29,7 @@ plans <- plans %>%
     ungroup() %>%
     filter(vap_minority >= 2 | draw == "cd_2010") %>%
     group_by(chain) %>%
-    slice(1:(2500 * attr(map, "ndists"))) %>% # thin samples
+    slice(1:(2500*attr(map, "ndists"))) %>% # thin samples
     ungroup() %>%
     select(-vap_minority) # remove extra column before saving
 
