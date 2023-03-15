@@ -7,12 +7,8 @@ cli_process_start("Creating {.cls redist_map} object for {.pkg NC_cd_2010}")
 map <- redist_map(nc_shp, pop_tol = 0.005,
     existing_plan = cd_2010, adj = nc_shp$adj)
 
-map <- map %>%
-    mutate(pseudo_county = pick_county_muni(map, counties = county, munis = muni,
-        pop_muni = get_target(map)))
-
 # Fix labeling
-map$state[1] <- "NC"
+map$state <- "NC"
 
 # Add an analysis name attribute
 attr(map, "analysis_name") <- "NC_2010"
