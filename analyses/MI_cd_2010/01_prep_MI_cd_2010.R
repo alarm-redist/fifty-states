@@ -34,7 +34,7 @@ if (!file.exists(here(shp_path))) {
         rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
 
     mi_shp <- mi_shp %>%
-        filter(ALAND10 >= AWATER10 | pop > 0)
+        filter(area_land >= area_water | pop > 0)
 
     # add municipalities
     d_muni <- make_from_baf("MI", "INCPLACE_CDP", "VTD", year = 2010)  %>%
@@ -86,13 +86,13 @@ if (!file.exists(here(shp_path))) {
         x <- redist:::contiguity(mi_shp$adj, rep(1, length(mi_shp$adj)))
         unique(mi_shp$county[x > 1])
 
-        idx <- which(x > 1 & str_detect(mi_shp$county, "055"))
+        idx <- which(x > 1 & str_detect(mi_shp$county, "097"))
         bbox <- st_bbox(st_buffer(mi_shp$geometry[idx], 800))
-        lbls <- rep("", nrow(wa_shp))
-        adj_idxs <- c(idx, unlist(adj_nowater[idx]) + 1L)
+        lbls <- rep("", nrow(mi_shp))
+        #adj_idxs <- c(idx, unlist(adj_nowater[idx]) + 1L)
         # adj_idxs = c(adj_idxs, unlist(adj_nowater[adj_idxs]) + 1L)
-        lbls[adj_idxs] <- wa_shp$GEOID[adj_idxs]
-        ggplot(wa_shp) +
+        lbls[idx] <- mi_shp$GEOID[idx]
+        ggplot(mi_shp) +
             geom_sf(aes(fill = x > 1), size = 0.1) +
             geom_sf(data = d_water, size = 0.0, fill = "#ffffff55", color = NA) +
             coord_sf(xlim = bbox[c(1, 3)], ylim = bbox[c(2, 4)]) +
@@ -102,15 +102,24 @@ if (!file.exists(here(shp_path))) {
         table(redist:::contiguity(mi_shp$adj, mi_shp$cd_2010))
     }
 
+
+    # manual connections
+    add_update_edge <- function(vtd1, vtd2) {
+        mi_shp$adj <<- add_edge(mi_shp$adj, which(mi_shp$GEOID == vtd1), which(mi_shp$GEOID == vtd2))
+    }
+
     # Connect Charlevoix
-    idx_1 <- which(mi_shp$GEOID == "26029029017")
-    idx_2 <- which(mi_shp$GEOID == "26029029016")
-    mi_shp$adj <- add_edge(mi_shp$adj, idx_1, idx_2)
+    add_update_edge("26029029017", "26029029016")
 
     # Connect UP
-    idx_1 <- which(mi_shp$GEOID == "26047047022")
-    idx_2 <- which(mi_shp$GEOID == "26097097010")
-    mi_shp$adj <- add_edge(mi_shp$adj, idx_1, idx_2)
+    #add_update_edge("26047047022", "26097097010")
+
+    # Connect UP attempt 2
+    add_update_edge("26047000220", "26097000010")
+
+    suggestions <- suggest_component_connection(mi_shp, mi_shp$adj)
+
+    mi_shp$adj <- add_edge(mi_shp$adj, suggestions$x, suggestions$y)
 
     mi_shp <- mi_shp %>%
         fix_geo_assignment(muni)
@@ -121,3 +130,4 @@ if (!file.exists(here(shp_path))) {
     mi_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong MI} shapefile")
 }
+

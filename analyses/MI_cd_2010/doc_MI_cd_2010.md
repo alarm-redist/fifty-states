@@ -20,5 +20,5 @@ Data for Michigan comes from the ALARM Project's [2020 Redistricting Data Files]
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 8,000 districting plans for Michigan across four independent runs of the SMC algorithm and then thinned our results to 5,000 simulations.
+We sample 8,000 districting plans for Michigan across two independent runs of the SMC algorithm and then thinned our results to 5,000 simulations.
 To balance county and municipality splits, we create pseudocounties for use in the county constraint, which leads to fewer municipality splits than using a county constraint. Note that Wayne County, Oakland County, and Macomb County must all be split due to their large populations, although within the counties, we avoid splitting any municipality.
