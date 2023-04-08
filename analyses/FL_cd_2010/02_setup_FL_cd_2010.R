@@ -13,11 +13,6 @@ map <- map %>%
     mutate(pseudo_county = pick_county_muni(map, counties = county, munis = muni,
         pop_muni = get_target(map)))
 
-# clust_south <- sort(c("Miami-Dade County", "Broward County", "Palm Beach County", "Monroe County", "Collier County", "Hendry County",
-#                      "Glades County", "Martin County", "Lee County", "Charlotte County", "St. Lucie County", "Okeechobee County",
-#                      "Hardee County", "Sarasota County", "Manatee County", "DeSoto County", "Highlands County"))
-
-
 clust_south <- sort(c("Miami-Dade County", "Broward County", "Palm Beach County"))
 
 clust_south <- stringr::str_sub(sapply(clust_south, function(x) {
