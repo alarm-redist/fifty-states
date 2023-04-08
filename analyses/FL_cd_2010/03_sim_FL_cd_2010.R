@@ -11,7 +11,7 @@ set.seed(2010)
 # Global settings
 cluster_tol <- .005
 nsims_south <- 60000
-nsims_north <- 50000
+nsims_north <- 40000
 nsims <- 35000
 
 map$row_num <- 1:nrow(map)
@@ -59,8 +59,8 @@ plans_south <- redist_smc(map_south,
     verbose = T)
 
 plans_south <- plans_south %>%
-    mutate(ndv = group_frac(map_south, ndv, ndv+nrv),
-           hvap = group_frac(map_south, vap_hisp, vap),
+    mutate(ndv = group_frac(map_south, ndv, ndv + nrv),
+        hvap = group_frac(map_south, vap_hisp, vap),
         bvap = group_frac(map_south, vap_black, vap),
         hcvap = group_frac(map_south, cvap_hisp, cvap),
         bcvap = group_frac(map_south, cvap_black, cvap),
@@ -73,7 +73,7 @@ plans_south <- plans_south %>% group_by(draw) %>%
     ungroup() %>% filter((first > 0.4 & second > .25) | draw == "cd_2010") %>%
     select(-c(first, second))
 
-samp <- sample(seq_len(ncol(get_plans_matrix(plans_south))),35000)
+samp <- sample(seq_len(ncol(get_plans_matrix(plans_south))), 35000)
 
 plans_south <- plans_south %>% group_by(draw) %>%
     mutate(id = cur_group_id()) %>%
@@ -102,7 +102,7 @@ map_north$cluster_edge <- map_north$row_num %in% z$row_num
 
 constraints <- redist_constr(map_north) %>%
     add_constr_grp_hinge(6, cvap_black, cvap, .5) %>%
-    add_constr_grp_hinge(-6, cvap_black, cvap, .17) %>%
+    add_constr_grp_hinge(-6, cvap_black, cvap, .2) %>%
     add_constr_grp_hinge(3, cvap_hisp, cvap, .7) %>%
     add_constr_grp_hinge(-6, cvap_hisp, cvap, .3) %>%
     add_constr_custom(
@@ -135,7 +135,7 @@ plans_north <- plans_north %>% group_by(draw) %>%
     mutate(count = sum(bvap >= .25 & district != 0)) %>% ungroup() %>% filter(count == 1) %>%
     select(-c(count))
 
-samp <- sample(seq_len(ncol(get_plans_matrix(plans_north))),35000)
+samp <- sample(seq_len(ncol(get_plans_matrix(plans_north))), 35000)
 
 plans_north <- plans_north %>% group_by(draw) %>%
     mutate(id = cur_group_id()) %>%
@@ -214,7 +214,6 @@ save_summary_stats(plans, "data-out/FL_2010/FL_cd_2010_stats.csv")
 cli_process_done()
 
 # Extra validation plots for custom constraints -----
-# TODO remove this section if no custom constraints
 if (interactive()) {
     library(ggplot2)
     library(patchwork)
@@ -290,9 +289,9 @@ if (interactive()) {
         summarise(
             all_hvap = sum((vap_hisp/total_vap) > 0.4),
             dem_hvap = sum((vap_hisp/total_vap) > 0.3 &
-                               (ndv > nrv)),
+                (ndv > nrv)),
             rep_hvap = sum((vap_hisp/total_vap) > 0.3 &
-                               (nrv > ndv)),
+                (nrv > ndv)),
             all_bvap_40 = sum((vap_black/total_vap) > 0.4),
             all_bvap_30 = sum((vap_black/total_vap) > 0.25),
             dem_bvap_30 = sum((vap_black/total_vap) > .25 & (ndv > nrv)),
@@ -326,9 +325,9 @@ if (interactive()) {
         summarise(
             all_hvap = sum((cvap_hisp/total_cvap) > 0.4),
             dem_hvap = sum((cvap_hisp/total_cvap) > 0.4 &
-                               (ndv > nrv)),
+                (ndv > nrv)),
             rep_hvap = sum((cvap_hisp/total_cvap) > 0.4 &
-                               (nrv > ndv)),
+                (nrv > ndv)),
             all_bvap_40 = sum((cvap_black/total_cvap) > 0.4),
             all_bvap_30 = sum((cvap_black/total_cvap) > 0.3),
             dem_bvap_30 = sum((cvap_black/total_cvap) > .3 & (ndv > nrv)),

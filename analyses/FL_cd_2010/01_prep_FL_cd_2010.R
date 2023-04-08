@@ -21,16 +21,12 @@ cli_process_start("Downloading files for {.pkg FL_cd_2010}")
 path_data <- download_redistricting_file("FL", "data-raw/FL", year = 2010)
 
 # download the enacted plan.
-# TODO try to find a download URL at <https://redistricting.lls.edu/state/florida/>
 url <- "https://redistricting.lls.edu/wp-content/uploads/fl_2010_congress_2012-04-30_2015-12-02.zip"
 path_enacted <- "data-raw/FL/FL_enacted.zip"
 download(url, here(path_enacted))
 unzip(here(path_enacted), exdir = here(dirname(path_enacted), "FL_enacted"))
 file.remove(path_enacted)
-path_enacted <- "data-raw/FL/FL_enacted/h000c9047.shp" # TODO use actual SHP
-
-# TODO other files here (as necessary). All paths should start with `path_`
-# If large, consider checking to see if these files exist before downloading
+path_enacted <- "data-raw/FL/FL_enacted/h000c9047.shp"
 
 cli_process_done()
 
@@ -77,7 +73,7 @@ if (!file.exists(here(shp_path))) {
         vtd_baf <- get_baf_10(state)$VTD
         cvap <- cvap %>%
             left_join(vtd_baf %>% rename(GEOID = BLOCKID),
-                      by = "GEOID")
+                by = "GEOID")
         cvap <- cvap %>%
             mutate(GEOID = paste0(COUNTYFP, "00", DISTRICT)) %>%
             select(GEOID, starts_with("cvap"))
@@ -101,7 +97,6 @@ if (!file.exists(here(shp_path))) {
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         fl_shp <- rmapshaper::ms_simplify(fl_shp, keep = 0.05,
             keep_shapes = TRUE) %>%
@@ -110,8 +105,6 @@ if (!file.exists(here(shp_path))) {
 
     # create adjacency graph
     fl_shp$adj <- redist.adjacency(fl_shp)
-
-    # TODO any custom adjacency graph edits here
 
     fl_shp <- fl_shp %>%
         fix_geo_assignment(muni)
