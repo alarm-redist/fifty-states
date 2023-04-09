@@ -132,7 +132,7 @@ plans_north <- plans_north %>%
         dem20 = group_frac(map_north, adv_20, arv_20 + adv_20))
 
 plans_north <- plans_north %>% group_by(draw) %>%
-    mutate(count = sum(bvap >= .25 & district != 0)) %>% ungroup() %>% filter(count == 1) %>%
+    mutate(count = sum(bvap >= .25 & district != 0)) %>% ungroup() %>% filter(count > 0) %>%
     select(-c(count))
 
 samp <- sample(seq_len(ncol(get_plans_matrix(plans_north))), 35000)
