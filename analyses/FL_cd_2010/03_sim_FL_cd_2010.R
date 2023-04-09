@@ -288,13 +288,13 @@ if (interactive()) {
         mutate(vap_nonwhite = total_vap - vap_white) %>%
         summarise(
             all_hvap = sum((vap_hisp/total_vap) > 0.4),
-            dem_hvap = sum((vap_hisp/total_vap) > 0.3 &
+            dem_hvap = sum((vap_hisp/total_vap) > 0.4 &
                 (ndv > nrv)),
-            rep_hvap = sum((vap_hisp/total_vap) > 0.3 &
+            rep_hvap = sum((vap_hisp/total_vap) > 0.4 &
                 (nrv > ndv)),
             all_bvap_40 = sum((vap_black/total_vap) > 0.4),
-            all_bvap_30 = sum((vap_black/total_vap) > 0.25),
-            dem_bvap_30 = sum((vap_black/total_vap) > .25 & (ndv > nrv)),
+            all_bvap_25 = sum((vap_black/total_vap) > 0.25),
+            dem_bvap_25 = sum((vap_black/total_vap) > .25 & (ndv > nrv)),
             mmd_all = sum(vap_nonwhite/total_vap > 0.5),
             mmd_coalition = sum(((
                 vap_hisp + vap_black
@@ -307,15 +307,15 @@ if (interactive()) {
     p2 <-
         redist.plot.hist(psum, all_hvap) + labs(x = "HVAP > 0.4", y = NULL)
     p3 <-
-        redist.plot.hist(psum, dem_hvap) + labs(x = "HVAP > 0.3 & Dem > Rep", y = NULL)
+        redist.plot.hist(psum, dem_hvap) + labs(x = "HVAP > 0.4 & Dem > Rep", y = NULL)
     p4 <-
-        redist.plot.hist(psum, rep_hvap) + labs(x = "HVAP > 0.3 & Dem < Rep", y = NULL)
+        redist.plot.hist(psum, rep_hvap) + labs(x = "HVAP > 0.4 & Dem < Rep", y = NULL)
     p5 <-
         redist.plot.hist(psum, all_bvap_40) + labs(x = "BVAP > 0.4", y = NULL)
     p6 <-
-        redist.plot.hist(psum, all_bvap_30) + labs(x = "BVAP > 0.25", y = NULL)
+        redist.plot.hist(psum, all_bvap_25) + labs(x = "BVAP > 0.25", y = NULL)
     p7 <-
-        redist.plot.hist(psum, dem_bvap_30) + labs(x = "BVAP > 0.25 & Dem > Rep", y = NULL)
+        redist.plot.hist(psum, dem_bvap_25) + labs(x = "BVAP > 0.25 & Dem > Rep", y = NULL)
 
     ggsave("data-raw/FL/vap_histograms.png", p1/p2/p3/p4/p5/p6/p7, height = 10)
 
@@ -329,8 +329,8 @@ if (interactive()) {
             rep_hvap = sum((cvap_hisp/total_cvap) > 0.4 &
                 (nrv > ndv)),
             all_bvap_40 = sum((cvap_black/total_cvap) > 0.4),
-            all_bvap_30 = sum((cvap_black/total_cvap) > 0.3),
-            dem_bvap_30 = sum((cvap_black/total_cvap) > .3 & (ndv > nrv)),
+            all_bvap_25 = sum((cvap_black/total_cvap) > 0.25),
+            dem_bvap_25 = sum((cvap_black/total_cvap) > .25 & (ndv > nrv)),
             mmd_all = sum(cvap_nonwhite/total_cvap > 0.5),
             mmd_coalition = sum(((
                 cvap_hisp + cvap_black
@@ -348,9 +348,9 @@ if (interactive()) {
     p12 <-
         redist.plot.hist(cpsum, all_bvap_40) + labs(x = "BCVAP > 0.4", y = NULL)
     p13 <-
-        redist.plot.hist(cpsum, all_bvap_30) + labs(x = "BCVAP > 0.3", y = NULL)
+        redist.plot.hist(cpsum, all_bvap_25) + labs(x = "BCVAP > 0.25", y = NULL)
     p14 <-
-        redist.plot.hist(cpsum, dem_bvap_30) + labs(x = "BCVAP > 0.3 & Dem > Rep", y = NULL)
+        redist.plot.hist(cpsum, dem_bvap_25) + labs(x = "BCVAP > 0.25 & Dem > Rep", y = NULL)
 
     ggsave("data-raw/FL/cvap_histograms.png", p8/p9/p10/p11/p12/p13/p14, height = 10)
 
