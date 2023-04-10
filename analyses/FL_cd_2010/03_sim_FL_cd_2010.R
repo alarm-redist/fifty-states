@@ -54,7 +54,7 @@ plans_south <- redist_smc(map_south,
     n_steps = n_steps,
     constraints = constraints,
     pop_temper = .035,
-    seq_alpha = .3,
+    seq_alpha = .4,
     compactness = .95,
     verbose = T)
 
