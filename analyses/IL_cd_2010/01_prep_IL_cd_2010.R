@@ -33,12 +33,10 @@ cli_process_done()
 shp_path <- "data-out/IL_2010/shp_vtd.rds"
 perim_path <- "data-out/IL_2010/perim.rds"
 
-fs::dir_create('data-raw/IL')
-
 if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong IL} shapefile")
     # read in redistricting data
-    il_shp <- read_csv(here(path_data), col_types = cols(GEOID10 = "c")) %>%
+    il_shp <- read_csv(here(path_data)) %>%
         join_vtd_shapefile(year = 2010) %>%
         st_transform(EPSG$IL)  %>%
         rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
@@ -52,35 +50,30 @@ if (!file.exists(here(shp_path))) {
         select(-vtd)
     d_cd <- make_from_baf("IL", "CD", "VTD", year = 2010)  %>%
         transmute(GEOID = paste0(censable::match_fips("IL"), vtd),
-                  cd_2000 = as.integer(cd))
+            cd_2000 = as.integer(cd))
     il_shp <- left_join(il_shp, d_muni, by = "GEOID") %>%
         left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2000, .after = county)
 
     # add the enacted plan
-    # old way
-    cd_shp <- st_read(here(path_enacted))
+    cd_shp <- tinytiger::tt_congressional_districts("IL", year = 2013) %>% # 2013 = 113th
+        filter(CD113FP != "ZZ")
     il_shp <- il_shp %>%
-        mutate(cd_2010 = as.integer(cd_shp$DISTRICT)[
-            geo_match(il_shp, cd_shp, method = "area")],
-            .after = cd_2000)
-
-    # new way
-    baf_cd113 <- make_from_baf("IL", from = read_baf_cd113("IL"), year = 2010) %>%
-        rename(GEOID = vtd) %>% mutate(GEOID = paste0("17", GEOID))
-    il_shp <- il_shp %>%
-        left_join(baf_cd113, by = "GEOID")
+        mutate(
+            cd_2010 = as.integer(cd_shp$CD113FP)[geo_match(il_shp, cd_shp, method = "area")],
+            .after = cd_2010
+        )
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = il_shp,
-                             perim_path = here(perim_path)) %>%
+        perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         il_shp <- rmapshaper::ms_simplify(il_shp, keep = 0.05,
-                                                 keep_shapes = TRUE) %>%
+            keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 
