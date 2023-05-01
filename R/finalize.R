@@ -27,6 +27,122 @@ finalize_analysis = function(state, type = "cd", year = 2020) {
         cli_abort(c("Summary statistics file missing for {.pkg {slug}}.",
                     "x" = "{.path {path_stats}} not found."))
 
+    if (year == 2010) {
+        # 2010 checks!
+        cli::cli_progress_bar("Performing automatic checks", total = 8)
+        # Map checks `n = 2` ----
+        map_in <- readr::read_rds(path_map)
+        warns <- FALSE
+
+        # state column is state abb
+        if (map_in$state[1] != censable::match_abb(map_in$state[1])) {
+            cli::cli_warn('State column is not the state abbreviation in {.cls redist_map} object.')
+            map_in$state <- censable::match_abb(map_in$state[1])
+            warns <- TRUE
+        }
+        cli::cli_progress_update()
+
+        # enacted column is `cd_2010`
+        if (attr(map_in, 'existing_col') != 'cd_2010') {
+            cli::cli_warn('Existing column is not {.val cd_2010}.')
+            attr(map_in, 'existing_col') <- 'cd_2010'
+            warns <- TRUE
+        }
+        cli::cli_progress_update()
+
+        if (warns) {
+            cli::cli_alert_warning('Updating {.cls redist_map} file.')
+            readr::write_rds(map_in, path_map, compress = 'xz')
+        }
+
+        # Plans checks `n = 3` ----
+        plans_in <- readr::read_rds(path_plans)
+
+        # correct dimension for plans matrix
+        if (ncol(get_plans_matrix(plans_in)) < 5001) { # allow for multiple `ref`? @cory thoughts, o.w. make !=
+            cli::cli_abort('{.cls redist_plans} file for {state} contains the wrong number of columns in the plans matrix.')
+        }
+        cli::cli_progress_update()
+
+        # plans has 5k sampled plans
+        n_samp <- plans_in %>% redist::subset_sampled() %>% dplyr::pull(.data$draw) %>% dplyr::n_distinct()
+        if (n_samp != 5000) {
+            cli::cli_abort('{.cls redist_plans} file contains the wrong number of sampled plans.')
+        }
+        cli::cli_progress_update()
+
+        # plans has the enacted plan
+        if (!any(redist::subset_ref(plans_in)$draw == 'cd_2010')) {
+            cli::cli_abort('{.cls redist_plans} file does not have {.val cd_2010} as a reference plan.')
+        }
+        cli::cli_progress_update()
+
+        # Stats checks `n = 3` ----
+        stats_in <- readr::read_csv(path_stats)
+        warns <- FALSE
+
+        # plans has no columns with .x suffix
+        if (any(endsWith(names(stats), '.x'))) {
+            # then fix!
+            cols_to_fix <- names(stats)[endsWith(names(stats), '.x')]
+            fixed <- stringr::str_sub(cols_to_fix, end = -3L)
+            # if (length(fixed) != length(cols_to_fix)) {
+            #     cli::cli_abort('{.val stats} file contains columns with `.x` but not corresponding columns.')
+            # }
+
+            for (col_i in seq_along(cols_to_fix)) {
+                if (fixed[col_i] %in% names(stats_in)) {
+                    stats_in <- stats_in %>%
+                        dplyr::mutate(
+                            {{fixed[col_i]}} := dplyr::coalesce({{fixed[col_i]}}, {{cols_to_fix[col_i]}})
+                        ) %>%
+                        dplyr::select(-dplyr::all_of(cols_to_fix[col_i]))
+                } else {
+                    stats_in <- stats_in %>%
+                        rename({{fixed[col_i]}} := {{cols_to_fix[col_i]}})
+                }
+            }
+            cli::cli_warn('{.val stats} file contains columns with `.x`.')
+            warns <- TRUE
+        }
+        cli::cli_progress_update()
+
+        # plans has no columns with .y suffix
+        if (any(endsWith(names(stats), '.y'))) {
+            # then fix!
+            cols_to_fix <- names(stats)[endsWith(names(stats), '.y')]
+            fixed <- stringr::str_sub(cols_to_fix, end = -3L)
+
+            for (col_i in seq_along(cols_to_fix)) {
+                if (fixed[col_i] %in% names(stats_in)) {
+                    stats_in <- stats_in %>%
+                        dplyr::mutate(
+                            {{fixed[col_i]}} := dplyr::coalesce({{fixed[col_i]}}, {{cols_to_fix[col_i]}})
+                        )
+                } else {
+                    stats_in <- stats_in %>%
+                        rename({{fixed[col_i]}} := {{cols_to_fix[col_i]}})
+                }
+            }
+            cli::cli_warn('{.val stats} file contains columns with `.y`.')
+            warns <- TRUE
+        }
+        cli::cli_progress_update()
+
+
+        # plans has no NAs
+        if (any(is.na(stats_in))) {
+            cli::cli_warn('{.val stats} file contains {.cls NA} values. Please verify that this is correct.')
+        }
+
+        if (warns) {
+            cli::cli_alert_warning('Updating {.val stats} file.')
+            readr::write_csv(stats_in, path_stats)
+        }
+
+        cli::cli_progress_done()
+    } # end year 2010 checks
+
     cli_process_start("Uploading {.pkg {slug}} to the dataverse")
     pub_dataverse(slug, path_map, path_plans, path_stats)
     cli_process_done()
