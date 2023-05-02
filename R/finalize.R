@@ -152,7 +152,7 @@ finalize_analysis = function(state, type = "cd", year = 2020, overwrite = TRUE) 
             cli::cli_progress_done()
         } # end year 2010 checks
     }) # end withr
-    if (utils::askYesNo('After reading the messages in the console, do you want to continue?')) {
+    if (utils::askYesNo('After reading any warnings in the console, do you want to continue?')) {
         cli_process_start("Uploading {.pkg {slug}} to the dataverse")
         pub_dataverse(slug, path_map, path_plans, path_stats)
         cli_process_done()
