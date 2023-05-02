@@ -152,12 +152,14 @@ finalize_analysis = function(state, type = "cd", year = 2020, overwrite = TRUE) 
             cli::cli_progress_done()
         } # end year 2010 checks
     }) # end withr
-    utils::askYesNo('After reading the messages in the console, do you want to continue?')
-    return('example success')
-    cli_process_start("Uploading {.pkg {slug}} to the dataverse")
-    pub_dataverse(slug, path_map, path_plans, path_stats)
-    cli_process_done()
-    cli_alert_info("Ask a maintainer to publish the dataverse updates.")
+    if (utils::askYesNo('After reading the messages in the console, do you want to continue?')) {
+        cli_process_start("Uploading {.pkg {slug}} to the dataverse")
+        pub_dataverse(slug, path_map, path_plans, path_stats)
+        cli_process_done()
+        cli_alert_info("Ask a maintainer to publish the dataverse updates.")
+    } else {
+        cli::cli_alert_info('Process manually aborted, please fix any problems and try again.')
+    }
 
     invisible(TRUE)
 }
