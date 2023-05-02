@@ -226,6 +226,11 @@ quality_control <- function(state, type = "cd", year = 2020, local = FALSE) {
     )
     utils::browseURL(wiki_url)
 
+    aar_url <- stringr::str_glue(
+        'https://redistricting.lls.edu/state/{state_name}/?cycle={year}&level=Congress'
+    )
+    utils::browseURL(aar_url)
+
     if (!local) {
         if (!requireNamespace("alarmdata", quietly = TRUE)) {
             cli::cli_abort('{.pkg alarmdata} required for running QC when {.arg local} is {.val FALSE}.')
