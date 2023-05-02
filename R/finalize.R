@@ -206,3 +206,29 @@ doc_render <- function(slug) {
     file.remove(path_doc)
     out
 }
+
+#' Quality Control for an analysis
+#'
+#' Assistant for running a manual quality control for an analysis.
+#' This function:
+#' - opens the wikipedia page for the state's congressional districts
+#' - creates a numbered map
+#'
+#' @param state the state abbreviation for the analysis, e.g. `WA`.
+#' @param type the type of districts: `cd`, `ssd`, or `shd`.
+#' @param year the analysis year
+#' @param local are the files saved on your computer. Default is `FALSE`.
+#'
+#' @returns nothing, called for side effects
+#' @export
+quality_control <- function(state, type = "cd", year = 2020) {
+
+    # there isn't a consistent figure name for the 2010/2020 map names, so just open the general page
+    state_name <- censable::match_name(state)
+    wiki_url <- stringr::str_glue(
+        'https://en.wikipedia.org/wiki/{state_name}%27s_congressional_districts'
+    )
+    utils::browseURL(wiki_url)
+
+
+}
