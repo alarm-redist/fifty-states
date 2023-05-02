@@ -208,6 +208,7 @@ doc_render <- function(slug) {
 #' Assistant for running a manual quality control for an analysis.
 #' This function:
 #' - opens the wikipedia page for the state's congressional districts
+#' - opens the All About Redistricting page for the state and decade's congressional plan
 #' - creates a numbered map
 #'
 #' @param state the state abbreviation for the analysis, e.g. `WA`.
@@ -227,7 +228,7 @@ quality_control <- function(state, type = "cd", year = 2020, local = FALSE) {
     utils::browseURL(wiki_url)
 
     aar_url <- stringr::str_glue(
-        'https://redistricting.lls.edu/state/{state_name}/?cycle={year}&level=Congress'
+        'https://redistricting.lls.edu/state/{tools::toTitleCase(state_name)}/?cycle={year}&level=Congress'
     )
     utils::browseURL(aar_url)
 
