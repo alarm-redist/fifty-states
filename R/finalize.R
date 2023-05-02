@@ -215,9 +215,9 @@ doc_render <- function(slug) {
 #' @param year the analysis year
 #' @param local are the files saved on your computer. Default is `FALSE`.
 #'
-#' @returns nothing, called for side effects
+#' @returns a ggplot of a numbered map
 #' @export
-quality_control <- function(state, type = "cd", year = 2020) {
+quality_control <- function(state, type = "cd", year = 2020, local = FALSE) {
 
     # there isn't a consistent figure name for the 2010/2020 map names, so just open the general page
     state_name <- censable::match_name(state)
@@ -226,5 +226,35 @@ quality_control <- function(state, type = "cd", year = 2020) {
     )
     utils::browseURL(wiki_url)
 
+    if (!local) {
+        if (!requireNamespace("alarmdata", quietly = TRUE)) {
+            cli::cli_abort('{.pkg alarmdata} required for running QC when {.arg local} is {.val FALSE}.')
+        }
+        #plans <- alarmdata::alarm_50state_plans(state = state, year = year)
+        map <- alarmdata::alarm_50state_map(state = state, year = year)
 
+    } else {
+        state <- stringr::str_to_upper(state)
+        year <- as.character(as.integer(year))
+        slug <- stringr::str_glue("{state}_{type}_{year}")
+        path_map <- stringr::str_glue("data-out/{state}_{year}/{slug}_map.rds")
+        map <- readr::read_rds(path_map)
+    }
+    p <- map %>%
+        dplyr::as_tibble() %>%
+        sf::st_as_sf() %>%
+        dplyr::group_by(dplyr::across(dplyr::all_of(paste0(type, '_', year)))) %>%
+        dplyr::summarise() %>%
+        ggplot2::ggplot(
+            ggplot2::aes(
+                label = stringr::str_pad(.data[[paste0(type, '_', year)]], side = 'left', width = 2, pad = '0'),
+                fill = as.character(.data[[paste0(type, '_', year)]])
+            )
+        ) +
+        ggplot2::geom_sf() +
+        ggplot2::geom_sf_text() +
+        ggplot2::labs(fill = 'district') +
+        ggplot2::theme_void()
+
+    p
 }
