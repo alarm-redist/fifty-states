@@ -247,8 +247,8 @@ quality_control <- function(state, type = "cd", year = 2020, local = FALSE) {
         dplyr::summarise() %>%
         ggplot2::ggplot(
             ggplot2::aes(
-                label = stringr::str_pad(.data[[paste0(type, '_', year)]], side = 'left', width = 2, pad = '0'),
-                fill = as.character(.data[[paste0(type, '_', year)]])
+                label = .data[[paste0(type, '_', year)]],
+                fill = stringr::str_pad(as.character(.data[[paste0(type, '_', year)]]), side = 'left', width = 2, pad = '0')
             )
         ) +
         ggplot2::geom_sf() +
