@@ -9,6 +9,7 @@
 #' @param overwrite should automatic revisions be made and saved to files
 #'
 #' @returns nothing
+#' @export
 finalize_analysis = function(state, type = "cd", year = 2020, overwrite = TRUE) {
     withr::with_options(list(warn = 1), {
 
@@ -130,11 +131,15 @@ finalize_analysis = function(state, type = "cd", year = 2020, overwrite = TRUE) 
                                                       "geometry", "pseudo_county")
             )
             exp_cols <- c("pop_overlap", "total_vap", "plan_dev", "comp_edge",
-                          "comp_polsby", map_cols, "county_splits", "muni_splits",
+                          "comp_polsby", map_cols,
                           "ndshare", "e_dvs", "pr_dem", "e_dem", "pbias", "egap")
             if (!all(exp_cols %in% names(stats_in))) {
                 cli::cli_abort("Missing the following column{?s} in {.cls redist_plans}:
                       {.arg {setdiff(exp_cols, names(stats_in))}}.")
+            }
+            if (!all(c("county_splits", "muni_splits") %in% names(stats_in))) {
+                cli::cli_warn("Missing the following column{?s} in {.cls redist_plans}:
+                      {.arg {setdiff(c('county_splits', 'muni_splits'), names(stats_in))}}.")
             }
             cli::cli_progress_update()
 
