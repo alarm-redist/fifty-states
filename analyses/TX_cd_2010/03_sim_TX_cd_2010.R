@@ -310,7 +310,7 @@ plans <- plans %>% filter(draw != "cd_2010")
 
 plans <- plans %>%
     mutate(district = as.numeric(district)) %>%
-    add_reference(ref_plan = as.numeric(map$cd_2010))
+    add_reference(ref_plan = as.numeric(map$cd_2010), "cd_2010")
 
 # thin sample
 plans_5k <- plans %>%
