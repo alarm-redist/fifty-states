@@ -10,7 +10,8 @@ map <- redist_map(ky_shp, pop_tol = 0.005,
 # make pseudo counties with default settings
 map <- map %>%
     mutate(pseudo_county = pick_county_muni(map, counties = county, munis = muni,
-        pop_muni = get_target(map)))
+        pop_muni = get_target(map)),
+        state = "KY")
 
 # Add an analysis name attribute
 attr(map, "analysis_name") <- "KY_2010"
