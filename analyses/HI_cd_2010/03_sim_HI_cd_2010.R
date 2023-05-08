@@ -29,7 +29,8 @@ plans <- redist_plans(
 
 plans <- plans %>%
     mutate(chain = rep(1:2, each = 5000), .after = draw) %>%
-    add_reference(ref_plan = map$cd_2010, "cd_2010")
+    add_reference(ref_plan = map$cd_2010, "cd_2010") %>%
+    match_numbers("cd_2010")
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")

@@ -15,6 +15,9 @@ plans <- redist_smc(map %>% mutate(state = "NH") %>% merge_by(mcd),
     counties = county) %>%
     pullback() %>%
     structure(prec_pop = map$pop) %>%
+    group_by(chain) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
+    ungroup() %>%
     match_numbers("cd_2010")
 
 cli_process_done()
