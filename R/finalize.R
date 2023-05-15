@@ -250,9 +250,21 @@ quality_control <- function(state, type = "cd", year = 2020, local = FALSE) {
     utils::browseURL(wiki_url)
 
     aar_url <- stringr::str_glue(
-        'https://redistricting.lls.edu/state/{tools::toTitleCase(state_name)}/?cycle={year}&level=Congress'
+        'https://redistricting.lls.edu/state/{stringr::str_replace(tools::toTitleCase(state_name), " ", "-")}/?cycle={year}&level=Congress'
     )
     utils::browseURL(aar_url)
+
+    if (!local) {
+        # also browse the github
+        file_3_url <- stringr::str_glue(
+            'https://github.com/alarm-redist/fifty-states/blob/main/analyses/{state}_cd_{year}/03_sim_{state}_cd_{year}.R'
+        )
+        utils::browseURL(file_3_url)
+        file_doc_url <- stringr::str_glue(
+            'https://github.com/alarm-redist/fifty-states/blob/main/analyses/{state}_cd_{year}/doc_{state}_cd_{year}.md'
+        )
+        utils::browseURL(file_doc_url)
+    }
 
     if (!local) {
         if (!requireNamespace("alarmdata", quietly = TRUE)) {
