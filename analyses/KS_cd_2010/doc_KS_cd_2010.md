@@ -1,7 +1,7 @@
 # 2010 Kansas Congressional Districts
 
 ## Redistricting requirements
-In Kansas, under the [Guidelines And Criteria For 2012 Kansas Congressional And Legislative Redistricting](http://www.kslegislature.org/li_2012/b2011_12/committees/misc/ctte_h_redist_1_20120109_01_other.pdf) districts must:
+In Kansas, under the [Guidelines And Criteria For 2012 Kansas Congressional And Legislative Redistricting](https://web.archive.org/web/20160128190356/http://www.kslegislature.org/li_2012/b2011_12/committees/misc/ctte_h_redist_1_20120109_01_other.pdf) districts must:
 
 1. be contiguous (5)
 1. have equal populations (2)
