@@ -1,5 +1,6 @@
 # Dataset Version 15
 - Thins extra plans out of UT CD 2020 plans (https://github.com/alarm-redist/fifty-states/issues/182)
+- Corrects the correction of GA, NE, and IN 2020 CD files to remove `.y` column.
 - Adds 2010 CD simulations and corresponding files
 - Adds additional authors to the dataset citation for their work on 2010 CD simulations
 
