@@ -115,7 +115,7 @@ finalize_analysis = function(state, type = "cd", year = 2020, overwrite = TRUE) 
             }
             # plans has no columns with .y suffix
             if (any(endsWith(names(stats_in), ".y"))) {
-                stats_in <- dplyr::rename_with(function(x) stringr::str_sub(x, 1, -3), dplyr::ends_with(".y"))
+                stats_in <- dplyr::rename_with(stats_in, function(x) stringr::str_sub(x, 1, -3), dplyr::ends_with(".y"))
                 cli::cli_warn("{.val stats} file contains columns with `.y`.")
                 warns <- TRUE
             }
