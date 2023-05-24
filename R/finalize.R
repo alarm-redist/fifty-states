@@ -236,11 +236,12 @@ doc_render <- function(slug) {
 #' @param state the state abbreviation for the analysis, e.g. `WA`.
 #' @param type the type of districts: `cd`, `ssd`, or `shd`.
 #' @param year the analysis year
-#' @param local are the files saved on your computer. Default is `FALSE`.
+#' @param make_valid should it run `sf::st_make_valid()` on the map? Default is `FALSE`.
+#' @param local are the files saved on your computer? Default is `FALSE`.
 #'
 #' @returns a ggplot of a numbered map
 #' @export
-quality_control <- function(state, type = "cd", year = 2020, local = FALSE) {
+quality_control <- function(state, type = "cd", year = 2020, make_valid = FALSE, local = FALSE) {
 
     # there isn't a consistent figure name for the 2010/2020 map names, so just open the general page
     state_name <- censable::match_name(state)
@@ -272,7 +273,6 @@ quality_control <- function(state, type = "cd", year = 2020, local = FALSE) {
         }
         #plans <- alarmdata::alarm_50state_plans(state = state, year = year)
         map <- alarmdata::alarm_50state_map(state = state, year = year)
-
     } else {
         state <- stringr::str_to_upper(state)
         year <- as.character(as.integer(year))
@@ -280,6 +280,7 @@ quality_control <- function(state, type = "cd", year = 2020, local = FALSE) {
         path_map <- stringr::str_glue("data-out/{state}_{year}/{slug}_map.rds")
         map <- readr::read_rds(path_map)
     }
+    if (make_valid) map <- sf::st_make_valid(map)
     p <- map %>%
         dplyr::as_tibble() %>%
         sf::st_as_sf() %>%
