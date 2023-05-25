@@ -1,7 +1,7 @@
 # 2010 Alabama Congressional Districts
 
 ## Redistricting requirements
-In Alabama, districts must:
+In Alabama, according to [Article IX of the Constitution Of Alabama 1901](http://alisondb.legislature.state.al.us/alison/codeofalabama/constitution/1901/constitution1901_toc.htm), districts must:
 
 1. be contiguous
 2. have equal populations
