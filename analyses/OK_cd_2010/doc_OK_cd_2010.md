@@ -19,4 +19,4 @@ No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
 We sample 10,000 districting plans for Oklahoma via two independent runs of 5,000 each.
-No special techniques were needed to produce the sample.
+To balance county and municipality splits, we create pseudocounties for use in the county constraint, which leads to fewer municipality splits than using a county constraint.
