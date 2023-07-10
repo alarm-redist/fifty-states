@@ -52,10 +52,9 @@ plans_south <- redist_smc(map_south,
     nsims = nsims_south,
     runs = 4L, ncores = 31L,
     n_steps = n_steps,
+    pop_temper = .02,
+    seq_alpha = .65,
     constraints = constraints,
-    pop_temper = .035,
-    seq_alpha = .4,
-    compactness = .95,
     verbose = T)
 
 plans_south <- plans_south %>%
@@ -175,7 +174,7 @@ constraints <- redist_constr(map) %>%
         tgts_group = c(0.55)
     )
 
-plans <- redist_smc(map, nsims = nsims, runs = 3L, ncores = 31L,
+plans <- redist_smc(map, nsims = nsims, runs = 2L, ncores = 31L,
     counties = pseudo_county,
     init_particles = prep_mat, verbose = T)
 
