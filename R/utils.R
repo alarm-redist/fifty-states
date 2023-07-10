@@ -71,6 +71,7 @@ join_vtd_shapefile <- function(data, year = 2020) {
                             sf::st_read(str_glue('{dirname(temp)}/tl_2010_{state_fp}{cty}_vtd10.shp'), quiet = TRUE) %>%
                                 dplyr::transmute(
                                     GEOID10 = str_c(str_sub(GEOID10, end = 5), str_pad_l0(str_sub(GEOID10, start = 6), 6)),
+                                    area_land = ALAND10, area_water = AWATER10,
                                     geometry = geometry
                                 )
                         })

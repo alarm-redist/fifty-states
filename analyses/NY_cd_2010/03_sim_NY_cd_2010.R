@@ -24,7 +24,7 @@ cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
 
 # Output the redist_map object. Do not edit this path.
-write_rds(plans, here("data-out/NY_2010/NY_cd_2010_plans.rds"), compress = "xz")
+write_rds(thinned_plans, here("data-out/NY_2010/NY_cd_2010_plans.rds"), compress = "xz")
 cli_process_done()
 
 # Compute summary statistics -----
@@ -34,6 +34,6 @@ plans <- add_summary_stats(plans, map)
 thinned_plans <- add_summary_stats(thinned_plans, map)
 
 # Output the summary statistics. Do not edit this path.
-save_summary_stats(plans, "data-out/NY_2010/NY_cd_2010_stats.csv")
+save_summary_stats(thinned_plans, "data-out/NY_2010/NY_cd_2010_stats.csv")
 
 cli_process_done()

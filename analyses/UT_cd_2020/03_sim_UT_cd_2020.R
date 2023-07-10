@@ -19,6 +19,11 @@ attr(plans, "prec_pop") <- map$pop
 
 plans <- match_numbers(plans, "cd_2020")
 
+plans <- plans %>%
+    group_by(chain) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
+    ungroup()
+
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
 
