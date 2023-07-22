@@ -1,4 +1,4 @@
-Package: fifty-states
+Package: fifty.states
 Title: Redistricting analysis for all 50 U.S. states
 Version: 0.0.0.9000
 Authors@R: c(
