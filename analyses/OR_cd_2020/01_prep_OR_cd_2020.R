@@ -48,7 +48,7 @@ if (!file.exists(here(shp_path))) {
     geom_d <- tigris::blocks("OR", year = 2020) %>%
         select(GEOID20 = GEOID20, area_land = ALAND20, area_water = AWATER20, geometry)
     # add municipalities
-    baf <- PL94171::pl_get_baf(state, cache_to = here(str_glue("data-raw/OR/or_baf.rds")))
+    baf <- PL94171::pl_get_baf("OR", cache_to = here(str_glue("data-raw/OR/or_baf.rds")))
     d_muni <- baf$INCPLACE_CDP %>%
         transmute(GEOID20 = BLOCKID,
             muni =  if_else(is.na(PLACEFP), NA_character_,
