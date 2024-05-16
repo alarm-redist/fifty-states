@@ -22,14 +22,14 @@ path_data <- "data-raw/OR/or_2020_block.csv"
 download(url, here(path_data))
 
 # updated link: manual download from https://geo.maps.arcgis.com/home/item.html?id=b43a1bf5997d4863a45023bfe7a047b1
-url <- "https://oregon-redistricting.esriemcs.com/portal/sharing/rest/content/items/4ebcfc87b06c4e79b65685135329513c/data"
-path_enacted <- "data-raw/OR/or_enacted.zip"
-download(url, here(path_enacted))
-zip_files <- unzip(here(path_enacted), list = TRUE)
-enacted_baf <- zip_files$Name[str_detect(zip_files$Name, "\\.txt$")]
-unzip(here(path_enacted), files = enacted_baf, exdir = dirname(here(path_enacted)))
-path_baf <- "data-raw/OR/or_enacted_baf.txt"
-file.rename(here(dirname(path_enacted), enacted_baf), here(path_baf))
+# url <- "https://oregon-redistricting.esriemcs.com/portal/sharing/rest/content/items/4ebcfc87b06c4e79b65685135329513c/data"
+# path_enacted <- "data-raw/OR/or_enacted.zip"
+# download(url, here(path_enacted))
+# zip_files <- unzip(here(path_enacted), list = TRUE)
+# enacted_baf <- zip_files$Name[str_detect(zip_files$Name, "\\.txt$")]
+# unzip(here(path_enacted), files = enacted_baf, exdir = dirname(here(path_enacted)))
+path_baf <- "data-raw/OR/Congress SB 881A (Block Assignment File).txt"
+# file.rename(here(dirname(path_enacted), enacted_baf), here(path_baf))
 
 cli_process_done()
 
@@ -61,11 +61,11 @@ if (!file.exists(here(shp_path))) {
         sf::st_as_sf() %>%
         st_transform(EPSG$OR) %>%
         rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID")) %>%
-        mutate(GEOID = str_c(str_sub(GEOID, 1, 11), "-", cd_2020)) %>% # trim to tracts, but allow splits
+        mutate(GEOID = str_sub(GEOID, 1, 11)) %>% # trim to tracts
         group_by(GEOID) %>%
         summarize(state = state[1], county = county[1],
-            cd_2020 = cd_2020[1], muni = muni[1],
-            across(pop:ndv, sum, na.rm = TRUE),
+            cd_2020 = Mode(cd_2020), muni = muni[1],
+            across(pop:ndv, function(x) sum(x, na.rm = TRUE)),
             across(area_land:area_water, sum),
             is_coverage = TRUE) %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
@@ -78,7 +78,7 @@ if (!file.exists(here(shp_path))) {
         .before = cd_2020)
 
     # Create perimeters in case shapes are simplified
-    redist.prep.polsbypopper(shp = or_shp,
+    redistmetrics::prep_perims(shp = or_shp,
         perim_path = here(perim_path)) %>%
         invisible()
 
