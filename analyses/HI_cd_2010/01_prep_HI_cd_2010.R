@@ -46,7 +46,7 @@ if (!file.exists(here(shp_path))) {
         left_join(d_muni, by = "GEOID") %>%
         left_join(d_cd, by = "GEOID") %>%
         left_join(read_baf_cd113("HI") %>% rename(GEOID = BLOCKID), by = "GEOID") %>%
-        #left_join(d_vtd, by = "GEOID") %>%
+        # left_join(d_vtd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_2000, cd_2010, .after = county)
 
