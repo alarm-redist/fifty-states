@@ -16,7 +16,7 @@ plans_honolulu <- redist_smc(
 )
 
 plans <- matrix(data = 0, nrow = nrow(map), ncol = 5001)
-plans[map$tract %in% map_honolulu$tract, ] <- get_plans_matrix(plans_honolulu)
+plans[map$vtd %in% map_honolulu$vtd, ] <- get_plans_matrix(plans_honolulu)
 plans[plans == 0] <- 2
 
 plans <- redist_plans(
