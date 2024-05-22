@@ -8,12 +8,15 @@
 #' @export
 tally_var <- function(map, pop, .data = redist:::cur_plans()) {
     redist:::check_tidy_types(map, .data)
-    if (length(unique(diff(as.integer(.data$district)))) > 2)
+    if (length(unique(diff(as.integer(.data$district)))) > 2) {
         warning("Districts not sorted in ascending order; output may be incorrect.")
+    }
     idxs <- unique(as.integer(.data$draw))
     pop <- rlang::eval_tidy(rlang::enquo(pop), map)
-    as.numeric(redist:::pop_tally(get_plans_matrix(.data)[, idxs, drop = FALSE],
-        pop, attr(map, "ndists")))
+    as.numeric(redist:::pop_tally(
+        get_plans_matrix(.data)[, idxs, drop = FALSE],
+        pop, attr(map, "ndists")
+    ))
 }
 
 #' Add summary statistics to sampled plans
@@ -32,73 +35,90 @@ add_summary_stats <- function(plans, map, ...) {
         state <- map$state[1]
         perim_df <- read_rds(perim_path)
     } else {
-        if (requireNamespace('redistmetrics', quietly = TRUE)) {
+        if (requireNamespace("redistmetrics", quietly = TRUE)) {
             perim_df <- redistmetrics::prep_perims(map, perim_path = perim_path)
         } else {
             perim_df <- redist.prep.polsbypopper(map, perim_path = perim_path)
         }
     }
     plans <- plans %>%
-        mutate(total_vap = tally_var(map, vap),
-            plan_dev =  plan_parity(map),
-            comp_edge = distr_compactness(map),
-            comp_polsby = distr_compactness(map,
-                                            measure = "PolsbyPopper",
-                                            perim_df = perim_df),
-            ndv = tally_var(map, ndv),
-            nrv = tally_var(map, nrv),
-            ndshare = ndv / (ndv + nrv),
-            ...)
+        mutate(
+            total_vap = redist::tally_var(map, .data$vap),
+            plan_dev = redist::plan_parity(map),
+            comp_edge = redistmetrics::comp_frac_kept(plans = redist::pl(), map),
+            comp_polsby = redistmetrics::comp_polsby(
+                plans = redist::pl(), map,
+                perim_df = perim_df
+            ),
+            ndv = redist::tally_var(map, .data$ndv),
+            nrv = redist::tally_var(map, .data$nrv),
+            ndshare = .data$ndv / (.data$ndv + .data$nrv),
+            ...
+        )
 
-    tally_cols <- names(map)[c(tidyselect::eval_select(starts_with("pop_"), map),
-                              tidyselect::eval_select(starts_with("vap_"), map),
-                              tidyselect::eval_select(matches("_(dem|rep)_"), map),
-                              tidyselect::eval_select(matches("^a[dr]v_"), map))]
+    tally_cols <- names(map)[c(
+        tidyselect::eval_select(starts_with("pop_"), map),
+        tidyselect::eval_select(starts_with("vap_"), map),
+        tidyselect::eval_select(matches("_(dem|rep)_"), map),
+        tidyselect::eval_select(matches("^a[dr]v_"), map)
+    )]
     for (col in tally_cols) {
         plans <- mutate(plans, {{ col }} := tally_var(map, map[[col]]), .before = ndv)
     }
 
-    elecs <- select(as_tibble(map), contains("_dem_")) %>%
+    elecs <- dplyr::select(dplyr::as_tibble(map), dplyr::contains("_dem_")) %>%
         names() %>%
-        str_sub(1, 6) %>%
+        stringr::str_sub(1, 6) %>%
         unique()
 
-    elect_tb <- purrr::map_dfr(elecs, function(el) {
-        vote_d = select(as_tibble(map),
-                        starts_with(paste0(el, "_dem_")),
-                        starts_with(paste0(el, "_rep_")))
-        if (ncol(vote_d) != 2) return(tibble())
-        dvote <- pull(vote_d, 1)
-        rvote <- pull(vote_d, 2)
+    elect_tb <- lapply(elecs, function(el) {
+        vote_d <- dplyr::select(
+            dplyr::as_tibble(map),
+            dplyr::starts_with(paste0(el, "_dem_")),
+            dplyr::starts_with(paste0(el, "_rep_"))
+        )
+        if (ncol(vote_d) != 2) {
+            return(dplyr::tibble())
+        }
+        dvote <- dplyr::pull(vote_d, 1)
+        rvote <- dplyr::pull(vote_d, 2)
 
         plans %>%
-            mutate(dem = group_frac(map, dvote, dvote + rvote),
-                   egap = partisan_metrics(map, "EffGap", rvote, dvote),
-                   pbias = partisan_metrics(map, "Bias", rvote, dvote)) %>%
-            as_tibble() %>%
-            group_by(draw) %>%
-            transmute(draw = draw,
-                      district = district,
-                      e_dvs = dem,
-                      pr_dem = dem > 0.5,
-                      e_dem = sum(dem > 0.5, na.rm=T),
-                      pbias = pbias[1],
-                      egap = egap[1])
-    })
+            dplyr::mutate(
+                dem = redist::group_frac(map, dvote, dvote + rvote),
+                egap = redistmetrics::part_egap(plans = redist::pl(), map, rvote, dvote),
+                pbias = redistmetrics::part_bias(plans = redist::pl(), map, rvote, dvote)
+            ) %>%
+            dplyr::as_tibble() %>%
+            dplyr::group_by(.data$draw) %>%
+            dplyr::transmute(
+                draw = .data$draw,
+                district = .data$district,
+                e_dvs = .data$dem,
+                pr_dem = .data$dem > 0.5,
+                e_dem = sum(.data$dem > 0.5, na.rm = TRUE),
+                pbias = .data$pbias[1],
+                egap = .data$egap[1]
+            )
+    }) %>%
+        purrr::list_rbind()
 
     elect_tb <- elect_tb %>%
-        group_by(draw, district) %>%
-        summarize(across(everything(), mean))
-    plans <- left_join(plans, elect_tb, by = c("draw", "district"))
+        dplyr::group_by(.data$draw, .data$district) %>%
+        dplyr::summarize(dplyr::across(dplyr::everything(), mean))
+    plans <- dplyr::left_join(plans, elect_tb, by = c("draw", "district"))
 
-    split_cols <- names(map)[tidyselect::eval_select(any_of(c("county", "muni")), map)]
+    split_cols <- names(map)[tidyselect::eval_select(tidyselect::any_of(c("county", "muni")), map)]
     for (col in split_cols) {
         if (col == "county") {
-            plans <- mutate(plans, county_splits = county_splits(map, county), .before = ndv)
+            plans <- plans %>%
+                dplyr::mutate(county_splits = redistmetrics::splits_admin(plans = redist::pl(), map, .data$county), .before = "ndv")
         } else if (col == "muni") {
-            plans <- mutate(plans, muni_splits = muni_splits(map, muni), .before = ndv)
+            plans <- plans %>%
+                dplyr::mutate(muni_splits = redistmetrics::splits_sub_admin(plans = redist::pl(), map, .data$muni), .before = "ndv")
         } else {
-            plans <- mutate(plans, "{col}_splits" := county_splits(map, map[[col]]), .before = ndv)
+            plans <- plans %>%
+                dplyr::mutate("{col}_splits" := redistmetrics::splits_admin(plans = redist::pl(), map, map[[col]]), .before = "ndv")
         }
     }
 
