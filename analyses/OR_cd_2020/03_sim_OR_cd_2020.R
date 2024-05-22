@@ -35,5 +35,5 @@ if (interactive()) {
     library(ggplot2)
     library(patchwork)
 
-    plot(map, adj = T, centroid = F)
+    plot(map, adj = TRUE, centroid = FALSE)
 }

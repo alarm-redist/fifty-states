@@ -21,7 +21,7 @@ Data for Oregon comes from the ALARM Project's [2020 Redistricting Data Files](h
 
 ## Pre-processing Notes
 Oregon does not submit precinct boundaries to the Census Bureau.
-The base shapefile consists of tracts, but where tracts are split by the enacted congressional districts, we create separate sub-tracts.
+The base shapefile consists of tracts.
 As described above, counties not linked by a state or federal highway were manually disconnected.
 The full list of these counties can be found in the `01_prep_OR_cd_2020.R` file.
 
