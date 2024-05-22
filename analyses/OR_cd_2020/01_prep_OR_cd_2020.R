@@ -21,15 +21,11 @@ url <- "https://raw.githubusercontent.com/alarm-redist/census-2020/main/census-v
 path_data <- "data-raw/OR/or_2020_block.csv"
 download(url, here(path_data))
 
-# updated link: manual download from https://geo.maps.arcgis.com/home/item.html?id=b43a1bf5997d4863a45023bfe7a047b1
-# url <- "https://oregon-redistricting.esriemcs.com/portal/sharing/rest/content/items/4ebcfc87b06c4e79b65685135329513c/data"
-# path_enacted <- "data-raw/OR/or_enacted.zip"
-# download(url, here(path_enacted))
-# zip_files <- unzip(here(path_enacted), list = TRUE)
-# enacted_baf <- zip_files$Name[str_detect(zip_files$Name, "\\.txt$")]
-# unzip(here(path_enacted), files = enacted_baf, exdir = dirname(here(path_enacted)))
+# Manually download the zip file from
+# https://geo.maps.arcgis.com/home/item.html?id=b43a1bf5997d4863a45023bfe7a047b1
+# Extract to 'data-raw/OR/'. Congress block assignment file is:
+# "Congress SB 881A (Block Assignment File).txt"
 path_baf <- "data-raw/OR/Congress SB 881A (Block Assignment File).txt"
-# file.rename(here(dirname(path_enacted), enacted_baf), here(path_baf))
 
 cli_process_done()
 
