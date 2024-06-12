@@ -86,8 +86,8 @@ add_summary_stats <- function(plans, map, ...) {
         plans %>%
             dplyr::mutate(
                 dem = redist::group_frac(map, dvote, dvote + rvote),
-                egap = redistmetrics::part_egap(plans = redist::pl(), map, rvote, dvote),
-                pbias = redistmetrics::part_bias(plans = redist::pl(), map, rvote, dvote)
+                egap = redistmetrics::part_egap(plans = redist::pl(), shp = map, rvote = rvote, dvote = dvote),
+                pbias = redistmetrics::part_bias(plans = redist::pl(), shp = map, rvote = rvote, dvote = dvote)
             ) %>%
             dplyr::as_tibble() %>%
             dplyr::group_by(.data$draw) %>%
