@@ -52,21 +52,18 @@ if (!file.exists(here(shp_path))) {
 
     # group from block-level to tract-level
     hi_shp <- hi_shp %>%
-        mutate(
-            vtd = paste0(
-                str_sub(GEOID, 1, 2),
-                COUNTYFP,
-                str_pad(vtd, 6, side = "left", pad = "0")
-            )
-        ) %>%
-        group_by(vtd) %>%
+        censable::breakdown_geoid() %>%
+        group_by(state, county, tract) %>%
         summarize(
             cd_2000 = Mode(cd_2000),
             cd_2010 = Mode(cd_2010),
             muni = Mode(muni),
-            state = censable::match_abb(unique(state)),
-            county = unique(county),
-            across(where(is.numeric), sum)
+            across(where(is.numeric), sum),
+            .groups = "drop"
+        ) %>%
+        mutate(
+            GEOID = str_c(state, county, tract),
+            state = censable::match_abb(unique(state))
         )
 
     # Create perimeters in case shapes are simplified
@@ -88,16 +85,39 @@ if (!file.exists(here(shp_path))) {
 
     island_codes <- tribble(
         ~v1, ~v2,
-        "15001ZZZZZZ", "15003ZZZZZZ",
-        "15007ZZZZZZ", "15003ZZZZZZ",
-        "15009ZZZZZZ", "15003ZZZZZZ"
+        "15001021800", "15009030100",
+        "15009030303", "15003980000",
+        "15009031503", "15009031601",
+        "15009031601", "15009031700",
+        "15009031801", "15003000110",
+        "15003990001", "15007040500",
+        "15007040900", "15007041200",
+        "15003990001", "15003981200"
     )
 
-    island_codes$v1 <- match(island_codes$v1, hi_shp$vtd)
-    island_codes$v2 <- match(island_codes$v2, hi_shp$vtd)
+    island_codes$v1 <- match(island_codes$v1, hi_shp$GEOID)
+    island_codes$v2 <- match(island_codes$v2, hi_shp$GEOID)
 
     hi_shp$adj <- hi_shp$adj %>%
         add_edge(island_codes$v1, island_codes$v2, zero = TRUE)
+
+    # handle the Honolulu boundary tract
+
+    hi_shp$adj <- hi_shp$adj |>
+        remove_edge(v1 = rep(294L, length(hi_shp$adj[[294]])), hi_shp$adj[[294]] + 1L)
+
+    honolulu_boundary <- tribble(
+        ~v1, ~v2,
+        "15003990001", "15007040500",
+        "15003990001", "15003981200",
+        "15003990001", "15003010303"
+    )
+
+    honolulu_boundary$v1 <- match(honolulu_boundary$v1, hi_shp$GEOID)
+    honolulu_boundary$v2 <- match(honolulu_boundary$v2, hi_shp$GEOID)
+
+    hi_shp$adj <- hi_shp$adj %>%
+        add_edge(honolulu_boundary$v1, honolulu_boundary$v2, zero = TRUE)
 
     hi_shp <- hi_shp %>%
         fix_geo_assignment(muni)
