@@ -1,7 +1,7 @@
 # 2010 Hawaii Congressional Districts
 
 ## Redistricting requirements
-Per Hawaii Revised Statutes 25-2(b)(1)-(4) and (6), [as in force for the 2010 cycle](https://www.ncsl.org/Portals/1/Documents/Redistricting/Redistricting_2010.pdf), districts must:
+Per Hawaii Revised Statutes 25-2(b)(1)-(4) and (6), [as in force for the 2010 cycle](https://law.justia.com/codes/hawaii/2011/division1/title3/chapter25/25-2/), districts must:
 
 1\. not unduly favor any person or party;
 
