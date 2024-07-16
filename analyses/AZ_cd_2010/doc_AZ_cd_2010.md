@@ -1,7 +1,7 @@
 # 2010 Arizona Congressional Districts
 
 ## Redistricting requirements
-In Arizona, districts must:
+In Arizona, under [Ariz. Const. art. IV, pt. 2, § 1](https://www.azleg.gov/viewDocument/?docName=https://www.azleg.gov/const/4/1.p2.htm), districts must:
 
 1. be contiguous
 1. have equal populations
