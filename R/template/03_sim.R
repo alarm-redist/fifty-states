@@ -18,9 +18,14 @@ cli_process_start("Running simulations for {.pkg ``SLUG``}")
 #  if that's the problem.
 #  - Ask for help!
 set.seed(``YEAR``)
-plans <- redist_smc(map, nsims = 5e3, counties = county)
+plans <- redist_smc(map, nsims = 5e3, runs = 2, counties = county)
 # IF CORES OR OTHER UNITS HAVE BEEN MERGED:
 # make sure to call `pullback()` on this plans object!
+
+plans <- plans %>%
+    group_by(chain) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
+    ungroup()
 plans <- match_numbers(plans, "cd_``YEAR``")
 
 cli_process_done()
@@ -48,4 +53,6 @@ if (interactive()) {
     library(ggplot2)
     library(patchwork)
 
+    validate_analysis(plans, map)
+    summary(plans)
 }
