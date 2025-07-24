@@ -24,6 +24,11 @@ init_analysis <- function(state, type = "cd", year = 2020, overwrite = FALSE) {
     cli_alert_success("Creating {.file {path_raw}}")
 
     templates <- Sys.glob(here("R/template/*.R"))
+    if (year == 2000) {
+        templates <- templates[!stringr::str_detect(templates, 'prep.R')]
+    } else {
+        templates <- templates[!stringr::str_detect(templates, 'prep_2000.R')]
+    }
 
     proc_template <- function(path) {
         new_basename <- str_replace(basename(path), ".R", str_c("_", slug, ".R"))
