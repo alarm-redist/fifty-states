@@ -101,6 +101,7 @@ join_vtd_shapefile <- function(data, year = 2020) {
     )), geom_d, by = "GEOID10") %>%
       sf::st_as_sf()
   } else {
+    left_join(data,
     tinytiger::tt_voting_districts(
       state = censable::match_fips(data$state[1]),
       year = year
@@ -108,6 +109,8 @@ join_vtd_shapefile <- function(data, year = 2020) {
       mutate(
         GEOID = paste0(STATEFP00, COUNTYFP00, str_pad(VTDST00, 6, "left", "0"))
       )
+    ) |>
+      sf::st_as_sf()
   }
 }
 
