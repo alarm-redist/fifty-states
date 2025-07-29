@@ -115,8 +115,14 @@ add_summary_stats <- function(plans, map, ...) {
             plans <- plans %>%
                 dplyr::mutate(county_splits = redistmetrics::splits_admin(plans = redist::pl(), map, .data$county), .before = "ndv")
         } else if (col == "muni") {
+          if (all(is.na(map$muni))) {
+            # then by definition
             plans <- plans %>%
-                dplyr::mutate(muni_splits = redistmetrics::splits_sub_admin(plans = redist::pl(), map, .data$muni), .before = "ndv")
+              dplyr::mutate(muni_splits = 0L, .before = "ndv")
+          } else {
+            plans <- plans %>%
+              dplyr::mutate(muni_splits = redistmetrics::splits_sub_admin(plans = redist::pl(), map, .data$muni), .before = "ndv")
+          }
         } else {
             plans <- plans %>%
                 dplyr::mutate("{col}_splits" := redistmetrics::splits_admin(plans = redist::pl(), map, map[[col]]), .before = "ndv")
