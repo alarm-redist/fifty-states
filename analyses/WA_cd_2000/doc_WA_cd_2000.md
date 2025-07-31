@@ -13,7 +13,7 @@ In Washington, districts must:
 The above information is largely sourced from the [Washington State Redistricting Commission's Report in 2000](https://app.leg.wa.gov/oralhistory/redistricting2/2000-beyond/2000-Excerpt_from_WA_State_Redistricting_Commission-7a-2.pdf).
 
 ### Algorithmic Constraints
-We enforce a maximum population deviation of X.X%.
+We enforce a maximum population deviation of 0.05%.
 
 ## Data Sources
 Data for Washington comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
