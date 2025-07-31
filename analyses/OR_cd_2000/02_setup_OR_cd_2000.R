@@ -4,14 +4,9 @@
 ###############################################################################
 cli_process_start("Creating {.cls redist_map} object for {.pkg OR_cd_2000}")
 
-# TODO any pre-computation (usually not necessary)
-
 map <- redist_map(or_shp, pop_tol = 0.005,
     existing_plan = cd_2000, adj = or_shp$adj)
 
-# TODO any filtering, cores, merging, etc.
-
-# TODO remove if not necessary. Adjust pop_muni as needed to balance county/muni splits
 # make pseudo counties with default settings
 map <- map %>%
     mutate(pseudo_county = pick_county_muni(map, counties = county, munis = muni,

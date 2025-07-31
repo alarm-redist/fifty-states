@@ -48,7 +48,6 @@ save_summary_stats(plans, "data-out/OR_2000/OR_cd_2000_stats.csv")
 cli_process_done()
 
 # Extra validation plots for custom constraints -----
-# TODO remove this section if no custom constraints
 if (interactive()) {
     library(ggplot2)
     library(patchwork)
@@ -62,7 +61,7 @@ if (interactive()) {
                            color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, "#3D77BB", "#B25D4C"),
                            size = 0.5, alpha = 0.5) +
       scale_y_continuous("Percent Black by VAP") +
-      labs(title = "Tennessee Proposed Plan versus Simulations") +
+      labs(title = "Oregon Proposed Plan versus Simulations") +
       scale_color_manual(values = c(cd_2020_prop = "black")) +
       theme_bw()
 
@@ -72,7 +71,7 @@ if (interactive()) {
                            color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, "#3D77BB", "#B25D4C"),
                            size = 0.5, alpha = 0.5) +
       scale_y_continuous("Minority Percentage by VAP") +
-      labs(title = "Tennessee Proposed Plan versus Simulations") +
+      labs(title = "Oregon Proposed Plan versus Simulations") +
       scale_color_manual(values = c(cd_2020_prop = "black")) +
       theme_bw()
 
@@ -124,8 +123,8 @@ if (interactive()) {
       mutate(majmin = if_else(total_vap/2 > vap_white, 1, 0))
     majminavgs <- avg_by_prec(plans, majmin, draws = NA)
     redist.plot.map(
-      sc_shp,
-      adj = redist.adjacency(sc_shp, plan),
+      or_shp,
+      adj = redist.adjacency(or_shp, plan),
       plan = NULL,
       fill = majminavgs,
       fill_label = "",
@@ -138,8 +137,8 @@ if (interactive()) {
       mutate(bvappct = vap_black/total_vap)
     blackavgs <- avg_by_prec(plans, bvappct, draws = NA)
     redist.plot.map(
-      sc_shp,
-      adj = redist.adjacency(sc_shp, plan),
+      or_shp,
+      adj = redist.adjacency(or_shp, plan),
       plan = NULL,
       fill = blackavgs,
       fill_label = "",
