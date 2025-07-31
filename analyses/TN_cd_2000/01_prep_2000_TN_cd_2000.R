@@ -59,8 +59,8 @@ if (!file.exists(here(shp_path))) {
 
     # TODO any custom adjacency graph edits here
 
-    tn_shp <- tn_shp %>%
-        fix_geo_assignment(muni)
+    #tn_shp <- tn_shp %>%
+    #    fix_geo_assignment(muni)
 
     write_rds(tn_shp, here(shp_path), compress = "gz")
     cli_process_done()
