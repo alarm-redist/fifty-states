@@ -30,7 +30,6 @@ if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong ``STATE``} shapefile")
     # read in redistricting data
     ``state``_shp <- read_csv(here(path_data), col_types = cols(GEOID = "c")) %>%
-        # TODO: If the state is not at the VTD-level, swap in a `tinytiger::tt_*` function
         join_vtd_shapefile(year = ``YEAR``) %>%
         st_transform(EPSG$``STATE``)
 
