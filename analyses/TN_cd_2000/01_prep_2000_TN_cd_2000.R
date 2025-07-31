@@ -18,7 +18,7 @@ suppressMessages({
 # Download necessary files for analysis -----
 cli_process_start("Downloading files for {.pkg TN_cd_2000}")
 
-path_data <- download_redistricting_file("TN", "data-raw/TN", year = 2000)
+path_data <- download_redistricting_file("TN", "data-raw/TN", year = 2000, overwrite = TRUE)
 
 cli_process_done()
 
@@ -59,8 +59,8 @@ if (!file.exists(here(shp_path))) {
 
     # TODO any custom adjacency graph edits here
 
-    # tn_shp <- tn_shp %>%
-    #    fix_geo_assignment(muni)
+    tn_shp <- tn_shp %>%
+        fix_geo_assignment(muni)
 
     write_rds(tn_shp, here(shp_path), compress = "gz")
     cli_process_done()
