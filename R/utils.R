@@ -100,17 +100,35 @@ join_vtd_shapefile <- function(data, year = 2020) {
       str_pad_l0(state, 2), str_pad_l0(county, 3), str_pad_l0(vtd, 6)
     )), geom_d, by = "GEOID10") %>%
       sf::st_as_sf()
-  } else {
-    left_join(data,
-    tinytiger::tt_voting_districts(
-      state = censable::match_fips(data$state[1]),
-      year = year
-    ) |>
-      mutate(
-        GEOID = paste0(STATEFP00, COUNTYFP00, str_pad(VTDST00, 6, "left", "0"))
-      )
-    ) |>
-      sf::st_as_sf()
+  } else if (year == 2000) {
+    tract_states <- c(
+      'AK', 'AZ', 'CA', 'CO', 'FL', 'KY', 'MT', 'ND', 'OH', 'OR', 'SD', 'WI'
+    )
+
+    if (censable::match_abb(data$state[1]) %in% tract_states) {
+      data |>
+        left_join(
+          tinytiger::tt_tracts(
+            state = censable::match_fips(data$state[1]),
+            year = year
+          ) |>
+            rename(GEOID = CTIDFP00)
+        ) |>
+        sf::st_as_sf()
+    } else {
+      data |>
+        left_join(
+          tinytiger::tt_voting_districts(
+            state = censable::match_fips(data$state[1]),
+            year = year
+          ) |>
+            mutate(
+              GEOID = paste0(STATEFP00, COUNTYFP00, str_pad(VTDST00, 6, "left", "0"))
+            )
+        ) |>
+        sf::st_as_sf()
+    }
+
   }
 }
 
