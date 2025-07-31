@@ -26,7 +26,7 @@ path_enacted <- "data-raw/MS/MS_enacted.zip"
 download(url, here(path_enacted))
 unzip(here(path_enacted), exdir = here(dirname(path_enacted), "MS_enacted"))
 file.remove(path_enacted)
-path_enacted <- "data-raw/MS/MS_enacted/Cong_2011.shp" # TODO use actual SHP
+path_enacted <- "data-raw/MS/MS_enacted/Cong_2011.shp" 
 
 # If large, consider checking to see if these files exist before downloading
 

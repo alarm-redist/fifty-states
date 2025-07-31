@@ -25,7 +25,7 @@ path_enacted <- "data-raw/VA/VA_enacted.zip"
 download(url, here(path_enacted))
 unzip(here(path_enacted), exdir = here(dirname(path_enacted), "VA_enacted"))
 file.remove(path_enacted)
-path_enacted <- "data-raw/VA/VA_enacted/HB251_Bell.shp" # TODO use actual SHP
+path_enacted <- "data-raw/VA/VA_enacted/HB251_Bell.shp" 
 
 cli_process_done()
 
