@@ -18,7 +18,7 @@ suppressMessages({
 # Download necessary files for analysis -----
 cli_process_start("Downloading files for {.pkg WA_cd_2000}")
 
-path_data <- download_redistricting_file("WA", "data-raw/WA", year = 2000)
+path_data <- download_redistricting_file("WA", "data-raw/WA", year = 2000, overwrite = TRUE)
 
 cli_process_done()
 
@@ -55,8 +55,8 @@ if (!file.exists(here(shp_path))) {
 
     # TODO any custom adjacency graph edits here
 
-    # wa_shp <- wa_shp %>%
-    #     fix_geo_assignment(muni)
+    wa_shp <- wa_shp %>%
+        fix_geo_assignment(muni)
 
     write_rds(wa_shp, here(shp_path), compress = "gz")
     cli_process_done()
