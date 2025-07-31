@@ -7,7 +7,7 @@ In ``Indiana `, there are no state law requirements for congressional districts.
 We enforce a maximum population deviation of 0.5%.
 
 ## Data Sources
-Data for ``STATE NAME`` comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
+Data for ``Indiana`` comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
 
 ## Pre-processing Notes
 No manual pre-processing decisions were necessary.
