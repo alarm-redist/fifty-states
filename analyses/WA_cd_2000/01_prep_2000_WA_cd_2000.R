@@ -53,8 +53,6 @@ if (!file.exists(here(shp_path))) {
     # create adjacency graph
     wa_shp$adj <- redist.adjacency(wa_shp)
 
-    # TODO any custom adjacency graph edits here
-
     wa_shp <- wa_shp %>%
         fix_geo_assignment(muni)
 

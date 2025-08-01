@@ -16,7 +16,7 @@ The above information is largely sourced from the [Washington State Redistrictin
 We enforce a maximum population deviation of 0.05%.
 
 ## Data Sources
-Data for Washington comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
+Data for Washington comes from the ALARM Project's [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
 
 ## Pre-processing Notes
 No manual pre-processing decisions were necessary.
