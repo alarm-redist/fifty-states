@@ -7,6 +7,9 @@ In Alabama, according to [NCSL Redistricting Law 2000](https://web.archive.org/w
 1. have equal populations
 1. be geographically compact
 1. preserve county and municipality boundaries as much as possible
+1. meet the provisions of the Voting Rights Act, including sections 2 and 5
+1. prefer counties to construct districts, and default to district boundaries and then census block geographies
+1. preserve cores of existing districts
 
 
 ### Algorithmic Constraints
