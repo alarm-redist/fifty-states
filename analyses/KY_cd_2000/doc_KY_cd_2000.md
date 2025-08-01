@@ -7,6 +7,9 @@ In Kentucky, according to [NCSL Redistricting Law 2000](https://web.archive.org/
 1. have equal populations
 1. be geographically compact
 1. preserve county and municipality boundaries as much as possible
+1. meet the requirements of Section 2 of the Voting Rights Act
+1. preserve communities of interest
+1. preserve cores of existing districts
 
 
 ### Algorithmic Constraints
