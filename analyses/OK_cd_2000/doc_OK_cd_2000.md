@@ -1,7 +1,7 @@
 # 2000 Oklahoma Congressional Districts
 
 ## Redistricting requirements
-In ``Oklahoma `, there are no state law requirements for congressional districts.
+In Oklahoma, there are no state law requirements for congressional districts.
 
 ### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
