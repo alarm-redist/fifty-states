@@ -1,7 +1,7 @@
 # 2000 Indiana Congressional Districts
 
 ## Redistricting requirements
-In ``Indiana `, there are no state law requirements for congressional districts.
+In Indiana, according to [NCSL Redistricting Law 2000](https://web.archive.org/web/20041216185957/https://www.senate.mn/departments/scr/redist/red2000/Tab5appx.htm), there are no state law requirements for congressional districts.
 
 ### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
