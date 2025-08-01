@@ -1,7 +1,7 @@
 # 2000 Hawaii Congressional Districts
 
 ## Redistricting requirements
-In ``Hawaii `, according to [NCSL Redistricting Law 2000](https://web.archive.org/web/20041216185957/https://www.senate.mn/departments/scr/redist/red2000/Tab5appx.htm), districts:
+In Hawaii, according to [NCSL Redistricting Law 2000](https://web.archive.org/web/20041216185957/https://www.senate.mn/departments/scr/redist/red2000/Tab5appx.htm), districts:
 
 1\. shall not extend beyond the boundaries of any basic island unit.
 2\. shall not be so drawn as to unduly favor a person or political faction.
