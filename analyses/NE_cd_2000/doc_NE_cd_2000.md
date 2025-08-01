@@ -1,7 +1,7 @@
 # 2000 Nebraska Congressional Districts
 
 ## Redistricting requirements
-In ``Nebraska `, there are no state law requirements for congressional districts.
+In Nebraska, according to [NCSL Redistricting Law 2000](https://web.archive.org/web/20041216185957/https://www.senate.mn/departments/scr/redist/red2000/Tab5appx.htm), there are no state law requirements for congressional districts.
 
 ### Interpretation of requirements
 We enforce a maximum population deviation of 0.5%.
