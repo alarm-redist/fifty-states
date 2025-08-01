@@ -6,7 +6,9 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg AZ_cd_2000}")
 
-# TODO any pre-computation (VRA targets, etc.)
+constr_az <- redist_constr(map) %>%
+  add_constr_grp_hinge(30, vap_black, vap, 0.60) %>%
+  add_constr_grp_hinge(30, vap_black, vap, 0.5)
 
 # TODO customize as needed. Recommendations:
 #  - For many districts / tighter population tolerances, try setting
@@ -18,7 +20,7 @@ cli_process_start("Running simulations for {.pkg AZ_cd_2000}")
 #  if that's the problem.
 #  - Ask for help!
 set.seed(2000)
-plans <- redist_smc(map, nsims = 2e3, runs = 5, counties = county)
+plans <- redist_smc(map, nsims = 2e3, runs = 5, counties = county, constraints = constr_az)
 # IF CORES OR OTHER UNITS HAVE BEEN MERGED:
 # make sure to call `pullback()` on this plans object!
 
