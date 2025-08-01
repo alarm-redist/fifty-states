@@ -6,21 +6,8 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg CO_cd_2000}")
 
-# TODO any pre-computation (VRA targets, etc.)
-
-# TODO customize as needed. Recommendations:
-#  - For many districts / tighter population tolerances, try setting
-#  `pop_temper=0.01` and nudging upward from there. Monitor the output for
-#  efficiency!
-#  - Monitor the output (i.e. leave `verbose=TRUE`) to ensure things aren't breaking
-#  - Don't change the number of simulations unless you have a good reason
-#  - If the sampler freezes, try turning off the county split constraint to see
-#  if that's the problem.
-#  - Ask for help!
 set.seed(2000)
-plans <- redist_smc(map, nsims = 2e3, runs = 5, counties = county)
-# IF CORES OR OTHER UNITS HAVE BEEN MERGED:
-# make sure to call `pullback()` on this plans object!
+plans <- redist_smc(map, nsims = 2e3, runs = 5, counties = pseudo_county, ncores = 15)
 
 plans <- plans %>%
     group_by(chain) %>%
@@ -30,8 +17,6 @@ plans <- match_numbers(plans, "cd_2000")
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
-
-# TODO add any reference plans that aren't already included
 
 # Output the redist_map object. Do not edit this path.
 write_rds(plans, here("data-out/CO_2000/CO_cd_2000_plans.rds"), compress = "xz")
