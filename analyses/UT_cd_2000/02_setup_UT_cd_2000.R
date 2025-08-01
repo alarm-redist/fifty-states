@@ -4,8 +4,6 @@
 ###############################################################################
 cli_process_start("Creating {.cls redist_map} object for {.pkg UT_cd_2000}")
 
-# any pre-computation (usually not necessary)
-
 map <- redist_map(ut_shp, pop_tol = 0.005,
                   existing_plan = cd_2000, adj = ut_shp$adj)
 
