@@ -36,11 +36,7 @@ if (!file.exists(here(shp_path))) {
     rename(muni = place) %>%
     mutate(muni = as.character(muni), county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
     relocate(muni, county_muni, cd_1990, .after = county)
-  
-  # any additional columns or data you want to add should go here
-  # add a stronger county constraint
-  
-  
+
   # Create perimeters in case shapes are simplified
   redistmetrics::prep_perims(shp = mi_shp,
                              perim_path = here(perim_path)) %>%
