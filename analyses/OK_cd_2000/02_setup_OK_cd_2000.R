@@ -7,7 +7,7 @@ cli_process_start("Creating {.cls redist_map} object for {.pkg OK_cd_2000}")
 map <- redist_map(ok_shp, pop_tol = 0.005,
                   existing_plan = cd_2000, adj = ok_shp$adj)
 
-#Pseudo-County
+# Pseudo-County
 map <- map %>%
   mutate(
     pseudo_county = pick_county_muni(
