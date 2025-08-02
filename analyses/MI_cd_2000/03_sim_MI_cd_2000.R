@@ -20,8 +20,6 @@ plans <- match_numbers(plans, "cd_2000")
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
 
-# add any reference plans that aren't already included
-
 # Output the redist_map object. Do not edit this path.
 write_rds(plans, here("data-out/MI_2000/MI_cd_2000_plans.rds"), compress = "xz")
 cli_process_done()
