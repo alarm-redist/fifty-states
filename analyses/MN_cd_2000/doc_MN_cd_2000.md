@@ -20,6 +20,6 @@ Data for Minnesota comes from the [ALARM Project's update](https://dataverse.har
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 10,000 districting plans for Minnesota across 5 independent runs of the SMC algorithm.
+We sample 20,000 districting plans for Minnesota across 10 independent runs of the SMC algorithm.
 We then thinned the number of samples to 5,000. 
 No special techniques were needed to produce the sample.
