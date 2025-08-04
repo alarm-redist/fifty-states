@@ -38,15 +38,12 @@ if (!file.exists(here(shp_path))) {
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_1990, .after = county)
 
-    # TODO any additional columns or data you want to add should go here
-
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = mn_shp,
                                perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         mn_shp <- rmapshaper::ms_simplify(mn_shp, keep = 0.05,
                                                  keep_shapes = TRUE) %>%
@@ -55,8 +52,6 @@ if (!file.exists(here(shp_path))) {
 
     # create adjacency graph
     mn_shp$adj <- redist.adjacency(mn_shp)
-
-    # TODO any custom adjacency graph edits here
 
     mn_shp <- mn_shp %>%
         fix_geo_assignment(muni)
