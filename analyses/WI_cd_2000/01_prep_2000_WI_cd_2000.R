@@ -1,6 +1,6 @@
 ###############################################################################
 # Download and prepare data for `WI_cd_2000` analysis
-# © ALARM Project, July 2025
+# © ALARM Project, August 2025
 ###############################################################################
 
 suppressMessages({
@@ -18,7 +18,7 @@ suppressMessages({
 # Download necessary files for analysis -----
 cli_process_start("Downloading files for {.pkg WI_cd_2000}")
 
-path_data <- download_redistricting_file("WI", "data-raw/WI", year = 2000)
+path_data <- download_redistricting_file("WI", "data-raw/WI", year = 2000, overwrite = TRUE)
 
 cli_process_done()
 
