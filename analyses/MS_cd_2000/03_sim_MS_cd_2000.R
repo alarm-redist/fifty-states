@@ -27,8 +27,6 @@ plans <- match_numbers(plans, "cd_2000")
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
 
-# TODO add any reference plans that aren't already included
-
 # Output the redist_map object. Do not edit this path.
 write_rds(plans, here("data-out/MS_2000/MS_cd_2000_plans.rds"), compress = "xz")
 cli_process_done()
@@ -44,7 +42,6 @@ save_summary_stats(plans, "data-out/MS_2000/MS_cd_2000_stats.csv")
 cli_process_done()
 
 # Extra validation plots for custom constraints -----
-# TODO remove this section if no custom constraints
 if (interactive()) {
     library(ggplot2)
     library(patchwork)
