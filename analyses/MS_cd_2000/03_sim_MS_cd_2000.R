@@ -8,10 +8,10 @@ cli_process_start("Running simulations for {.pkg MS_cd_2000}")
 
 # Custom constraints
 constr_sc <- redist_constr(map) %>%
-  add_constr_splits(strength = 0.5, admin = county_muni) %>%
-  add_constr_grp_hinge(30, vap_black, vap, 0.55) %>%
-  add_constr_grp_hinge(-30, vap_black, vap, 0.3) %>%
-  add_constr_grp_hinge(-30, vap_black, vap, 0.25)
+    add_constr_splits(strength = 0.5, admin = county_muni) %>%
+    add_constr_grp_hinge(30, vap_black, vap, 0.55) %>%
+    add_constr_grp_hinge(-30, vap_black, vap, 0.3) %>%
+    add_constr_grp_hinge(-30, vap_black, vap, 0.25)
 
 set.seed(2000)
 plans <- redist_smc(map, nsims = 2e3, runs = 5, counties = county, constraints = constr_sc)
