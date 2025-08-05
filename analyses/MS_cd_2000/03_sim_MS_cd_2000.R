@@ -14,7 +14,7 @@ constr_sc <- redist_constr(map) %>%
     add_constr_grp_hinge(-30, vap_black, vap, 0.25)
 
 set.seed(2000)
-plans <- redist_smc(map, nsims = 2e3, runs = 5, counties = county, constraints = constr_sc)
+plans <- redist_smc(map, nsims = 2e3, runs = 10, counties = county, constraints = constr_sc)
 # IF CORES OR OTHER UNITS HAVE BEEN MERGED:
 # make sure to call `pullback()` on this plans object!
 
