@@ -6,14 +6,17 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg AL_cd_2000}")
 
-constr_sc <- redist_constr(map) %>%
-  add_constr_splits(strength = 0.5, admin = county_muni) %>%
-  add_constr_grp_hinge(50, vap_black, vap, 0.6) %>%
-  add_constr_grp_hinge(-50, vap_black, vap, 0.25) %>%
-  add_constr_grp_hinge(-50, vap_black, vap, 0.2)
+constr_al <- redist_constr(map) %>%
+  # penalize plans with Black VAP below 33%
+  add_constr_grp_hinge(-30, vap_black, vap, 0.33) %>%
+  # penalize plans with Black VAP above 60%
+  add_constr_grp_hinge( 30, vap_black, vap, 0.60)
 
 set.seed(2000)
-plans <- redist_smc(map, nsims = 2e3, runs = 5, counties = county, constraints = constr_sc)
+plans <- redist_smc(map, nsims = 8e3, runs = 20, counties = county, constraints = constr_al,
+                    pop_temper   = 0.05,
+                    seq_alpha    = 1,
+                    adapt_k_thresh = 0.8)
 # IF CORES OR OTHER UNITS HAVE BEEN MERGED:
 # make sure to call `pullback()` on this plans object!
 
@@ -25,8 +28,6 @@ plans <- match_numbers(plans, "cd_2000")
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
-
-# TODO add any reference plans that aren't already included
 
 # Output the redist_map object. Do not edit this path.
 write_rds(plans, here("data-out/AL_2000/AL_cd_2000_plans.rds"), compress = "xz")
@@ -43,7 +44,6 @@ save_summary_stats(plans, "data-out/AL_2000/AL_cd_2000_stats.csv")
 cli_process_done()
 
 # Extra validation plots for custom constraints -----
-# TODO remove this section if no custom constraints
 if (interactive()) {
     library(ggplot2)
     library(patchwork)
@@ -51,3 +51,10 @@ if (interactive()) {
     validate_analysis(plans, map)
     summary(plans)
 }
+
+bottleneck_split <- 6
+
+plot(
+  map,
+  rowMeans(as.matrix(plans) == bottleneck_split),
+)
