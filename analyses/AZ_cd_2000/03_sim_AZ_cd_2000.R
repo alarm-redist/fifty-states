@@ -11,15 +11,6 @@ constr_az <- redist_constr(map) %>%
   add_constr_grp_hinge(-10, vap_hisp, vap, 0.28) %>%
   add_constr_grp_inv_hinge(5, vap_hisp, vap, 0.58)
 
-# TODO customize as needed. Recommendations:
-#  - For many districts / tighter population tolerances, try setting
-#  `pop_temper=0.01` and nudging upward from there. Monitor the output for
-#  efficiency!
-#  - Monitor the output (i.e. leave `verbose=TRUE`) to ensure things aren't breaking
-#  - Don't change the number of simulations unless you have a good reason
-#  - If the sampler freezes, try turning off the county split constraint to see
-#  if that's the problem.
-#  - Ask for help!
 set.seed(2000)
 plans <- redist_smc(map, nsims = 2e3, runs = 10, counties = county, constraints = constr_az, pop_temper = 0.03, seq_alpha = 0.99)
 # IF CORES OR OTHER UNITS HAVE BEEN MERGED:
@@ -33,8 +24,6 @@ plans <- match_numbers(plans, "cd_2000")
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
-
-# TODO add any reference plans that aren't already included
 
 # Output the redist_map object. Do not edit this path.
 write_rds(plans, here("data-out/AZ_2000/AZ_cd_2000_plans.rds"), compress = "xz")
@@ -51,7 +40,6 @@ save_summary_stats(plans, "data-out/AZ_2000/AZ_cd_2000_stats.csv")
 cli_process_done()
 
 # Extra validation plots for custom constraints -----
-# TODO remove this section if no custom constraints
 if (interactive()) {
     library(ggplot2)
     library(patchwork)
