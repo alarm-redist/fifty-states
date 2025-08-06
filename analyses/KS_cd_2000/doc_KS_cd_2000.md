@@ -7,6 +7,8 @@ In Kansas, according to [NCSL Redistricting Law 2000](https://web.archive.org/we
 1. have equal populations
 1. be geographically compact
 1. preserve county and municipality boundaries as much as possible
+1. preserve communities of interest
+1. not be drawn to dilute minority voting strength or protect or defeat an incumbent
 
 
 ### Algorithmic Constraints
