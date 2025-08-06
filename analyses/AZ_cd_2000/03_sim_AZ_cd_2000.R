@@ -7,8 +7,9 @@
 cli_process_start("Running simulations for {.pkg AZ_cd_2000}")
 
 constr_az <- redist_constr(map) %>%
-  add_constr_grp_hinge(30, vap_black, vap, 0.60) %>%
-  add_constr_grp_hinge(30, vap_black, vap, 0.5)
+  add_constr_grp_hinge(10, vap_hisp, vap, 0.5) %>%
+  add_constr_grp_hinge(-10, vap_hisp, vap, 0.28) %>%
+  add_constr_grp_inv_hinge(5, vap_hisp, vap, 0.58)
 
 # TODO customize as needed. Recommendations:
 #  - For many districts / tighter population tolerances, try setting
@@ -20,7 +21,7 @@ constr_az <- redist_constr(map) %>%
 #  if that's the problem.
 #  - Ask for help!
 set.seed(2000)
-plans <- redist_smc(map, nsims = 2e3, runs = 5, counties = county, constraints = constr_az)
+plans <- redist_smc(map, nsims = 2e3, runs = 10, counties = county, constraints = constr_az, pop_temper = 0.03, seq_alpha = 0.99)
 # IF CORES OR OTHER UNITS HAVE BEEN MERGED:
 # make sure to call `pullback()` on this plans object!
 
@@ -57,4 +58,29 @@ if (interactive()) {
 
     validate_analysis(plans, map)
     summary(plans)
+
+    # Dem seats by HVAP rank -- numeric
+    plans %>%
+      group_by(draw) %>%
+      mutate(hvap = vap_hisp/total_vap, hvap_rank = rank(hvap)) %>%
+      subset_sampled() %>%
+      select(draw, district, hvap, hvap_rank, ndv, nrv) %>%
+      mutate(dem = ndv > nrv) %>%
+      group_by(hvap_rank) %>%
+      summarize(dem = mean(dem))
+
+    # VRA
+    plans %>%
+      mutate(min = vap_hisp/total_vap) %>%
+      number_by(min) %>%
+      redist.plot.distr_qtys(ndshare, sort = "none", geom = "boxplot") +
+      labs(x = "Districts, ordered by HVAP", y = "Average Democratic share")
+
+    redist.plot.distr_qtys(plans, vap_hisp/total_vap,
+                           color_thresh = NULL,
+                           color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, "#3D77BB", "#B25D4C"),
+                           size = 0.1) +
+      scale_y_continuous("Percent Hispanic by VAP") +
+      labs(title = "Approximate Performance") +
+      scale_color_manual(values = c(cd_2000_prop = "black"))
 }
