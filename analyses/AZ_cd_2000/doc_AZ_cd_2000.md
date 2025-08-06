@@ -11,7 +11,7 @@ In Arizona, according to [NCSL Redistricting Law 2000](https://web.archive.org/w
 
 
 ### Algorithmic Constraints
-We enforce a maximum population deviation of 1%.
+We enforce a maximum population deviation of 3%.
 
 ## Data Sources
 Data for Arizona comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
@@ -20,6 +20,7 @@ Data for Arizona comes from the [ALARM Project's update](https://dataverse.harva
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 10,000 districting plans for Arizona across 5 independent runs of the SMC algorithm.
+We sample 20,000 districting plans for Arizona across 10 independent runs of the SMC algorithm.
 We then thinned the number of samples to 5,000. 
-No special techniques were needed to produce the sample.
+We add a hinge Gibbs constraint targeting two majority-HVAP districts, but not all plans are guaranteed to have two majority-HVAP districts.
+
