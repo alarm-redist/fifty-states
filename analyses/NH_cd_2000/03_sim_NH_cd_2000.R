@@ -10,7 +10,7 @@ cli_process_start("Running simulations for {.pkg NH_cd_2000}")
 ## Merge by MCDs and use county_muni.
 set.seed(2000)
 plans <- redist_smc(
-  map %>% mutate(state = "NH") %>% merge_by(mcd),
+  map,
   nsims    = 2e3,
   runs     = 10,
   counties = county_muni
