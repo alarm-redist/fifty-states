@@ -53,6 +53,9 @@ if (!file.exists(here(shp_path))) {
             suppressWarnings()
     }
 
+    # make every feature valid
+    ia_shp <- st_make_valid(ia_shp)
+
     # create adjacency graph
     ia_shp$adj <- redist.adjacency(ia_shp)
 
