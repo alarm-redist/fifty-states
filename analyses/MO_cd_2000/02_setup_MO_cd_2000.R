@@ -1,11 +1,11 @@
 ###############################################################################
-# Set up redistricting simulation for `MO_cd_2010`
-# © ALARM Project, December 2022
+# Set up redistricting simulation for `MO_cd_2000`
+# © ALARM Project, August 2025
 ###############################################################################
-cli_process_start("Creating {.cls redist_map} object for {.pkg MO_cd_2010}")
+cli_process_start("Creating {.cls redist_map} object for {.pkg MO_cd_2000}")
 
 map <- redist_map(mo_shp, pop_tol = 0.005,
-    existing_plan = cd_2010, adj = mo_shp$adj)
+    existing_plan = cd_2000, adj = mo_shp$adj)
 
 # add cores
 map <- mutate(map,
@@ -17,10 +17,13 @@ map <- mutate(map,
   select(-core_id_lump)
 map_cores <- merge_by(map, core_id)
 
+# make pseudo counties with default settings
+map <- map %>%
+    mutate(pseudo_county = pick_county_muni(map, counties = county, munis = muni,
+
 # Add an analysis name attribute
-attr(map, "analysis_name") <- "MO_2010"
-map$state <- "MO"
+attr(map, "analysis_name") <- "MO_2000"
 
 # Output the redist_map object. Do not edit this path.
-write_rds(map, "data-out/MO_2010/MO_cd_2010_map.rds", compress = "xz")
+write_rds(map, "data-out/MO_2000/MO_cd_2000_map.rds", compress = "xz")
 cli_process_done()
