@@ -1,7 +1,10 @@
 # 2000 New Hampshire Congressional Districts
 
 ## Redistricting requirements
-In ``New Hampshire``, according to [NCSL Redistricting Law 2000](https://web.archive.org/web/20041216185957/https://www.senate.mn/departments/scr/redist/red2000/Tab5appx.htm), there are no state law requirements for congressional districts.
+In ``New Hampshire``, according to [NCSL Redistricting Law 2000](https://web.archive.org/web/20041216185957/https://www.senate.mn/departments/scr/redist/red2000/Tab5appx.htm), districts must:
+
+1. be contiguous
+1. have equal populations
 
 ### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
