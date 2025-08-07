@@ -13,8 +13,6 @@ constr <- redist_constr(map) %>%
 
 set.seed(2000)
 plans <- redist_smc(map, nsims = 2e3, runs = 5, counties = county, constraints = constr)
-# IF CORES OR OTHER UNITS HAVE BEEN MERGED:
-# make sure to call `pullback()` on this plans object!
 
 plans <- plans %>%
   group_by(chain) %>%
