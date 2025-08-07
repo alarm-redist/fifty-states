@@ -7,10 +7,14 @@ In Iowa, according to [NCSL Redistricting Law 2000](https://web.archive.org/web/
 1. have equal populations
 1. be geographically compact
 1. preserve county and municipality boundaries as much as possible
+1. not split any county
+1. not favor any political party, incumbent, or other person or group
+1. not augment or dilute the voting strength of a racial or linguistic minority
+1. use addresses of incumbents, political affiliations of registered voters, previous election results, or demographic information not required by the Constitution
 
 
 ### Algorithmic Constraints
-We enforce a maximum population deviation of X.X%.
+We enforce a maximum population deviation of 0.5%.
 
 ## Data Sources
 Data for Iowa comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
