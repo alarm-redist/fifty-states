@@ -4,20 +4,23 @@
 ###############################################################################
 cli_process_start("Creating {.cls redist_map} object for {.pkg SC_cd_2000}")
 
-# TODO any pre-computation (usually not necessary)
-
 map <- redist_map(sc_shp, pop_tol = 0.005,
     existing_plan = cd_2000, adj = sc_shp$adj)
 
-# TODO any filtering, cores, merging, etc.
+# add cores
+map <- mutate(map,
+              core_id = redist.identify.cores(map$adj, map$cd_1990, boundary = 2),
+              core_id_lump = forcats::fct_lump_n(as.character(core_id), max(cd_1990)), # lump all non-core precincts in to "Other"
+              core_id = if_else(as.logical(is_county_split(core_id_lump, county)), # break off counties which are split by core border
+                                str_c(county, "_", core_id),
+                                as.character(core_id))) %>%
+  select(-core_id_lump)
+map_cores <- merge_by(map, core_id)
 
-# TODO remove if not necessary. Adjust pop_muni as needed to balance county/muni splits
 # make pseudo counties with default settings
 map <- map %>%
     mutate(pseudo_county = pick_county_muni(map, counties = county, munis = muni,
         pop_muni = get_target(map)))
-# IF MERGING CORES OR OTHER UNITS:
-# make a new `map_cores` object that is merged & used for simulating. You can set `drop_geom=TRUE` for this.
 
 # Add an analysis name attribute
 attr(map, "analysis_name") <- "SC_2000"
