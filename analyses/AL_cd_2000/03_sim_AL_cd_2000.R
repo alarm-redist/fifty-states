@@ -7,18 +7,13 @@
 cli_process_start("Running simulations for {.pkg AL_cd_2000}")
 
 constr_al <- redist_constr(map) %>%
-  # penalize plans with Black VAP below 33%
-  add_constr_grp_hinge(-30, vap_black, vap, 0.33) %>%
-  # penalize plans with Black VAP above 60%
-  add_constr_grp_hinge( 30, vap_black, vap, 0.60)
+  add_constr_grp_hinge(21, vap_black, vap, 0.42) %>%
+  add_constr_grp_hinge(-15, vap_black, vap, 0.30) %>%
+  add_constr_grp_inv_hinge(10, vap_black, vap, 0.45)
 
 set.seed(2000)
-plans <- redist_smc(map, nsims = 8e3, runs = 20, counties = county, constraints = constr_al,
-                    pop_temper   = 0.05,
-                    seq_alpha    = 1,
-                    adapt_k_thresh = 0.8)
-# IF CORES OR OTHER UNITS HAVE BEEN MERGED:
-# make sure to call `pullback()` on this plans object!
+plans <- redist_smc(map, nsims = 2e3, runs = 20, counties = county, constraints = constr_al,
+                    pop_temper   = 0.05)
 
 plans <- plans %>%
     group_by(chain) %>%

@@ -4,7 +4,7 @@
 ###############################################################################
 cli_process_start("Creating {.cls redist_map} object for {.pkg AL_cd_2000}")
 
-map <- redist_map(al_shp, pop_tol = 0.01,
+map <- redist_map(al_shp, pop_tol = 0.05,
     existing_plan = cd_2000, adj = al_shp$adj)
 
 # make pseudo counties with default settings
