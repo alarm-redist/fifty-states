@@ -8,8 +8,6 @@ cli_process_start("Running simulations for {.pkg NJ_cd_2000}")
 
 set.seed(2000)
 plans <- redist_smc(map, nsims = 4e3, runs = 10, counties = pseudo_county)
-# IF CORES OR OTHER UNITS HAVE BEEN MERGED:
-# make sure to call `pullback()` on this plans object!
 
 plans <- plans %>%
   group_by(chain) %>%
