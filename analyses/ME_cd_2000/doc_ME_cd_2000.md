@@ -8,7 +8,6 @@ In Maine, districts must:
 1. be geographically compact
 1. preserve county and municipality boundaries as much as possible
 
-
 ### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 
@@ -19,5 +18,6 @@ Data for Maine comes from the ALARM Project's [2020 Redistricting Data Files](ht
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Maine.
-No special techniques were needed to produce the sample.
+We sample 5,000 districting plans for Maine, across 10 independent runs of the SMC algorithm.
+We use the standard county constraint.
+We weaken the compactness parameter to 0.8 due to the relatively small state size and total number of tracts to encourage more diversity in the sample.
