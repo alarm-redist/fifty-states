@@ -1,13 +1,16 @@
 # 2000 Illinois Congressional Districts
 
 ## Redistricting requirements
-In ``Illinois``, according to [NCSL Redistricting Law 2000](https://web.archive.org/web/20041216185957/https://www.senate.mn/departments/scr/redist/red2000/Tab5appx.htm), there are no state law requirements for congressional districts.
+In ``Illinois``, according to [NCSL Redistricting Law 2000](https://web.archive.org/web/20041216185957/https://www.senate.mn/departments/scr/redist/red2000/Tab5appx.htm), districts must:
+
+1. be contiguous
+1. have equal populations
 
 ### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 
 ## Data Sources
-Data for ``Illinoi`` comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
+Data for ``Illinois`` comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
 
 ## Pre-processing Notes
 No manual pre-processing decisions were necessary. We use a pseudo-county constraint to help preserve county and municipality boundaries, as described below.
