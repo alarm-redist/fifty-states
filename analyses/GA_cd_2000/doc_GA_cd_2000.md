@@ -7,6 +7,9 @@ In Georgia, according to [NCSL Redistricting Law 2000](https://web.archive.org/w
 1. have equal populations
 1. be geographically compact
 1. preserve county and municipality boundaries as much as possible
+1. comply with the Voting Rights Act
+1. preserve the cores of existing districts and avoid contests between incumbents
+1. use voting district boundaries as building blocks for districts
 
 
 ### Algorithmic Constraints
