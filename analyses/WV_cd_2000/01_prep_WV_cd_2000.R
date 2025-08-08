@@ -13,6 +13,7 @@ suppressMessages({
   library(cli)
   library(here)
   library(tinytiger)
+  library(stringr)
   devtools::load_all() # load utilities
 })
 
@@ -33,43 +34,38 @@ if (!file.exists(here(shp_path))) {
     wv_df <- wv_df %>% mutate(county = str_sub(GEOID, 3, 5))
   }
   
-  # Aggregate once, keeping cd_1990 and cd_2000. 
+  # Aggregate once by county, summing numerics and excluding cd_.
   wv_df_cnty <- wv_df %>%
     group_by(county) %>%
     summarise(
-      across(where(is.numeric) & !matches("^cd_1990$|^cd_2000$"),
-             ~ sum(.x, na.rm = TRUE)),
-      cd_1990 = first(cd_1990),
-      cd_2000 = first(cd_2000),
+      across(where(is.numeric) & !matches("^cd_"), ~ sum(.x, na.rm = TRUE)),
       .groups = "drop"
     )
   
   cnty_sf <- tt_counties("WV", year = 2000) %>%
     st_transform(EPSG$WV) %>%
-    transmute(county = COUNTYFP00, geometry)
+    transmute(county = sprintf("%03s", COUNTYFP00), geometry)
   
-  wv_shp <- cnty_sf %>% left_join(wv_df_cnty, by = "county")
+  wv_shp <- cnty_sf %>%
+    left_join(wv_df_cnty %>% mutate(county = sprintf("%03s", county)),
+              by = "county")
 
-  # Prepare lists of column types
-  col_names <- as.vector(colnames(wv_shp))
-  mergeable_col_names <- c("state", "county", "cd_2000", "cd_1990")
-  sf_col_names <- c("muni", "county_muni", "GEOID", "geometry", "vtd")
-  summable_col_names <- col_names[!col_names %in% c(mergeable_col_names, sf_col_names)]
+  # Assign each county the most frequent cd_2000 from its VTDs
+  # Function to calculate mode
+  stat_mode <- function(x) {
+    ux <- na.omit(unique(x))
+    ux[which.max(tabulate(match(x, ux)))]
+  }
   
-  # Extract mergeable columns (non-summed)
-  data_without_sf <- st_drop_geometry(wv_shp)
-  cols_to_merge <- select(
-    data_without_sf[!duplicated(data_without_sf$county), ],
-    any_of(mergeable_col_names)
-  )
-  
-  # Sum numeric columns by county
-  merged_county_sf <- wv_shp %>%
+  # Mode cd_2000 per county from original VTD-level data
+  county_cd2000 <- wv_df %>%
+    mutate(county = sprintf("%03s", county)) %>%
     group_by(county) %>%
-    summarize(across(any_of(summable_col_names), sum), .groups = "drop")
+    summarise(cd_2000 = stat_mode(cd_2000), .groups = "drop")
   
-  # Merge numeric and non-numeric data
-  wv_shp <- merge(merged_county_sf, cols_to_merge, by = "county")
+  # Join mode cd_2000 back to county-level shapefile
+  wv_shp <- wv_shp %>%
+    left_join(county_cd2000, by = "county")
   
   # Drop unwanted columns if present
   wv_shp <- wv_shp %>% select(-any_of(c("mcd", "shd", "ssd")))
@@ -89,8 +85,6 @@ if (!file.exists(here(shp_path))) {
   
   # create adjacency graph
   wv_shp$adj <- redist.adjacency(wv_shp)
-  
-  wv_shp <- wv_shp %>% fix_geo_assignment(county)
   
   write_rds(wv_shp, here(shp_path), compress = "gz")
   cli_process_done()
