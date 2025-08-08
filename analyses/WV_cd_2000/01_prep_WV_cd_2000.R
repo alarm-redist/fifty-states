@@ -33,7 +33,7 @@ if (!file.exists(here(shp_path))) {
     wv_df <- wv_df %>% mutate(county = str_sub(GEOID, 3, 5))
   }
   
-  # Aggregate once, keeping cd_1990 and cd_2000. Pick up the first value of cd_1990 and cd_2000 because two counties are split between multiple districts in the enacted plan.
+  # Aggregate once, keeping cd_1990 and cd_2000. 
   wv_df_cnty <- wv_df %>%
     group_by(county) %>%
     summarise(
