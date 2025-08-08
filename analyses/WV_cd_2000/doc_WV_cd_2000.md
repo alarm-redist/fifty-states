@@ -20,4 +20,4 @@ No manual pre-processing decisions were necessary.
 ## Simulation Notes
 We sample 10,000 districting plans for ``West Virginia`` across 5 independent runs of the SMC algorithm.
 We then thinned the number of samples to 5,000. 
-Although we analyze ``West Virginia`` at the county level, Barbour and Braxton County are split by the enacted plan. To assign a single district to each county, we determine which cd_2000 value occurs most frequently among that county’s VTDs, and assign that district code to the county.
+Although we analyze ``West Virginia`` at the county level, Barbour and Braxton counties are split by the enacted plan. To assign a single district to each county, we determine which cd_2000 value occurs most frequently among that county’s VTDs, and assign that district code to the county.
