@@ -6,6 +6,12 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg SC_cd_2000}")
 
+# Custom constraints
+constr_sc <- redist_constr(map) %>%
+  add_constr_splits(strength = 0.5, admin = county_muni) %>%
+  add_constr_grp_hinge(15, vap_black, vap, 0.6) %>%
+  add_constr_grp_hinge(-10, vap_black, vap, 0.2)
+
 set.seed(2000)
 plans <- redist_smc(map, nsims = 2e3, runs = 5, counties = county)
 # IF CORES OR OTHER UNITS HAVE BEEN MERGED:
@@ -49,7 +55,7 @@ if (interactive()) {
                            color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, "#3D77BB", "#B25D4C"),
                            size = 0.5, alpha = 0.5) +
       scale_y_continuous("Percent Black by VAP") +
-      labs(title = "Tennessee Proposed Plan versus Simulations") +
+      labs(title = "South Carolina Proposed Plan versus Simulations") +
       scale_color_manual(values = c(cd_2020_prop = "black")) +
       theme_bw()
 
