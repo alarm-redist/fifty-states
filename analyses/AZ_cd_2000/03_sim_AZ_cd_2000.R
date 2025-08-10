@@ -68,5 +68,5 @@ if (interactive()) {
         size = 0.1) +
         scale_y_continuous("Percent Hispanic by VAP") +
         labs(title = "Approximate Performance") +
-        scale_color_manual(values = c(cd_2000_prop = "black"))
+        scale_color_manual(values = c(cd_2000 = "black"))
 }
