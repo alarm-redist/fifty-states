@@ -1,17 +1,12 @@
 # 2000 New Mexico Congressional Districts
 
 ## Redistricting requirements
-In New Mexico, districts must:
+In New Mexico, according to [NCSL Redistricting Law 2000](https://web.archive.org/web/20041216185957/https://www.senate.mn/departments/scr/redist/red2000/Tab5appx.htm), districts must:
 
 1. be contiguous
-1. have equal populations
-1. be geographically compact
-1. preserve county and municipality boundaries as much as possible
-
-The house of representatives is composed of seventy members to be elected from districts that are contiguous and that are as compact as is practical and possible.
-The senate is composed of forty-two members to be elected from districts that are contiguous and that are as compact as is practical and possible.
-nsims = 2000, runs = 10 (20000 plans total)
-pop_temper=0.05
+2. have equal populations
+3. be geographically compact
+4. preserve county and municipality boundaries as much as possible
 
 ### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
