@@ -11,7 +11,7 @@ Senatorial and assembly districts must:
 
 1. preserve county and municipality boundaries as much as possible
 
-Additionally, the 1982 Connecticut Supreme Court's holding in [JOHN J. LOGAN V. WILLIAM A. O’NEILL & JOHNSON V. O’NEILL](https://www.cga.ct.gov/red2011/documents/CASESUM/2011CASESUM-20110426_OLR%20Report%20Court%20Challenges%20to%20Connecticut%20Redistricting%20Plans.pdf) states that that challengers must demonstrate that town lines were cut for reasons other than 
+Additionally, the 1982 Connecticut Supreme Court's holding in [JOHN J. LOGAN V. WILLIAM A. O’NEILL & JOHNSON V. O’NEILL](https://www.cga.ct.gov/red2011/documents/CASESUM/2011CASESUM-20110426_OLR%20Report%20Court%20Challenges%20to%20Connecticut%20Redistricting%20Plans.pdf) states that challengers must demonstrate that town lines were cut for reasons other than 
 
 1. to meet the federal equal population requirement
 1. the plan was not the best judgment in harmonizing conflicting constitutional requirements 
