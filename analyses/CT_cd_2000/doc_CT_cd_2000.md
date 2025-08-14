@@ -20,7 +20,6 @@ Additionally, the 1982 Connecticut Supreme Court's holding in [JOHN J. LOGAN V. 
 We enforce a maximum population deviation of 0.5%.
 We use a pseudo-county constraint described below which attempts to mimic the norms in Connecticut of generally preserving county and municipal boundaries (i.e., the "town integrity principle" in CT).
 
-
 ## Data Sources
 Data for Connecticut comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
 
