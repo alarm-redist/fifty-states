@@ -14,7 +14,7 @@ map$state <- "AR"
 
 # Add a stronger county constraint.
 constr <- redist_constr(map)
-constr <- add_constr_splits(constr, strength = 1.5, admin = county)
+constr <- add_constr_splits(constr, strength = 2, admin = county)
 
 # Output the redist_map object. Do not edit this path.
 write_rds(map, "data-out/AR_2000/AR_cd_2000_map.rds", compress = "xz")
