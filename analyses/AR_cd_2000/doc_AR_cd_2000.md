@@ -3,8 +3,10 @@
 ## Redistricting requirements
 In ``Arkansas `, according to [NCSL Redistricting Law 2000](https://web.archive.org/web/20041216185957/https://www.senate.mn/departments/scr/redist/red2000/Tab5appx.htm), districts should:
 
-3. maintain counties, cities, and established geographical boundaries, if possible
-4. not dilute the voting strength of minority citizens
+1. be contiguous
+1. have equal populations
+1. maintain counties, cities, and established geographical boundaries, if possible
+1. not dilute the voting strength of minority citizens
 
 ### Interpretation of requirements
 We enforce a maximum population deviation of 0.5%, which is in line with the low deviation seen in past congressional district maps.
