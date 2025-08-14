@@ -11,7 +11,7 @@ Senatorial and assembly districts must:
 
 1. preserve county and municipality boundaries as much as possible
 
-Additionally, the 1982 Connecticut Supreme Court's holding in [JOHN J. LOGAN V. WILLIAM A. O’NEILL & JOHNSON V. O’NEILL](https://www.cga.ct.gov/red2011/documents/CASESUM/2011CASESUM-20110426_OLR%20Report%20Court%20Challenges%20to%20Connecticut%20Redistricting%20Plans.pdf) states that challengers must demonstrate that town lines were cut for reasons other than 
+Additionally, the 1982 Connecticut Supreme Court's holding in [JOHN J. LOGAN V. WILLIAM A. O’NEILL & JOHNSON V. O’NEILL](https://www.cga.ct.gov/red2011/documents/CASESUM/2011CASESUM-20110426_OLR%20Report%20Court%20Challenges%20to%20Connecticut%20Redistricting%20Plans.pdf) states that challengers must demonstrate that town lines were cut for reasons other than:
 
 1. to meet the federal equal population requirement
 1. the plan was not the best judgment in harmonizing conflicting constitutional requirements 
@@ -30,5 +30,5 @@ No manual pre-processing decisions were necessary.
 ## Simulation Notes
 We sample 10,000 districting plans for Connecticut across 5 independent runs of the SMC algorithm.
 We then thinned the number of samples to 5,000. 
-We use a pseudo-county constraint to limit county and municipality splits
+We use a pseudo-county constraint to limit county and municipality splits.
 No special techniques were needed to produce the sample.
