@@ -12,6 +12,7 @@ suppressMessages({
   library(baf)
   library(cli)
   library(here)
+  library(stringr)
   devtools::load_all() # load utilities
 })
 
@@ -38,21 +39,45 @@ if (!file.exists(here(shp_path))) {
     mutate(muni = as.character(muni), county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
     relocate(muni, county_muni, cd_1990, .after = county)
   
+  # Exclude Bay units
+  bay_ids <- c(
+    "24003ZZZZZZ","24005ZZZZZZ","24009ZZZZZZ",
+    "24029ZZZZZZ","24037ZZZZZZ","24041ZZZZZZ"
+  )
+  
+  md_bay  <- md_shp[md_shp$GEOID %in% bay_ids, ]
+  md_land <- md_shp[!md_shp$GEOID %in% bay_ids, ]
+  
+  sf::sf_use_s2(FALSE)
+  md_land <- st_make_valid(md_land)
+  adj_full <- redist.adjacency(md_land)
+  
   # Create perimeters in case shapes are simplified
-  redistmetrics::prep_perims(shp = md_shp,
-                             perim_path = here(perim_path)) %>%
-    invisible()
+  redistmetrics::prep_perims(shp = md_land, perim_path = here(perim_path)) %>% invisible()
   
   # simplifies geometry for faster processing, plotting, and smaller shapefiles
-  # feel free to delete if this dependency isn't available
   if (requireNamespace("rmapshaper", quietly = TRUE)) {
-    md_shp <- rmapshaper::ms_simplify(md_shp, keep = 0.05,
-                                      keep_shapes = TRUE) %>%
-      suppressWarnings()
+    md_land <- rmapshaper::ms_simplify(md_land, keep = 0.05, keep_shapes = TRUE) %>% suppressWarnings()
   }
   
-  # create adjacency graph
-  md_shp$adj <- redist.adjacency(md_shp)
+  md_land$adj <- adj_full
+  md_shp <- md_land
+  
+  # Connect an island
+  key_col <- "GEOID"
+  
+  island_codes <- tibble::tribble(
+    ~v1,             ~v2,
+    "2403702-001",   "2403709-001" 
+  )
+  
+  island_codes$v1 <- match(island_codes$v1, md_shp[[key_col]])
+  island_codes$v2 <- match(island_codes$v2, md_shp[[key_col]])
+  
+  for (i in seq_len(nrow(island_codes))) {
+    md_shp$adj <- md_shp$adj %>%
+      add_edge(island_codes$v1[i], island_codes$v2[i], zero = TRUE)
+  }
   
   md_shp <- md_shp %>%
     fix_geo_assignment(muni)
@@ -63,3 +88,4 @@ if (!file.exists(here(shp_path))) {
   md_shp <- read_rds(here(shp_path))
   cli_alert_success("Loaded {.strong MD} shapefile")
 }
+
