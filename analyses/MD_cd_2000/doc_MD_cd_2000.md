@@ -17,7 +17,7 @@ We enforce a maximum population deviation of 0.5%.
 Data for ``Maryland`` comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
 
 ## Pre-processing Notes
-No manual pre-processing decisions were necessary.
+We edited the adjacency graph so districts can’t traverse the Bay. Specifically, we excluded the Bay polygons from the graph. One island became isolated as a result, so we manually connected it to its closest neighbor.
 
 ## Simulation Notes
 We sample 10,000 districting plans for ``Maryland`` across 5 independent runs of the SMC algorithm.
