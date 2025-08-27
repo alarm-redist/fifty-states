@@ -29,23 +29,9 @@ perim_path <- "data-out/WI_2000/perim.rds"
 if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong WI} shapefile")
     # read in redistricting data
-    df <- read_csv(here(path_data), col_types = cols(GEOID = "c"))
-
-    # join the data
-    wi_shp <- read_sf(here("data-raw/WI/wi_2000_tracts.geojson")) %>%
-        mutate(GEOID = paste0(STATEFP00, COUNTYFP00, TRACTCE00),
-            county = paste0(STATEFP00, COUNTYFP00)) %>%
-        left_join(df, by = "GEOID") %>%
-        st_transform(EPSG$OH)
-
-    # data cleaning
-    wi_shp <- wi_shp %>%
-        mutate(
-            county = dplyr::coalesce(.data[["county.x"]],
-                .data[["county.y"]],
-                substr(.data[["GEOID"]], 1, 5))
-        ) %>%
-        select(-any_of(c("county.x", "county.y")))
+    wi_shp <- read_csv(here(path_data), col_types = cols(GEOID = "c")) %>%
+      join_vtd_shapefile(year = 2000) %>%
+      st_transform(EPSG$WI)
 
     wi_shp <- wi_shp %>%
         rename(muni = place) %>%
@@ -66,8 +52,6 @@ if (!file.exists(here(shp_path))) {
 
     # create adjacency graph
     wi_shp$adj <- redist.adjacency(wi_shp)
-
-    # TODO any custom adjacency graph edits here
 
     wi_shp <- wi_shp %>%
         fix_geo_assignment(muni)
