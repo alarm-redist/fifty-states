@@ -30,7 +30,6 @@ if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong RI} shapefile")
     # read in redistricting data
     ri_shp <- read_csv(here(path_data), col_types = cols(GEOID = "c")) %>%
-        # TODO: If the state is not at the VTD-level, swap in a `tinytiger::tt_*` function
         join_vtd_shapefile(year = 2000) %>%
         st_transform(EPSG$RI)
 
@@ -39,15 +38,12 @@ if (!file.exists(here(shp_path))) {
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_1990, .after = county)
 
-    # TODO any additional columns or data you want to add should go here
-
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = ri_shp,
         perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         ri_shp <- rmapshaper::ms_simplify(ri_shp, keep = 0.05,
             keep_shapes = TRUE) %>%
