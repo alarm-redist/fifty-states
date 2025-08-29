@@ -264,7 +264,6 @@ plans <- redist_smc(
   nsims = nsims_state, runs = 5,
   counties = county,
   constraints = cons_final,
-  #init_particles = init,
   pop_temper = 0.03, seq_alpha  = 0.97,
   sampling_space = sampling_space_val,
   ms_params = list(ms_frequency = 1L, ms_moves_multiplier = 53),
