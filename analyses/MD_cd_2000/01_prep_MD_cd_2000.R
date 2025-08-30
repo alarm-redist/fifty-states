@@ -37,7 +37,7 @@ if (!file.exists(here(shp_path))) {
     mutate(muni = as.character(muni), county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
     relocate(muni, county_muni, cd_1990, .after = county)
   
-  # ensure valid geoms; keep all polygons (including bay/water)
+  # ensure valid geoms; keep all polygons 
   suppressMessages(sf::sf_use_s2(FALSE))
   md_shp <- sf::st_zm(md_shp, drop = TRUE, what = "ZM")
   md_shp <- sf::st_make_valid(md_shp)
