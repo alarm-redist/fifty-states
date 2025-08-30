@@ -16,7 +16,7 @@ We enforce a maximum population deviation of 0.5%.
 Data for Maryland comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
 
 ## Pre-processing Notes
-We edited the adjacency graph so districts can’t traverse the Bay. Specifically, we excluded the Bay polygons from the graph. One island became isolated as a result, so we manually connected it to its closest neighbor.
+We edited the adjacency graph so districts cannot traverse the Bay. Bay units were isolated in the adjacency while all polygons were preserved on disk. For the simulation, we derived a land-only map to ensure redist_map() saw a contiguous graph. One isolated island precinct was manually connected to its nearest neighbor.
 
 ## Simulation Notes
 We sample 5,000 districting plans for Maryland across 2 independent runs of the SMC algorithm. No special techniques were needed to produce the sample.
