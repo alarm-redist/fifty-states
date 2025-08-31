@@ -43,13 +43,13 @@ if (!file.exists(here(shp_path))) {
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = nc_shp,
-                               perim_path = here(perim_path)) %>%
+        perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         nc_shp <- rmapshaper::ms_simplify(nc_shp, keep = 0.05,
-                                                 keep_shapes = TRUE) %>%
+            keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 
