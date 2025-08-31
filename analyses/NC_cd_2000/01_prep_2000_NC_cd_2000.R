@@ -38,8 +38,6 @@ if (!file.exists(here(shp_path))) {
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_1990, .after = county)
 
-    # TODO any additional columns or data you want to add should go here
-
     # delete empty geom
     nc_shp <- nc_shp[!st_is_empty(nc_shp), ]
 
@@ -49,7 +47,6 @@ if (!file.exists(here(shp_path))) {
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         nc_shp <- rmapshaper::ms_simplify(nc_shp, keep = 0.05,
                                                  keep_shapes = TRUE) %>%
@@ -58,8 +55,6 @@ if (!file.exists(here(shp_path))) {
 
     # create adjacency graph
     nc_shp$adj <- redist.adjacency(nc_shp)
-
-    # TODO any custom adjacency graph edits here
 
     nc_shp <- nc_shp %>%
         fix_geo_assignment(muni)
