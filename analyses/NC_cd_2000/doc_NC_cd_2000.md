@@ -7,6 +7,11 @@ In North Carolina, according to [NCSL Redistricting Law 2000](https://web.archiv
 1. have equal populations
 1. be geographically compact
 1. preserve county and municipality boundaries as much as possible
+1. follow the Voting Rights Act
+1. change as few districts as possible
+1. keep the delegation's current partisan balance
+1. keep incumbents in separate districts
+1. preserve cores of existing districts
 
 
 ### Algorithmic Constraints
