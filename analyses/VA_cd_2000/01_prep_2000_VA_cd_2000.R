@@ -41,7 +41,7 @@ if (!file.exists(here(shp_path))) {
     # TODO any additional columns or data you want to add should go here
 
     # delete empty geom
-    nc_shp <- nc_shp[!st_is_empty(nc_shp), ]
+    va_shp <- va_shp[!st_is_empty(va_shp), ]
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = va_shp,
