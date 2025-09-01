@@ -7,6 +7,12 @@
 cli_process_start("Running simulations for {.pkg NC_cd_2000}")
 
 set.seed(2000)
+
+constr <- redist_constr(map) %>%
+  add_constr_grp_hinge(20, vap - vap_white, vap, 0.52) %>%
+  add_constr_grp_hinge(-20, vap - vap_white, vap, 0.3) %>%
+  add_constr_grp_inv_hinge(20, vap - vap_white, vap, 0.62)
+
 plans <- redist_smc(map, nsims = 2e3, runs = 5, counties = county)
 
 plans <- plans %>%
