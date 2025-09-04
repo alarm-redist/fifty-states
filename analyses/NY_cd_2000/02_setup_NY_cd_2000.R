@@ -1,12 +1,12 @@
 ###############################################################################
-# Set up redistricting simulation for `TN_cd_2000`
-# © ALARM Project, August 2025
+# Set up redistricting simulation for `NY_cd_2000`
+# © ALARM Project, July 2025
 ###############################################################################
-cli_process_start("Creating {.cls redist_map} object for {.pkg TN_cd_2000}")
+cli_process_start("Creating {.cls redist_map} object for {.pkg NY_cd_2000}")
 
-map <- redist_map(tn_shp, pop_tol = 0.005,
-                  existing_plan = cd_2000, adj = tn_shp$adj)
-
+map <- redist_map(ny_shp, pop_tol = 0.005,
+                  existing_plan = cd_2000, adj = ny_shp$adj)
+# Pseudo-county
 map <- map %>%
   mutate(
     pseudo_county = pick_county_muni(
@@ -18,10 +18,10 @@ map <- map %>%
   )
 
 # Add an analysis name attribute
-attr(map, "analysis_name") <- "TN_2000"
+attr(map, "analysis_name") <- "NY_2000"
 
-map$state <- "TN"
+map$state <- "NY"
 
 # Output the redist_map object. Do not edit this path.
-write_rds(map, "data-out/TN_2000/TN_cd_2000_map.rds", compress = "xz")
+write_rds(map, "data-out/NY_2000/NY_cd_2000_map.rds", compress = "xz")
 cli_process_done()
