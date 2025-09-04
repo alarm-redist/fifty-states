@@ -37,46 +37,46 @@ if (!file.exists(here(shp_path))) {
         rename(muni = place) %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_1990, .after = county)
-    
+
     # Add CVAP total and CVAP hispanic counts
     path_cvap <- here(paste0("data-raw/", state, "/cvap.rds"))
-    
+
     if (!file.exists(path_cvap)) {
-      bg <- readRDS('data-raw/TX/blockgr_2000.rds')
-      blks <- censable::build_dec(geography = 'block', year = 2000, state = 'TX', geometry = FALSE)
-      cvap <- cvap::cvap_distribute(bg, blks, wts = 'vap')
-      vtd_baf <- read_csv("data-raw/TX/BlockAssign_ST48_TX_VTD.txt", col_types = "ccc")
-      
-      cvap <- cvap %>%
-        left_join(vtd_baf %>% rename(GEOID = BLOCKID),
-                  by = "GEOID")
-      
-      cvap <- cvap %>%
-        mutate(GEOID = paste0(COUNTYFP, "00", DISTRICT)) %>%
-        select(GEOID, starts_with("cvap"))
-      cvap <- cvap %>%
-        group_by(GEOID) %>%
-        summarize(across(.fns = sum))
-      saveRDS(cvap, path_cvap, compress = "xz")
+        bg <- readRDS("data-raw/TX/blockgr_2000.rds")
+        blks <- censable::build_dec(geography = "block", year = 2000, state = "TX", geometry = FALSE)
+        cvap <- cvap::cvap_distribute(bg, blks, wts = "vap")
+        vtd_baf <- read_csv("data-raw/TX/BlockAssign_ST48_TX_VTD.txt", col_types = "ccc")
+
+        cvap <- cvap %>%
+            left_join(vtd_baf %>% rename(GEOID = BLOCKID),
+                by = "GEOID")
+
+        cvap <- cvap %>%
+            mutate(GEOID = paste0(COUNTYFP, "00", DISTRICT)) %>%
+            select(GEOID, starts_with("cvap"))
+        cvap <- cvap %>%
+            group_by(GEOID) %>%
+            summarize(across(.fns = sum))
+        saveRDS(cvap, path_cvap, compress = "xz")
     } else {
-      cvap <- read_rds(path_cvap)
+        cvap <- read_rds(path_cvap)
     }
-    
+
     cvap <- cvap %>% mutate(GEOID = paste0("48", GEOID))
-    
+
     tx_shp <- tx_shp %>%
-      left_join(cvap, by = "GEOID") %>%
-      st_as_sf()
-    
+        left_join(cvap, by = "GEOID") %>%
+        st_as_sf()
+
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = tx_shp,
-                               perim_path = here(perim_path)) %>%
+        perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         tx_shp <- rmapshaper::ms_simplify(tx_shp, keep = 0.05,
-                                                 keep_shapes = TRUE) %>%
+            keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 
