@@ -21,7 +21,7 @@ plans <- redist_smc(
   constraints = constr,
   pop_temper = 0.05, seq_alpha  = 0.95,
   sampling_space = sampling_space_val,
-  ms_params = list(ms_frequency = 1L, ms_moves_multiplier = 65),
+  ms_params = list(frequency = 1L, mh_accept_per_smc = 65),
   split_params = list(splitting_schedule = "any_valid_sizes"),
   ncores = max(1, parallel::detectCores() - 1)
 )
