@@ -37,7 +37,7 @@ plans <- redist_smc(
 
 plans <- plans %>%
     group_by(chain) %>%
-    filter(as.integer(draw) < min(as.integer(draw)) + 1000) %>% # thin samples
+    filter(as.integer(draw) < min(as.integer(draw)) + 2000) %>% # thin samples
     ungroup()
 plans <- match_numbers(plans, "ssd_``YEAR``")
 
