@@ -29,7 +29,7 @@ plans <- redist_smc(
   sampling_space = "linking_edge",
   ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
   split_params = list(splitting_schedule = "any_valid_sizes"),
-  verbose = T
+  verbose = TRUE
 )
 
 # IF CORES OR OTHER UNITS HAVE BEEN MERGED:
@@ -60,12 +60,13 @@ save_summary_stats(plans, "data-out/``STATE``_``YEAR``/``SLUG``_stats.csv")
 
 cli_process_done()
 
-# Extra validation plots for custom constraints -----
-# TODO remove this section if no custom constraints
 if (interactive()) {
     library(ggplot2)
     library(patchwork)
 
     validate_analysis(plans, map)
     summary(plans)
+
+    # Extra validation plots for custom constraints -----
+    # TODO remove this section if no custom constraints
 }
