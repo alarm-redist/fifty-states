@@ -14,6 +14,8 @@ suppressMessages({
     devtools::load_all() # load utilities
 })
 
+stopifnot(utils::packageVersion("redist") >= "5.0.0.1")
+
 # Download necessary files for analysis -----
 cli_process_start("Downloading files for {.pkg ``SLUG``}")
 
