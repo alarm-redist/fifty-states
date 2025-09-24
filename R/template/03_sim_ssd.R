@@ -20,10 +20,10 @@ cli_process_start("Running simulations for {.pkg ``SLUG``}")
 set.seed(``YEAR``)
 
 # TODO set equal to one third of number of districts, increase by 10-15 if no convergence
-mh_accept_per_smc <- ceiling(n_distinct(map$ssd_``YEAR``)/3)
+mh_accept_per_smc <- ceiling(n_distinct(ssd_map$ssd_``YEAR``)/3)
 
 plans <- redist_smc(
-  map,
+  ssd_map,
   nsims = 2e3, runs = 5,
   counties = pseudo_county,
   sampling_space = "linking_edge",
@@ -47,13 +47,13 @@ cli_process_start("Saving {.cls redist_plans} object")
 # TODO add any reference plans that aren't already included
 
 # Output the redist_map object. Do not edit this path.
-write_rds(plans, here("data-out/``STATE``_``YEAR``/``SLUG``_plans.rds"), compress = "xz")
+write_rds(plans, here("data-out/``STATE``_``YEAR``/``SLUG``_ssd_plans.rds"), compress = "xz")
 cli_process_done()
 
 # Compute summary statistics -----
 cli_process_start("Computing summary statistics for {.pkg ``SLUG``}")
 
-plans <- add_summary_stats(plans, map)
+plans <- add_summary_stats(plans, ssd_map)
 
 # Output the summary statistics. Do not edit this path.
 save_summary_stats(plans, "data-out/``STATE``_``YEAR``/``SLUG``_stats.csv")
@@ -64,7 +64,7 @@ if (interactive()) {
     library(ggplot2)
     library(patchwork)
 
-    validate_analysis(plans, map)
+    validate_analysis(plans, ssd_map)
     summary(plans)
 
     # Extra validation plots for custom constraints -----
