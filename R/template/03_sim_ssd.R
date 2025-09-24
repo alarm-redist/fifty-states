@@ -19,8 +19,8 @@ cli_process_start("Running simulations for {.pkg ``SLUG``}")
 #  - Ask for help!
 set.seed(``YEAR``)
 
-# TODO set equal to half of districts, increase 10-15 if no convergence
-mh_accept_per_smc <-
+# TODO set equal to one third of number of districts, increase by 10-15 if no convergence
+mh_accept_per_smc <- ceiling(n_distinct(map$ssd_``YEAR``)/3)
 
 plans <- redist_smc(
   map,
