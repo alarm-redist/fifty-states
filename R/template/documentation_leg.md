@@ -1,7 +1,7 @@
 # ``YEAR`` ``STATE NAME`` ``TYPE``
 
 ## Redistricting requirements
-In ``STATE NAME``, according to [NCSL Redistricting Law 2020](    - https://documents.ncsl.org/wwwncsl/Redistricting-Census/Redistricting-Law-2020_NCSL%20FINAL.pdf#page=204.99), legislative districts must:
+In ``STATE NAME``, legislative districts must:
 
 1. be contiguous
 1. have equal populations
@@ -13,7 +13,7 @@ In ``STATE NAME``, according to [NCSL Redistricting Law 2020](    - https://docu
 We enforce a maximum population deviation of X.X%.
 
 ## Data Sources
-Data for ``STATE NAME`` comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
+Data for ``STATE NAME`` comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
 
 ## Pre-processing Notes
 No manual pre-processing decisions were necessary.
