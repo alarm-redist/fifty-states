@@ -100,3 +100,7 @@ if (!file.exists(here(shp_path))) {
     ``state``_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong ``STATE``} shapefile")
 }
+
+
+# TODO visualize the enacted maps using redistio::draw(``state``_shp, ``state``_shp$ssd_2020) and redistio::draw(``state``_shp, ``state``_shp$shd_2020)
+
