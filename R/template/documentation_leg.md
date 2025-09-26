@@ -10,7 +10,7 @@ In ``STATE NAME``, we consult [NCSL Redistricting Law 2020]( - https://documents
 
 
 ### Algorithmic Constraints
-We enforce a maximum population deviation of X.X%.
+We enforce a maximum population deviation of 5.0%.
 
 ## Data Sources
 Data for ``STATE NAME`` comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
