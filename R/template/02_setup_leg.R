@@ -6,10 +6,10 @@ cli_process_start("Creating {.cls redist_map} object for {.pkg ``SLUG``}")
 
 # TODO any pre-computation (usually not necessary)
 
-ssd_map <- redist_map(``state``_shp, pop_tol = 0.005,
+ssd_map <- redist_map(``state``_shp, pop_tol = 0.05,
     existing_plan = ssd_``YEAR``, adj = ``state``_shp$adj)
 
-shd_map <- redist_map(``state``_shp, pop_tol = 0.005,
+shd_map <- redist_map(``state``_shp, pop_tol = 0.05,
     existing_plan = shd_``YEAR``, adj = ``state``_shp$adj)
 
 # TODO any filtering, cores, merging, etc.
