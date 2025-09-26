@@ -1,7 +1,7 @@
 # ``YEAR`` ``STATE NAME`` ``TYPE``
 
 ## Redistricting requirements
-In ``STATE NAME``, legislative districts must:
+In ``STATE NAME``, according to [NCSL Redistricting Law 2020]( - https://documents.ncsl.org/wwwncsl/Redistricting-Census/Redistricting-Law-2020_NCSL%20FINAL.pdf#page=204.99), legislative districts must:
 
 1. be contiguous
 1. have equal populations
