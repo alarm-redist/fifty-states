@@ -40,7 +40,7 @@ validate_analysis <- function(plans, map) {
     p_comp2 <-  p_comp2 +
         geom_text(data = enac_sum,
                   aes(x = compact_rank,
-                      label = dist_lab), # vjust = "inward" is more proper but at the edges
+                      label = district), # vjust = "inward" is more proper but at the edges
                   vjust = 3,
                   y = Inf,
                   size = 2.5,
@@ -55,7 +55,7 @@ validate_analysis <- function(plans, map) {
         # add label
         geom_text(data = enac_sum,
                   aes(x = minority_rank,
-                      label = dist_lab),
+                      label = district),
                   vjust = 3,
                   y = Inf,
                   size = 2.5,
