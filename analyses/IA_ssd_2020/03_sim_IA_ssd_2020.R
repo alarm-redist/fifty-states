@@ -13,20 +13,8 @@ suppressMessages({
 
 cli_process_start("Running simulations for {.pkg IA_ssd_2020}")
 
-# TODO any pre-computation (VRA targets, etc.)
-
-# TODO customize as needed. Recommendations:
-#  - For many districts / tighter population tolerances, try setting
-#  `pop_temper=0.01` and nudging upward from there. Monitor the output for
-#  efficiency!
-#  - Monitor the output (i.e. leave `verbose=TRUE`) to ensure things aren't breaking
-#  - Don't change the number of simulations unless you have a good reason
-#  - If the sampler freezes, try turning off the county split constraint to see
-#  if that's the problem.
-#  - Ask for help!
 set.seed(2020)
 
-# TODO set equal to half of districts, increase 10-15 if no convergence
 mh_accept_per_smc <- 25
 
 # Compute total SMC steps explicitly to avoid ms_frequency schedule issues
@@ -82,8 +70,6 @@ plans <- match_numbers(plans, "ssd_2020")
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
 
-# TODO add any reference plans that aren't already included
-
 
 # Ensure output directory exists (first run convenience)
 dir.create(here::here("data-out/IA_2020"), recursive = TRUE, showWarnings = FALSE)
@@ -103,7 +89,6 @@ save_summary_stats(plans, "data-out/IA_2020/IA_ssd_2020_stats.csv")
 cli_process_done()
 
 # Extra validation plots for custom constraints -----
-# TODO remove this section if no custom constraints
 if (interactive()) {
     library(ggplot2)
     library(patchwork)
