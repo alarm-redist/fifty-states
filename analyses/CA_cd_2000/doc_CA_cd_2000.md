@@ -19,4 +19,5 @@ We reallocated the population and voting data from two offshore precincts, which
 ## Simulation Notes
 We sample 6,000 districting plans for ``California`` across 5 independent runs of the SMC algorithm.
 We then thinned the number of samples to 5,000. 
+We also used new algorithmic mergesplit parameters to improve mixing.
 To balance county and municipality splits, we create pseudocounties for use in the county constraint.
