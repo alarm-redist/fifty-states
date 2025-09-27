@@ -54,7 +54,6 @@ if (interactive()) {
   library(ggplot2)
   library(patchwork)
   
-  plans   <- plans %>% mutate(total_vap = total_vap)
   enac_sum <- plans %>% subset_ref() %>% mutate(total_vap = total_vap)
   
   plans <- plans %>%
