@@ -17,4 +17,4 @@ No manual pre-processing decisions are necessary.
 
 ## Simulation Notes
 We sample 5,000 districting plans for ``Ohio`` across 10 independent runs of the SMC algorithm.
-No special techniques were needed to produce the sample.
+We also used new algorithmic mergesplit parameters to improve mixing.
