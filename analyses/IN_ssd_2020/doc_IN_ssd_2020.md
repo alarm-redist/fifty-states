@@ -24,7 +24,7 @@ No manual pre-processing was necessary. The analysis followed the standard pipel
 - `03_sim` to run SMC and compute diagnostics.
 
 ## Simulation Notes
-We sampled **30,002** state senate plans for Indiana using `redist_smc` across **5 independent chains × 6,000 plans** each (no thinning).
+We sampled **30,000** state senate plans for Indiana using `redist_smc` across **5 independent chains × 6,000 plans** each (no thinning).
 
 **Sampler configuration (baseline):**
 - Sampling space: `linking_edge`;
