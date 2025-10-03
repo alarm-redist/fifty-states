@@ -33,11 +33,12 @@ We sampled **30,002** state senate plans for Indiana using `redist_smc` across *
 - `pop_temper = 0.02`;
 - `seq_alpha = 0.98` (default tempering schedule used for this run).
 
-**Diagnostics (summarized):**
-- Convergence and mixing are excellent: **max R‑hat = 1.0016 (< 1.05)**; effective sample sizes (bulk/tail) ≈ **24k–27k** across key plan-level metrics.
-- Plan weights are well-behaved (unimodal distribution; no extreme weight concentration).
-- Population deviation: the distribution is tightly concentrated near the 5% target; only **2 of 30,002** sampled plans slightly exceed 5%. If a strictly ≤5% subset is preferred for downstream analysis, those plans can be filtered out without re-running the sampler.
-- Validation figures (saved under `data-out/IN_2020/diagnostics/`):  
-  `IN_validation.png`, `rhat.png` (+ `rhat_table.csv`), `plan_dev_hist.png`, and `weights_hist.png`.  
+## Diagnostics (summary)
+
+- Convergence and mixing are excellent: **max R-hat = 1.0016 (< 1.05)**; effective sample sizes (bulk/tail) ≈ **24k–27k** across key plan-level metrics.
+- Plan weights are unimodal with no extreme concentration.
+- Population deviation is tightly concentrated near the ±5% target; only **2 / 30,002** plans slightly exceed 5%. A strict ≤5% subset can be obtained by filtering those plans without re-running the sampler.
+- Validation artifacts are written to `data-out/IN_2020/diagnostics/`: `IN_validation.png`, `rhat.png` (with `rhat_table.csv`), `plan_dev_hist.png`, and `weights_hist.png`. Per the contribution guide, these plots are attached in the PR and not committed to Git.
+
 
 
