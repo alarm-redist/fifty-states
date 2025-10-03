@@ -15,7 +15,7 @@ We enforce a **maximum population deviation of 5.0%** at the plan level (max |po
 ## Data Sources
 - Geography: 2020 TIGER/Line Voting Tabulation District (VTD) geometry and county boundaries (U.S. Census Bureau).
 - Enacted plan: 2020-cycle Indiana state senate plan, incorporated as a reference in the `redist_plans` object.
-- All files produced by this analysis are written to `data-out/IN_2020/…` per project conventions (no `data-raw/` or `data-out/` data are committed to GitHub). :contentReference[oaicite:2]{index=2}
+- All files produced by this analysis are written to `data-out/IN_2020/…` per project conventions (no `data-raw/` or `data-out/` data are committed to GitHub). 
 
 ## Pre-processing Notes
 No manual pre-processing was necessary. The analysis followed the standard pipeline:
@@ -31,7 +31,7 @@ We sampled **30,002** state senate plans for Indiana using `redist_smc` across *
 - County handling: counties only (no additional municipality-split penalties);
 - SMC merge–split every step; `mh_accept_per_smc = 35`;
 - `pop_temper = 0.02`;
-- `seq_alpha = 0.98` (default tempering schedule used for this run).
+- `seq_alpha = 1` (default tempering schedule used for this run).
 
 ## Diagnostics (summary)
 
