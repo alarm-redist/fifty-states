@@ -39,5 +39,5 @@ We sampled **30,002** state senate plans for Indiana using `redist_smc` across *
 - Population deviation: the distribution is tightly concentrated near the 5% target; only **2 of 30,002** sampled plans slightly exceed 5%. If a strictly ≤5% subset is preferred for downstream analysis, those plans can be filtered out without re-running the sampler.
 - Validation figures (saved under `data-out/IN_2020/diagnostics/`):  
   `IN_validation.png`, `rhat.png` (+ `rhat_table.csv`), `plan_dev_hist.png`, and `weights_hist.png`.  
-  As per the contribution guide, these plots are pasted into the PR for review. :contentReference[oaicite:3]{index=3}
+
 
