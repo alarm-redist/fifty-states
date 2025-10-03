@@ -37,7 +37,7 @@ We sampled **30,002** state senate plans for Indiana using `redist_smc` across *
 
 - Convergence and mixing are excellent: **max R-hat = 1.0016 (< 1.05)**; effective sample sizes (bulk/tail) ≈ **24k–27k** across key plan-level metrics.
 - Plan weights are unimodal with no extreme concentration.
-- Population deviation is tightly concentrated near the ±5% target; only **2 / 30,002** plans slightly exceed 5%. A strict ≤5% subset can be obtained by filtering those plans without re-running the sampler.
+- Population deviation is tightly concentrated near the ±5% target; only **2 / 30,000** plans slightly exceed 5%. A strict ≤5% subset can be obtained by filtering those plans without re-running the sampler.
 - Validation artifacts are written to `data-out/IN_2020/diagnostics/`: `IN_validation.png`, `rhat.png` (with `rhat_table.csv`), `plan_dev_hist.png`, and `weights_hist.png`. Per the contribution guide, these plots are attached in the PR and not committed to Git.
 
 
