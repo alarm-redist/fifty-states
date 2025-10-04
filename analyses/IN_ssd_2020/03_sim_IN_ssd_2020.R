@@ -1,5 +1,5 @@
 ###############################################################################
-# Simulate plans for IN_ssd_2020 — template-conformant (counties-only; ±5% tol)
+# Simulate plans for IN_ssd_2020 (counties-only; ±5% tol)
 ###############################################################################
 suppressMessages({
   library(cli); library(here); library(dplyr); library(readr); library(redist)
@@ -67,7 +67,7 @@ plans <- add_summary_stats(plans, map)
 save_summary_stats(plans, here("data-out/IN_2020/IN_ssd_2020_stats.csv"))
 cli_process_done()
 
-# Optional: validation (keep in interactive only; template style)
+# Optional: validation (keep in interactive only)
 if (interactive()) {
   validate_analysis(plans, map)
 }
