@@ -8,7 +8,7 @@ suppressMessages({
 stopifnot(packageVersion("redist") >= "5.0.0")
 set.seed(2020)
 
-# Load map (keep your current path for this PR)
+# Load map
 cli_process_start("Loading map for {.pkg IN_ssd_2020}")
 map <- read_rds(here("data-out/IN_2020/IN_ssd_2020_map.rds"))
 cli_process_done()
@@ -67,7 +67,7 @@ plans <- add_summary_stats(plans, map)
 save_summary_stats(plans, here("data-out/IN_2020/IN_ssd_2020_stats.csv"))
 cli_process_done()
 
-# Optional: validation (keep in interactive only)
+# Optional: validation (keep in interactive only; template style)
 if (interactive()) {
   validate_analysis(plans, map)
 }
