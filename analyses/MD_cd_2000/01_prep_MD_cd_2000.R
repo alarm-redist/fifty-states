@@ -48,7 +48,7 @@ if (!file.exists(here(shp_path))) {
   md_shp <- read_rds(here(shp_path))
   cli_alert_success("Loaded {.strong MD} base shapefile (unchanged geometry)")
 }
-  
+
 # Build adjacency on full layer, then edit via subtract_edge()
 cli_process_start("Building full adjacency and editing edges (no shape edits)")
 
@@ -83,25 +83,41 @@ if (!is.na(u) && !is.na(v)) {
   md_shp$adj <- add_edge(md_shp$adj, u, v, zero = TRUE)
 }
 
-# build the map from a land-only map while leaving the saved shapefile untouched to satisfy redist_map()
-is_bay   <- md_shp$GEOID %in% bay_ids
-land_idx <- which(!is_bay)
+# Connect bay precincts
+u <- match("24029ZZZZZZ", md_shp$GEOID)
+v <- match("2402906-001", md_shp$GEOID)
+if (!is.na(u) && !is.na(v)) {
+  md_shp$adj <- add_edge(md_shp$adj, u, v, zero = TRUE)
+}
 
-relabel <- setNames(seq_along(land_idx), land_idx)
+u <- match("24005ZZZZZZ", md_shp$GEOID)
+v <- match("2400515-019", md_shp$GEOID)
+if (!is.na(u) && !is.na(v)) {
+  md_shp$adj <- add_edge(md_shp$adj, u, v, zero = TRUE)
+}
 
-adj_land <- lapply(land_idx, function(i) {
-  nbr <- md_shp$adj[[i]]
-  if (length(nbr)) {
-    nbr <- nbr + 1L                   
-    nbr <- nbr[nbr %in% land_idx]     
-    unname(relabel[as.character(nbr)]) - 1L  
-  } else integer(0)
-})
-attr(adj_land, "zero_indexed") <- TRUE
+u <- match("24003ZZZZZZ", md_shp$GEOID)
+v <- match("2400306-024", md_shp$GEOID)
+if (!is.na(u) && !is.na(v)) {
+  md_shp$adj <- add_edge(md_shp$adj, u, v, zero = TRUE)
+}
 
-md_land       <- md_shp[land_idx, , drop = FALSE]
-md_land$adj   <- adj_land
+u <- match("24009ZZZZZZ", md_shp$GEOID)
+v <- match("2400902-002", md_shp$GEOID)
+if (!is.na(u) && !is.na(v)) {
+  md_shp$adj <- add_edge(md_shp$adj, u, v, zero = TRUE)
+}
 
-cd_2000_land <- md_shp$cd_2000[land_idx]
+u <- match("24037ZZZZZZ", md_shp$GEOID)
+v <- match("2403701-001", md_shp$GEOID)
+if (!is.na(u) && !is.na(v)) {
+  md_shp$adj <- add_edge(md_shp$adj, u, v, zero = TRUE)
+}
+
+u <- match("24041ZZZZZZ", md_shp$GEOID)
+v <- match("2404105-001", md_shp$GEOID)
+if (!is.na(u) && !is.na(v)) {
+  md_shp$adj <- add_edge(md_shp$adj, u, v, zero = TRUE)
+}
 
 cli_process_done()
