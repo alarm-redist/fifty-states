@@ -17,7 +17,7 @@ We enforce a maximum population deviation of 0.5%.
 Data for ``Maryland`` comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
 
 ## Pre-processing Notes
-We edited the adjacency graph so districts cannot traverse the Bay. Bay units were isolated in the adjacency while all polygons were preserved on disk. For the simulation, we derived a land-only map to ensure ``redist_map()`` saw a contiguous graph. One isolated island precinct was manually connected to its nearest neighbor.
+We edited the adjacency graph so that districts cannot traverse the Bay. All polygons were preserved, but Bay units were isolated within the adjacency. Specifically, we identified the Bay precincts, removed all of their existing adjacency links, and then reconnected each Bay precinct to a selected same-side neighbor to prevent cross-Bay connections. In other words, Bay precincts on the east side were linked to one chosen east-side neighbor, and those on the west side were linked to one chosen west-side neighbor. One isolated island precinct was manually connected to its nearest neighbor.
 
 ## Simulation Notes
 We sample 10,000 districting plans for ``Maryland`` across 5 independent runs of the SMC algorithm.
