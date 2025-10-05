@@ -1,11 +1,11 @@
 ###############################################################################
 # Set up redistricting simulation for `MD_cd_2000`
-# © ALARM Project, July 2025
+# © ALARM Project, October 2025
 ###############################################################################
 cli_process_start("Creating {.cls redist_map} object for {.pkg MD_cd_2000}")
 
-map <- redist_map(md_land, pop_tol = 0.005,
-                  existing_plan = cd_2000, adj = md_land$adj)
+map <- redist_map(md_shp, pop_tol = 0.005,
+                  existing_plan = cd_2000, adj = md_shp$adj)
 
 # Add an analysis name attribute
 attr(map, "analysis_name") <- "MD_2000"
