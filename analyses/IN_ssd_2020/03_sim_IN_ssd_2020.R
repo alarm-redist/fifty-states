@@ -6,7 +6,6 @@ suppressMessages({
   devtools::load_all()
 })
 stopifnot(packageVersion("redist") >= "5.0.0")
-set.seed(2020)
 
 # Load map
 cli_process_start("Loading map for {.pkg IN_ssd_2020}")
