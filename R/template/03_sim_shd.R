@@ -1,5 +1,5 @@
 ###############################################################################
-# Simulate plans for ```SLUG```
+# Simulate plans for ```SLUG``` SHD
 # ``COPYRIGHT``
 ###############################################################################
 
@@ -18,15 +18,28 @@ cli_process_start("Running simulations for {.pkg ``SLUG``}")
 #  if that's the problem.
 #  - Ask for help!
 set.seed(``YEAR``)
-plans <- redist_smc(map, nsims = 2e3, runs = 5, counties = county)
+
+# TODO set equal to one third of number of districts, increase by 10-15 if no convergence
+mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_``YEAR``)/3)
+
+plans <- redist_smc(
+  map_shd,
+  nsims = 2e3, runs = 5,
+  counties = pseudo_county,
+  sampling_space = "linking_edge",
+  ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
+  split_params = list(splitting_schedule = "any_valid_sizes"),
+  verbose = TRUE
+)
+
 # IF CORES OR OTHER UNITS HAVE BEEN MERGED:
 # make sure to call `pullback()` on this plans object!
 
 plans <- plans |>
     group_by(chain) |>
-    filter(as.integer(draw) < min(as.integer(draw)) + 1000) |> # thin samples
+    filter(as.integer(draw) < min(as.integer(draw)) + 2000) |> # thin samples
     ungroup()
-plans <- match_numbers(plans, "cd_``YEAR``")
+plans <- match_numbers(plans, "shd_``YEAR``")
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
@@ -40,19 +53,20 @@ cli_process_done()
 # Compute summary statistics -----
 cli_process_start("Computing summary statistics for {.pkg ``SLUG``}")
 
-plans <- add_summary_stats(plans, map)
+plans <- add_summary_stats(plans, map_shd)
 
 # Output the summary statistics. Do not edit this path.
 save_summary_stats(plans, "data-out/``STATE``_``YEAR``/``SLUG``_stats.csv")
 
 cli_process_done()
 
-# Extra validation plots for custom constraints -----
-# TODO remove this section if no custom constraints
 if (interactive()) {
     library(ggplot2)
     library(patchwork)
 
-    validate_analysis(plans, map)
+    validate_analysis(plans, map_shd)
     summary(plans)
+
+    # Extra validation plots for custom constraints -----
+    # TODO remove this section if no custom constraints
 }
