@@ -60,7 +60,7 @@ if (!file.exists(here(shp_path))) {
 
     # add the enacted plan
     ``state``_shp <- ``state``_shp |>
-        left_join(y = leg_from_baf(state = "``STATE``"))
+        left_join(y = leg_from_baf(state = "``STATE``"), by = "GEOID")
 
 
     # TODO any additional columns or data you want to add should go here
@@ -79,9 +79,14 @@ if (!file.exists(here(shp_path))) {
     }
 
     # create adjacency graph
-    ``state``_shp$adj <- redist.adjacency(``state``_shp)
+    ``state``_shp$adj <- adjacency(``state``_shp)
 
     # TODO any custom adjacency graph edits here
+
+    # check max number of connected components
+    # 1 is one fully connected component, more is worse
+    ccm(``state``_shp$adj, ``state``_shp$ssd_2020)
+    ccm(``state``_shp$adj, ``state``_shp$shd_2020)
 
     ``state``_shp <- ``state``_shp |>
         fix_geo_assignment(muni)
