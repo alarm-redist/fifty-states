@@ -220,7 +220,7 @@ vest_crosswalk <- function(cvap, state) {
   rt <- pl_retally(cvap, crosswalk = vest_cw)
 
   baf <- pl_get_baf(toupper(state), "VTD") |>
-    .[[1]] |>
+    purrr::pluck(1) |>
     rename(GEOID = BLOCKID) |>
     mutate(
       STATEFP = censable::match_fips(state),
