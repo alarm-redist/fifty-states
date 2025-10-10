@@ -11,7 +11,11 @@ validate_analysis <- function(plans, map) {
     p_wgts <- plot(plans) + theme_bw()
 
     plan_div <- plans_diversity(plans, n_max = 150)
-    p_div <- qplot(plan_div, bins = I(40), xlab = "VI distance", main = "Plan diversity") + theme_bw()
+    p_div <- dplyr::tibble(div = plan_div) |>
+      ggplot2::ggplot() +
+      ggplot2::geom_histogram(ggplot2::aes(x = div), bins = 40) +
+      ggplot2::labs(x = "VI distance", title = "Plan diversity") +
+      ggplot2::theme_bw()
 
     p_dev <- hist(plans, plan_dev, bins = 40) + labs(title = "Population deviation") + theme_bw()
     p_comp1 <- hist(plans, comp_edge, bins = 40) + labs(title = "Compactness: fraction kept") + theme_bw()
