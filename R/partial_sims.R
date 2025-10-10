@@ -41,10 +41,13 @@ prep_particles <- function(map, map_plan_list, uid, dist_keep, nsims) {
             mutate(draw = as.integer(draw))
     })
 
-    adds <- sapply(keep_l, function(x) {
+    adds <- c(
+      0,
+      sapply(keep_l, function(x) {
         z <- x$draw[1]
         x |> filter(draw == z) |> nrow()
-    }) |> cumsum() |> c(0, .)
+      }) |> cumsum()
+    )
 
     plans_m_l <- lapply(seq_along(plans_m_l), function(i) {
         m <- plans_m_l[[i]]
