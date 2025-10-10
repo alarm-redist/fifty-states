@@ -31,7 +31,7 @@ validate_analysis <- function(plans, map) {
         select(district, comp_polsby, vap_white, vap_black, total_vap) |>
         mutate(minority = (total_vap - vap_white) / (total_vap)) |>
         mutate(
-            dist_lab = paste0(st, "-", str_pad(district, width = 2, pad = '0')),
+            dist_lab = district,
             minority_rank = rank(minority), # ascending order
             compact_rank = rank(comp_polsby),
         )
