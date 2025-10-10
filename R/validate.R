@@ -11,7 +11,11 @@ validate_analysis <- function(plans, map) {
     p_wgts <- plot(plans) + theme_bw()
 
     plan_div <- plans_diversity(plans, n_max = 150)
-    p_div <- qplot(plan_div, bins = I(40), xlab = "VI distance", main = "Plan diversity") + theme_bw()
+    p_div <- dplyr::tibble(div = plan_div) |>
+      ggplot2::ggplot() +
+      ggplot2::geom_histogram(ggplot2::aes(x = div), bins = 40) +
+      ggplot2::labs(x = "VI distance", title = "Plan diversity") +
+      ggplot2::theme_bw()
 
     p_dev <- hist(plans, plan_dev, bins = 40) + labs(title = "Population deviation") + theme_bw()
     p_comp1 <- hist(plans, comp_edge, bins = 40) + labs(title = "Compactness: fraction kept") + theme_bw()
@@ -25,13 +29,13 @@ validate_analysis <- function(plans, map) {
     } else p_split2 <- patchwork::plot_spacer()
 
     st <- map$state[1]
-    enac_sum <- plans %>%
-        filter(draw == attr(map, "existing_col")) %>%
+    enac_sum <- plans |>
+        filter(draw == attr(map, "existing_col")) |>
         # TODO: match with what gets plotted
-        select(district, comp_polsby, vap_white, vap_black, total_vap) %>%
-        mutate(minority = (total_vap - vap_white) / (total_vap)) %>%
+        select(district, comp_polsby, vap_white, vap_black, total_vap) |>
+        mutate(minority = (total_vap - vap_white) / (total_vap)) |>
         mutate(
-            dist_lab = paste0(st, "-", str_pad(district, width = 2, pad = '0')),
+            dist_lab = district,
             minority_rank = rank(minority), # ascending order
             compact_rank = rank(comp_polsby),
         )
@@ -49,8 +53,8 @@ validate_analysis <- function(plans, map) {
                   alpha = 0.8,
                   color = "red")
 
-    p_vra = plans %>%
-        mutate(minority = (total_vap - vap_white) / total_vap) %>%
+    p_vra = plans |>
+        mutate(minority = (total_vap - vap_white) / total_vap) |>
         plot(minority, geom="boxplot") +
         # add label
         geom_text(data = enac_sum,

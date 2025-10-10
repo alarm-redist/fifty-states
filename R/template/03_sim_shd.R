@@ -20,10 +20,10 @@ cli_process_start("Running simulations for {.pkg ``SLUG``}")
 set.seed(``YEAR``)
 
 # TODO set equal to one third of number of districts, increase by 10-15 if no convergence
-mh_accept_per_smc <- ceiling(n_distinct(shd_map$shd_``YEAR``)/3)
+mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_``YEAR``)/3)
 
 plans <- redist_smc(
-  shd_map,
+  map_shd,
   nsims = 2e3, runs = 5,
   counties = pseudo_county,
   sampling_space = "linking_edge",
@@ -35,9 +35,9 @@ plans <- redist_smc(
 # IF CORES OR OTHER UNITS HAVE BEEN MERGED:
 # make sure to call `pullback()` on this plans object!
 
-plans <- plans %>%
-    group_by(chain) %>%
-    filter(as.integer(draw) < min(as.integer(draw)) + 2000) %>% # thin samples
+plans <- plans |>
+    group_by(chain) |>
+    filter(as.integer(draw) < min(as.integer(draw)) + 2000) |> # thin samples
     ungroup()
 plans <- match_numbers(plans, "shd_``YEAR``")
 
@@ -47,16 +47,16 @@ cli_process_start("Saving {.cls redist_plans} object")
 # TODO add any reference plans that aren't already included
 
 # Output the redist_map object. Do not edit this path.
-write_rds(plans, here("data-out/``STATE``_``YEAR``/``SLUG``_shd_plans.rds"), compress = "xz")
+write_rds(plans, here("data-out/``STATE``_``YEAR``/``SLUG``_plans.rds"), compress = "xz")
 cli_process_done()
 
 # Compute summary statistics -----
 cli_process_start("Computing summary statistics for {.pkg ``SLUG``}")
 
-plans <- add_summary_stats(plans, shd_map)
+plans <- add_summary_stats(plans, map_shd)
 
 # Output the summary statistics. Do not edit this path.
-save_summary_stats(plans, "data-out/``STATE``_``YEAR``/``SLUG``_shd_stats.csv")
+save_summary_stats(plans, "data-out/``STATE``_``YEAR``/``SLUG``_stats.csv")
 
 cli_process_done()
 
@@ -64,7 +64,7 @@ if (interactive()) {
     library(ggplot2)
     library(patchwork)
 
-    validate_analysis(plans, shd_map)
+    validate_analysis(plans, map_shd)
     summary(plans)
 
     # Extra validation plots for custom constraints -----

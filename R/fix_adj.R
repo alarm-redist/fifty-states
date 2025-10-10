@@ -8,13 +8,13 @@
 #' @export
 fix_geo_assignment <- function(data, col, adj = data$adj) {
     # get populations of geo units
-    geo_pops <- data %>%
-        sf::st_drop_geometry() %>%
+    geo_pops <- data |>
+        sf::st_drop_geometry() |>
         count({{ col }}, wt = pop, name = "pop")
 
     col_val <- rlang::eval_tidy(rlang::enquo(col), data)
     if (!is.character(col_val) && !is.factor(col_val) && !is.integer(col_val))
-        cli_abort("Column must be a {.cls character}, {.cls factor}, or {.cls integer}.")
+        cli::cli_abort("Column must be a {.cls character}, {.cls factor}, or {.cls integer}.")
     if (is.character(col_val)) {
         col_type <- "chr"
         lev <- unique(col_val)
@@ -77,9 +77,9 @@ assign_geo <- function(i, all_geos, adj, col, geo_pops) {
         # check if assignment was tied
         # if so, assign to place with highest population of neighbors
         return(
-            geo_pops %>%
-                filter({{ col }} %in% neighbor_geo) %>%
-                filter(pop == max(pop)) %>%
+            geo_pops |>
+                filter({{ col }} %in% neighbor_geo) |>
+                filter(pop == max(pop)) |>
                 pull({{ col }})
         )
 

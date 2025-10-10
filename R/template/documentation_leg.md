@@ -1,7 +1,7 @@
 # ``YEAR`` ``STATE NAME`` ``TYPE``
 
 ## Redistricting requirements
-In ``STATE NAME``, we consult [NCSL Redistricting Law 2020]( - https://documents.ncsl.org/wwwncsl/Redistricting-Census/Redistricting-Law-2020_NCSL%20FINAL.pdf#page=204.99) and impose the following constraints. In our simulations, legislative districts must:
+In ``STATE NAME``, we consult [NCSL Redistricting Law 2020](https://documents.ncsl.org/wwwncsl/Redistricting-Census/Redistricting-Law-2020_NCSL%20FINAL.pdf) and impose the following constraints. In our simulations, legislative districts must:
 
 1. be contiguous
 1. have equal populations
@@ -20,9 +20,9 @@ No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
 We sample XX,XXX districting plans for ``STATE NAME``'s lower house across 5 independent runs of the SMC algorithm.
-We then thinned the number of samples to 10,000 [delete if only 10,000 total samples].
+We then thinned the number of samples to 10,000 [TODO delete if only 10,000 total samples].
 No special techniques were needed to produce the sample.
 
 We sample XX,XXX districting plans for ``STATE NAME``'s upper house across 5 independent runs of the SMC algorithm.
-We then thinned the number of samples to 10,000 [delete if only 10,000 total samples].
+We then thinned the number of samples to 10,000 [TODO delete if only 10,000 total samples].
 No special techniques were needed to produce the sample.
