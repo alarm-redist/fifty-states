@@ -266,14 +266,11 @@ open_state <- function(state, type = "cd", year = 2020) {
   slug <- str_glue("{state}_{type}_{year}")
 
   if (requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()) {
-    rstudioapi::navigateToFile(str_glue("analyses/{slug}/01_prep_{slug}.R"))
-    rstudioapi::navigateToFile(str_glue("analyses/{slug}/02_setup_{slug}.R"))
-    rstudioapi::navigateToFile(str_glue("analyses/{slug}/03_sim_{slug}.R"))
-    rstudioapi::navigateToFile(str_glue("analyses/{slug}/doc_{slug}.md"))
-    rstudioapi::navigateToFile(str_glue("analyses/{slug}/03_sim_{slug}.R"))
-    rstudioapi::navigateToFile(str_glue("analyses/{slug}/02_setup_{slug}.R"))
-    rstudioapi::navigateToFile(str_glue("analyses/{slug}/01_prep_{slug}.R"))
+    files <- fs::dir_ls(path = stringr::str_glue('analyses/{slug}/'))
+    lapply(c(files, rev(files)[-1]) rstudioapi::navigateToFile)
   }
+
+  invisible(NULL)
 }
 
 
