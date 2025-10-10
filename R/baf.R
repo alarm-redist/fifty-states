@@ -167,17 +167,17 @@ leg_from_baf <- function(state, to = "VTD") {
     purrr::reduce(dplyr::left_join, by = 'BLOCKID') |>
     dplyr::group_by(vtd) |>
     dplyr::summarize(
-      shd_20 = Mode(shd_20),
-      ssd_20 = Mode(ssd_20)
+      shd_2020 = Mode(shd_20),
+      ssd_2020 = Mode(ssd_20)
     )
   # Why? Some states (nested mainly) use A, B, C... for SSDs
-  if (!any(is.na(suppressWarnings(as.integer(out$shd_20))))){
+  if (!any(is.na(suppressWarnings(as.integer(out$shd_2020))))){
     out <- out |>
-      dplyr::mutate(shd_20 = as.integer(shd_20))
+      dplyr::mutate(shd_2020 = as.integer(shd_2020))
   }
-  if (!any(is.na(suppressWarnings(as.integer(out$ssd_20))))){
+  if (!any(is.na(suppressWarnings(as.integer(out$ssd_2020))))){
     out <- out |>
-      dplyr::mutate(ssd_20 = as.integer(ssd_20))
+      dplyr::mutate(ssd_2020 = as.integer(ssd_2020))
   }
   out |>
     dplyr::rename(GEOID = vtd)
