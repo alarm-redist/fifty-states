@@ -20,9 +20,9 @@ No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
 We sample XX,XXX districting plans for ``STATE NAME``'s lower house across 5 independent runs of the SMC algorithm.
-We then thinned the number of samples to 10,000 [delete if only 10,000 total samples].
+We then thinned the number of samples to 10,000 [TODO delete if only 10,000 total samples].
 No special techniques were needed to produce the sample.
 
 We sample XX,XXX districting plans for ``STATE NAME``'s upper house across 5 independent runs of the SMC algorithm.
-We then thinned the number of samples to 10,000 [delete if only 10,000 total samples].
+We then thinned the number of samples to 10,000 [TODO delete if only 10,000 total samples].
 No special techniques were needed to produce the sample.
