@@ -1,17 +1,17 @@
 #' Download a file
 #'
-#' Backend-agnostic (currently `httr`)
+#' Backend-agnostic (currently `curl`)
 #'
 #' @param url a URL
 #' @param path a file path
 #' @param overwrite should the file at path be overwritten if it already exists? Default is FALSE.
 #'
-#' @returns the `httr` request
+#' @returns the `curl` request
 download <- function(url, path, overwrite = FALSE) {
   dir <- dirname(path)
   if (!dir.exists(dir)) dir.create(dir, recursive = TRUE)
   if (!file.exists(path) || overwrite) {
-    httr::GET(url = url, httr::write_disk(path, overwrite = overwrite))
+    curl::curl_download(url = url, destfile = path)
   } else {
     cli::cli_alert_info(paste0("File already downloaded at ", path, ". Set `overwrite = TRUE` to overwrite."))
     list(status_code = 200)
@@ -275,6 +275,10 @@ open_state <- function(state, type = "cd", year = 2020) {
 
 
 Mode <- function(v) {
+  if (all(is.na(v))) {
+    return(v[1])
+  }
+  v <- v[!is.na(v)]
   uv <- unique(v)
   uv[which.max(tabulate(match(v, uv)))][1]
 }
