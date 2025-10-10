@@ -14,7 +14,7 @@ make_from_baf <- function(state, from = "INCPLACE_CDP", to = "VTD", year = 2020)
     } else {
         baf <- get_baf_10(state, cache_to = here(str_glue("data-raw/{state}/{state}_baf_10.rds")))
         if ('VTD' %in% names(baf)) {
-            baf[['VTD']] <- baf[['VTD']] %>%
+            baf[['VTD']] <- baf[['VTD']] |>
                 mutate(DISTRICT = str_pad_l0(DISTRICT, 6))
         }
     }
@@ -26,20 +26,24 @@ make_from_baf <- function(state, from = "INCPLACE_CDP", to = "VTD", year = 2020)
         from = names(from)[2]
     }
     d_to <- baf[[to]]
-    if (is.null(from)) cli_abort("{.arg from} not found in {state} BAF.")
-    if (is.null(to)) cli_abort("{.arg to} not found in {state} BAF.")
+    if (is.null(from)) {
+      cli::cli_abort("{.arg from} not found in {state} BAF.")
+    }
+    if (is.null(to)) {
+      cli::cli_abort("{.arg to} not found in {state} BAF.")
+    }
 
     state_fp <- str_sub(d_to$BLOCKID[1], 1, 2)
     fmt_baf <- function(x, nm) {
-        tidyr::unite(x, {{ nm }}, -BLOCKID, sep = "") %>%
+        tidyr::unite(x, {{ nm }}, -BLOCKID, sep = "") |>
             mutate({{ nm }} := na_if(.[[nm]], "NA"))
     }
 
     d_to <- fmt_baf(d_to, "to")
     d_from <- fmt_baf(d_from, "from")
     d <- left_join(d_to, d_from, by = "BLOCKID")
-    d <- d %>%
-        group_by(to) %>%
+    d <- d |>
+        group_by(to) |>
         summarize(from = names(which.max(table(from, useNA = "always"))))
     if (from == "INCPLACE_CDP") from <- "muni"
     to <- str_to_lower(to)
@@ -117,7 +121,7 @@ read_baf_cd113 <- function(state) {
 
     read_csv(
         path, col_types = c(BLOCKID = 'c', CD113 = 'i')
-    ) %>%
+    ) |>
         rename(
             cd_2010 = CD113
         )

@@ -25,11 +25,11 @@ validate_analysis <- function(plans, map) {
     } else p_split2 <- patchwork::plot_spacer()
 
     st <- map$state[1]
-    enac_sum <- plans %>%
-        filter(draw == attr(map, "existing_col")) %>%
+    enac_sum <- plans |>
+        filter(draw == attr(map, "existing_col")) |>
         # TODO: match with what gets plotted
-        select(district, comp_polsby, vap_white, vap_black, total_vap) %>%
-        mutate(minority = (total_vap - vap_white) / (total_vap)) %>%
+        select(district, comp_polsby, vap_white, vap_black, total_vap) |>
+        mutate(minority = (total_vap - vap_white) / (total_vap)) |>
         mutate(
             dist_lab = paste0(st, "-", str_pad(district, width = 2, pad = '0')),
             minority_rank = rank(minority), # ascending order
@@ -49,8 +49,8 @@ validate_analysis <- function(plans, map) {
                   alpha = 0.8,
                   color = "red")
 
-    p_vra = plans %>%
-        mutate(minority = (total_vap - vap_white) / total_vap) %>%
+    p_vra = plans |>
+        mutate(minority = (total_vap - vap_white) / total_vap) |>
         plot(minority, geom="boxplot") +
         # add label
         geom_text(data = enac_sum,

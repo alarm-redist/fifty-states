@@ -41,7 +41,7 @@ add_summary_stats <- function(plans, map, ...) {
             perim_df <- redist.prep.polsbypopper(map, perim_path = perim_path)
         }
     }
-    plans <- plans %>%
+    plans <- plans |>
         mutate(
             total_vap = redist::tally_var(map, .data$vap),
             plan_dev = redist::plan_parity(map),
@@ -66,9 +66,9 @@ add_summary_stats <- function(plans, map, ...) {
         plans <- mutate(plans, {{ col }} := tally_var(map, map[[col]]), .before = ndv)
     }
 
-    elecs <- dplyr::select(dplyr::as_tibble(map), dplyr::contains("_dem_")) %>%
-        names() %>%
-        stringr::str_sub(1, 6) %>%
+    elecs <- dplyr::select(dplyr::as_tibble(map), dplyr::contains("_dem_")) |>
+        names() |>
+        stringr::str_sub(1, 6) |>
         unique()
     if (length(elecs) != 0) {
       elect_tb <- lapply(elecs, function(el) {
@@ -83,14 +83,14 @@ add_summary_stats <- function(plans, map, ...) {
         dvote <- dplyr::pull(vote_d, 1)
         rvote <- dplyr::pull(vote_d, 2)
 
-        plans %>%
+        plans |>
           dplyr::mutate(
             dem = redist::group_frac(map, dvote, dvote + rvote),
             egap = redistmetrics::part_egap(plans = redist::pl(), shp = map, rvote = rvote, dvote = dvote),
             pbias = redistmetrics::part_bias(plans = redist::pl(), shp = map, rvote = rvote, dvote = dvote)
-          ) %>%
-          dplyr::as_tibble() %>%
-          dplyr::group_by(.data$draw) %>%
+          ) |>
+          dplyr::as_tibble() |>
+          dplyr::group_by(.data$draw) |>
           dplyr::transmute(
             draw = .data$draw,
             district = .data$district,
@@ -100,11 +100,11 @@ add_summary_stats <- function(plans, map, ...) {
             pbias = .data$pbias[1],
             egap = .data$egap[1]
           )
-      }) %>%
+      }) |>
         purrr::list_rbind()
 
-      elect_tb <- elect_tb %>%
-        dplyr::group_by(.data$draw, .data$district) %>%
+      elect_tb <- elect_tb |>
+        dplyr::group_by(.data$draw, .data$district) |>
         dplyr::summarize(dplyr::across(dplyr::everything(), mean))
       plans <- dplyr::left_join(plans, elect_tb, by = c("draw", "district"))
     }
@@ -112,19 +112,19 @@ add_summary_stats <- function(plans, map, ...) {
     split_cols <- names(map)[tidyselect::eval_select(tidyselect::any_of(c("county", "muni")), map)]
     for (col in split_cols) {
         if (col == "county") {
-            plans <- plans %>%
+            plans <- plans |>
                 dplyr::mutate(county_splits = redistmetrics::splits_admin(plans = redist::pl(), map, .data$county), .before = "ndv")
         } else if (col == "muni") {
           if (all(is.na(map$muni))) {
             # then by definition
-            plans <- plans %>%
+            plans <- plans |>
               dplyr::mutate(muni_splits = 0L, .before = "ndv")
           } else {
-            plans <- plans %>%
+            plans <- plans |>
               dplyr::mutate(muni_splits = redistmetrics::splits_sub_admin(plans = redist::pl(), map, .data$muni), .before = "ndv")
           }
         } else {
-            plans <- plans %>%
+            plans <- plans |>
                 dplyr::mutate("{col}_splits" := redistmetrics::splits_admin(plans = redist::pl(), map, map[[col]]), .before = "ndv")
         }
     }
@@ -142,7 +142,7 @@ add_summary_stats <- function(plans, map, ...) {
 #' @returns invisibly
 #' @export
 save_summary_stats <- function(plans, path) {
-    as_tibble(plans) %>%
-        mutate(across(where(is.numeric), format, digits = 4, scientific = FALSE)) %>%
+    as_tibble(plans) |>
+        mutate(across(where(is.numeric), format, digits = 4, scientific = FALSE)) |>
         write_csv(here(path))
 }
