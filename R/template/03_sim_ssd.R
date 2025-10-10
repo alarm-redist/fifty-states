@@ -47,7 +47,7 @@ cli_process_start("Saving {.cls redist_plans} object")
 # TODO add any reference plans that aren't already included
 
 # Output the redist_map object. Do not edit this path.
-write_rds(plans, here("data-out/``STATE``_``YEAR``/``SLUG``_ssd_plans.rds"), compress = "xz")
+write_rds(plans, here("data-out/``STATE``_``YEAR``/``SLUG``_plans.rds"), compress = "xz")
 cli_process_done()
 
 # Compute summary statistics -----

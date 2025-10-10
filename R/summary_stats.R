@@ -30,6 +30,9 @@ tally_var <- function(map, pop, .data = redist:::cur_plans()) {
 add_summary_stats <- function(plans, map, ...) {
     if (is.null(slug <- attr(map, "analysis_name"))) stop("`map` missing `analysis_name` attribute.")
     perim_path <- here("data-out", slug, "perim.rds")
+    perim_path <- perim_path |>
+      stringr::str_remove('_SHD') |>
+      stringr::str_remove('_SSD')
 
     if (file.exists(perim_path)) {
         state <- map$state[1]

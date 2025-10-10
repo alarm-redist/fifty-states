@@ -47,7 +47,7 @@ cli_process_start("Saving {.cls redist_plans} object")
 # TODO add any reference plans that aren't already included
 
 # Output the redist_map object. Do not edit this path.
-write_rds(plans, here("data-out/``STATE``_``YEAR``/``SLUG``_shd_plans.rds"), compress = "xz")
+write_rds(plans, here("data-out/``STATE``_``YEAR``/``SLUG``_plans.rds"), compress = "xz")
 cli_process_done()
 
 # Compute summary statistics -----
@@ -56,7 +56,7 @@ cli_process_start("Computing summary statistics for {.pkg ``SLUG``}")
 plans <- add_summary_stats(plans, map_shd)
 
 # Output the summary statistics. Do not edit this path.
-save_summary_stats(plans, "data-out/``STATE``_``YEAR``/``SLUG``_shd_stats.csv")
+save_summary_stats(plans, "data-out/``STATE``_``YEAR``/``SLUG``_stats.csv")
 
 cli_process_done()
 
