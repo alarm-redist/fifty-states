@@ -22,10 +22,6 @@ cli_process_start("Downloading files for {.pkg ``SLUG``}")
 
 path_data <- download_redistricting_file("``STATE``", "data-raw/``STATE``", year = ``YEAR``)
 
-# download the enacted plan.
-shd_shp <- tt_state_leg_lower("``STATE``", year = 2023)
-ssd_shp <- tt_state_leg_upper("``STATE``", year = 2023)
-
 # TODO other files here (as necessary). All paths should start with `path_`
 # If large, consider checking to see if these files exist before downloading
 
@@ -53,7 +49,7 @@ if (!file.exists(here(shp_path))) {
     d_shd <- make_from_baf("``STATE``", "SLDL", "VTD", year = ``YEAR``)  |>
         transmute(GEOID = paste0(censable::match_fips("``STATE``"), vtd),
                   shd_``OLDYEAR`` = as.integer(sldl))
-                    
+
     ``state``_shp <- left_join(``state``_shp, d_muni, by = "GEOID") |>
         left_join(d_ssd, by="GEOID") |>
         left_join(d_shd, by="GEOID") |>
@@ -63,13 +59,8 @@ if (!file.exists(here(shp_path))) {
 
     # add the enacted plan
     ``state``_shp <- ``state``_shp |>
-        mutate(ssd_``YEAR`` = as.integer(ssd_shp$SLDUST)[
-            geo_match(``state``_shp, ssd_shp, method = "area")],
-            .after = ssd_``OLDYEAR``) |>
-        mutate(shd_``YEAR`` = as.integer(ssd_shp$SLDLST)[
-            geo_match(``state``_shp, shd_shp, method = "area")],
-            .after = shd_``OLDYEAR``)
-    
+        left_join(y = leg_from_baf(state = ``STATE``))
+
 
     # TODO any additional columns or data you want to add should go here
 
@@ -101,6 +92,6 @@ if (!file.exists(here(shp_path))) {
     cli_alert_success("Loaded {.strong ``STATE``} shapefile")
 }
 
-
-# TODO visualize the enacted maps using redistio::draw(``state``_shp, ``state``_shp$ssd_2020) and redistio::draw(``state``_shp, ``state``_shp$shd_2020)
-
+# TODO visualize the enacted maps using:
+# redistio::draw(``state``_shp, ``state``_shp$ssd_2020)
+# redistio::draw(``state``_shp, ``state``_shp$shd_2020)

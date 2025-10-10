@@ -45,10 +45,13 @@ make_from_baf <- function(state, from = "INCPLACE_CDP", to = "VTD", year = 2020)
     d <- d |>
         group_by(to) |>
         summarize(from = names(which.max(table(from, useNA = "always"))))
-    if (from == "INCPLACE_CDP") from <- "muni"
-    to <- str_to_lower(to)
-    from <- str_to_lower(from)
-    rename(d, {{ to }} := to, {{ from }} := from)
+    if (from == "INCPLACE_CDP") {
+      from <- "muni"
+    }
+    to <- stringr::str_to_lower(to)
+    from <- stringr::str_to_lower(from)
+    d |>
+      dplyr::rename({{ to }} := to, {{ from }} := from)
 }
 
 
@@ -125,4 +128,56 @@ read_baf_cd113 <- function(state) {
         rename(
             cd_2010 = CD113
         )
+}
+
+
+#' Create State Legislative BAFs
+#'
+#' @param state the state abbreviation
+#' @param to the unit to create the column at. Defaults to `VTD`s. Also supports tract.
+#'
+#' @return a data from of `to` units, with `from` columns added, ready to be joined
+#' @export
+#'
+#' @examples
+#' leg_from_baf('DE')
+leg_from_baf <- function(state, to = "VTD") {
+  match.arg(to, c('VTD', 'tract'))
+  # only 2020 available for SHD/SSD; use 2023 for shapes adopted in 2022
+  shd_baf <- baf::baf(state = state, year = 2023, geographies = 'shd')$SHD2022 |>
+    rename(BLOCKID = GEOID, shd_20 = SLDLST)
+  ssd_baf <- baf::baf(state = state, year = 2023, geographies = 'ssd')$SSD2022 |>
+    rename(BLOCKID = GEOID, ssd_20 = SLDUST)
+
+  if (to == 'VTD') {
+    vtd_baf <- baf::baf(state = state, year = 2023, geographies = 'VTD')[[1]] |>
+      mutate(
+        BLOCKID = BLOCKID,
+        vtd = paste0(stringr::str_sub(BLOCKID, 1, 2), COUNTYFP, DISTRICT),
+        .keep = 'none'
+      )
+  } else {
+    # then it's tract
+    vtd_baf <- dplyr::tibble(
+      BLOCKID = shd_baf$BLOCKID,
+      vtd = stringr::str_sub(shd_baf$BLOCKID, 1, 11)
+    )
+  }
+  out <- list(shd_baf, ssd_baf, vtd_baf) |>
+    purrr::reduce(dplyr::left_join, by = 'BLOCKID') |>
+    dplyr::group_by(vtd) |>
+    dplyr::summarize(
+      shd_20 = Mode(shd_20),
+      ssd_20 = Mode(ssd_20)
+    )
+  # Why? Some states (nested mainly) use A, B, C... for SSDs
+  if (!any(is.na(suppressWarnings(as.integer(out$shd_20))))){
+    out <- out |>
+      dplyr::mutate(shd_20 = as.integer(shd_20))
+  }
+  if (!any(is.na(suppressWarnings(as.integer(out$ssd_20))))){
+    out <- out |>
+      dplyr::mutate(ssd_20 = as.integer(ssd_20))
+  }
+  out
 }
