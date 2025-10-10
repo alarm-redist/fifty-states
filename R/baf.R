@@ -35,7 +35,7 @@ make_from_baf <- function(state, from = "INCPLACE_CDP", to = "VTD", year = 2020)
 
     state_fp <- str_sub(d_to$BLOCKID[1], 1, 2)
     fmt_baf <- function(x, nm) {
-        tidyr::unite(x, {{ nm }}, -BLOCKID, sep = "") |>
+        tidyr::unite(x, {{ nm }}, -BLOCKID, sep = "") %>%
             mutate({{ nm }} := na_if(.[[nm]], "NA"))
     }
 
@@ -179,5 +179,6 @@ leg_from_baf <- function(state, to = "VTD") {
     out <- out |>
       dplyr::mutate(ssd_20 = as.integer(ssd_20))
   }
-  out
+  out |>
+    dplyr::rename(GEOID = vtd)
 }

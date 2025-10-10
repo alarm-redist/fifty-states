@@ -50,16 +50,17 @@ if (!file.exists(here(shp_path))) {
         transmute(GEOID = paste0(censable::match_fips("``STATE``"), vtd),
                   shd_``OLDYEAR`` = as.integer(sldl))
 
-    ``state``_shp <- left_join(``state``_shp, d_muni, by = "GEOID") |>
-        left_join(d_ssd, by="GEOID") |>
-        left_join(d_shd, by="GEOID") |>
+    ``state``_shp <- ``state``_shp |>
+        left_join(d_muni, by = "GEOID") |>
+        left_join(d_ssd, by = "GEOID") |>
+        left_join(d_shd, by = "GEOID") |>
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) |>
         relocate(muni, county_muni, ssd_``OLDYEAR``, .after = county) |>
         relocate(muni, county_muni, shd_``OLDYEAR``, .after = county)
 
     # add the enacted plan
     ``state``_shp <- ``state``_shp |>
-        left_join(y = leg_from_baf(state = ``STATE``))
+        left_join(y = leg_from_baf(state = "``STATE``"))
 
 
     # TODO any additional columns or data you want to add should go here

@@ -48,13 +48,12 @@ download_redistricting_file <- function(abbr, folder, type = "vtd", overwrite = 
 
   if (!file.exists(path) || overwrite) {
     resp <- download(url, path, overwrite)
-    if (resp$status_code == "404") {
-      stop("No files available for ", abbr)
-    }
+    # CTK: when download uses curl, it provides a clean error
+    # if (resp$status_code == "404") {
+    #   stop("No files available for ", abbr)
+    # }
   }
   path
-
-
 }
 
 #' Add precinct shapefile geometry to downloaded data
