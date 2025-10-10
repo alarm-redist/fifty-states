@@ -267,7 +267,7 @@ open_state <- function(state, type = "cd", year = 2020) {
 
   if (requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()) {
     files <- fs::dir_ls(path = stringr::str_glue('analyses/{slug}/'))
-    lapply(c(files, rev(files)[-1]) rstudioapi::navigateToFile)
+    lapply(c(files, rev(files)[-1]), rstudioapi::navigateToFile)
   }
 
   invisible(NULL)
