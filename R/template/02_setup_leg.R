@@ -26,7 +26,7 @@ map_shd <- map_shd |>
 # make a new `map_cores` object that is merged & used for simulating. You can set `drop_geom=TRUE` for this.
 
 # Add an analysis name attribute
-attr(map_ssd, "analysis_name") <- "``STATE```_SSD_``YEAR`"
+attr(map_ssd, "analysis_name") <- "``STATE``_SSD_``YEAR``"
 attr(map_shd, "analysis_name") <- "``STATE``_SHD_``YEAR``"
 
 # Output the redist_map object. Do not edit this path.
