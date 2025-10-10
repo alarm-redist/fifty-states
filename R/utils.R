@@ -169,14 +169,7 @@ EPSG <- read_rds(here("R/epsg.rds"))
 #' @param v2 numeric indices of the second vertex in each edge
 #' @param zero if `TRUE`, the entries of `adj` are zero-indexed
 remove_edge <- function(adj, v1, v2, zero = TRUE) {
-  if (length(v1) != length(v2)) {
-    stop("v1 and v2 lengths are different.")
-  }
-  for (i in 1:length(v1)) {
-    adj[[v1[i]]] <- setdiff(adj[[v1[i]]], v2[i] - zero)
-    adj[[v2[i]]] <- setdiff(adj[[v2[i]]], v1[i] - zero)
-  }
-  adj
+  geomander::subtract_edge(adj = adj, v1 = v1, v2 = v2, zero = zero)
 }
 
 #' Retally with VEST
