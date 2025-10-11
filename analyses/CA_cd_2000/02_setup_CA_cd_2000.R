@@ -4,10 +4,10 @@
 ###############################################################################
 cli_process_start("Creating {.cls redist_map} object for {.pkg CA_cd_2000}")
 
-adj0 <- redist.adjacency(ca_shp)
+adj <- ca_shp$adj
 
 map <- redist_map(ca_shp, pop_tol = 0.005,
-                  existing_plan = "cd_2000", adj = adj0)
+                  existing_plan = "cd_2000", adj = adj)
 
 # Pseudo-county
 map <- map %>%
