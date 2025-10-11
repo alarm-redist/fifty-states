@@ -74,15 +74,13 @@ if (!file.exists(here(shp_path))) {
     c("06037599100", "06037297500")
   )
   
-  for (p in pairs) {
-    ia <- match(p[1], ca_shp_s$GEOID) 
-    ib <- match(p[2], ca_shp_s$GEOID)
-    if (!is.na(ia) && !is.na(ib)) {
-      ca_shp_s$adj <- geomander::add_edge(ca_shp_s$adj, ia, ib, zero = TRUE)
-    } else {
-      warning(sprintf("Could not find GEOID(s): %s, %s", p[1], p[2]))
-    }
+for (p in pairs) {
+  ia <- match(p[1], ca_shp_s$GEOID) 
+  ib <- match(p[2], ca_shp_s$GEOID)
+  if (!is.na(ia) && !is.na(ib)) {
+    ca_shp_s$adj <- geomander::add_edge(ca_shp_s$adj, ia, ib, zero = TRUE)
   }
+}
   
   # fix_geo_assignment 
   ca_shp_s <- ca_shp_s %>% fix_geo_assignment(muni)
