@@ -13,9 +13,9 @@ We enforce a maximum population deviation of 0.5%. We use a pseudo-county constr
 Data for ``New Jersey`` comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
 
 ## Pre-processing Notes
-No manual pre-processing decisions were necessary.
+We used a helper function to exclude simulated plans containing discontiguous districts
 
 ## Simulation Notes
-We sample 40,000 districting plans for ``New Jersey`` across 10 independent runs of the SMC algorithm.
-We then thinned the number of samples to 5,000. 
+We sample 180,000 districting plans for ``New Jersey`` across 10 independent runs of the SMC algorithm.
+After the simulation, we filtered out plans with discontiguous districts and then thinned the remaining sample to 5,000 plans.
 To balance county and municipality splits, we create pseudo-counties for use in the county constraint. 
