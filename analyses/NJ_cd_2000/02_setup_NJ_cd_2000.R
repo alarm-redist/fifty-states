@@ -26,3 +26,35 @@ map$state <- "NJ"
 # Output the redist_map object. Do not edit this path.
 write_rds(map, "data-out/NJ_2000/NJ_cd_2000_map.rds", compress = "xz")
 cli_process_done()
+
+# Define helper function before it is called
+check_valid <- function(pref_n, plans_matrix) {
+  
+  pref_sep <- data.frame(unit = 1, geometry = sf::st_cast(pref_n[1, ]$geometry, "POLYGON"))
+  
+  for (i in 2:nrow(pref_n))
+  {
+    pref_sep <- rbind(pref_sep, data.frame(unit = i, geometry = sf::st_cast(pref_n[i, ]$geometry, "POLYGON")))
+  }
+  
+  pref_sep <- sf::st_as_sf(pref_sep)
+  pref_sep_adj <- redist::redist.adjacency(pref_sep)
+  
+  mainland <- pref_sep[which(unlist(lapply(pref_sep_adj, length)) > 0), ]
+  mainland_adj <- redist::redist.adjacency(mainland)
+  mainland$component <- geomander::check_contiguity(adj = mainland_adj)$component
+  
+  checks <- vector(length = ncol(plans_matrix))
+  mainland_plans <- plans_matrix[mainland$unit, ]
+  
+  for (k in 1:ncol(plans_matrix))
+  {
+    # mainland_plan <- plans_matrix[mainland$unit, k]
+    # mainland$temp_plan <- mainland_plan
+    # checks[k] <- max(check_polygon_contiguity(shp=mainland, group=temp_plan)$component) == 1 
+    checks[k] <- max(check_contiguity(mainland_adj, mainland_plans[, k])$component) == 1
+  }
+  
+  return(checks)
+  
+}
