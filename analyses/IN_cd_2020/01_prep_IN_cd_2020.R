@@ -46,10 +46,8 @@ if (!file.exists(here(shp_path))) {
         relocate(muni, county_muni, cd_2010, .after = county)
 
     # add enacted ----
-    dists <- read_sf("https://redistrict2020.org/files/IN-2021-09/Proposed_Indiana_Congressional_Districts.geojson")
-    permute <- c(1L, 2L, 3L, 5L, 4L, 7L, 6L, 9L, 8L)
-
-    in_shp$cd_2020 <- permute[geo_match(in_shp, dists, "area")]
+    dists <- tinytiger::tt_congressional_districts("IN", year = 2023)
+    in_shp$cd_2020 <- geo_match(in_shp, dists, method = "area")
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = in_shp,
