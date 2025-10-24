@@ -6,12 +6,12 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg NM_cd_2000}")
 set.seed(2000)
-plans <- redist_smc(map, nsims = 2000, runs = 10, compactness=1, counties = county, pop_temper = 0.05, verbose = TRUE)
+plans <- redist_smc(map, nsims = 2000, runs = 10, counties = pseudo_county)
 
 plans <- plans %>%
-    group_by(chain) %>%
-    filter(as.integer(draw) < min(as.integer(draw)) + 1000) %>% # thin samples
-    ungroup()
+  group_by(chain) %>%
+  filter(as.integer(draw) < min(as.integer(draw)) +500) %>% # thin samples
+  ungroup()
 plans <- match_numbers(plans, "cd_2000")
 
 cli_process_done()
@@ -33,10 +33,9 @@ cli_process_done()
 
 # Extra validation plots for custom constraints -----
 if (interactive()) {
-    library(ggplot2)
-    library(patchwork)
-
-    validate_analysis(plans, map)
-    summary(plans)
+  library(ggplot2)
+  library(patchwork)
+  
+  validate_analysis(plans, map)
+  summary(plans)
 }
-
