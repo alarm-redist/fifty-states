@@ -1,12 +1,23 @@
 ###############################################################################
 # Simulate plans for `NM_cd_2000`
-# © ALARM Project, July 2025
+# © ALARM Project, October 2025
 ###############################################################################
 
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg NM_cd_2000}")
 set.seed(2000)
-plans <- redist_smc(map, nsims = 2000, runs = 10, counties = pseudo_county, pop_temper = 0.05, seq_alpha  = 0.9)
+plans <- redist_smc(map, 
+                    nsims = 2000, 
+                    runs = 10, 
+                    counties = pseudo_county, 
+                    sampling_space = "linking_edge", 
+                    pop_temper = 0.05, 
+                    seq_alpha  = 0.9,
+                    ms_params = list(
+                      frequency = 1,            
+                      mh_accept_per_smc = 50,   
+                      pair_rule = "uniform")
+                    )
 
 plans <- plans %>%
   group_by(chain) %>%
