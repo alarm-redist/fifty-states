@@ -6,7 +6,7 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg NM_cd_2000}")
 set.seed(2000)
-plans <- redist_smc(map, nsims = 2000, runs = 10, counties = pseudo_county)
+plans <- redist_smc(map, nsims = 2000, runs = 10, counties = pseudo_county, pop_temper = 0.05, seq_alpha  = 0.9)
 
 plans <- plans %>%
   group_by(chain) %>%
