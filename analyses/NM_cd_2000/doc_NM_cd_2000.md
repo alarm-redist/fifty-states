@@ -21,3 +21,4 @@ No manual pre-processing decisions were necessary.
 We sample 20000 redistricting plans for New Mexico across 10 independent runs of the SMC algorithm.
 We then thinned the number of samples to 5000.
 We use a pseudo-county constraint to limit the county and municipality (i.e., city and township) splits.
+We also used new algorithmic mergesplit parameters to improve plan diversity.
