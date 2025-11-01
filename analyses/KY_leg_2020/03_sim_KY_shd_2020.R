@@ -8,16 +8,16 @@ cli_process_start("Running simulations for {.pkg KY_shd_2020}")
 
 set.seed(2020)
 
-mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3)+10
+mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3) + 10
 
 plans <- redist_smc(
-  map_shd,
-  nsims = 2e3, runs = 5,
-  counties = pseudo_county,
-  sampling_space = "linking_edge",
-  ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
-  split_params = list(splitting_schedule = "any_valid_sizes"),
-  verbose = TRUE
+    map_shd,
+    nsims = 2e3, runs = 5,
+    counties = pseudo_county,
+    sampling_space = "linking_edge",
+    ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
+    split_params = list(splitting_schedule = "any_valid_sizes"),
+    verbose = TRUE
 )
 
 # IF CORES OR OTHER UNITS HAVE BEEN MERGED:
