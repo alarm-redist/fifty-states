@@ -18,7 +18,7 @@ We enforce a maximum population deviation of 0.5%. We use a pseudo-county constr
 Data for Kentucky comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
 
 ## Pre-processing Notes
-To preserve the cores of prior districts, we merge all precincts which are more than two precincts away from a district border, under the 1990 plan. Precincts in counties which are split by existing district boundaries are merged only within their county.
+To preserve the cores of prior districts, we merge all precincts that are more than two precincts away from a district border, under the 1990 plan.
 
 ## Simulation Notes
 We sample 10,000 districting plans for Kentucky across 5 independent runs of the SMC algorithm.
