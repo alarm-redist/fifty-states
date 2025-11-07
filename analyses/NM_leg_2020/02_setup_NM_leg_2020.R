@@ -24,6 +24,18 @@ map_shd <- map_shd |>
                                             pop_muni = get_target(map_shd)))
 # IF MERGING CORES OR OTHER UNITS:
 # make a new `map_cores` object that is merged & used for simulating. You can set `drop_geom=TRUE` for this.
+# Set up cores objects
+map_ssd <- map_ssd %>%
+  mutate(cores = make_cores(boundary = 2))
+
+map_shd <- map_shd %>%
+  mutate(cores = make_cores(boundary = 2))
+
+# merge by both cores and county to preserve county contiguity
+map_ssd_cores <- merge_by(map_ssd, cores, county)
+
+map_shd_cores <- merge_by(map_shd, cores, county)
+
 
 # Add an analysis name attribute
 attr(map_ssd, "analysis_name") <- "NM_SSD_2020"

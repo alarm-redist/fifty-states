@@ -23,7 +23,7 @@ set.seed(2020)
 mh_accept_per_smc <- ceiling(n_distinct(map_ssd$ssd_2020)/3) + 10
 
 plans <- redist_smc(
-  map_ssd,
+  map_ssd_cores,
   nsims = 2e3, runs = 5,
   counties = pseudo_county,
   sampling_space = "linking_edge",
@@ -31,6 +31,10 @@ plans <- redist_smc(
   split_params = list(splitting_schedule = "any_valid_sizes"),
   verbose = TRUE
 )
+
+plans <- pullback(plans, map_ssd)
+
+plans <- match_numbers(plans, "ssd_2020")
 
 # IF CORES OR OTHER UNITS HAVE BEEN MERGED:
 # make sure to call `pullback()` on this plans object!
