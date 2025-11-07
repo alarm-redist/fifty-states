@@ -22,6 +22,5 @@ Data for Colorado comes from the ALARM Project's [2020 Redistricting Data Files]
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample XX,XXX districting plans for Colorado's lower house across 5 independent runs of the SMC algorithm.
-We then thinned the number of samples to 10,000 [TODO delete if only 10,000 total samples].
+We sample 10,000 districting plans for Colorado's lower house across 5 independent runs of the SMC algorithm.
 No special techniques were needed to produce the sample.

@@ -6,38 +6,19 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg CO_ssd_2020}")
 
-# TODO any pre-computation (VRA targets, etc.)
-# Set up competitiveness targets ----
-#cons <- redist_constr(map_ssd) %>%
-#  add_constr_compet(300, ndv, nrv, pow = 1)
-
-# TODO customize as needed. Recommendations:
-#  - For many districts / tighter population tolerances, try setting
-#  `pop_temper=0.01` and nudging upward from there. Monitor the output for
-#  efficiency!
-#  - Monitor the output (i.e. leave `verbose=TRUE`) to ensure things aren't breaking
-#  - Don't change the number of simulations unless you have a good reason
-#  - If the sampler freezes, try turning off the county split constraint to see
-#  if that's the problem.
-#  - Ask for help!
 set.seed(2020)
 
-# TODO set equal to one third of number of districts, increase by 10-15 if no convergence
 mh_accept_per_smc <- ceiling(n_distinct(map_ssd$ssd_2020)/3) + 15
 
 plans <- redist_smc(
-  map_ssd,
-  nsims = 2e3, runs = 5,
-  counties = pseudo_county,
-  sampling_space = "linking_edge",
-  ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
-  split_params = list(splitting_schedule = "any_valid_sizes"),
-#  constraints = cons,
-  verbose = TRUE
+    map_ssd,
+    nsims = 2e3, runs = 5,
+    counties = pseudo_county,
+    sampling_space = "linking_edge",
+    ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
+    split_params = list(splitting_schedule = "any_valid_sizes"),
+    verbose = TRUE
 )
-
-# IF CORES OR OTHER UNITS HAVE BEEN MERGED:
-# make sure to call `pullback()` on this plans object!
 
 plans <- plans |>
     group_by(chain) |>
@@ -47,8 +28,6 @@ plans <- match_numbers(plans, "ssd_2020")
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
-
-# TODO add any reference plans that aren't already included
 
 # Output the redist_map object. Do not edit this path.
 write_rds(plans, here("data-out/CO_2020/CO_ssd_2020_plans.rds"), compress = "xz")
@@ -74,7 +53,7 @@ if (interactive()) {
     # Extra validation plots for custom constraints -----
     plans <- plans %>% mutate(dvs_20 = group_frac(map_ssd, adv_20, adv_20 + arv_20))
     redist.plot.distr_qtys(plans, qty = dvs_20, geom = "boxplot") + theme_bw() +
-           lims(y = c(0.25, 0.9)) +
-           labs(title = "Competitiveness")
+        lims(y = c(0.25, 0.9)) +
+        labs(title = "Competitiveness")
 
 }

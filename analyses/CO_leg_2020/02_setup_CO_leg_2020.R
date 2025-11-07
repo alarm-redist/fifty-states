@@ -4,24 +4,19 @@
 ###############################################################################
 cli_process_start("Creating {.cls redist_map} object for {.pkg CO_leg_2020}")
 
-# TODO any pre-computation (usually not necessary)
-
 map_ssd <- redist_map(co_shp, pop_tol = 0.05,
     existing_plan = ssd_2020, adj = co_shp$adj)
 
 map_shd <- redist_map(co_shp, pop_tol = 0.05,
     existing_plan = shd_2020, adj = co_shp$adj)
 
-# TODO any filtering, cores, merging, etc.
-
-# TODO remove if not necessary. Adjust pop_muni as needed to balance county/muni splits
 # make pseudo counties with default settings
 map_ssd <- map_ssd |>
     mutate(pseudo_county = pick_county_muni(map_ssd, counties = county, munis = muni,
-                                            pop_muni = get_target(map_ssd)))
+        pop_muni = get_target(map_ssd)))
 map_shd <- map_shd |>
     mutate(pseudo_county = pick_county_muni(map_shd, counties = county, munis = muni,
-                                            pop_muni = get_target(map_shd)))
+        pop_muni = get_target(map_shd)))
 # IF MERGING CORES OR OTHER UNITS:
 # make a new `map_cores` object that is merged & used for simulating. You can set `drop_geom=TRUE` for this.
 

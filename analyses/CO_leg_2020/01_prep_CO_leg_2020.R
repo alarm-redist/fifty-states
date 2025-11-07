@@ -22,9 +22,6 @@ cli_process_start("Downloading files for {.pkg CO_leg_2020}")
 
 path_data <- download_redistricting_file("CO", "data-raw/CO", year = 2020)
 
-# TODO other files here (as necessary). All paths should start with `path_`
-# If large, consider checking to see if these files exist before downloading
-
 cli_process_done()
 
 # Compile raw data into a final shapefile for analysis -----
@@ -45,10 +42,10 @@ if (!file.exists(here(shp_path))) {
         select(-vtd)
     d_ssd <- make_from_baf("CO", "SLDU", "VTD", year = 2020)  |>
         transmute(GEOID = paste0(censable::match_fips("CO"), vtd),
-                  ssd_2010 = as.integer(sldu))
+            ssd_2010 = as.integer(sldu))
     d_shd <- make_from_baf("CO", "SLDL", "VTD", year = 2020)  |>
         transmute(GEOID = paste0(censable::match_fips("CO"), vtd),
-                  shd_2010 = as.integer(sldl))
+            shd_2010 = as.integer(sldl))
 
     co_shp <- co_shp |>
         left_join(d_muni, by = "GEOID") |>
@@ -62,26 +59,20 @@ if (!file.exists(here(shp_path))) {
     co_shp <- co_shp |>
         left_join(y = leg_from_baf(state = "CO"), by = "GEOID")
 
-
-    # TODO any additional columns or data you want to add should go here
-
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = co_shp,
-                             perim_path = here(perim_path)) |>
+        perim_path = here(perim_path)) |>
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         co_shp <- rmapshaper::ms_simplify(co_shp, keep = 0.05,
-                                                 keep_shapes = TRUE) |>
+            keep_shapes = TRUE) |>
             suppressWarnings()
     }
 
     # create adjacency graph
     co_shp$adj <- adjacency(co_shp)
-
-    # TODO any custom adjacency graph edits here
 
     # check max number of connected components
     # 1 is one fully connected component, more is worse
@@ -97,4 +88,3 @@ if (!file.exists(here(shp_path))) {
     co_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong CO} shapefile")
 }
-
