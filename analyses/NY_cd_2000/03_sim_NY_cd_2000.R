@@ -1,14 +1,13 @@
-#############################################################################
-# Simulate plans for `KY_cd_2000`
-# © ALARM Project, August 2025
+###############################################################################
+# Simulate plans for `NY_cd_2000`
+# © ALARM Project, July 2025
 ###############################################################################
 
 # Run the simulation -----
-cli_process_start("Running simulations for {.pkg KY_cd_2000}")
+cli_process_start("Running simulations for {.pkg NY_cd_2000}")
 
 set.seed(2000)
-plans <- redist_smc(map_cores, nsims = 2e3, runs = 5, counties = pseudo_county) %>%
-  pullback(map)
+plans <- redist_smc(map, nsims = 1.2e4, seq_alpha   = 0.95, pop_temper  = 0.001, runs = 5, counties = pseudo_county) 
 
 plans <- plans %>%
   group_by(chain) %>%
@@ -20,15 +19,14 @@ cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
 
 # Output the redist_map object. Do not edit this path.
-write_rds(plans, here("data-out/KY_2000/KY_cd_2000_plans.rds"), compress = "xz")
+write_rds(plans, here("data-out/NY_2000/NY_cd_2000_plans.rds"), compress = "xz")
 cli_process_done()
 
 # Compute summary statistics -----
-cli_process_start("Computing summary statistics for {.pkg KY_cd_2000}")
+cli_process_start("Computing summary statistics for {.pkg NY_cd_2000}")
 
 plans <- add_summary_stats(plans, map)
-
 # Output the summary statistics. Do not edit this path.
-save_summary_stats(plans, "data-out/KY_2000/KY_cd_2000_stats.csv")
+save_summary_stats(plans, "data-out/NY_2000/NY_cd_2000_stats.csv")
 
 cli_process_done()
