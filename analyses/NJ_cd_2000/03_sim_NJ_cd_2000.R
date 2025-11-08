@@ -119,34 +119,34 @@ if (interactive()) {
     count(n_black_perf)
 
   # Validation for distontiguous plans.
-plan_index <- plans |>
-  dplyr::distinct(chain, draw) |>
-  dplyr::arrange(chain, draw)
-
-if ("cd_2000" %in% plan_index$draw) {
-  plan_index <- dplyr::filter(plan_index, draw != "cd_2000")
-}
-
-plan_index <- plan_index |>
-  dplyr::mutate(col = dplyr::row_number())
-
-per_plan_summary <- data.frame(
-  col = seq_len(ncol(pmat)),
-  all_contiguous = vapply(seq_len(ncol(pmat)), function(j) {
-    p <- pmat[, j]
-    comp <- geomander::check_contiguity(adj_adjusted, p)$component
-    by_district <- tapply(seq_along(p), p, function(idx) {
-      idx_main <- idx[!is_island[idx]]
-      if (length(idx_main) == 0) TRUE else max(comp[idx_main]) == 1
-    })
-    all(unlist(by_district))
-  }, logical(1))
-) |>
-  dplyr::left_join(plan_index, by = "col")
-
-# quick readout
-tbl <- table(per_plan_summary$all_contiguous)
-n_false <- ifelse("FALSE" %in% names(tbl), tbl["FALSE"], 0)
-cat("Number of non-contiguous plans:", n_false, "\n")
+  plan_index <- plans |>
+    dplyr::distinct(chain, draw) |>
+    dplyr::arrange(chain, draw)
+  
+  if ("cd_2000" %in% plan_index$draw) {
+    plan_index <- dplyr::filter(plan_index, draw != "cd_2000")
+  }
+  
+  plan_index <- plan_index |>
+    dplyr::mutate(col = dplyr::row_number())
+  
+  per_plan_summary <- data.frame(
+    col = seq_len(ncol(pmat)),
+    all_contiguous = vapply(seq_len(ncol(pmat)), function(j) {
+      p <- pmat[, j]
+      comp <- geomander::check_contiguity(adj_adjusted, p)$component
+      by_district <- tapply(seq_along(p), p, function(idx) {
+        idx_main <- idx[!is_island[idx]]
+        if (length(idx_main) == 0) TRUE else max(comp[idx_main]) == 1
+      })
+      all(unlist(by_district))
+    }, logical(1))
+  ) |>
+    dplyr::left_join(plan_index, by = "col")
+  
+  # quick readout
+  tbl <- table(per_plan_summary$all_contiguous)
+  n_false <- ifelse("FALSE" %in% names(tbl), tbl["FALSE"], 0)
+  cat("Number of non-contiguous plans:", n_false, "\n")
   
 }
