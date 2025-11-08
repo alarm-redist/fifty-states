@@ -148,5 +148,3 @@ if (interactive()) {
   tbl <- table(per_plan_summary$all_contiguous)
   n_false <- ifelse("FALSE" %in% names(tbl), tbl["FALSE"], 0)
   cat("Number of non-contiguous plans:", n_false, "\n")
-  
-}
