@@ -29,30 +29,50 @@ cli_process_done()
 
 # Define helper function before it is called
 check_valid <- function(pref_n, plans_matrix) {
+  # ensure geometries are valid
+  shp <- sf::st_make_valid(sf::st_as_sf(pref_n))
   
-  pref_sep <- data.frame(unit = 1, geometry = sf::st_cast(pref_n[1, ]$geometry, "POLYGON"))
+  # Build hybrid adjacency
+  adj_orig  <- pref_n$adj
+  adj_built <- redist::redist.adjacency(shp)  
   
-  for (i in 2:nrow(pref_n))
-  {
-    pref_sep <- rbind(pref_sep, data.frame(unit = i, geometry = sf::st_cast(pref_n[i, ]$geometry, "POLYGON")))
+  shp$.__uid <- seq_len(nrow(shp))
+  poly_big <- shp |>
+    sf::st_cast("POLYGON") |>
+    dplyr::mutate(.area = sf::st_area(geometry)) |>
+    dplyr::group_by(.__uid) |>
+    dplyr::slice_max(.area, n = 1, with_ties = FALSE) |>
+    dplyr::ungroup() |>
+    dplyr::select(-.area) |>
+    dplyr::arrange(.__uid)
+  
+  adj_poly <- redist::redist.adjacency(poly_big)
+  
+  adj_adjusted <- adj_built
+  for (i in seq_along(adj_adjusted)) {
+    if (length(adj_built[[i]]) > 0) {
+      adj_adjusted[[i]] <- adj_poly[[i]]
+    } else {
+      adj_adjusted[[i]] <- adj_orig[[i]]  # fallback (islands)
+    }
   }
   
-  pref_sep <- sf::st_as_sf(pref_sep)
-  pref_sep_adj <- redist::redist.adjacency(pref_sep)
+  # Identify islands
+  is_island <- vapply(adj_adjusted, length, 0L) == 0
   
-  mainland <- pref_sep[which(unlist(lapply(pref_sep_adj, length)) > 0), ]
-  mainland_adj <- redist::redist.adjacency(mainland)
-  mainland$component <- geomander::check_contiguity(adj = mainland_adj)$component
+  # Contiguity check
+  checks <- vapply(seq_len(ncol(plans_matrix)), function(k) {
+    p <- plans_matrix[, k]
+    comp <- geomander::check_contiguity(adj_adjusted, p)$component
+    
+    by_district <- tapply(seq_along(p), p, function(idx) {
+      idx_main <- idx[!is_island[idx]]
+      if (length(idx_main) == 0) TRUE
+      else max(comp[idx_main]) == 1
+    })
+    
+    all(unlist(by_district))
+  }, logical(1))
   
-  checks <- vector(length = ncol(plans_matrix))
-  mainland_plans <- plans_matrix[mainland$unit, ]
-  
-  for (k in 1:ncol(plans_matrix))
-  {
-
-    checks[k] <- max(check_contiguity(mainland_adj, mainland_plans[, k])$component) == 1
-  }
-  
-  return(checks)
-  
+  return(list(valid = checks, adj_adjusted = adj_adjusted, is_island = is_island))
 }
