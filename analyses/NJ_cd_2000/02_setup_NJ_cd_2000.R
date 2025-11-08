@@ -53,14 +53,14 @@ check_valid <- function(pref_n, plans_matrix) {
     if (length(adj_built[[i]]) > 0) {
       adj_adjusted[[i]] <- adj_poly[[i]]
     } else {
-      adj_adjusted[[i]] <- adj_orig[[i]]  # fallback (islands)
+      adj_adjusted[[i]] <- adj_orig[[i]]  
     }
   }
   
   # Identify islands
   is_island <- vapply(adj_adjusted, length, 0L) == 0
   
-  # Contiguity check
+  # Contiguity check (avoid falsely flagging islands as discontiguous)
   checks <- vapply(seq_len(ncol(plans_matrix)), function(k) {
     p <- plans_matrix[, k]
     comp <- geomander::check_contiguity(adj_adjusted, p)$component
