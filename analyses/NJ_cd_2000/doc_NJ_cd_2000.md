@@ -16,6 +16,6 @@ Data for ``New Jersey`` comes from the [ALARM Project's update](https://datavers
 We used a helper function to exclude simulated plans containing discontiguous districts.
 
 ## Simulation Notes
-We sample 180,000 districting plans for ``New Jersey`` across 10 independent runs of the SMC algorithm.
+We sample 300,000 districting plans for ``New Jersey`` across 10 independent runs of the SMC algorithm.
 After the simulation, we filtered out plans with discontiguous districts and then thinned the remaining sample to 5,000 plans.
 To balance county and municipality splits, we create pseudo-counties for use in the county constraint. 
