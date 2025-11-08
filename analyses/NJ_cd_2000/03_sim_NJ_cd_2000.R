@@ -145,6 +145,6 @@ if (interactive()) {
     dplyr::left_join(plan_index, by = "col")
   
   # quick readout
-  tbl <- table(per_plan_summary$all_contiguous)
-  n_false <- ifelse("FALSE" %in% names(tbl), tbl["FALSE"], 0)
-  cat("Number of non-contiguous plans:", n_false, "\n")
+  tbl <- per_plan_summary |>
+  dplyr::count(all_contiguous, name = "n") |>
+  dplyr::mutate(prop = round(n / sum(n), 3))
