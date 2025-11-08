@@ -7,7 +7,7 @@
 cli_process_start("Running simulations for {.pkg NJ_cd_2000}") 
 
 set.seed(2000) 
-plans <- redist_smc(map, nsims = 18000, runs = 10, counties = pseudo_county) 
+plans <- redist_smc(map, nsims = 30000, runs = 10, counties = pseudo_county) 
 
 plans <- match_numbers(plans, "cd_2000")
 
@@ -17,7 +17,10 @@ cli_process_done()
 cli_process_start("Screening for contiguity") 
 
 pmat <- redist::get_plans_matrix(plans) 
-valid <- check_valid(pref_n = map, plans_matrix = pmat) 
+res   <- check_valid(pref_n = map, plans_matrix = pmat)
+valid <- res$valid
+adj_adjusted <- res$adj_adjusted
+is_island    <- res$is_island
 
 cli_alert_info("{sum(valid)} of {length(valid)} draws passed contiguity.") 
 
@@ -69,6 +72,8 @@ plans <- plans %>% dplyr::semi_join(keep_ids, by = c("chain","draw"))
 
 cli_alert_success("Burn-in: dropped up to {burn}/chain; kept {keep_each} tail draws per chain (total {keep_each * n_runs}).")
 
+pmat <- redist::get_plans_matrix(plans)
+
 # add the enacted plan as a named reference plan
 plans <- redist::add_reference(plans, ref_plan = map$cd_2000, name = "cd_2000")
 
@@ -112,3 +117,36 @@ if (interactive()) {
     group_by(draw) %>%
     summarize(n_black_perf = sum(vap_black/total_vap > 0.3 & ndshare > 0.5)) %>%
     count(n_black_perf)
+
+  # Validation for distontiguous plans.
+plan_index <- plans |>
+  dplyr::distinct(chain, draw) |>
+  dplyr::arrange(chain, draw)
+
+if ("cd_2000" %in% plan_index$draw) {
+  plan_index <- dplyr::filter(plan_index, draw != "cd_2000")
+}
+
+plan_index <- plan_index |>
+  dplyr::mutate(col = dplyr::row_number())
+
+per_plan_summary <- data.frame(
+  col = seq_len(ncol(pmat)),
+  all_contiguous = vapply(seq_len(ncol(pmat)), function(j) {
+    p <- pmat[, j]
+    comp <- geomander::check_contiguity(adj_adjusted, p)$component
+    by_district <- tapply(seq_along(p), p, function(idx) {
+      idx_main <- idx[!is_island[idx]]
+      if (length(idx_main) == 0) TRUE else max(comp[idx_main]) == 1
+    })
+    all(unlist(by_district))
+  }, logical(1))
+) |>
+  dplyr::left_join(plan_index, by = "col")
+
+# quick readout
+tbl <- table(per_plan_summary$all_contiguous)
+n_false <- ifelse("FALSE" %in% names(tbl), tbl["FALSE"], 0)
+cat("Number of non-contiguous plans:", n_false, "\n")
+  
+}
