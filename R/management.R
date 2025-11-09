@@ -16,7 +16,7 @@ init_analysis <- function(state, type = "cd", year = 2020, overwrite = FALSE) {
   year <- as.character(as.integer(year))
   slug <- stringr::str_glue("{state}_{type}_{year}")
   copyright <- format(Sys.Date(), "\u00A9 ALARM Project, %B %Y")
-
+  
   path_r <- stringr::str_glue("analyses/{slug}/")
   if (dir.exists(path_r) & !overwrite) {
     cli::cli_abort("Analysis {.pkg {slug}} already exists.
@@ -30,9 +30,9 @@ init_analysis <- function(state, type = "cd", year = 2020, overwrite = FALSE) {
   path_raw <- stringr::str_glue("data-raw/{state}/")
   dir.create(path_raw, showWarnings = FALSE)
   cli::cli_alert_success("Creating {.file {path_raw}}")
-
+  
   templates <- Sys.glob(here("R/template/*.R"))
-  if (year != 2000) {
+  if (year %in% c("1990", "2000")) {
     templates <- templates[!stringr::str_detect(templates, 'prep.R')]
   } else {
     templates <- templates[!stringr::str_detect(templates, 'prep_2000.R')]
@@ -40,7 +40,7 @@ init_analysis <- function(state, type = "cd", year = 2020, overwrite = FALSE) {
   if (type == 'leg') {
     templates <- templates[stringr::str_detect(templates, '_leg|_shd|_ssd')]
   }
-
+  
   proc_template <- function(path) {
     if (stringr::str_detect(path, 'ssd')) {
       slug <- stringr::str_replace(slug, 'leg', 'ssd')
@@ -56,7 +56,7 @@ init_analysis <- function(state, type = "cd", year = 2020, overwrite = FALSE) {
         stringr::str_remove(pattern = '_ssd') |>
         stringr::str_remove(pattern = '_shd')
     }
-
+    
     new_path <- here(path_r, new_basename)
     path |>
       readr::read_file() |>
@@ -73,18 +73,18 @@ init_analysis <- function(state, type = "cd", year = 2020, overwrite = FALSE) {
     cli::cli_li("Creating {.file {path_r}{new_basename}}'")
     new_path
   }
-
+  
   cli::cli_alert_info("Copying scripts from templates...")
   cli::cli_ul()
   new_paths <- purrr::map(templates, proc_template)
   cli::cli_end()
-
+  
   doc_path <- stringr::str_c(path_r, "doc_", slug, ".md")
   template <-  here("R/template/documentation.md")
   if (type %in% c('leg', 'ssd', 'shd')) {
     template <- here("R/template/documentation_leg.md")
   }
-
+  
   template |>
     readr::read_file() |>
     stringr::str_replace_all("``SLUG``", slug) |>
@@ -102,9 +102,9 @@ init_analysis <- function(state, type = "cd", year = 2020, overwrite = FALSE) {
     stringr::str_replace_all("``state``", stringr::str_to_lower(state)) |>
     readr::write_file(here(doc_path))
   cli::cli_alert_success("Creating {.file {doc_path}}")
-
+  
   cli::cli_alert_success("Initialization complete.")
-
+  
   if (requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()) {
     purrr::map(new_paths, rstudioapi::navigateToFile)
     rstudioapi::navigateToFile(doc_path)
@@ -125,7 +125,7 @@ enforce_style <- function(state, type = "cd", year = 2020) {
   slug <- stringr::str_glue("{state}_{type}_{year}")
   path_r <- stringr::str_glue("analyses/{slug}/")
   if (!dir.exists(path_r)) stop("Analysis `", slug, "` not found.")
-
+  
   R_style <- function(...) {
     x <- styler::tidyverse_style(scope = "tokens",
                                  indent_by = 4,
@@ -135,7 +135,7 @@ enforce_style <- function(state, type = "cd", year = 2020) {
                                    one = c("'+'", "'-'")))
     x
   }
-
+  
   styler::cache_activate()
   styler::style_dir(here(path_r), style = R_style, exclude_dirs = "template")
 }
