@@ -56,7 +56,7 @@ init_analysis <- function(state, type = "cd", year = 2020, overwrite = FALSE) {
         stringr::str_remove(pattern = '_ssd') |>
         stringr::str_remove(pattern = '_shd')
     }
-  
+
     new_path <- here(path_r, new_basename)
     path |>
       readr::read_file() |>
