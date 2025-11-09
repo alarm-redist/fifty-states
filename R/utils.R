@@ -51,7 +51,7 @@ download_redistricting_file <- function(abbr, folder, type = "vtd", overwrite = 
     stop("Year must be 1990, 2000, 2010, or 2020.")
   }
   path <- paste0(folder, "/", basename(url))
-  
+
   if (!file.exists(path) || overwrite) {
     resp <- download(url, path, overwrite)
     # CTK: when download uses curl, it provides a clean error
@@ -80,7 +80,7 @@ join_vtd_shapefile <- function(data, year = 2020) {
     counties <- censable::fips_2010 |>
       dplyr::filter(state == state_fp) |>
       dplyr::pull(county)
-    
+  
     files <- lapply(
       counties,
       function(cty) {
@@ -98,8 +98,8 @@ join_vtd_shapefile <- function(data, year = 2020) {
           )
       }
     )
-    
-    
+
+
     geom_d <- do.call("rbind", files)
     left_join(data |> mutate(GEOID10 = paste0(
       str_pad_l0(state, 2), str_pad_l0(county, 3), str_pad_l0(vtd, 6)
@@ -109,7 +109,7 @@ join_vtd_shapefile <- function(data, year = 2020) {
     tract_states <- c(
       'AK', 'AZ', 'CA', 'CO', 'FL', 'KY', 'MT', 'ND', 'OH', 'OR', 'SD', 'WI'
     )
-    
+
     if (censable::match_abb(data$state[1]) %in% tract_states) {
       data |>
         left_join(
@@ -133,7 +133,7 @@ join_vtd_shapefile <- function(data, year = 2020) {
         ) |>
         sf::st_as_sf()
     }
-    
+
   }
 }
 
@@ -158,7 +158,7 @@ make_epsg_table <- function() {
     select(code, state) |>
     rows_insert(tibble(code = 2784L, state = "Hawaii"), by = "state") |>
     arrange(state)
-  
+
   codes <- as.list(epsg_d$code)
   names(codes) <- datasets::state.abb
   codes
@@ -196,7 +196,7 @@ vest_crosswalk <- function(cvap, state) {
   writeBin(cw_zip, cw_zip_path)
   unz_path <- file.path(dirname(cw_zip_path), "block1020_crosswalks")
   utils::unzip(cw_zip_path, exdir = unz_path, overwrite = TRUE)
-  
+
   proc_raw_cw <- function(raw) {
     fields <- str_split(raw, ",")
     purrr::map_dfr(fields, function(x) {
@@ -210,7 +210,7 @@ vest_crosswalk <- function(cvap, state) {
       )
     })
   }
-  
+
   vest_cw_raw <- read_lines(glue::glue("{unz_path}/block1020_crosswalk_{censable::match_fips(state)}.csv"))
   vest_cw <- proc_raw_cw(vest_cw_raw)
   cw <- pl_crosswalk(toupper(state))
@@ -226,7 +226,7 @@ vest_crosswalk <- function(cvap, state) {
     )
   
   rt <- rt |> left_join(baf, by = "GEOID")
-  
+
   # agg
   vtd <- rt |>
     select(-GEOID, -area_land, -area_water) |>
@@ -238,7 +238,7 @@ vest_crosswalk <- function(cvap, state) {
     relocate(GEOID20, .before = everything()) |>
     relocate(STATEFP, .before = COUNTYFP) |>
     mutate(across(where(is.numeric), round, 2))
-  
+
   vtd
 }
 
@@ -262,12 +262,12 @@ open_state <- function(state, type = "cd", year = 2020) {
   state <- str_to_upper(state)
   year <- as.character(as.integer(year))
   slug <- str_glue("{state}_{type}_{year}")
-  
+
   if (requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()) {
     files <- fs::dir_ls(path = stringr::str_glue('analyses/{slug}/'))
     lapply(c(files, rev(files)[-1]), rstudioapi::navigateToFile)
   }
-  
+
   invisible(NULL)
 }
 
