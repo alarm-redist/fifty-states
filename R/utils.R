@@ -80,7 +80,7 @@ join_vtd_shapefile <- function(data, year = 2020) {
     counties <- censable::fips_2010 |>
       dplyr::filter(state == state_fp) |>
       dplyr::pull(county)
-  
+
     files <- lapply(
       counties,
       function(cty) {
@@ -216,7 +216,7 @@ vest_crosswalk <- function(cvap, state) {
   cw <- pl_crosswalk(toupper(state))
   vest_cw <- left_join(vest_cw, select(cw, -int_land), by = c("GEOID", "GEOID_to"))
   rt <- pl_retally(cvap, crosswalk = vest_cw)
-  
+
   baf <- pl_get_baf(toupper(state), "VTD") |>
     purrr::pluck(1) |>
     rename(GEOID = BLOCKID) |>
@@ -224,7 +224,7 @@ vest_crosswalk <- function(cvap, state) {
       STATEFP = censable::match_fips(state),
       GEOID20 = paste0(STATEFP, COUNTYFP, DISTRICT)
     )
-  
+
   rt <- rt |> left_join(baf, by = "GEOID")
 
   # agg
