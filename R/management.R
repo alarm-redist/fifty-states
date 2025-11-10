@@ -39,6 +39,8 @@ init_analysis <- function(state, type = "cd", year = 2020, overwrite = FALSE) {
   }
   if (type == 'leg') {
     templates <- templates[stringr::str_detect(templates, '_leg|_shd|_ssd')]
+  } else {
+    templates <- templates[!stringr::str_detect(templates, '_leg|_shd|_ssd')]
   }
 
   proc_template <- function(path) {
