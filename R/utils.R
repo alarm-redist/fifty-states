@@ -114,19 +114,6 @@ join_vtd_shapefile <- function(data, year = 2020) {
             rename(GEOID = CTIDFP00)
         ) |>
         sf::st_as_sf()
-    } else if (year == 1990) {
-      shp <- dataverse::get_file_by_name(
-        filename = stringr::str_glue("{censable::match_fips(data$state[1])}_tracts.gpkg"),
-        dataset = "10.7910/DVN/L60KIF"
-      )
-      tf <- tempfile(fileext = ".gpkg")
-      writeBin(shp, tf)
-
-      data |>
-        left_join(
-          sf::st_read(tf, quiet = TRUE)
-        ) |>
-        sf::st_as_sf()
     } else {
       data |>
         left_join(
@@ -141,6 +128,19 @@ join_vtd_shapefile <- function(data, year = 2020) {
         sf::st_as_sf()
     }
 
+  } else if (year == 1990) {
+    shp <- dataverse::get_file_by_name(
+      filename = stringr::str_glue("{censable::match_fips(data$state[1])}_tracts.gpkg"),
+      dataset = "10.7910/DVN/L60KIF"
+    )
+    tf <- tempfile(fileext = ".gpkg")
+    writeBin(shp, tf)
+
+    data |>
+      left_join(
+        sf::st_read(tf, quiet = TRUE)
+      ) |>
+      sf::st_as_sf()
   }
 }
 
