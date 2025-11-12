@@ -40,21 +40,18 @@ if (!file.exists(here(shp_path))) {
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = ct_shp,
-                               perim_path = here(perim_path)) |>
+        perim_path = here(perim_path)) |>
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         ct_shp <- rmapshaper::ms_simplify(ct_shp, keep = 0.05,
-                                                 keep_shapes = TRUE) |>
+            keep_shapes = TRUE) |>
             suppressWarnings()
     }
 
     # create adjacency graph
     ct_shp$adj <- redist.adjacency(ct_shp)
-
-    ct_shp <- ct_shp |>
-        fix_geo_assignment(muni)
 
     write_rds(ct_shp, here(shp_path), compress = "gz")
     cli_process_done()
