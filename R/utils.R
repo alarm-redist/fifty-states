@@ -140,6 +140,7 @@ join_vtd_shapefile <- function(data, year = 2020) {
       left_join(
         sf::st_read(tf, quiet = TRUE)
       ) |>
+      dplyr::mutate(state = censable::match_abb(.data$state)) |>
       sf::st_as_sf()
   }
 }
