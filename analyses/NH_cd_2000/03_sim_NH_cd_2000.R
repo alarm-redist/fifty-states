@@ -41,4 +41,3 @@ plans <- add_summary_stats(plans, map)
 save_summary_stats(plans, "data-out/NH_2000/NH_cd_2000_stats.csv")
 
 cli_process_done()
-
