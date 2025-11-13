@@ -18,4 +18,4 @@ Since the enacted plan had no minor civil division (MCD) splits, we merged preci
 ## Simulation Notes
 We sample 20,000 districting plans for ``New Hampshire`` across 10 independent runs of the SMC algorithm.
 We then thinned the number of samples to 5,000. 
-Although we also employed new algorithmic merge-split parameters to enhance plan diversity, it remains low due to the population being concentrated in Manchester and Nasua.
+Although we also employed new algorithmic merge-split parameters to enhance plan diversity, it remains low due to the population being concentrated in Manchester and Nashua.
