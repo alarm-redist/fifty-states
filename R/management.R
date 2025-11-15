@@ -32,13 +32,15 @@ init_analysis <- function(state, type = "cd", year = 2020, overwrite = FALSE) {
   cli::cli_alert_success("Creating {.file {path_raw}}")
 
   templates <- Sys.glob(here("R/template/*.R"))
-  if (year != 2000) {
+  if (year %in% c(1990, 2000)) {
     templates <- templates[!stringr::str_detect(templates, 'prep.R')]
   } else {
     templates <- templates[!stringr::str_detect(templates, 'prep_2000.R')]
   }
   if (type == 'leg') {
     templates <- templates[stringr::str_detect(templates, '_leg|_shd|_ssd')]
+  } else {
+    templates <- templates[!stringr::str_detect(templates, '_leg|_shd|_ssd')]
   }
 
   proc_template <- function(path) {
@@ -57,7 +59,8 @@ init_analysis <- function(state, type = "cd", year = 2020, overwrite = FALSE) {
         stringr::str_remove(pattern = '_shd')
     }
 
-    new_path <- here(path_r, new_basename)
+    new_path <- here(path_r, new_basename) |>
+      stringr::str_replace('_2000_', '_')
     path |>
       readr::read_file() |>
       stringr::str_replace_all("``SLUG``", slug) |>
