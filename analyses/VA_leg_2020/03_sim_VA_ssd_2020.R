@@ -8,11 +8,11 @@ cli_process_start("Running simulations for {.pkg VA_ssd_2020}")
 
 set.seed(2020)
 
-mh_accept_per_smc <- ceiling(n_distinct(map_ssd$ssd_2020)/3)
+mh_accept_per_smc <- ceiling(n_distinct(map_ssd$ssd_2020)/3) + 20
 
 plans <- redist_smc(
     map_ssd,
-    nsims = 2e3, runs = 5,
+    nsims = 3e3, runs = 5,                     # increase sample size from 2000 to 3000
     counties = pseudo_county,
     sampling_space = "linking_edge",
     ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),

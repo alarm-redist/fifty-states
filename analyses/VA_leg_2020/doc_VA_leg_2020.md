@@ -23,5 +23,6 @@ We sample 15,000 districting plans for Virginia's lower house across 5 independe
 We then thinned the number of samples to 10,000.
 No special techniques were needed to produce the sample.
 
-We sample 10,000 districting plans for Virginia's upper house across 5 independent runs of the SMC algorithm.
+We sample 15,000 districting plans for Virginia's upper house across 5 independent runs of the SMC algorithm.
+We then thinned the number of samples to 10,000.
 No special techniques were needed to produce the sample.
