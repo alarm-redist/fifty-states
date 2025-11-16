@@ -4,7 +4,7 @@
 In Alabama, we consult [NCSL Redistricting Law 2020](https://documents.ncsl.org/wwwncsl/Redistricting-Census/Redistricting-Law-2020_NCSL%20FINAL.pdf) and impose the following constraints. In our simulations, legislative districts must:
 
 1. Be contiguous [NCSL, 184]
-2. have equal populations [NCSL, 23]
+2. Have equal populations [NCSL, 23]
 3. Be compact and geographically coherent [NCSL, 184]
 4. Preserve political subdivisions and communities of interest [NCSL, 184]
 
