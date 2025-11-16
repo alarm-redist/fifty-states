@@ -5,9 +5,8 @@ In Alabama, we consult [NCSL Redistricting Law 2020](https://documents.ncsl.org/
 
 1. Be contiguous [NCSL, 184]
 2. Have equal populations [NCSL, 23]
-3. Be compact and geographically coherent [NCSL, 184]
+3. Be geographically compact [NCSL, 184]
 4. Preserve political subdivisions and communities of interest [NCSL, 184]
-
 
 ### Algorithmic Constraints
 We enforce a maximum population deviation of 5.0%.
