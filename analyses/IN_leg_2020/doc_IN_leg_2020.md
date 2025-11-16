@@ -3,10 +3,8 @@
 ## Redistricting requirements
 In Indiana, we consult [NCSL Redistricting Law 2020](https://documents.ncsl.org/wwwncsl/Redistricting-Census/Redistricting-Law-2020_NCSL%20FINAL.pdf) and impose the following constraints. In our simulations, legislative districts must:
 
-1. be contiguous
-1. have equal populations
-1. be geographically compact
-1. preserve county and municipality boundaries as much as possible
+1. Be contiguous [NCSL, 184]
+2. Equal population [NCSL, 23]
 
 
 ### Algorithmic Constraints
