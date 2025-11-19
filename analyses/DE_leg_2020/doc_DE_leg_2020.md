@@ -8,7 +8,7 @@ In Delaware, we consult [NCSL Redistricting Law 2020](https://documents.ncsl.org
 3. be not favoring any incumbent [NCSL 185]
 4. be not favoring any political party [NCSL 185]
 5. be geographically compact
-6. preserve county and municipality boundaries as much as possible
+6. generally follow county and municipal boundaries, minimizing splits where feasible
 
 
 ### Algorithmic Constraints
@@ -22,7 +22,7 @@ No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
 We sample 10,000 districting plans for Delaware's lower house across 5 independent runs of the SMC algorithm.
-To ensure chain convergence for this 41-district simulation, the mh_accept_per_smc mixing parameter was increased by 10.
+To ensure chain convergence for this 41-district simulation, we tune the MCMC parameters such that each run of merge-split should accept 24 changes, on average.
 
 We sample 10,000 districting plans for Delaware's upper house across 5 independent runs of the SMC algorithm.
 No special techniques were needed to produce the sample.
