@@ -53,13 +53,13 @@ if (!file.exists(here(shp_path))) {
   # create adjacency graph
   ca_shp$adj <- redist.adjacency(ca_shp)
   
-  # connect island
+  # connect islands
   pairs <- list(
     c("06015000001", "06015000002"),
     c("06037005990", "06037005991"),
     c("06037005991", "06037006706"),
-    c("06015000199", "06013378099"),
-    c("06073006299", "06013378099")
+    c("06015000199", "06015000002"),
+    c("06073006299", "06073009902")
   )
   
   for (p in pairs) {
