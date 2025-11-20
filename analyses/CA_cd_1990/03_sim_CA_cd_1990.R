@@ -19,9 +19,9 @@ plans <- redist_smc(
   nsims = 1200, runs = 5,
   counties = pseudo_county,
   constraints = constr,
-  pop_temper = 0.05, seq_alpha  = 0.95,
+  pop_temper = 0.01, seq_alpha  = 0.90,
   sampling_space = sampling_space_val,
-  ms_params = list(frequency = 1L, mh_accept_per_smc = 65),
+  ms_params = list(frequency = 1L, mh_accept_per_smc = 80),
   split_params = list(splitting_schedule = "any_valid_sizes"),
   ncores = max(1, parallel::detectCores() - 1)
 )
