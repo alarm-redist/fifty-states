@@ -119,11 +119,28 @@ Ordered boxplots show the distribution of Polsby-Popper across districts. Ordere
 A smaller value of this measure, i.e., more edges being cut, means the plan has less compact districts.
 The two metrics are related. PP is more common, but FK is more robust to the inherent resolution of the map and the inherent geography of precincts.
 
+### Bounding Box Reock
+
+Bounding Box Reock (BBR) is measured for each district.
+A greater value (which ranges 0-1) means a more compact district.
+BBR is a ratio of the area of the district over the area of the minimum (fixed rotation) bounding box that contains the district; 1 represents a perfect rectangle.
+Ordered boxplots show the distribution of Polsby-Popper across districts. Ordered district 1 is the least compact district, whereas higher numbers show more compact districts.
+
+**Check for**: A consistent discrepancy between the enacted plan and the simulations, _especially_ if the enacted plan is much more compact than the simulations. Also look for a lack of plan diversity in each ordered district. If all boxes are very tight (in terms of their y-range), this may concerning.
+
 ## Administrative unit splits
+
+### County and Municipal Splits
 
 **Units**: Splits are defined for each plan.
  
 **Interpretation**: The number of counties and municipalities which are not wholly contained in a single district.
+
+### Total County and Municipal Splits
+
+**Units**: Total splits are defined for each plan.
+
+**Interpretation**: The number of unit-district pairs minus one, summed over all administrative units. For example, if a county is split between three districts, it contributes two to the total splits count.
 
 ## Minority VAP share
 In cases where there is significant minority population in a state, we want to see that there is somewhat increased minority power in some districts. The goal is to avoid cracking (where all districts have relatively low minority VAP) or packing (where some districts have absurdly high minority VAP). Much of this comes into use when looking for states with existing majority minority districts. In those cases, we want to make sure that our simulated plans have (1) at least as many majority minority districts and (2) that those districts would perform.
