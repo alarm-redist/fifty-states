@@ -7,11 +7,12 @@
 cli_process_start("Running simulations for {.pkg AZ_cd_2000}")
 
 constr_az <- redist_constr(map) %>%
+    add_constr_splits(strength = 1, admin = county_muni) %>%
     add_constr_grp_hinge(10, vap_hisp, vap, 0.5) %>%
     add_constr_grp_hinge(-10, vap_hisp, vap, 0.28)
 
 set.seed(2000)
-plans <- redist_smc(map, nsims = 2e3, runs = 10, counties = county, constraints = constr_az, pop_temper = 0.03, seq_alpha = 0.99)
+plans <- redist_smc(map, nsims = 2e3, runs = 10, counties = county, pop_temper = 0.03, constraints = constr_az, seq_alpha = 0.99)
 
 plans <- plans %>%
     group_by(chain) %>%
