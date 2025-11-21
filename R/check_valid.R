@@ -34,8 +34,6 @@ check_plans_polygon_contiguity <- function(shp, plans) {
     return(rep(TRUE, ncol(plans)))
   }
 
-  print(to_cast)
-
   adj_built <- geomander:::adj_geos(geo)
 
   for (i in seq_along(to_cast)) {
