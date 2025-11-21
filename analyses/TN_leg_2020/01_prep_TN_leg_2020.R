@@ -22,9 +22,6 @@ cli_process_start("Downloading files for {.pkg TN_leg_2020}")
 
 path_data <- download_redistricting_file("TN", "data-raw/TN", year = 2020)
 
-# TODO other files here (as necessary). All paths should start with `path_`
-# If large, consider checking to see if these files exist before downloading
-
 cli_process_done()
 
 # Compile raw data into a final shapefile for analysis -----
@@ -62,9 +59,6 @@ if (!file.exists(here(shp_path))) {
     tn_shp <- tn_shp |>
         left_join(y = leg_from_baf(state = "TN"), by = "GEOID")
 
-
-    # TODO any additional columns or data you want to add should go here
-
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = tn_shp,
         perim_path = here(perim_path)) |>
@@ -81,8 +75,6 @@ if (!file.exists(here(shp_path))) {
     # create adjacency graph
     tn_shp$adj <- adjacency(tn_shp)
 
-    # TODO any custom adjacency graph edits here
-
     # check max number of connected components
     # 1 is one fully connected component, more is worse
     ccm(tn_shp$adj, tn_shp$ssd_2020)
@@ -97,7 +89,3 @@ if (!file.exists(here(shp_path))) {
     tn_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong TN} shapefile")
 }
-
-# TODO visualize the enacted maps using:
-# redistio::draw(tn_shp, tn_shp$ssd_2020)
-# redistio::draw(tn_shp, tn_shp$shd_2020)

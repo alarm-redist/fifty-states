@@ -6,20 +6,8 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg TN_shd_2020}")
 
-# TODO any pre-computation (VRA targets, etc.)
-
-# TODO customize as needed. Recommendations:
-#  - For many districts / tighter population tolerances, try setting
-#  `pop_temper=0.01` and nudging upward from there. Monitor the output for
-#  efficiency!
-#  - Monitor the output (i.e. leave `verbose=TRUE`) to ensure things aren't breaking
-#  - Don't change the number of simulations unless you have a good reason
-#  - If the sampler freezes, try turning off the county split constraint to see
-#  if that's the problem.
-#  - Ask for help!
 set.seed(2020)
 
-# TODO set equal to one third of number of districts, increase by 10-15 if no convergence
 mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3) + 75
 
 plans <- redist_smc(
@@ -32,9 +20,6 @@ plans <- redist_smc(
     verbose = TRUE
 )
 
-# IF CORES OR OTHER UNITS HAVE BEEN MERGED:
-# make sure to call `pullback()` on this plans object!
-
 plans <- plans |>
     group_by(chain) |>
     filter(as.integer(draw) < min(as.integer(draw)) + 2000) |> # thin samples
@@ -43,8 +28,6 @@ plans <- match_numbers(plans, "shd_2020")
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
-
-# TODO add any reference plans that aren't already included
 
 # Output the redist_map object. Do not edit this path.
 write_rds(plans, here("data-out/TN_2020/TN_shd_2020_plans.rds"), compress = "xz")
@@ -67,6 +50,4 @@ if (interactive()) {
     validate_analysis(plans, map_shd)
     summary(plans)
 
-    # Extra validation plots for custom constraints -----
-    # TODO remove this section if no custom constraints
 }
