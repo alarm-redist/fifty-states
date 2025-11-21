@@ -58,4 +58,3 @@ if (interactive()) {
     summarize(n_black_perf = sum(vap_black/total_vap > 0.3 & ndshare > 0.5)) %>%
     count(n_black_perf)
 }
-  
