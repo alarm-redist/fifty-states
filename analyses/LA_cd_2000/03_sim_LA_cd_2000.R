@@ -47,7 +47,7 @@ if (interactive()) {
                          color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, "#3D77BB", "#B25D4C"),
                          size = 0.5, alpha = 0.5) +
     scale_y_continuous("Percent Black by VAP") +
-    labs(title = "Tennessee Proposed Plan versus Simulations") +
+    labs(title = "Louisiana Proposed Plan versus Simulations") +
     scale_color_manual(values = c(cd_2000 = "black")) +
     theme_bw()
 
