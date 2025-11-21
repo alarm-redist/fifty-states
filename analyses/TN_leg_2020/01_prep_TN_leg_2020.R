@@ -45,10 +45,10 @@ if (!file.exists(here(shp_path))) {
         select(-vtd)
     d_ssd <- make_from_baf("TN", "SLDU", "VTD", year = 2020)  |>
         transmute(GEOID = paste0(censable::match_fips("TN"), vtd),
-                  ssd_2010 = as.integer(sldu))
+            ssd_2010 = as.integer(sldu))
     d_shd <- make_from_baf("TN", "SLDL", "VTD", year = 2020)  |>
         transmute(GEOID = paste0(censable::match_fips("TN"), vtd),
-                  shd_2010 = as.integer(sldl))
+            shd_2010 = as.integer(sldl))
 
     tn_shp <- tn_shp |>
         left_join(d_muni, by = "GEOID") |>
@@ -67,14 +67,14 @@ if (!file.exists(here(shp_path))) {
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = tn_shp,
-                             perim_path = here(perim_path)) |>
+        perim_path = here(perim_path)) |>
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         tn_shp <- rmapshaper::ms_simplify(tn_shp, keep = 0.05,
-                                                 keep_shapes = TRUE) |>
+            keep_shapes = TRUE) |>
             suppressWarnings()
     }
 
