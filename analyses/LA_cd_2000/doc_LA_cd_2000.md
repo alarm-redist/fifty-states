@@ -1,7 +1,9 @@
 # 2000 Louisiana Congressional Districts
 
 ## Redistricting requirements
-In ``Louisiana``, according to [NCSL Redistricting Law 2000](https://web.archive.org/web/20041216185957/https://www.senate.mn/departments/scr/redist/red2000/Tab5appx.htm), there are no state law requirements for congressional districts.
+In ``Louisiana``, according to [NCSL Redistricting Law 2000](https://web.archive.org/web/20041216185957/https://www.senate.mn/departments/scr/redist/red2000/Tab5appx.htm), congressional districts must be:
+1. be contiguous
+1. have equal populations
 
 ### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%. We add a hinge Gibbs constraint targeting the same number of majority-minority districts as the enacted plan. We also apply a hinge Gibbs constraint to discourage packing of minority voters.
