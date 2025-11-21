@@ -35,14 +35,14 @@ download_redistricting_file <- function(abbr, folder, type = "vtd", overwrite = 
       "https://raw.githubusercontent.com/alarm-redist/census-2020/",
       "main/census-vest-{year}/{abbr}_{year}_{type}.csv"
     )
-  } else if (year == 2000) {
+  } else if (year %in% c(1990, 2000)) {
     abbr <- toupper(abbr)
     url <- stringr::str_glue(
       'https://raw.githubusercontent.com/alarm-redist/census-2020/',
-      'refs/heads/road/road-2000/{abbr}_2000.csv'
+      'refs/heads/road/road-{year}/{abbr}_{year}.csv'
     )
   } else {
-    stop("Year must be 2000, 2010, or 2020.")
+    stop("Year must be 1990, 2000, 2010, or 2020.")
   }
   path <- paste0(folder, "/", basename(url))
 
@@ -128,6 +128,20 @@ join_vtd_shapefile <- function(data, year = 2020) {
         sf::st_as_sf()
     }
 
+  } else if (year == 1990) {
+    shp <- dataverse::get_file_by_name(
+      filename = stringr::str_glue("{censable::match_fips(data$state[1])}_tracts.gpkg"),
+      dataset = "10.7910/DVN/L60KIF"
+    )
+    tf <- tempfile(fileext = ".gpkg")
+    writeBin(shp, tf)
+
+    data |>
+      left_join(
+        sf::st_read(tf, quiet = TRUE)
+      ) |>
+      dplyr::mutate(state = censable::match_abb(.data$state)) |>
+      sf::st_as_sf()
   }
 }
 

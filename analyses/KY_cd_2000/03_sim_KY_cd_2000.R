@@ -1,4 +1,4 @@
-###############################################################################
+#############################################################################
 # Simulate plans for `KY_cd_2000`
 # © ALARM Project, August 2025
 ###############################################################################
@@ -7,14 +7,13 @@
 cli_process_start("Running simulations for {.pkg KY_cd_2000}")
 
 set.seed(2000)
-plans <- redist_smc(map, nsims = 2e3, runs = 5, counties = county)
-# IF CORES OR OTHER UNITS HAVE BEEN MERGED:
-# make sure to call `pullback()` on this plans object!
+plans <- redist_smc(map_cores, nsims = 2e3, runs = 5, counties = pseudo_county) %>%
+  pullback(map)
 
 plans <- plans %>%
-    group_by(chain) %>%
-    filter(as.integer(draw) < min(as.integer(draw)) + 1000) %>% # thin samples
-    ungroup()
+  group_by(chain) %>%
+  filter(as.integer(draw) < min(as.integer(draw)) + 1000) %>% # thin samples
+  ungroup()
 plans <- match_numbers(plans, "cd_2000")
 
 cli_process_done()
@@ -33,12 +32,3 @@ plans <- add_summary_stats(plans, map)
 save_summary_stats(plans, "data-out/KY_2000/KY_cd_2000_stats.csv")
 
 cli_process_done()
-
-# Extra validation plots for custom constraints -----
-if (interactive()) {
-    library(ggplot2)
-    library(patchwork)
-
-    validate_analysis(plans, map)
-    summary(plans)
-}
