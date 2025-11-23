@@ -4,7 +4,7 @@
 ###############################################################################
 cli_process_start("Creating {.cls redist_map} object for {.pkg SC_cd_2000}")
 
-map <- redist_map(sc_shp, pop_tol = 0.005,
+map <- redist_map(sc_shp, pop_tol = 0.006,
     existing_plan = cd_2000, adj = sc_shp$adj)
 
 # add cores
