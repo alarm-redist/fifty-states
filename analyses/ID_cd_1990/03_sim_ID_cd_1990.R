@@ -6,9 +6,6 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg ID_cd_1990}")
 
-# TODO any pre-computation (VRA targets, etc.)
-
-# TODO customize as needed. Recommendations:
 #  - For many districts / tighter population tolerances, try setting
 #  `pop_temper=0.01` and nudging upward from there. Monitor the output for
 #  efficiency!
@@ -32,8 +29,6 @@ plans <- match_numbers(plans, "cd_1990")
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
-
-# TODO add any reference plans that aren't already included
 
 # Output the redist_map object. Do not edit this path.
 write_rds(plans, here("data-out/ID_1990/ID_cd_1990_plans.rds"), compress = "xz")
