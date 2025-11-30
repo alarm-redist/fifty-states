@@ -12,6 +12,7 @@ suppressMessages({
     library(baf)
     library(cli)
     library(here)
+    library(tidyr)
     devtools::load_all() # load utilities
 })
 
