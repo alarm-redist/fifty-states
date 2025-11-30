@@ -31,7 +31,8 @@ if (!file.exists(here(shp_path))) {
     # read in redistricting data
     nc_shp <- read_csv(here(path_data), col_types = cols(GEOID = "c")) %>%
         join_vtd_shapefile(year = 2000) %>%
-        st_transform(EPSG$NC)
+        st_transform(EPSG$NC) %>%
+        mutate(across(c(ndv, nrv), \(x) replace_na(x, 0)))
 
     nc_shp <- nc_shp %>%
         rename(muni = place) %>%
