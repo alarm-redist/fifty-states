@@ -9,20 +9,20 @@ cli_process_start("Running simulations for {.pkg TX_ssd_2020}")
 # VRA constraints
 constraints <- redist_constr(map_ssd) %>%
   add_constr_grp_hinge(
-    10,
+    12,
     cvap_hisp,
     total_pop = cvap,
     tgts_group = c(0.45)
   ) %>%
   add_constr_grp_hinge(
-    6,
+    10,
     cvap_black,
     total_pop = cvap,
     tgts_group = c(0.45))
 
 set.seed(2020)
 
-mh_accept_per_smc <- ceiling(n_distinct(map_ssd$ssd_2020)/3) + 15
+mh_accept_per_smc <- ceiling(n_distinct(map_ssd$ssd_2020)/3) + 20
 
 plans <- redist_smc(
   map_ssd,
@@ -105,5 +105,5 @@ if (interactive()) {
     p5 <- redist.plot.hist(psum, mmd_coalition) + xlab("Hisp + Black + Asian CVAP > .5")
     p6 <- redist.plot.hist(psum, mmd_coalition_dem) + xlab("Hisp + Black + Asian CVAP > .5 & Dem > Rep")
     
-    p1 + p2 + p3 + p4 + p5
+    p1 + p2 + p3 + p4 + p5 + p6
 }

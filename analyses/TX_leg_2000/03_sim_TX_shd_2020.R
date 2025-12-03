@@ -7,33 +7,52 @@
 sink("analyses/TX_leg_2000/output_sf.txt")
 cli_process_start("Running simulations for {.pkg TX_shd_2020}")
 
+bvap_thresh  <- 0.4
+ndists <- attr(map_shd, "ndists")
+
 # VRA constraints
 constraints <- redist_constr(map_shd) %>%
   add_constr_grp_hinge(
     3,
     cvap_hisp,
     total_pop = cvap,
-    tgts_group = c(0.45)
+    tgts_group = c(0.5)
   ) %>%
   add_constr_grp_hinge(
     8,
     cvap_black,
     total_pop = cvap,
-    tgts_group = c(0.5))
+    tgts_group = c(0.5)) |>
+  add_constr_min_group_frac(
+    strength=-1,
+    group_pops=list(map_shd$vap_black),
+    total_pops=list(map_shd$vap),
+    min_fracs=c(bvap_thresh),
+    thresh = -2.9,
+    only_nregions = seq.int(10, ndists)
+  ) |> 
+  add_constr_min_group_frac(
+    strength=-1,
+    group_pops=list(map_shd$vap_black),
+    total_pops=list(map_shd$vap),
+    min_fracs=c(bvap_thresh),
+    thresh = -4.9,
+    only_nregions = seq.int(40, ndists)
+  )
 
 set.seed(2020)
 
-mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3) * 2
+mh_accept_per_smc <- n_distinct(map_shd$shd_2020)/3 + 15
 
 plans <- redist_smc(
   map_shd,
-  nsims = 2500, runs = 5,
+  nsims = 3500, runs = 5,
   constraints = constraints,
   counties = pseudo_county,
   sampling_space = "spanning_forest", # linking_edge
   ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
   split_params = list(splitting_schedule = "any_valid_sizes"),
-  verbose = TRUE, ncores = 39
+  verbose = TRUE, ncores = parallelly::availableCores() - 1
 )
 
 sink()
@@ -53,7 +72,7 @@ cli_process_start("Saving {.cls redist_plans} object")
 # TODO add any reference plans that aren't already included
 
 # Output the redist_map object. Do not edit this path.
-write_rds(plans, here("data-out/TX_2020/TX_shd_2020_plans.rds"), compress = "xz")
+write_rds(plans, here("data-out/TX_2020/TX_shd_2020_plans2.rds"), compress = "xz")
 cli_process_done()
 
 # Compute summary statistics -----

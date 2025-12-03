@@ -69,10 +69,7 @@ if (!file.exists(here(shp_path))) {
     if (!file.exists(path_cvap)) {
       cvap <-
         cvap::cvap_distribute_censable(state) %>% select(GEOID, starts_with("cvap"))
-#      vest_cw <- cvap::vest_crosswalk(state)
-#      cvap <-
-#        PL94171::pl_retally(cvap, crosswalk = vest_cw)
-      vtd_baf <- read_delim("data-raw/TX/BlockAssign_ST48_TX_VTD_2020.txt", col_types = c("c"))
+      vtd_baf <- baf::baf('TX')[['VTD']]
       cvap <- cvap %>%
         left_join(vtd_baf %>% rename(GEOID = BLOCKID),
                   by = "GEOID")
