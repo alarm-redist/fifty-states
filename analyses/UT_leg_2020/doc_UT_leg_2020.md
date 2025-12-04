@@ -5,8 +5,10 @@ In Utah, we consult [NCSL Redistricting Law 2020](https://documents.ncsl.org/www
 
 1. be contiguous [NCSL 186]
 2. have equal populations
-3. be geographically compact [NCSL 186]
-4. preserve county and municipality boundaries as much as possible [NCSL 186]
+3. be not favoring any incumbent [NCSL 187]
+4. be not favoring any political party [NCSL 187]
+5. be geographically compact [NCSL 186]
+6. generally follow county and municipal boundaries, minimizing splits where feasible [NCSL 186]
 
 
 ### Algorithmic Constraints
@@ -19,8 +21,10 @@ Data for Utah comes from the ALARM Project's [2020 Redistricting Data Files](htt
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 10,000 districting plans for Delaware's lower house across 5 independent runs of the SMC algorithm.
-To ensure chain convergence for this simulation, the mh_accept_per_smc mixing parameter was increased by 15.
 
-We sample 10,000 districting plans for Delaware's upper house across 5 independent runs of the SMC algorithm.
-To ensure chain convergence for this simulation, the mh_accept_per_smc mixing parameter was increased by 15.
+We sample 10,000 districting plans for Utah's lower house across 5 independent runs of the SMC algorithm. 
+To ensure chain convergence for this 75-district simulation, we tune the MCMC parameters such that each run of merge–split should accept 40 changes, on average.
+
+We sample 10,000 districting plans for Utah's upper house across 5 independent runs of the SMC algorithm. 
+To ensure chain convergence for this 29-district simulation, we tune the MCMC parameters such that each run of merge–split should accept 25 changes, on average.
+
