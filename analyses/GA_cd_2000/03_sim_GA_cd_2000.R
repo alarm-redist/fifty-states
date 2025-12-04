@@ -6,8 +6,28 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg GA_cd_2000}")
 
+BVAP_THRESH  <- 0.30
+DEM_THRESH   <- 0.50
+ndists <- attr(map, "ndists")
+constr <- redist_constr(map) |>
+  add_constr_min_group_frac(
+    strength=-1,
+    group_pops=list(map$vap_black, map$ndv),
+    total_pops=list(map$vap, map$nrv + map$ndv),
+    min_fracs=c(BVAP_THRESH, DEM_THRESH),
+    thresh = -.9,
+    only_nregions = seq.int(2, ndists)
+  ) |> add_constr_min_group_frac(
+    strength=-1,
+    group_pops=list(map$vap_black, map$ndv),
+    total_pops=list(map$vap, map$nrv + map$ndv),
+    min_fracs=c(BVAP_THRESH, DEM_THRESH),
+    thresh = -1.9,
+    only_nregions = seq.int(5, ndists)
+  )
+
 set.seed(2000)
-plans <- redist_smc(map, nsims = 2e3, runs = 10, counties = county)
+plans <- redist_smc(map, nsims = 2e3, runs = 10, counties = county, constraints=constr)
 
 plans <- plans %>%
     group_by(chain) %>%
@@ -24,41 +44,10 @@ plans <- add_summary_stats(plans, map)
 
 cli_process_done()
 
-# Rejection sampling for ≥ 2 minority opportunity districts -----
-MIN_OPP      <- 2
-BVAP_THRESH  <- 0.30
-DEM_THRESH   <- 0.50
-
-cli_process_start(glue::glue(
-    "Rejection sampling: keeping draws with ≥ {MIN_OPP} Black opportunity districts ",
-    "(BVAP>{BVAP_THRESH}, Dem share>{DEM_THRESH})"
-))
-
-opp_by_draw <- plans %>%
-    subset_sampled() %>%
-    mutate(bvap = vap_black/total_vap, dem_share = ndshare) %>%
-    group_by(draw) %>%
-    summarise(n_black_opp = sum(bvap > BVAP_THRESH & dem_share > DEM_THRESH), .groups = "drop")
-
-keep_draws <- opp_by_draw %>%
-    filter(n_black_opp >= MIN_OPP) %>%
-    pull(draw) %>%
-    unique()
-
-n_before <- n_distinct(plans$draw)
-plans <- plans %>% filter(draw %in% keep_draws)
-n_after  <- n_distinct(plans$draw)
-
-cli::cli_alert_info("{n_after} / {n_before} draws retained after rejection sampling.")
-if (n_after == 0) {
-    cli::cli_alert_danger("All draws rejected. Consider relaxing thresholds or adding a hinge constraint.")
-}
-cli_process_done()
-
-cli_process_start("Saving {.cls redist_plans} object (post-filter)")
+cli_process_start("Saving {.cls redist_plans} object")
 
 # Output the redist_map object. Do not edit this path.
-+write_rds(plans, here("data-out/GA_2000/GA_cd_2000_plans.rds"), compress = "xz")
+write_rds(plans, here("data-out/GA_2000/GA_cd_2000_plans.rds"), compress = "xz")
 cli_process_done()
 
 # Output the summary statistics. Do not edit this path.
