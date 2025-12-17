@@ -18,5 +18,5 @@ Data for Ohio comes from the [ALARM Project's update](https://dataverse.harvard.
 A precinct is manually connected in the adjacency graph, but this has no bearing on the simulation.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Ohio across 10 independent runs of the SMC algorithm.
+We sample 6,000 districting plans for Ohio across 10 independent runs of the SMC algorithm.
 We also used new algorithmic mergesplit parameters to improve mixing.
