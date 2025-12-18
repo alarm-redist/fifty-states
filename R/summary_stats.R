@@ -50,6 +50,9 @@ add_summary_stats <- function(plans, map, ...) {
                 plans = redist::pl(), map,
                 perim_df = perim_df
             ),
+            comp_bbox_reock = redistmetrics::comp_bbox_reock(
+                plans = redist::pl(), map
+            ),
             ndv = redist::tally_var(map, .data$ndv),
             nrv = redist::tally_var(map, .data$nrv),
             ndshare = .data$ndv / (.data$ndv + .data$nrv),
