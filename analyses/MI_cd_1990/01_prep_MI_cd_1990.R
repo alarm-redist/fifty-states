@@ -30,6 +30,11 @@ if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong MI} shapefile")
     # read in redistricting data
     mi_shp <- read_csv(here(path_data), col_types = cols(GEOID = "c")) |>
+        mutate(
+          state  = as.character(state),
+          county = as.character(county),
+          tract  = as.character(tract)
+        ) |>
         join_vtd_shapefile(year = 1990) |>
         st_transform(EPSG$MI)
 
