@@ -18,7 +18,7 @@ cli_process_start("Running simulations for {.pkg NJ_cd_1990}")
 #  if that's the problem.
 #  - Ask for help!
 set.seed(1990)
-plans <- redist_smc(map, nsims = 2e3, runs = 5, counties = county)
+plans <- redist_smc(map, nsims = 1e4, runs = 5, counties = county, pop_temper = 0.015)
 # IF CORES OR OTHER UNITS HAVE BEEN MERGED:
 # make sure to call `pullback()` on this plans object!
 
