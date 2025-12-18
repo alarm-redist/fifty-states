@@ -23,16 +23,16 @@ finalize_analysis = function(state, type = "cd", year = 2020, overwrite = TRUE) 
         path_plans <- str_glue("data-out/{state}_{year}/{slug}_plans.rds")
         path_stats <- str_glue("data-out/{state}_{year}/{slug}_stats.csv")
         if (!file.exists(here(path_map))) {
-            cli::cli_abort(c("Map file missing for {.pkg {slug}}.",
+            cli_abort(c("Map file missing for {.pkg {slug}}.",
                         "x" = "{.path {path_map}} not found."))
         }
 
         if (!file.exists(here(path_plans))) {
-            cli::cli_abort(c("Plans file missing for {.pkg {slug}}.",
+            cli_abort(c("Plans file missing for {.pkg {slug}}.",
                         "x" = "{.path {path_plans}} not found."))
         }
         if (!file.exists(here(path_stats))) {
-            cli::cli_abort(c("Summary statistics file missing for {.pkg {slug}}.",
+            cli_abort(c("Summary statistics file missing for {.pkg {slug}}.",
                         "x" = "{.path {path_stats}} not found."))
         }
 
@@ -89,7 +89,7 @@ finalize_analysis = function(state, type = "cd", year = 2020, overwrite = TRUE) 
             # plans has the right columns
             if (length(names(plans_in)) > 5)  {
                 cli::cli_warn("{.cls redist_plans} has too many columns.")
-                plans_in <- plans_in |>
+                plans_in <- plans_in %>%
                     dplyr::select(dplyr::any_of(c("draw", "district", "total_pop", "chain", 'pop_overlap')))
             }
             if (!all(c("draw", "district", "total_pop", "chain", 'pop_overlap') %in% names(plans_in))) {
@@ -121,8 +121,8 @@ finalize_analysis = function(state, type = "cd", year = 2020, overwrite = TRUE) 
             }
             cli::cli_progress_update()
 
-            map_cols <- setdiff(names(map_in)[map_in |>
-                                                  dplyr::as_tibble() |>
+            map_cols <- setdiff(names(map_in)[map_in %>%
+                                                  dplyr::as_tibble() %>%
                                                   tidyselect::eval_select(dplyr::starts_with(c(
                                                       'pop', 'vap', 'pre', 'uss', 'gov', 'atg', 'sos'
                                                   )), .)], c(
@@ -158,10 +158,10 @@ finalize_analysis = function(state, type = "cd", year = 2020, overwrite = TRUE) 
         } # end year 2010 checks
     }) # end withr
     if (utils::askYesNo('After reading any warnings in the console, do you want to continue?')) {
-        cli::cli_process_start("Uploading {.pkg {slug}} to the dataverse")
+        cli_process_start("Uploading {.pkg {slug}} to the dataverse")
         pub_dataverse(slug, path_map, path_plans, path_stats)
-        cli::cli_process_done()
-        cli::cli_alert_info("Ask a maintainer to publish the dataverse updates.")
+        cli_process_done()
+        cli_alert_info("Ask a maintainer to publish the dataverse updates.")
     } else {
         cli::cli_alert_info('Process manually aborted, please fix any problems and try again.')
     }
@@ -182,7 +182,7 @@ pub_dataverse = function(slug, path_map, path_plans, path_stats) {
 
     doc1 <- read_lines(here(str_glue("analyses/{slug}/doc_{slug}.md")))
     readable <- str_trim(str_sub(doc1[1], 2))
-    doc2 <- read_lines(here("R/template/dataverse_addendum.md")) |>
+    doc2 <- read_lines(here("R/template/dataverse_addendum.md")) %>%
         str_replace_all("``SLUG``", slug)
     path_doc = file.path(path_stage, str_glue("{slug}_doc.md"))
     write_lines(c(doc1, "", doc2), path_doc)
@@ -198,14 +198,14 @@ pub_dataverse = function(slug, path_map, path_plans, path_stats) {
     dv_id <- "doi:10.7910/DVN/SLCD3E"
     dv_set <- get_dataset(dv_id)
     if (length(dv_set$files) > 0) {
-        existing <- dplyr::filter(dv_set$files, str_detect(filename, slug)) |>
+        existing <- dplyr::filter(dv_set$files, str_detect(filename, slug)) %>%
             dplyr::arrange(filename)
     } else {
         existing = data.frame()
     }
 
     if (nrow(existing) > 0)
-        cli::cli_abort("Files for {.pkg {slug}} already exist on the dataverse.")
+        cli_abort("Files for {.pkg {slug}} already exist on the dataverse.")
 
     invisible(add_dataset_file(path_zip, dataset = dv_id, description = readable))
 }
@@ -216,7 +216,7 @@ doc_render <- function(slug) {
     dir.create(path_stage)
     doc1 <- read_lines(here(str_glue("analyses/{slug}/doc_{slug}.md")))
     readable <- str_trim(str_sub(doc1[1], 2))
-    doc2 <- read_lines(here("R/template/dataverse_addendum.md")) |>
+    doc2 <- read_lines(here("R/template/dataverse_addendum.md")) %>%
         str_replace_all("``SLUG``", slug)
     path_doc = file.path(path_stage, str_glue("{slug}_doc.md"))
     write_lines(c(doc1, "", doc2), path_doc)
@@ -281,11 +281,11 @@ quality_control <- function(state, type = "cd", year = 2020, make_valid = FALSE,
         map <- readr::read_rds(path_map)
     }
     if (make_valid) map <- sf::st_make_valid(map)
-    p <- map |>
-        dplyr::as_tibble() |>
-        sf::st_as_sf() |>
-        dplyr::group_by(dplyr::across(dplyr::all_of(paste0(type, '_', year)))) |>
-        dplyr::summarise() |>
+    p <- map %>%
+        dplyr::as_tibble() %>%
+        sf::st_as_sf() %>%
+        dplyr::group_by(dplyr::across(dplyr::all_of(paste0(type, '_', year)))) %>%
+        dplyr::summarise() %>%
         ggplot2::ggplot(
             ggplot2::aes(
                 label = .data[[paste0(type, '_', year)]],

@@ -13,7 +13,7 @@ map <- redist_map(``state``_shp, pop_tol = 0.005,
 
 # TODO remove if not necessary. Adjust pop_muni as needed to balance county/muni splits
 # make pseudo counties with default settings
-map <- map |>
+map <- map %>%
     mutate(pseudo_county = pick_county_muni(map, counties = county, munis = muni,
                                             pop_muni = get_target(map)))
 # IF MERGING CORES OR OTHER UNITS:

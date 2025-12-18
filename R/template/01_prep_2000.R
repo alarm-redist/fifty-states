@@ -29,27 +29,27 @@ perim_path <- "data-out/``STATE``_``YEAR``/perim.rds"
 if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong ``STATE``} shapefile")
     # read in redistricting data
-    ``state``_shp <- read_csv(here(path_data), col_types = cols(GEOID = "c")) |>
-        join_vtd_shapefile(year = ``YEAR``) |>
+    ``state``_shp <- read_csv(here(path_data), col_types = cols(GEOID = "c")) %>%
+        join_vtd_shapefile(year = ``YEAR``) %>%
         st_transform(EPSG$``STATE``)
 
-    ``state``_shp <- ``state``_shp |>
-        rename(muni = place) |>
-        mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) |>
+    ``state``_shp <- ``state``_shp %>%
+        rename(muni = place) %>%
+        mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_``OLDYEAR``, .after = county)
 
     # TODO any additional columns or data you want to add should go here
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = ``state``_shp,
-                               perim_path = here(perim_path)) |>
+                               perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         ``state``_shp <- rmapshaper::ms_simplify(``state``_shp, keep = 0.05,
-                                                 keep_shapes = TRUE) |>
+                                                 keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 
@@ -57,6 +57,9 @@ if (!file.exists(here(shp_path))) {
     ``state``_shp$adj <- redist.adjacency(``state``_shp)
 
     # TODO any custom adjacency graph edits here
+
+    ``state``_shp <- ``state``_shp %>%
+        fix_geo_assignment(muni)
 
     write_rds(``state``_shp, here(shp_path), compress = "gz")
     cli_process_done()

@@ -31,30 +31,27 @@ prep_particles <- function(map, map_plan_list, uid, dist_keep, nsims) {
     keep_l <- lapply(map_plan_list, function(x) {
         keeps <- as.logical(rlang::eval_tidy(rlang::enquo(dist_keep), x$plans))
         if (is.null(keeps)) {
-            keeps <- rep(TRUE, x$plans |> subset_sampled() |> nrow())
+            keeps <- rep(TRUE, x$plans %>% subset_sampled() %>% nrow())
         }
-        x$plans |>
-            redist::subset_sampled() |>
-            as_tibble() |>
-            select(draw, district) |>
-            filter(keeps) |>
+        x$plans %>%
+            redist::subset_sampled() %>%
+            as_tibble() %>%
+            select(draw, district) %>%
+            filter(keeps) %>%
             mutate(draw = as.integer(draw))
     })
 
-    adds <- c(
-      0,
-      sapply(keep_l, function(x) {
+    adds <- sapply(keep_l, function(x) {
         z <- x$draw[1]
-        x |> filter(draw == z) |> nrow()
-      }) |> cumsum()
-    )
+        x %>% filter(draw == z) %>% nrow()
+    }) %>% cumsum() %>% c(0, .)
 
     plans_m_l <- lapply(seq_along(plans_m_l), function(i) {
         m <- plans_m_l[[i]]
         keep <- keep_l[[i]]
         for (j in seq_len(ncol(m))) {
-            keep_j <- keep |>
-                filter(draw == j) |>
+            keep_j <- keep %>%
+                filter(draw == j) %>%
                 pull(district)
             m[!(m[, j] %in% keep_j), j] <- 0L
             m[, j] <- match(m[, j], sort(unique(m[, j]))) - as.integer(any(m[, j] == 0))

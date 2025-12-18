@@ -74,9 +74,9 @@ fix_state = function(state, type = "cd", year = 2020, wait = TRUE) {
     plans = d$plans
     map = d$map
 
-    elecs <- select(as_tibble(map), contains("_dem_")) |>
-        names() |>
-        str_sub(1, 6) |>
+    elecs <- select(as_tibble(map), contains("_dem_")) %>%
+        names() %>%
+        str_sub(1, 6) %>%
         unique()
 
     elect_tb <- purrr::map_dfr(elecs, function(el) {
@@ -87,20 +87,20 @@ fix_state = function(state, type = "cd", year = 2020, wait = TRUE) {
         dvote <- pull(vote_d, 1)
         rvote <- pull(vote_d, 2)
 
-        plans |>
-            mutate(pbias = partisan_metrics(map, "Bias", rvote, dvote)) |>
-            as_tibble() |>
-            group_by(draw) |>
+        plans %>%
+            mutate(pbias = partisan_metrics(map, "Bias", rvote, dvote)) %>%
+            as_tibble() %>%
+            group_by(draw) %>%
             transmute(draw = draw,
                       district = district,
                       pbias = pbias[1])
-    }) |>
-        group_by(draw, district) |>
+    }) %>%
+        group_by(draw, district) %>%
         summarize(pbias = mean(pbias))
 
-    stats = d$stats |>
-        select(-pbias) |>
-        left_join(elect_tb, by=c("draw", "district")) |>
+    stats = d$stats %>%
+        select(-pbias) %>%
+        left_join(elect_tb, by=c("draw", "district")) %>%
         relocate(pbias, .before=egap)
     cli::cli_alert_success("Updated summary statistics.")
 
@@ -110,8 +110,8 @@ fix_state = function(state, type = "cd", year = 2020, wait = TRUE) {
     path_plans <- str_glue("{path_stage}/{slug}_plans.rds")
     path_stats <- str_glue("{path_stage}/{slug}_stats.csv")
     write_rds(plans, path_plans, compress="xz")
-    stats |>
-        mutate(across(where(is.numeric), format, digits = 4, scientific = FALSE)) |>
+    stats %>%
+        mutate(across(where(is.numeric), format, digits = 4, scientific = FALSE)) %>%
         write_csv(path_stats)
 
     readable <- paste(year, censable::match_name(state), "Congressional Districts")
@@ -141,12 +141,12 @@ fix_state = function(state, type = "cd", year = 2020, wait = TRUE) {
             success = dataverse::delete_file(id_plans)
         }
         if (!success) {
-            cli::cli_abort(c("Plans not deleted successfully.",
+            cli_abort(c("Plans not deleted successfully.",
                         ">"="Delete files manually. Then run
                         {.code {cmd}}"))
         }
     } else {
-        cli::cli_abort(c("Plans not found.",
+        cli_abort(c("Plans not found.",
                     ">"="Delete files manually. Then run
                     {.code {cmd}}"))
     }
@@ -158,12 +158,12 @@ fix_state = function(state, type = "cd", year = 2020, wait = TRUE) {
             success = dataverse::delete_file(id_stats)
         }
         if (!success) {
-            cli::cli_abort(c("Stats not deleted successfully.",
+            cli_abort(c("Stats not deleted successfully.",
                         ">"="Delete files manually. Then run
                         {.code {cmd}}"))
         }
     } else {
-        cli::cli_abort(c("Stats not found.",
+        cli_abort(c("Stats not found.",
                     ">"="Delete files manually. Then run
                     {.code {cmd}}"))
     }
