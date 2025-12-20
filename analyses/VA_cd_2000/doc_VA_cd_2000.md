@@ -22,4 +22,4 @@ No manual pre-processing decisions were necessary.
 ## Simulation Notes
 We sample 100,000 districting plans for Virginia across 5 independent runs of the SMC algorithm.
 We then thinned the number of samples to 5,000. 
-No special techniques were needed to produce the sample.
+We also used new algorithmic mergesplit parameters to improve mixing.
