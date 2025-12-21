@@ -1,7 +1,7 @@
 # 1990 Maine Congressional Districts
 
 ## Redistricting requirements
-In Maine, because redistricting laws relevant for 1990 are not publicly available, we consult both [NCSL Redistricting Law 2000](https://web.archive.org/web/20041216185957/https://www.senate.mn/departments/scr/redist/red2000/Tab5appx.htm) and impose the following constraints and [Forgette et al. 2009](http://www.jstor.org/stable/40421634). In our simulations, districts must:
+In Maine, because redistricting laws relevant for 1990 are not publicly available, we consult both [NCSL Redistricting Law 2000](https://web.archive.org/web/20041216185957/https://www.senate.mn/departments/scr/redist/red2000/Tab5appx.htm) and [Forgette et al. 2009](http://www.jstor.org/stable/40421634) and impose the following constraints. In our simulations, districts must:
 
 1. be contiguous
 1. have equal populations
