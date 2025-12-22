@@ -22,6 +22,6 @@ Data for Georgia comes from the [ALARM Project's update](https://dataverse.harva
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 20,000 districting plans for Georgia across 10 independent runs of the SMC algorithm.
+We sample 15,000 districting plans for Georgia across 3 independent runs of the SMC algorithm.
 We then thinned the number of samples to 5,000. 
 No special techniques were needed to produce the sample.

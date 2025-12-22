@@ -6,28 +6,22 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg GA_cd_2000}")
 
-BVAP_THRESH  <- 0.30
-DEM_THRESH   <- 0.50
-ndists <- attr(map, "ndists")
-constr <- redist_constr(map) |>
-  add_constr_min_group_frac(
-    strength=-1,
-    group_pops=list(map$vap_black, map$ndv),
-    total_pops=list(map$vap, map$nrv + map$ndv),
-    min_fracs=c(BVAP_THRESH, DEM_THRESH),
-    thresh = -.9,
-    only_nregions = seq.int(2, ndists)
-  ) |> add_constr_min_group_frac(
-    strength=-1,
-    group_pops=list(map$vap_black, map$ndv),
-    total_pops=list(map$vap, map$nrv + map$ndv),
-    min_fracs=c(BVAP_THRESH, DEM_THRESH),
-    thresh = -1.9,
-    only_nregions = seq.int(5, ndists)
-  )
+constr <- redist_constr(map) %>%
+  add_constr_grp_hinge(15, vap_black, vap, 0.43) %>%
+  add_constr_grp_hinge(-15, vap_black, vap, 0.34)
+
+sampling_space_val <- tryCatch(
+  getFromNamespace("LINKING_EDGE_SPACE", "redist"),
+  error = function(e) "linking_edge"
+)
 
 set.seed(2000)
-plans <- redist_smc(map, nsims = 2e3, runs = 10, counties = county, constraints=constr)
+plans <- redist_smc(map, nsims = 5e4, runs = 3, counties = county, constraints=constr,
+                    seq_alpha = 0.99,
+                    pop_temper = 0.01,
+                    sampling_space = sampling_space_val,
+                    ms_params      = list(ms_frequency = 1L, ms_moves_multiplier = 240L),
+                    split_params   = list(splitting_schedule = "any_valid_sizes"))
 
 plans <- plans %>%
     group_by(chain) %>%
@@ -41,6 +35,13 @@ cli_process_done()
 cli_process_start("Computing summary statistics for {.pkg GA_cd_2000}")
 
 plans <- add_summary_stats(plans, map)
+
+plans <- plans %>%
+  mutate(
+    denom = ndv + nrv,
+    ndshare = ifelse(denom == 0, 0.5, ndv / denom)
+  ) %>%
+  select(-denom)
 
 cli_process_done()
 
