@@ -31,9 +31,9 @@ if (!file.exists(here(shp_path))) {
     # read in redistricting data
     ga_shp <- read_csv(here(path_data), col_types = cols(GEOID = "c")) |>
         mutate(
-          state  = as.character(state),
-          county = as.character(county),
-          tract  = as.character(tract)
+            state  = as.character(state),
+            county = as.character(county),
+            tract  = as.character(tract)
         ) |>
         join_vtd_shapefile(year = 1990) |>
         st_transform(EPSG$GA)
@@ -45,13 +45,13 @@ if (!file.exists(here(shp_path))) {
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = ga_shp,
-                               perim_path = here(perim_path)) |>
+        perim_path = here(perim_path)) |>
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         ga_shp <- rmapshaper::ms_simplify(ga_shp, keep = 0.05,
-                                                 keep_shapes = TRUE) |>
+            keep_shapes = TRUE) |>
             suppressWarnings()
     }
 
