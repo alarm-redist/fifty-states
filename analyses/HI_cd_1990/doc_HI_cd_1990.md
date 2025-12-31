@@ -1,7 +1,7 @@
 # 1990 Hawaii Congressional Districts
 
 ## Redistricting requirements
-In Hawaii, we consult [Hawaii Revised Statutes 25-2(b)(1)-(4) and (6), as in force for the 1990 cycle](https://archive.org/stream/hawaii-session-laws/1979-regular_djvu.txt#:~:text=%2A%2ASec.%2025,consult%20with%20the%20apportionment%20advisory). 
+In Hawaii, we consult Hawaii Revised Statutes 25-2(b)(1)-(4) and (6), [as in force for the 1990 cycle](https://archive.org/stream/hawaii-session-laws/1979-regular_djvu.txt#:~:text=%2A%2ASec.%2025,consult%20with%20the%20apportionment%20advisory). 
 We impose the following constraints. 
 In our simulations, districts must:
 
