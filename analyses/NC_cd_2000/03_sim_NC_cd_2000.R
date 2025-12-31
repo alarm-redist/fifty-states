@@ -6,14 +6,33 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg NC_cd_2000}")
 
+BVAP_THRESH  <- 0.30
+DEM_THRESH   <- 0.50
+ndists <- attr(map, "ndists")
+constr <- redist_constr(map) |>
+  add_constr_min_group_frac(
+    strength=-1,
+    group_pops=list(map$vap_black, map$ndv),
+    total_pops=list(map$vap, map$nrv + map$ndv),
+    min_fracs=c(BVAP_THRESH, DEM_THRESH),
+    thresh = -.9,
+    only_nregions = seq.int(2, ndists)
+  ) |> add_constr_min_group_frac(
+    strength=-1,
+    group_pops=list(map$vap_black, map$ndv),
+    total_pops=list(map$vap, map$nrv + map$ndv),
+    min_fracs=c(BVAP_THRESH, DEM_THRESH),
+    thresh = -1.9,
+    only_nregions = seq.int(5, ndists)
+  )
+
 set.seed(2000)
-
-constr <- redist_constr(map) %>%
-  add_constr_grp_hinge(20, vap - vap_white, vap, 0.52) %>%
-  add_constr_grp_hinge(-20, vap - vap_white, vap, 0.3) %>%
-  add_constr_grp_inv_hinge(20, vap - vap_white, vap, 0.62)
-
-plans <- redist_smc(map, nsims = 2e3, runs = 5, counties = county)
+plans <- redist_smc(map, nsims = 2e3, runs = 6,
+                    counties = county, constraints=constr,
+                    split_params = list(splitting_schedule = "any_valid_sizes"),
+                    sampling_space = "spanning_forest",
+                    ms_params = list(frequency = 1, mh_accept_per_smc = 30),
+                    ncores = 0)
 
 plans <- plans %>%
     group_by(chain) %>%
