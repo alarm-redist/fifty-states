@@ -18,7 +18,7 @@ We enforce a maximum population deviation of 0.5%. We use Census tracts as the b
 Data for Hawaii comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
 
 ## Pre-processing Notes
-Precicnts, including islands, are manually connected in the adjacency graph.
+Precincts, including islands, are manually connected in the adjacency graph.
 
 ## Simulation Notes
 We run statewide SMC (2 runs, 30,000 candidate draws per run) and retain only plans where all non-Honolulu units are assigned to the same district, yielding one district confined to Honolulu. From the retained plans, we keep the first 2,500 per run, for 5,000 total statewide plans.
