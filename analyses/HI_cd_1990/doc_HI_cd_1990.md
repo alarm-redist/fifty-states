@@ -12,7 +12,7 @@ In our simulations, districts must:
 6. where practicable, avoid mixing regions with different socioeconomic interests.
 
 ### Algorithmic Constraints
-We enforce a maximum population deviation of 0.5%. We use Census tracts in line with 25-2(b)(4). In absence of regional knowledge about features and socioeconomic interests, we use municipalities to attempt to enforce 25-2(b)(4) and (6).
+We enforce a maximum population deviation of 0.5%. We use Census tracts as the basic geographic units, ensuring that district boundaries do not subdivide tracts, consistent with the tract-alignment principle in 25-2(b)(4). In absence of regional knowledge about features and socioeconomic interests, we use municipalities to attempt to enforce 25-2(b)(4) and (6).
 
 ## Data Sources
 Data for Hawaii comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
