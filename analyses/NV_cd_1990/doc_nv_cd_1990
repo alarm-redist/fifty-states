@@ -1,0 +1,17 @@
+2000 Nevada Congressional Districts
+Redistricting requirements
+In Nevada,according to NCSL Redistricting Law 2000, districts must:
+
+be contiguous
+have equal populations
+Algorithmic Constraints
+We enforce a maximum population deviation of 0.5%.
+
+Data Sources
+Data for Nevada comes from the ALARM Project's update to The Record of American Democracy.
+
+Pre-processing Notes
+No manual pre-processing decisions were necessary.
+
+Simulation Notes
+We sample 5,000 districting plans for Nevada. No special techniques were needed to produce the sample.
