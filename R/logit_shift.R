@@ -24,6 +24,11 @@ logit_shift_baseline <- function(d_baseline, ndv, nrv,
   nrv_vec <- dplyr::pull(d_baseline, !!nrv_q)
 
   turn <- ndv_vec + nrv_vec
+
+  if (sum(turn) == 0) {
+    return(d_baseline)
+  }
+
   ldvs <- dplyr::if_else(turn > 0, log(ndv_vec) - log(nrv_vec), 0)
 
   res <- uniroot(function(shift) {
