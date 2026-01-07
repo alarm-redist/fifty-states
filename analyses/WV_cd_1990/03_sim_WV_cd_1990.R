@@ -30,3 +30,23 @@ plans <- add_summary_stats(plans, map)
 save_summary_stats(plans, "data-out/WV_1990/WV_cd_1990_stats.csv")
 
 cli_process_done()
+
+# Extra validation plots for custom constraints -----
+if (interactive()) {
+  library(ggplot2)
+  library(patchwork)
+
+  # Standard ALARM validation plots
+  validate_analysis(plans, map)
+  summary(plans)
+
+  # Custom compactness validation plots
+  plans_sum <- plans %>%
+    group_by(draw) %>%
+    summarize(comp_lw = sum(comp_lw),
+              comp_perim = sum(comp_perim))
+  p_lw <- hist(plans_sum, comp_lw, bins = 40) + labs(title = "Length-width compactness") + theme_bw()
+  p_perim <- hist(plans_sum, comp_perim, bins = 40) + labs(title = "Perimeter compactness") + theme_bw()
+  p <- p_lw + p_perim + plot_layout(guides = "collect")
+  ggsave("data-raw/NV/validation_comp.png", width = 10, height = 5)
+}
