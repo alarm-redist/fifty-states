@@ -18,7 +18,7 @@ Data for ``Tennessee`` comes from the [ALARM Project's update](https://dataverse
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 10,000 districting plans across five independent runs of the SMC algorithm, and then thin them to 5000 plans.
+We sample 30,000 districting plans across five independent runs of the SMC algorithm, and then thin them to 5000 plans.
 To reflect Tennessee's traditional norm of minimizing county splits while reducing unnecessary fragmentation of major cities, we create pseudo-counties for use in the county constraint.
 We use a stronger algorithmic county constraint to limit the number of county splits.
 We also use new algorithmic mergesplit parameters to improve mixing.
