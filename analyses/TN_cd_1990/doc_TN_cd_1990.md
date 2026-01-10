@@ -9,7 +9,9 @@ In our simulations, districts must:
 1. have equal populations
 
 ### Algorithmic Constraints
-We enforce a maximum population deviation of 0.5%. We use a pseudo-county constraint to limit the county and municipality splits. We apply a stronger county constraint, which is in line with the smaller number of county splits observed in the enacted congressional district map.
+We enforce a maximum population deviation of 0.5%. 
+We use a pseudo-county constraint to limit the county and municipality splits. 
+We apply a stronger county constraint, which is in line with the smaller number of county splits observed in the enacted congressional district map.
 
 ## Data Sources
 Data for ``Tennessee`` comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
