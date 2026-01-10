@@ -1,7 +1,7 @@
 # 1990 Indiana Congressional Districts
 
 ## Redistricting requirements
-In Indiana, there are no specific legal requirements.
+In ``Indiana``, there are no specific legal requirements.
 We impose the following constraints. 
 In our simulations, districts must:
 
