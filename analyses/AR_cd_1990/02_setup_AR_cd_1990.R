@@ -6,14 +6,6 @@ cli_process_start("Creating {.cls redist_map} object for {.pkg AR_cd_1990}")
 
 map <- redist_map(ar_shp, pop_tol = 0.005,
                   existing_plan = cd_1990, adj = ar_shp$adj)
-# make pseudo counties with default settings
-map <- map |>
-  mutate(
-    pseudo_county = pick_county_muni(
-      map, counties = county, munis = muni,
-      pop_muni = 0.4*get_target(map)
-    )
-  )
 
 # Add an analysis name attribute
 attr(map, "analysis_name") <- "AR_1990"
