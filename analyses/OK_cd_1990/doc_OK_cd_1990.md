@@ -10,6 +10,7 @@ In our simulations, districts must:
 
 ### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
+We use a pseudo-county constraint, as explained below.
 
 ## Data Sources
 Data for ``Oklahoma`` comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
