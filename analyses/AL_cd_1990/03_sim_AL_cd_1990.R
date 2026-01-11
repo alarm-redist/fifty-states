@@ -4,33 +4,22 @@
 ###############################################################################
 
 # Run the simulation -----
-cli_process_start("Running simulations for {.pkg AL_cd_1990}")
+cli_process_start("Running simulations for {.pkg SC_cd_1990}")
 
-cli_process_start("Running simulations for {.pkg AL_cd_1990}")
-
+# Custom constraints
 constr <- redist_constr(map) %>%
-  add_constr_grp_hinge(30, vap_black, vap, 0.40) %>%
-  add_constr_grp_hinge(-30, vap_black, vap, 0.33)
+  add_constr_grp_hinge(40, vap_black, vap, 0.5) %>%
+  add_constr_grp_hinge(-5, vap_black, vap, 0.65)
 
 set.seed(1990)
-plans <- redist_smc(map, nsims = 10e3, runs = 2L,
-                    counties = county, constr = constr, pop_temper = 0.05)
+plans <- redist_smc(map, nsims = 10e3, runs = 5, counties = county, constraints = constr)
+
+plans <- plans |>
+  group_by(chain) |>
+  filter(as.integer(draw) < min(as.integer(draw)) + 1000) |> # thin samples
+  ungroup()
 plans <- match_numbers(plans, "cd_1990")
 
-# Subset plans that are not performing
-n_perf <- plans %>%
-  mutate(bvap = group_frac(map, vap_black, vap),
-         ndshare = group_frac(map, ndv, nrv + ndv)) %>%
-  group_by(draw) %>%
-  summarize(n_blk_perf = sum(bvap > 0.3 & ndshare > 0.5))
-
-plans_5k <- plans %>%
-  # subset non-performing plan
-  anti_join(filter(n_perf, n_blk_perf == 0), by = "draw") %>%
-  # thin to 5000 draws
-  group_by(chain) %>%
-  filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>%
-  ungroup()
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
 
