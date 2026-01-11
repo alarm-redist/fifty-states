@@ -11,13 +11,13 @@ In Minnesota, according to [the concurrent resolution adopted in 199 and relevan
 
 ### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
+We use a pseudo-county constraint to help preserve county and municipality boundaries.
 
 ## Data Sources
 Data for Minnesota comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
 
 ## Pre-processing Notes
 No manual pre-processing decisions were necessary.
-We use a pseudo-county constraint to help preserve county and municipality boundaries.
 
 ## Simulation Notes
 We sample 15,000 districting plans for Minnesota across 5 independent runs of the SMC algorithm.
