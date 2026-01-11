@@ -14,8 +14,8 @@ sampling_space_val <- tryCatch(
 set.seed(1990)
 plans <- redist_smc(
   map, 
-  nsims = 2e3, 
-  runs = 10, 
+  nsims = 3e3, 
+  runs = 5, 
   counties = pseudo_county, 
   constraints = constr,
   sampling_space = sampling_space_val,
