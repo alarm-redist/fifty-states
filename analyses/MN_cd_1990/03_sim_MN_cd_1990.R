@@ -19,7 +19,7 @@ plans <- redist_smc(
   counties = pseudo_county, 
   constraints = constr,
   sampling_space = sampling_space_val,
-  ms_params = list(frequency = 1L, mh_accept_per_smc = 30),
+  ms_params = list(frequency = 1L, mh_accept_per_smc = 60),
   split_params = list(splitting_schedule = "any_valid_sizes")
   )
 
