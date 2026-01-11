@@ -1,7 +1,7 @@
 # 1990 Minnesota Congressional Districts
 
 ## Redistricting requirements
-In Minnesota, according to [the concurrent resolution adopted in 199 and relevant court orders](https://web.archive.org/web/20041216185957/https://www.senate.mn/departments/scr/redist/red2000/Tab5appx.htm), districts must:
+In Minnesota, according to [the concurrent resolution adopted in 1990 and relevant court orders](https://web.archive.org/web/20041216185957/https://www.senate.mn/departments/scr/redist/red2000/Tab5appx.htm), districts must:
 
 1. be contiguous
 1. have equal populations
