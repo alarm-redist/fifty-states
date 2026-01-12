@@ -30,6 +30,11 @@ if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong NC} shapefile")
     # read in redistricting data
     nc_shp <- read_csv(here(path_data), col_types = cols(GEOID = "c")) |>
+        mutate(
+          state  = as.character(state),
+          county = as.character(county),
+          tract  = as.character(tract)
+        ) |>
         join_vtd_shapefile(year = 1990) |>
         st_transform(EPSG$NC)
 
@@ -56,7 +61,37 @@ if (!file.exists(here(shp_path))) {
     # create adjacency graph
     nc_shp$adj <- redist.adjacency(nc_shp)
 
-    # TODO any custom adjacency graph edits here
+
+    ###############################################################################
+    # Logit-shift ndv/nrv to match 2000 MEDSL county results
+    ###############################################################################
+
+    # 1. Load the MEDSL county CSV as `medsl_cty` ----
+    medsl_cty <- read_csv(
+      here("data-raw/baseline_voteshare_medsl_00.csv"),
+      show_col_types = FALSE
+    )
+
+    # 2. Add county_fips column based on VTD GEOID ----
+    nc_shp <- nc_shp |>
+      mutate(county_fips = stringr::str_sub(GEOID, 1, 5))
+
+    names(nc_shp)
+
+    # 3. For each county, logit-shift ndv/nrv to the 2000 target from MEDSL ----
+    nc_shp <- nc_shp |>
+      group_by(county_fips) |>
+      group_split() |>
+      lapply(function(x) {
+        meds <- medsl_cty |>
+          filter(county == x$county_fips[1])
+        target <- meds$dshare_00[1]
+
+        if (is.na(target)) return(x)
+
+        logit_shift_baseline(x, ndv = ndv, nrv = nrv, target = target)
+      }) |>
+      bind_rows()
 
     write_rds(nc_shp, here(shp_path), compress = "gz")
     cli_process_done()
