@@ -11,7 +11,7 @@ constr <- redist_constr(map) %>%
   add_constr_grp_hinge(5, vap_black, vap, 0.4)
 
 set.seed(1990)
-plans <- redist_smc(map, nsims = 2e4, runs = 5, counties = county, constraints = constr, pop_temper = 0.01)
+plans <- redist_smc(map, nsims = 2e4, runs = 5, counties = pseudo_county, constraints = constr, pop_temper = 0.01)
 
 plans <- plans |>
     group_by(chain) |>
