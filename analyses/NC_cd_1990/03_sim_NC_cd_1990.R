@@ -6,26 +6,39 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg NC_cd_1990}")
 
-# TODO any pre-computation (VRA targets, etc.)
 
-# TODO customize as needed. Recommendations:
-#  - For many districts / tighter population tolerances, try setting
-#  `pop_temper=0.01` and nudging upward from there. Monitor the output for
-#  efficiency!
-#  - Monitor the output (i.e. leave `verbose=TRUE`) to ensure things aren't breaking
-#  - Don't change the number of simulations unless you have a good reason
-#  - If the sampler freezes, try turning off the county split constraint to see
-#  if that's the problem.
-#  - Ask for help!
+BVAP_THRESH  <- 0.30
+DEM_THRESH   <- 0.50
+ndists <- attr(map, "ndists")
+constr <- redist_constr(map) |>
+  add_constr_min_group_frac(
+    strength=-1,
+    group_pops=list(map$vap_black, map$ndv),
+    total_pops=list(map$vap, map$nrv + map$ndv),
+    min_fracs=c(BVAP_THRESH, DEM_THRESH),
+    thresh = -.9,
+    only_nregions = seq.int(2, ndists)
+  ) |> add_constr_min_group_frac(
+    strength=-1,
+    group_pops=list(map$vap_black, map$ndv),
+    total_pops=list(map$vap, map$nrv + map$ndv),
+    min_fracs=c(BVAP_THRESH, DEM_THRESH),
+    thresh = -1.9,
+    only_nregions = seq.int(5, ndists)
+  )
+
 set.seed(1990)
-plans <- redist_smc(map, nsims = 2e3, runs = 5, counties = county)
-# IF CORES OR OTHER UNITS HAVE BEEN MERGED:
-# make sure to call `pullback()` on this plans object!
+plans <- redist_smc(map, nsims = 2e3, runs = 6,
+                    counties = pseudo_county, constraints=constr,
+                    split_params = list(splitting_schedule = "any_valid_sizes"),
+                    sampling_space = "spanning_forest",
+                    ms_params = list(frequency = 1, mh_accept_per_smc = 50),
+                    ncores = 0)
 
-plans <- plans |>
-    group_by(chain) |>
-    filter(as.integer(draw) < min(as.integer(draw)) + 1000) |> # thin samples
-    ungroup()
+plans <- plans %>%
+  group_by(chain) %>%
+  filter(as.integer(draw) < min(as.integer(draw)) + 1000) %>% # thin samples
+  ungroup()
 plans <- match_numbers(plans, "cd_1990")
 
 cli_process_done()
