@@ -31,9 +31,9 @@ if (!file.exists(here(shp_path))) {
     # read in redistricting data
     nc_shp <- read_csv(here(path_data), col_types = cols(GEOID = "c")) |>
         mutate(
-          state  = as.character(state),
-          county = as.character(county),
-          tract  = as.character(tract)
+            state  = as.character(state),
+            county = as.character(county),
+            tract  = as.character(tract)
         ) |>
         join_vtd_shapefile(year = 1990) |>
         st_transform(EPSG$NC)
@@ -43,24 +43,20 @@ if (!file.exists(here(shp_path))) {
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) |>
         relocate(muni, county_muni, cd_1980, .after = county)
 
-    # TODO any additional columns or data you want to add should go here
-
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = nc_shp,
-                               perim_path = here(perim_path)) |>
+        perim_path = here(perim_path)) |>
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         nc_shp <- rmapshaper::ms_simplify(nc_shp, keep = 0.05,
-                                                 keep_shapes = TRUE) |>
+            keep_shapes = TRUE) |>
             suppressWarnings()
     }
 
     # create adjacency graph
     nc_shp$adj <- redist.adjacency(nc_shp)
-
 
     ###############################################################################
     # Logit-shift ndv/nrv to match 2000 MEDSL county results
@@ -68,30 +64,30 @@ if (!file.exists(here(shp_path))) {
 
     # 1. Load the MEDSL county CSV as `medsl_cty` ----
     medsl_cty <- read_csv(
-      here("data-raw/baseline_voteshare_medsl_00.csv"),
-      show_col_types = FALSE
+        here("data-raw/baseline_voteshare_medsl_00.csv"),
+        show_col_types = FALSE
     )
 
     # 2. Add county_fips column based on VTD GEOID ----
     nc_shp <- nc_shp |>
-      mutate(county_fips = stringr::str_sub(GEOID, 1, 5))
+        mutate(county_fips = stringr::str_sub(GEOID, 1, 5))
 
     names(nc_shp)
 
     # 3. For each county, logit-shift ndv/nrv to the 2000 target from MEDSL ----
     nc_shp <- nc_shp |>
-      group_by(county_fips) |>
-      group_split() |>
-      lapply(function(x) {
-        meds <- medsl_cty |>
-          filter(county == x$county_fips[1])
-        target <- meds$dshare_00[1]
+        group_by(county_fips) |>
+        group_split() |>
+        lapply(function(x) {
+            meds <- medsl_cty |>
+                filter(county == x$county_fips[1])
+            target <- meds$dshare_00[1]
 
-        if (is.na(target)) return(x)
+            if (is.na(target)) return(x)
 
-        logit_shift_baseline(x, ndv = ndv, nrv = nrv, target = target)
-      }) |>
-      bind_rows()
+            logit_shift_baseline(x, ndv = ndv, nrv = nrv, target = target)
+        }) |>
+        bind_rows()
 
     write_rds(nc_shp, here(shp_path), compress = "gz")
     cli_process_done()
