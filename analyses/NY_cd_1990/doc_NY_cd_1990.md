@@ -17,9 +17,10 @@ We use a pseudo-county constraint described below, which attempts to mimic the n
 Data for New York comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
 
 ## Pre-processing Notes
-Ellis Island (2393) was connected to Governor's Island (2394), and the shorelines were connected (2617) and (2616).
+Ellis Island (2393) was manually connected to Governor's Island (2394), and the shorelines were connected (2617) and (2616).
+29 other disconnected components were joined to their nearest neighbor.
 
 ## Simulation Notes
-We sample 150,000 districting plans for New York across 5 independent runs of the SMC algorithm.
+We sample 6,000 districting plans for New York across 5 independent runs of the SMC algorithm.
 We then thinned the number of samples to 5,000. 
 To balance county and municipality splits, we create pseudo-counties for use in the county constraint.
