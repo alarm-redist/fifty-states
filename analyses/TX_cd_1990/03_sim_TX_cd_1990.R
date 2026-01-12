@@ -65,5 +65,65 @@ save_summary_stats(plans, "data-out/TX_1990/TX_cd_1990_stats.csv")
 
 cli_process_done()
 
-summary(plans)
-validate_analysis(plans, map)
+# Extra validation plots for custom constraints -----
+if (interactive()) {
+  library(ggplot2)
+  library(patchwork)
+  
+  validate_analysis(plans, map)
+  summary(plans)
+  
+  d1 <- redist.plot.distr_qtys(
+    plans,
+    vap_black/total_vap,
+    color_thresh = NULL,
+    color = ifelse(
+      subset_sampled(plans)$ndv > subset_sampled(plans)$nrv,
+      "#3D77BB",
+      "#B25D4C"
+    ),
+    size = 0.5,
+    alpha = 0.5
+  ) +
+    scale_y_continuous("Percent Black by VAP") +
+    labs(title = "TX Proposed Plan versus Simulations") +
+    scale_color_manual(values = c(cd_2000 = "black"))
+  
+  d2 <- redist.plot.distr_qtys(
+    plans,
+    vap_hisp/total_vap,
+    color_thresh = NULL,
+    color = ifelse(
+      subset_sampled(plans)$ndv > subset_sampled(plans)$nrv,
+      "#3D77BB",
+      "#B25D4C"
+    ),
+    size = 0.5,
+    alpha = 0.5
+  ) +
+    scale_y_continuous("Percent Hispanic by VAP") +
+    labs(title = "TX Proposed Plan versus Simulations") +
+    scale_color_manual(values = c(cd_2000 = "black"))
+  
+  psum <- plans %>%
+    group_by(draw) %>%
+    summarise(
+      all_hvap = sum((vap_hisp/total_vap) > 0.4),
+      dem_hvap = sum((vap_hisp/total_vap) > 0.4 &
+                       (ndv > nrv)),
+      rep_hvap = sum((vap_hisp/total_vap) > 0.4 &
+                       (nrv > ndv)),
+      mmd_coalition = sum(((
+        vap_hisp + vap_black + vap_asian
+      )/total_vap) > 0.5)
+    )
+  
+  p1 <- redist.plot.hist(psum, all_hvap) + xlab("HVAP > .4")
+  p2 <- redist.plot.hist(psum, dem_hvap) + xlab("HVAP > .4 & Dem > Rep")
+  p3 <- redist.plot.hist(psum, rep_hvap) + xlab("HVAP > .4 & Rep > Dem")
+  p4 <- redist.plot.hist(psum, mmd_coalition) + xlab("Hisp + Black + Asian VAP > .5")
+  
+  ggsave("data-raw/TX/vap_plots.png",
+         p1 + p2 + p3 + p4,
+         height = 10, width = 10, units = "in")
+}
