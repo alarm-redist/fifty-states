@@ -1,7 +1,7 @@
 # 1990 Maryland Congressional Districts
 
 ## Redistricting requirements
-In Maryland, we consult [the Legal Standards for Plan Development](https://web.archive.org/web/20041217022537/http://www.senate.mn/departments/scr/redist/Red2000/mdprin.htm).
+In Maryland, we consult [the Legal Standards for Plan Development, adopted in 1991](https://web.archive.org/web/20041217022537/http://www.senate.mn/departments/scr/redist/Red2000/mdprin.htm).
 We impose the following constraints. 
 In our simulations, districts should:
 
