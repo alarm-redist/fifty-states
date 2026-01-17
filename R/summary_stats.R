@@ -53,6 +53,9 @@ add_summary_stats <- function(plans, map, ...) {
                 plans = redist::pl(), map,
                 perim_df = perim_df
             ),
+            comp_bbox_reock = redistmetrics::comp_bbox_reock(
+                plans = redist::pl(), map
+            ),
             ndv = redist::tally_var(map, .data$ndv),
             nrv = redist::tally_var(map, .data$nrv),
             ndshare = .data$ndv / (.data$ndv + .data$nrv),
@@ -115,8 +118,14 @@ add_summary_stats <- function(plans, map, ...) {
     split_cols <- names(map)[tidyselect::eval_select(tidyselect::any_of(c("county", "muni")), map)]
     for (col in split_cols) {
         if (col == "county") {
-            plans <- plans |>
-                dplyr::mutate(county_splits = redistmetrics::splits_admin(plans = redist::pl(), map, .data$county), .before = "ndv")
+          plans <- plans |>
+            dplyr::mutate(
+              county_splits = redistmetrics::splits_admin(plans = redist::pl(), map, .data$county),
+              total_county_splits = redistmetrics::splits_total(
+                plans = redist::pl(), map, .data$county
+              ),
+              .before = "ndv"
+            )
         } else if (col == "muni") {
           if (all(is.na(map$muni))) {
             # then by definition
@@ -124,7 +133,13 @@ add_summary_stats <- function(plans, map, ...) {
               dplyr::mutate(muni_splits = 0L, .before = "ndv")
           } else {
             plans <- plans |>
-              dplyr::mutate(muni_splits = redistmetrics::splits_sub_admin(plans = redist::pl(), map, .data$muni), .before = "ndv")
+              dplyr::mutate(
+                muni_splits = redistmetrics::splits_sub_admin(plans = redist::pl(), map, .data$muni),
+                total_muni_splits = redistmetrics::splits_sub_total(
+                  plans = redist::pl(), map, .data$muni
+                ),
+                .before = "ndv"
+              )
           }
         } else {
             plans <- plans |>

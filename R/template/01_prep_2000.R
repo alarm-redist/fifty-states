@@ -58,9 +58,6 @@ if (!file.exists(here(shp_path))) {
 
     # TODO any custom adjacency graph edits here
 
-    ``state``_shp <- ``state``_shp |>
-        fix_geo_assignment(muni)
-
     write_rds(``state``_shp, here(shp_path), compress = "gz")
     cli_process_done()
 } else {
