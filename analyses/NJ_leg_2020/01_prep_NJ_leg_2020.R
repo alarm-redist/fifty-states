@@ -22,9 +22,6 @@ cli_process_start("Downloading files for {.pkg NJ_leg_2020}")
 
 path_data <- download_redistricting_file("NJ", "data-raw/NJ", year = 2020)
 
-# TODO other files here (as necessary). All paths should start with `path_`
-# If large, consider checking to see if these files exist before downloading
-
 cli_process_done()
 
 # Compile raw data into a final shapefile for analysis -----
@@ -62,8 +59,6 @@ if (!file.exists(here(shp_path))) {
     nj_shp <- nj_shp |>
         left_join(y = leg_from_baf(state = "NJ"), by = "GEOID")
 
-
-    # TODO any additional columns or data you want to add should go here
     # add CVAP
     state <- "NJ"
     path_cvap <- here(paste0("data-raw/", state, "/cvap.rds"))
@@ -98,7 +93,6 @@ if (!file.exists(here(shp_path))) {
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         nj_shp <- rmapshaper::ms_simplify(nj_shp, keep = 0.05,
             keep_shapes = TRUE) |>
@@ -107,8 +101,6 @@ if (!file.exists(here(shp_path))) {
 
     # create adjacency graph
     nj_shp$adj <- adjacency(nj_shp)
-
-    # TODO any custom adjacency graph edits here
 
     # check max number of connected components
     # 1 is one fully connected component, more is worse
@@ -124,7 +116,3 @@ if (!file.exists(here(shp_path))) {
     nj_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong NJ} shapefile")
 }
-
-# TODO visualize the enacted maps using:
-# redistio::draw(nj_shp, nj_shp$ssd_2020)
-# redistio::draw(nj_shp, nj_shp$shd_2020)
