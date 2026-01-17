@@ -68,8 +68,6 @@ if (!file.exists(here(shp_path))) {
     # create adjacency graph
     ma_shp$adj <- redist.adjacency(ma_shp)
 
-    # TODO any custom adjacency graph edits here
-
     write_rds(ma_shp, here(shp_path), compress = "gz")
     cli_process_done()
 } else {
