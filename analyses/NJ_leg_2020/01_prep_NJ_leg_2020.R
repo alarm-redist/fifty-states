@@ -45,10 +45,10 @@ if (!file.exists(here(shp_path))) {
         select(-vtd)
     d_ssd <- make_from_baf("NJ", "SLDU", "VTD", year = 2020)  |>
         transmute(GEOID = paste0(censable::match_fips("NJ"), vtd),
-                  ssd_2010 = as.integer(sldu))
+            ssd_2010 = as.integer(sldu))
     d_shd <- make_from_baf("NJ", "SLDL", "VTD", year = 2020)  |>
         transmute(GEOID = paste0(censable::match_fips("NJ"), vtd),
-                  shd_2010 = as.integer(sldl))
+            shd_2010 = as.integer(sldl))
 
     nj_shp <- nj_shp |>
         left_join(d_muni, by = "GEOID") |>
@@ -67,41 +67,41 @@ if (!file.exists(here(shp_path))) {
     # add CVAP
     state <- "NJ"
     path_cvap <- here(paste0("data-raw/", state, "/cvap.rds"))
-    
+
     if (!file.exists(path_cvap)) {
-      cvap <-
-        cvap::cvap_distribute_censable(state) %>% select(GEOID, starts_with("cvap"))
-      vtd_baf <- PL94171::pl_get_baf(state)$VTD
-      cvap <- cvap %>%
-        left_join(vtd_baf %>% rename(GEOID = BLOCKID),
-                  by = "GEOID")
-      cvap <- cvap %>%
-        mutate(GEOID = paste0(COUNTYFP, DISTRICT)) %>%
-        select(GEOID, starts_with("cvap"))
-      cvap <- cvap %>%
-        group_by(GEOID) %>%
-        summarize(across(.fns = sum))
-      saveRDS(cvap, path_cvap, compress = "xz")
+        cvap <-
+            cvap::cvap_distribute_censable(state) %>% select(GEOID, starts_with("cvap"))
+        vtd_baf <- PL94171::pl_get_baf(state)$VTD
+        cvap <- cvap %>%
+            left_join(vtd_baf %>% rename(GEOID = BLOCKID),
+                by = "GEOID")
+        cvap <- cvap %>%
+            mutate(GEOID = paste0(COUNTYFP, DISTRICT)) %>%
+            select(GEOID, starts_with("cvap"))
+        cvap <- cvap %>%
+            group_by(GEOID) %>%
+            summarize(across(.fns = sum))
+        saveRDS(cvap, path_cvap, compress = "xz")
     } else {
-      cvap <- read_rds(path_cvap)
+        cvap <- read_rds(path_cvap)
     }
-    
+
     cvap <- cvap %>% mutate(GEOID = paste0("34", GEOID))
-    
+
     nj_shp <- nj_shp %>%
-      left_join(cvap, by = "GEOID") %>%
-      st_as_sf()
-    
+        left_join(cvap, by = "GEOID") %>%
+        st_as_sf()
+
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = nj_shp,
-                             perim_path = here(perim_path)) |>
+        perim_path = here(perim_path)) |>
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         nj_shp <- rmapshaper::ms_simplify(nj_shp, keep = 0.05,
-                                                 keep_shapes = TRUE) |>
+            keep_shapes = TRUE) |>
             suppressWarnings()
     }
 
