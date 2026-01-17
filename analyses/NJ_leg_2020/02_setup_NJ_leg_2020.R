@@ -4,17 +4,12 @@
 ###############################################################################
 cli_process_start("Creating {.cls redist_map} object for {.pkg NJ_leg_2020}")
 
-# TODO any pre-computation (usually not necessary)
-
 map_ssd <- redist_map(nj_shp, pop_tol = 0.05,
     existing_plan = ssd_2020, adj = nj_shp$adj)
 
 map_shd <- redist_map(nj_shp, pop_tol = 0.05,
     existing_plan = shd_2020, adj = nj_shp$adj)
 
-# TODO any filtering, cores, merging, etc.
-
-# TODO remove if not necessary. Adjust pop_muni as needed to balance county/muni splits
 # make pseudo counties with default settings
 map_ssd <- map_ssd |>
     mutate(pseudo_county = pick_county_muni(map_ssd, counties = county, munis = muni,
