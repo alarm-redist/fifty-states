@@ -47,7 +47,7 @@ constr <- redist_constr(map) |>
     vap_black,
     total_pop = vap,
     tgts_group = c(BVAP_LOW)
-  )
+  ) |>
   # anti-packing: discourage too many supermajority Hispanic districts
   add_constr_grp_inv_hinge(
     2,
