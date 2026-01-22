@@ -59,13 +59,13 @@ constr <- redist_constr(map) |>
 set.seed(1990)
 plans <- redist_smc(
   map,
-  nsims = 2e4,
-  runs = 6,
+  nsims = 20000,
+  runs = 10,
   counties = pseudo_county,
   constraints = constr,
   split_params = list(splitting_schedule = "any_valid_sizes"),
   sampling_space = "spanning_forest",
-  ms_params = list(ms_frequency = 1L, ms_moves_multiplier = 5L),
+  ms_params = list(ms_frequency = 5L, ms_moves_multiplier = 20L),
   ncores = 112,
   pop_temper = 0.01,
   seq_alpha = 0.95,
