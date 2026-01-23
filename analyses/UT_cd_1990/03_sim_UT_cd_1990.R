@@ -6,6 +6,10 @@
 # Run the simulation -----
 if (interactive()) {
   cli_process_start("Running simulations for {.pkg UT_cd_1990}")
+
+  # Add a stronger county constraint.
+  constr <- redist_constr(map)
+  constr <- add_constr_splits(constr, strength = 2, admin = county)
   
   set.seed(1990)
   plans <- redist_smc(map, nsims = 2e3, runs = 5, counties = county, constraints = constr)
