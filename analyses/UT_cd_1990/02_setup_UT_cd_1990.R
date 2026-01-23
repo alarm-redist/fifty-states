@@ -10,10 +10,6 @@ map <- redist_map(ut_shp, pop_tol = 0.005,
 # Add an analysis name attribute
 attr(map, "analysis_name") <- "UT_1990"
 
-# Add a stronger county constraint.
-constr <- redist_constr(map)
-constr <- add_constr_splits(constr, strength = 2, admin = county)
-
 # Output the redist_map object. Do not edit this path.
 write_rds(map, "data-out/UT_1990/UT_cd_1990_map.rds", compress = "xz")
 cli_process_done()
