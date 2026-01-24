@@ -9,7 +9,8 @@ In our simulations, districts must:
 1. have equal populations
 
 ### Algorithmic Constraints
-We enforce a maximum population deviation of 0.5%. 
+We enforce a maximum population deviation of 0.5%.
+We add VRA constraints targeting one BVAP opportunity district and one HVAP district.
 
 ## Data Sources
 Data for Illinois comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
@@ -18,5 +19,5 @@ Data for Illinois comes from the [ALARM Project's update](https://dataverse.harv
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 6,000 districting plans for Illinois across 10 independent runs of the SMC algorithm.
+We sample 10,000 districting plans for Illinois across ten independent runs of the SMC algorithm, retain plans with at least one district exceeding 30% BVAP and at least one district exceeding 30% HVAP, and then thin the sample to 5,000 plans.
 We also used new algorithmic mergesplit parameters to improve mixing.
