@@ -39,3 +39,4 @@ if (interactive()) {
   # Standard ALARM validation plots
   validate_analysis(plans, map)
   summary(plans)
+}
