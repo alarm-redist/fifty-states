@@ -93,4 +93,3 @@ if (!file.exists(here(shp_path))) {
   wv_shp <- read_rds(here(shp_path))
   cli_alert_success("Loaded {.strong WV} shapefile")
 }
-
