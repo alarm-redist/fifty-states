@@ -10,7 +10,7 @@ In Missouri, we consult [Forgette et al.](https://www.jstor.org/stable/40421634)
 
 
 ### Algorithmic Constraints
-We enforce a maximum population deviation of 0.5%.
+We enforce a maximum population deviation of 0.5%. We add a hinge Gibbs constraint targeting one majority-minority district to comply with VRA requirements and match the number in the enacted plan.
 
 ## Data Sources
 Data for Missouri comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
