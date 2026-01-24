@@ -1,12 +1,12 @@
 ###############################################################################
-# Simulate plans for `HI_cd_2000`
-# © ALARM Project, January 2026
+# Simulate plans for `HI_cd_1990`
+# © ALARM Project, December 2025
 ###############################################################################
 
 # Run the simulation -----
-cli_process_start("Running simulations for {.pkg HI_cd_2000}")
+cli_process_start("Running simulations for {.pkg HI_cd_1990}")
 
-set.seed(2000)
+set.seed(1990)
 
 # Target output
 target_per_chain <- 2500L
@@ -24,7 +24,7 @@ plans_raw <- redist_smc(
 cli_process_done()
 
 # Filter: all non-Honolulu units must be in the same district
-cli_process_start("HI_cd_2000: filter draws")
+cli_process_start("HI_cd_1990: filter draws")
 
 mat_all <- get_plans_matrix(plans_raw)
 mat_sim <- if (ncol(mat_all) == nsims * runs + 1L) mat_all[, -1, drop = FALSE] else mat_all
@@ -84,7 +84,7 @@ if (n == length(chain_cols)) {
 }
 
 plans <- plans |>
-  add_reference(ref_plan = map$cd_2000, name = "cd_2000")
+  add_reference(ref_plan = map$cd_1990, name = "cd_1990")
 
 # if reference got added once, copy for chain 2
 if ("is_reference" %in% names(plans)) {
@@ -97,22 +97,22 @@ if ("is_reference" %in% names(plans)) {
 }
 
 # relabel to match the enacted plan
-plans <- match_numbers(plans, "cd_2000")
+plans <- match_numbers(plans, "cd_1990")
 
 cli_process_done()
 
 cli_process_start("Saving {.cls redist_plans} object")
 
 # Output the redist_map object. Do not edit this path.
-write_rds(plans, here("data-out/HI_2000/HI_cd_2000_plans.rds"), compress = "xz")
+write_rds(plans, here("data-out/HI_1990/HI_cd_1990_plans.rds"), compress = "xz")
 cli_process_done()
 
 # Compute summary statistics -----
-cli_process_start("Computing summary statistics for {.pkg HI_cd_2000}")
+cli_process_start("Computing summary statistics for {.pkg HI_cd_1990}")
 plans <- add_summary_stats(plans, map)
 
 # Output the summary statistics. Do not edit this path.
-save_summary_stats(plans, "data-out/HI_2000/HI_cd_2000_stats.csv")
+save_summary_stats(plans, "data-out/HI_1990/HI_cd_1990_stats.csv")
 cli_process_done()
 
 # Validation
