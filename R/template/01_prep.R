@@ -40,26 +40,26 @@ perim_path <- "data-out/``STATE``_``YEAR``/perim.rds"
 if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong ``STATE``} shapefile")
     # read in redistricting data
-    ``state``_shp <- read_csv(here(path_data), col_types = cols(GEOID``YR`` = "c")) %>%
-        join_vtd_shapefile(year = ``YEAR``) %>%
-        st_transform(EPSG$``STATE``)  %>%
+    ``state``_shp <- read_csv(here(path_data), col_types = cols(GEOID``YR`` = "c")) |>
+        join_vtd_shapefile(year = ``YEAR``) |>
+        st_transform(EPSG$``STATE``)  |>
         rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
 
     # add municipalities
-    d_muni <- make_from_baf("``STATE``", "INCPLACE_CDP", "VTD", year = ``YEAR``)  %>%
-        mutate(GEOID = paste0(censable::match_fips("``STATE``"), vtd)) %>%
+    d_muni <- make_from_baf("``STATE``", "INCPLACE_CDP", "VTD", year = ``YEAR``)  |>
+        mutate(GEOID = paste0(censable::match_fips("``STATE``"), vtd)) |>
         select(-vtd)
-    d_cd <- make_from_baf("``STATE``", "CD", "VTD", year = ``YEAR``)  %>%
+    d_cd <- make_from_baf("``STATE``", "CD", "VTD", year = ``YEAR``)  |>
         transmute(GEOID = paste0(censable::match_fips("``STATE``"), vtd),
                   cd_``OLDYEAR`` = as.integer(cd))
-    ``state``_shp <- left_join(``state``_shp, d_muni, by = "GEOID") %>%
-        left_join(d_cd, by="GEOID") %>%
-        mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
+    ``state``_shp <- left_join(``state``_shp, d_muni, by = "GEOID") |>
+        left_join(d_cd, by="GEOID") |>
+        mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) |>
         relocate(muni, county_muni, cd_``OLDYEAR``, .after = county)
 
     # add the enacted plan
     cd_shp <- st_read(here(path_enacted))
-    ``state``_shp <- ``state``_shp %>%
+    ``state``_shp <- ``state``_shp |>
         mutate(cd_``YEAR`` = as.integer(cd_shp$DISTRICT)[
             geo_match(``state``_shp, cd_shp, method = "area")],
             .after = cd_``OLDYEAR``)
@@ -68,14 +68,14 @@ if (!file.exists(here(shp_path))) {
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = ``state``_shp,
-                             perim_path = here(perim_path)) %>%
+                             perim_path = here(perim_path)) |>
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         ``state``_shp <- rmapshaper::ms_simplify(``state``_shp, keep = 0.05,
-                                                 keep_shapes = TRUE) %>%
+                                                 keep_shapes = TRUE) |>
             suppressWarnings()
     }
 
@@ -84,7 +84,7 @@ if (!file.exists(here(shp_path))) {
 
     # TODO any custom adjacency graph edits here
 
-    ``state``_shp <- ``state``_shp %>%
+    ``state``_shp <- ``state``_shp |>
         fix_geo_assignment(muni)
 
     write_rds(``state``_shp, here(shp_path), compress = "gz")
