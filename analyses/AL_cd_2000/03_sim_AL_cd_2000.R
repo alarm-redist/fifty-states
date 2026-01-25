@@ -6,14 +6,43 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg AL_cd_2000}")
 
-constr_al <- redist_constr(map) %>%
-  add_constr_grp_hinge(21, vap_black, vap, 0.42) %>%
-  add_constr_grp_hinge(-15, vap_black, vap, 0.30) %>%
-  add_constr_grp_inv_hinge(10, vap_black, vap, 0.30)
+map <- map %>%
+  mutate(
+    vap_safe = if_else(vap <= 0 | is.na(vap), 1, vap),
+    pop_safe = if_else(pop <= 0 | is.na(pop), 1, pop)
+  )
+
+
+tgts <- c(0.40, rep(0.33, 6))  # 1 high target, 6 low targets
+
+constr_al <- redist_constr(map) |>
+  # (A) Count constraint: exactly 1 district clears 0.40
+  # Keep this SOFT or SMC weights can overflow.
+  add_constr_min_group_frac(
+    strength      = 0.03,      # << do NOT use 1 here
+    group_pops    = list(map$vap_black),
+    total_pops    = list(map$vap_safe),
+    min_fracs     = 0.40,
+    thresh        = -0.05,     # << do NOT use -0.8 / -0.9
+    only_nregions = 1L
+  ) |>
+  # (B) Shape: pull districts toward {0.40, 0.33,...}
+  add_constr_grp_hinge(
+    strength   = 25,
+    group_pop  = vap_black,
+    total_pop  = vap_safe,
+    tgts_group = tgts
+  ) |>
+  add_constr_grp_inv_hinge(
+    strength   = 25,
+    group_pop  = vap_black,
+    total_pop  = vap_safe,
+    tgts_group = tgts
+  )
 
 set.seed(2000)
-plans <- redist_smc(map, nsims = 2e3, runs = 20, counties = county, constraints = constr_al,
-                    pop_temper   = 0.05)
+plans <- redist_smc(map, nsims = 15e3, runs = 5, counties = pseudo_county, constraints = constr_al,
+                    pop_temper   = 0.05, verbose=TRUE)
 
 plans <- plans %>%
     group_by(chain) %>%
