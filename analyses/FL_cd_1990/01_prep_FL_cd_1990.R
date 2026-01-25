@@ -81,7 +81,7 @@ if (!file.exists(here(shp_path))) {
       lapply(function(x) {
         meds <- leip_cty |>
           filter(county == x$county_fips[1])
-        target <- meds$dshare_00[1]
+        target <- meds$dshare_92[1]
 
         if (is.na(target)) return(x)
 
