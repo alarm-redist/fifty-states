@@ -19,5 +19,5 @@ Data for Illinois comes from the [ALARM Project's update](https://dataverse.harv
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 10,000 districting plans for Illinois across ten independent runs of the SMC algorithm, retain plans with at least one district exceeding 30% BVAP and at least one district exceeding 30% HVAP, and then thin the sample to 5,000 plans.
+We sample 10,000 districting plans for Illinois across ten independent runs of the SMC algorithm, retain plans with at least one district exceeding 30% BVAP and at least one district exceeding 30% HVAP, and then thin the remaining sample to 5,000 plans.
 We also used new algorithmic mergesplit parameters to improve mixing.
