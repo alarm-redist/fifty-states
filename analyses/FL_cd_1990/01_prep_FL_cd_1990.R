@@ -26,6 +26,7 @@ cli_process_done()
 shp_path <- "data-out/FL_1990/shp_vtd.rds"
 perim_path <- "data-out/FL_1990/perim.rds"
 
+if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong FL} shapefile")
     # read in redistricting data
     fl_shp <- read_csv(here(path_data), col_types = cols(GEOID = "c")) |>
