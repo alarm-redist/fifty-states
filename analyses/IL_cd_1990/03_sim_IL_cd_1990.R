@@ -18,10 +18,9 @@ constr <- redist_constr(map) %>%
   add_constr_grp_hinge(-3, vap_black, vap, 0.25) %>%
   add_constr_grp_hinge(-3, vap_black, vap, 0.08) %>%
   # Hispanic opportunity shaping
-  add_constr_grp_hinge( 6, vap_hisp,  vap, 0.40) %>%
-  add_constr_grp_hinge(-3, vap_hisp,  vap, 0.25) %>%
-  add_constr_grp_hinge(-3, vap_hisp,  vap, 0.08)
-
+  add_constr_grp_hinge( 8, vap_hisp,  vap, 0.40) %>%  
+  add_constr_grp_hinge(-6, vap_hisp,  vap, 0.25) %>%  
+  add_constr_grp_hinge(-3, vap_hisp,  vap, 0.10)
 
 set.seed(1990)
 plans <- redist_smc(
@@ -37,21 +36,27 @@ plans <- redist_smc(
 
 attr(plans, "existing_col") <- "cd_1990"
 
-# Now enforce ">= 1 Black opp & >= 1 Hispanic opp" where opp = share > 0.30
+plans <- add_summary_stats(plans, map)
+
+# thin plans
 plans <- plans %>%
   mutate(
-    n_black_opp = sum(group_frac(map, vap_black, vap) > 0.30),
-    n_hisp_opp  = sum(group_frac(map, vap_hisp,  vap) > 0.30),
-    .by = draw
+    black_share = vap_black / total_vap,
+    hisp_share  = vap_hisp  / total_vap
   ) %>%
-  filter((n_black_opp >= 1 & n_hisp_opp >= 1) | draw == "cd_1990") %>%
-  select(-n_black_opp, -n_hisp_opp)
+  group_by(chain, draw) %>%
+  mutate(
+    total_black = max(black_share),
+    total_hisp  = max(hisp_share)
+  ) %>%
+  ungroup() %>%
+  filter((total_black > 0.30 & total_hisp > 0.30) | draw == "cd_1990")
 
-# thin + match numbers
-plans <- plans |>
-  group_by(chain) |>
-  filter(as.integer(draw) < min(as.integer(draw)) + 500) |>
+plans <- plans %>%
+  group_by(chain) %>%
+  filter(as.integer(droplevels(draw)) < min(as.integer(droplevels(draw))) + 500) %>% # thin samples
   ungroup()
+
 plans <- match_numbers(plans, "cd_1990")
 
 cli_process_done()
