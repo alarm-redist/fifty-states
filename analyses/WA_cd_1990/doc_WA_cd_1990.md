@@ -1,7 +1,7 @@
 # 1990 Washington Congressional Districts
 
 ## Redistricting requirements
-In Washington, according to [State Constitution, Article II, Section 43, as adopted by Amendment 74 in 1983](https://apps.leg.wa.gov/billsummary/?BillNumber=4409&Year=2011&Initiative=false), districts must:
+In Washington, according to [State Constitution, Article II, Section 43, as adopted by Amendment 74 in 1983](https://leg.wa.gov/media/o3fg0ey1/washington-state-constitution.pdf), districts must:
 
 1. be contiguous
 1. have equal populations
