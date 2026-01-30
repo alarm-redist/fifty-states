@@ -6,19 +6,20 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg SC_cd_1990}")
 
-# Custom constraints
-constr <- redist_constr(map) %>%
-    add_constr_grp_hinge(40, vap_black, vap, 0.5) %>%
-    add_constr_grp_hinge(-5, vap_black, vap, 0.65)
+  # Custom constraints
+  constr <- redist_constr(map) %>%
+      add_constr_splits(strength = 0.5, admin = county_muni) %>%
+      add_constr_grp_hinge(45, vap_black, vap, 0.4) %>%
+      add_constr_grp_hinge(-10, vap_black, vap, 0.6)
 
-set.seed(1990)
-plans <- redist_smc(map, nsims = 10e3, runs = 5, counties = county, constraints = constr)
+  set.seed(1990)
+  plans <- redist_smc(map, ncores = 112, nsims = 5e4, runs = 5, counties = NULL, seq_alpha = 0.95, pop_temper = 0.01, constraints = constr)
 
-plans <- plans |>
-    group_by(chain) |>
-    filter(as.integer(draw) < min(as.integer(draw)) + 1000) |> # thin samples
-    ungroup()
-plans <- match_numbers(plans, "cd_1990")
+  plans <- plans |>
+      group_by(chain) |>
+      filter(as.integer(draw) < min(as.integer(draw)) + 1000) |> # thin samples
+      ungroup()
+  plans <- match_numbers(plans, "cd_1990")
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
