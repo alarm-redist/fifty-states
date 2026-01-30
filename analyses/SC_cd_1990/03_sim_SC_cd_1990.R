@@ -13,7 +13,7 @@ cli_process_start("Running simulations for {.pkg SC_cd_1990}")
       add_constr_grp_hinge(-10, vap_black, vap, 0.6)
 
   set.seed(1990)
-  plans <- redist_smc(map, ncores = 112, nsims = 5e4, runs = 5, counties = NULL, seq_alpha = 0.95, pop_temper = 0.01, constraints = constr)
+  plans <- redist_smc(map, ncores = 112, nsims = 10e4, runs = 5, counties = NULL, seq_alpha = 0.95, pop_temper = 0.01, constraints = constr)
 
   plans <- plans |>
       group_by(chain) |>
