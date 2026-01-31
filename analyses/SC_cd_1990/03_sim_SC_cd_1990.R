@@ -12,6 +12,8 @@ cli_process_start("Running simulations for {.pkg SC_cd_1990}")
 #    add_constr_grp_hinge(45, vap_black, vap, 0.4) %>%
 #    add_constr_grp_hinge(-10, vap_black, vap, 0.6)
 
+ndists <- attr(map, "ndists")
+
 constr <- redist_constr(map) |>
   # Black VAP: push for >= 0.50 in at least 2 districts
   add_constr_min_group_frac(
