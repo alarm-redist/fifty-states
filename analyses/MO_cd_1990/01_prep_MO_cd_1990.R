@@ -68,7 +68,7 @@ if (!file.exists(here(shp_path))) {
     mo_shp <- mo_shp |>
       mutate(county_fips = stringr::str_sub(GEOID, 1, 5))
 
-    names(al_shp)
+    names(mo_shp)
 
     # 3. For each county, logit-shift ndv/nrv to the 2000 target from MEDSL ----
     mo_shp <- mo_shp |>
