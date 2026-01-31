@@ -28,7 +28,7 @@ constr <- redist_constr(map) |>
     vap_black,
     total_pop = vap,
     tgts_group = c(0.2)
-  ) |>
+  )
 
 
 #set.seed(1990)
