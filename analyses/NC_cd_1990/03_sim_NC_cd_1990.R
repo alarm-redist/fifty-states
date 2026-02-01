@@ -28,12 +28,12 @@ constr <- redist_constr(map) |>
 
 set.seed(1990)
 plans <- redist_smc(map, nsims = 3e3, runs = 6,
-                    counties = county, constraints=constr,
-                    split_params = list(splitting_schedule = "any_valid_sizes"),
-                    sampling_space = "spanning_forest",
-                    ms_params = list(frequency = 1, mh_accept_per_smc = 50),
-                    ncores = 112,
-                    verbose = TRUE)
+    counties = county, constraints = constr,
+    split_params = list(splitting_schedule = "any_valid_sizes"),
+    sampling_space = "spanning_forest",
+    ms_params = list(frequency = 1, mh_accept_per_smc = 50),
+    ncores = 112,
+    verbose = TRUE)
 
 plans <- plans %>%
     group_by(chain) %>%
@@ -47,6 +47,19 @@ cli_process_start("Saving {.cls redist_plans} object")
 # Output the redist_map object. Do not edit this path.
 write_rds(plans, here("data-out/NC_1990/NC_cd_1990_plans.rds"), compress = "xz")
 cli_process_done()
+
+# Read in from local files -----
+plans <- read_rds(
+    here("data-out/NC_2000/NC_cd_2000_plans.rds")
+)
+
+map <- read_rds(
+    here("data-out/NC_2000/NC_cd_2000_map.rds")
+)
+
+stats <- read_csv(
+    here("data-out/NC_2000/NC_cd_2000_stats.csv")
+)
 
 # Compute summary statistics -----
 cli_process_start("Computing summary statistics for {.pkg NC_cd_1990}")
@@ -66,6 +79,7 @@ if (interactive()) {
     validate_analysis(plans, map)
     summary(plans)
 
+    # Dem seats by BVAP rank
     redist.plot.distr_qtys(
         plans, vap_black/total_vap,
         color_thresh = NULL,
@@ -93,4 +107,26 @@ if (interactive()) {
         group_by(draw) %>%
         summarize(n_black_perf = sum(vap_black/total_vap > 0.3 & ndshare > 0.5)) %>%
         count(n_black_perf)
+
+
+    map$prob_mmd <- proj_avg(plans, vap_black/total_vap > 0.4)
+    map$prob_dem <- proj_avg(plans, ndshare > 0.5)
+
+    redist.plot.map(map, fill = prob_mmd) +
+        scale_fill_viridis_c("P(MMD)", limits = c(0, 1))
+
+    redist.plot.map(map, fill = prob_dem) +
+        scale_fill_gradient2("P(Dem)", low = "#B25D4C", high = "#3D77BB", mid = "white", midpoint = 0.5)
+
+    redist.plot.distr_qtys(
+        plans, ndshare,
+        color_thresh = NULL,
+        color = ifelse(
+            subset_sampled(plans)$ndv > subset_sampled(plans)$nrv,
+            "#3D77BB", "#B25D4C"),
+        size = 0.5, alpha = 0.5) +
+        geom_hline(yintercept = 0.5, linetype = "dashed") +
+        scale_y_continuous("Democratic Vote Share") +
+        labs(title = "Democratic performance by district rank") +
+        scale_color_manual(values = c(cd_2020 = "black"))
 }
