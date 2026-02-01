@@ -53,7 +53,6 @@ if (!file.exists(here(shp_path))) {
     # create adjacency graph
     al_shp$adj <- redist.adjacency(al_shp)
 
-
     ###############################################################################
     # Logit-shift ndv/nrv to match 1990 LEIP county results
     ###############################################################################
