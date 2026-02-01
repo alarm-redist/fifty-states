@@ -4,18 +4,17 @@
 ###############################################################################
 
 # Run the simulation -----
-cli_process_start("Running simulations for {.pkg SC_cd_1990}")
+cli_process_start("Running simulations for {.pkg AL_cd_1990}")
 
-# Custom constraints
 BVAP_THRESH  <- 0.40
 DEM_THRESH   <- 0.50
 ndists <- attr(map, "ndists")
 constr <- redist_constr(map) |>
   add_constr_min_group_frac(
-    strength=-1,
-    group_pops=list(map$vap_black, map$ndv),
-    total_pops=list(map$vap, map$nrv + map$ndv),
-    min_fracs=c(BVAP_THRESH, DEM_THRESH),
+    strength = -1,
+    group_pops = list(map$vap_black, map$ndv),
+    total_pops = list(map$vap, map$nrv + map$ndv),
+    min_fracs = c(BVAP_THRESH, DEM_THRESH),
     thresh = -.9,
     only_nregions = seq.int(2, ndists)
   )
@@ -26,7 +25,8 @@ plans <- redist_smc(map, nsims = 3e3, runs = 6,
                     split_params = list(splitting_schedule = "any_valid_sizes"),
                     sampling_space = "spanning_forest",
                     ms_params = list(frequency = 1, mh_accept_per_smc = 50),
-                    ncores = 112,
+                    pop_temper = 0.01,
+                    seq_alpha = 0.95,
                     verbose = TRUE)
 
 plans <- plans %>%
