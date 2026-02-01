@@ -26,7 +26,7 @@ cli_process_done()
 shp_path <- "data-out/AL_1990/shp_vtd.rds"
 perim_path <- "data-out/AL_1990/perim.rds"
 
-
+if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong AL} shapefile")
     # read in redistricting data
     al_shp <- read_csv(here(path_data), col_types = cols(GEOID = "c")) |>
@@ -86,3 +86,7 @@ perim_path <- "data-out/AL_1990/perim.rds"
 
     write_rds(al_shp, here(shp_path), compress = "gz")
     cli_process_done()
+} else {
+    al_shp <- read_rds(here(shp_path))
+    cli_alert_success("Loaded {.strong AL} shapefile")
+}
