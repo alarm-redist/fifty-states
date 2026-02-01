@@ -26,6 +26,7 @@ plans <- redist_smc(map, nsims = 3e3, runs = 6,
                     sampling_space = "spanning_forest",
                     ms_params = list(frequency = 1, mh_accept_per_smc = 50),
                     pop_temper = 0.01,
+                    ncores = 112,
                     verbose = TRUE)
 
 plans <- plans %>%
