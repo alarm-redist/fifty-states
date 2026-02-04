@@ -67,9 +67,13 @@ contiguity_merges <- function(shp) {
   el <- lapply(seq_len(n_pieces), function(i) {
     nbrs <- adj_pieces[[i]] + 1L # convert 0-indexed to 1-indexed
     nbrs <- nbrs[nbrs > i] # keep only upper-triangle to avoid duplicates
-    if (length(nbrs) > 0) cbind(i, nbrs) else NULL
+    if (length(nbrs) > 0) {
+      cbind(i, nbrs)
+    } else {
+      NULL
+    }
   }) |>
-    do.call(rbind, what = _)
+    do.call(rbind, args = _)
 
   if (is.null(el) || nrow(el) == 0) {
     cli::cli_warn('No adjacency edges found among polygon pieces. Returning identity groups.')
