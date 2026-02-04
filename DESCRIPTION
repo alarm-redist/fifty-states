@@ -9,7 +9,7 @@ Authors@R: c(
     person("Kosuke", "Imai", role = "drt", email = "imai@harvard.edu"),
     person("George", "Garcia III", role = "aut", email = "grg3@law.stanford.edu"))
 Description: Redistricting analysis for all 50 U.S. states.
-Imports: 
+Imports:
     dplyr (>= 1.0.7),
     geomander (>= 1.1.0),
     PL94171 (>= 1.0.0),
@@ -18,6 +18,7 @@ Imports:
     tidyr,
     readr,
     redist (>= 4.2.0),
+    rmapshaper,
     sf (>= 1.0.0),
     stringr,
     tigris,
@@ -29,12 +30,14 @@ Imports:
     dataverse (>= 0.3.16),
     here,
     cvap
-Suggests: 
-    rmapshaper,
+Suggests:
     styler,
-    alarmdata
+    alarmdata,
+    geos,
+    igraph,
+    wk
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
