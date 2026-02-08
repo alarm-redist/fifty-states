@@ -1,6 +1,6 @@
 ###############################################################################
 # Download and prepare data for NJ_cd_2000 analysis
-# © ALARM Project, July 2025
+# © ALARM Project, February 2026
 ###############################################################################
 
 suppressMessages({
@@ -29,7 +29,6 @@ if (!file.exists(here(shp_path))) {
   cli_process_start("Preparing {.strong NJ} shapefile")
   # read in redistricting data
   nj_shp <- read_csv(here(path_data), col_types = cols(GEOID = "c")) %>%
-    # If the state is not at the VTD-level, swap in a `tinytiger::tt_*` function
     join_vtd_shapefile(year = 2000) %>%
     st_transform(EPSG$NJ)
   
@@ -44,18 +43,20 @@ if (!file.exists(here(shp_path))) {
     invisible()
   
   # simplifies geometry for faster processing, plotting, and smaller shapefiles
-  # feel free to delete if this dependency isn't available
   if (requireNamespace("rmapshaper", quietly = TRUE)) {
     nj_shp <- rmapshaper::ms_simplify(nj_shp, keep = 0.05,
                                       keep_shapes = TRUE) %>%
       suppressWarnings()
   }
   
-  # create adjacency graph
-  nj_shp$adj <- redist.adjacency(nj_shp)
-  
   nj_shp <- nj_shp %>%
     fix_geo_assignment(muni)
+  
+  # compute merge groups
+  nj_shp$merge_group <- contiguity_merges(nj_shp)
+  
+  # create adjacency graph
+  nj_shp$adj <- redist.adjacency(nj_shp)
   
   write_rds(nj_shp, here(shp_path), compress = "gz")
   cli_process_done()
