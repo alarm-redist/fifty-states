@@ -7,13 +7,13 @@ In ``New Jersey``, according to [NCSL Redistricting Law 2000](https://web.archiv
 2. have equal populations
 
 ### Algorithmic Constraints
-We enforce a maximum population deviation of 0.5%. We use a pseudo-county constraint described below which attempts to mimic the norms in New Jersey of generally preserving county and municipal boundaries.
+We enforce a maximum population deviation of 0.5%. We use a pseudo-county constraint described below, which attempts to mimic the norms in New Jersey of generally preserving county and municipal boundaries.
 
 ## Data Sources
 Data for ``New Jersey`` comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
 
 ## Pre-processing Notes
-We used a helper function to exclude simulated plans containing discontiguous districts.
+We used a helper function to identify and merge discontiguous precincts.
 
 ## Simulation Notes
 We sample 30,000 districting plans for ``New Jersey`` across 5 independent runs of the SMC algorithm.
