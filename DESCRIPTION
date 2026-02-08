@@ -19,6 +19,7 @@ Imports:
     readr,
     redist (>= 4.2.0),
     rmapshaper,
+    redistmetrics (>= 1.0.11),
     sf (>= 1.0.0),
     stringr,
     tigris,
