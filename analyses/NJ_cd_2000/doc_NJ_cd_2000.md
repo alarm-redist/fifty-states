@@ -17,5 +17,5 @@ We used a helper function to exclude simulated plans containing discontiguous di
 
 ## Simulation Notes
 We sample 30,000 districting plans for ``New Jersey`` across 5 independent runs of the SMC algorithm.
-After the simulation, we filtered out plans with discontiguous districts and then thinned the remaining sample to 5,000 plans.
+After the simulation, we filtered out plans with discontiguous districts and thinned the remaining sample to 5,000 plans.
 To balance county and municipality splits, we create pseudo-counties for use in the county constraint. 
