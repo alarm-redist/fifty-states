@@ -59,4 +59,3 @@ if (interactive()) {
     validate_analysis(plans, map_shd)
     summary(plans)
 }
-
