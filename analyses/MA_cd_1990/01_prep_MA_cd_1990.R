@@ -39,7 +39,7 @@ if (!file.exists(here(shp_path))) {
     # manually set state to MA
     ma_shp = mutate(ma_shp, state = "MA") |>
       st_as_sf()
-    ma_shp = st_transform(ma_shp, EPSG$ID)
+    ma_shp = st_transform(ma_shp, EPSG$MA)
 
     ma_shp <- ma_shp |>
       mutate(county = coalesce(county.x, county.y)) |>
@@ -71,3 +71,4 @@ if (!file.exists(here(shp_path))) {
     ma_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong MA} shapefile")
 }
+

@@ -42,3 +42,4 @@ if (interactive()) {
     validate_analysis(plans, map)
     summary(plans)
 }
+
