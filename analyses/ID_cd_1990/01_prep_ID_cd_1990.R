@@ -18,7 +18,6 @@ suppressMessages({
 # Download necessary files for analysis -----
 cli_process_start("Downloading files for {.pkg ID_cd_1990}")
 
-
 path_data <- download_redistricting_file("ID", "data-raw/ID", year = 1990)
 
 cli_process_done()
@@ -26,6 +25,7 @@ cli_process_done()
 # Compile raw data into a final shapefile for analysis -----
 shp_path <- "data-out/ID_1990/shp_vtd.rds"
 perim_path <- "data-out/ID_1990/perim.rds"
+tract_path <- "data-raw/ID/16_tracts.gpkg"
 
 if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong ID} shapefile")
@@ -63,11 +63,57 @@ if (!file.exists(here(shp_path))) {
     }
     id_shp <- id_shp |>
       select(-county.y, -tract.y, -state_shp)
+    id_shp <- id_shp %>%
+      rename(county = county.x)
 
     # create adjacency graph
     id_shp$adj <- redist.adjacency(id_shp)
 
-    # TODO any custom adjacency graph edits here
+    cty <- id_shp %>%
+      group_by(county) %>%
+      summarize(geometry = sf::st_as_sfc(geos::geos_unary_union(geos::geos_make_collection(geom))))
+
+    cty_adj <- adjacency(cty) %>% lapply(\(x) x + 1)
+
+    cty_pair <- purrr::map_dfr(seq_along(cty_adj), \(x){
+      tibble(x = x, y = cty_adj[[x]])
+    })
+
+    roads <- tigris::primary_secondary_roads("ID") %>%
+      st_transform(st_crs(id_shp)) %>%
+      geos::as_geos_geometry()
+
+    ints <- geos::geos_intersects_matrix(geom = roads, tree = cty)
+    tbl <- purrr::map_dfr(ints, \(x){
+      if (length(x) > 1) {
+        tidyr::expand_grid(x = x, y = x) %>% filter(
+          x != y
+        )
+      } else {
+        data.frame()
+      }
+    }) %>% distinct() %>%
+      mutate(magic = TRUE)
+
+    cty_pair <- cty_pair %>%
+      left_join(tbl, by = c("x", "y")) %>%
+      filter(is.na(magic))
+
+    cty_pair <- cty_pair %>%
+      mutate(x = cty$county[x],
+             y = cty$county[y])
+
+    adj <- id_shp$adj
+    for (i in seq_len(nrow(cty_pair))) {
+      adj <- seam_rip(adj, shp = id_shp,
+                      admin = "county", seam = c(cty_pair$x[i], cty_pair$y[i])
+      )
+    }
+
+    id_shp$adj <- adj
+
+    id_shp <- id_shp %>%
+      fix_geo_assignment(muni)
 
     write_rds(id_shp, here(shp_path), compress = "gz")
     cli_process_done()
