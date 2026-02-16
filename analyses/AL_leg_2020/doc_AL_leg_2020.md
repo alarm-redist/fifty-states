@@ -1,0 +1,26 @@
+# 2020 Alabama State House/Senate Districts
+
+## Redistricting requirements
+In Alabama, we consult [NCSL Redistricting Law 2020](https://documents.ncsl.org/wwwncsl/Redistricting-Census/Redistricting-Law-2020_NCSL%20FINAL.pdf) and impose the following constraints. In our simulations, legislative districts must:
+
+1. Be contiguous [NCSL, 184]
+2. Have equal populations [NCSL, 23]
+3. Be geographically compact [NCSL, 184]
+4. Preserve political subdivisions and communities of interest [NCSL, 184]
+
+### Algorithmic Constraints
+We enforce a maximum population deviation of 5.0%.
+
+## Data Sources
+Data for Alabama comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
+
+## Pre-processing Notes
+No manual pre-processing decisions were necessary.
+
+## Simulation Notes
+We sample 25,000 districting plans for Alabama's lower house across 5 independent runs of the SMC algorithm.
+We then thinned the number of samples to 10,000.
+No special techniques were needed to produce the sample.
+
+We sample 10,000 districting plans for Alabama's upper house across 5 independent runs of the SMC algorithm.
+No special techniques were needed to produce the sample.
