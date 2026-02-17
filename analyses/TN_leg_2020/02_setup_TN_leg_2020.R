@@ -16,7 +16,7 @@ map_ssd <- map_ssd |>
         pop_muni = get_target(map_ssd)))
 map_shd <- map_shd |>
     mutate(pseudo_county = pick_county_muni(map_shd, counties = county, munis = muni,
-        pop_muni = get_target(map_shd)))
+        pop_muni = get_target(map_shd)*12))
 
 # Add an analysis name attribute
 attr(map_ssd, "analysis_name") <- "TN_SSD_2020"
