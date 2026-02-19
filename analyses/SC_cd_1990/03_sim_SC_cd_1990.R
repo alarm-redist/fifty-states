@@ -15,12 +15,12 @@ cli_process_start("Running simulations for {.pkg SC_cd_1990}")
 ndists <- attr(map, "ndists")
 
 constr <- redist_constr(map) |>
-  # Black VAP: push for >= 0.50 in at least 2 districts
+  # Black VAP: push for >= 0.40 in at least 2 districts
   add_constr_min_group_frac(
     strength      = -1,
     group_pops    = list(map$vap_black),
     total_pops    = list(map$vap),
-    min_fracs     = c(0.5),
+    min_fracs     = c(0.4),
     thresh        = -.9,
     only_nregions = seq.int(3L, ndists)
   ) |>
