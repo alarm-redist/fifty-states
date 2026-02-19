@@ -10,29 +10,29 @@ BVAP_THRESH  <- 0.40
 DEM_THRESH   <- 0.50
 ndists <- attr(map, "ndists")
 constr <- redist_constr(map) |>
-  add_constr_min_group_frac(
-    strength = -1,
-    group_pops = list(map$vap_black, map$ndv),
-    total_pops = list(map$vap, map$nrv + map$ndv),
-    min_fracs = c(BVAP_THRESH, DEM_THRESH),
-    thresh = -.9,
-    only_nregions = seq.int(2, ndists)
-  )
+    add_constr_min_group_frac(
+        strength = -1,
+        group_pops = list(map$vap_black, map$ndv),
+        total_pops = list(map$vap, map$nrv + map$ndv),
+        min_fracs = c(BVAP_THRESH, DEM_THRESH),
+        thresh = -.9,
+        only_nregions = seq.int(2, ndists)
+    )
 
 set.seed(1990)
 plans <- redist_smc(map, nsims = 3e3, runs = 6,
-                    counties = county, constraints = constr,
-                    split_params = list(splitting_schedule = "any_valid_sizes"),
-                    sampling_space = "spanning_forest",
-                    ms_params = list(frequency = -5, mh_accept_per_smc = 50),
-                    pop_temper = 0.01,
-                    ncores = 112,
-                    verbose = TRUE)
+    counties = county, constraints = constr,
+    split_params = list(splitting_schedule = "any_valid_sizes"),
+    sampling_space = "spanning_forest",
+    ms_params = list(frequency = -5, mh_accept_per_smc = 50),
+    pop_temper = 0.01,
+    ncores = 112,
+    verbose = TRUE)
 
 plans <- plans %>%
-  group_by(chain) %>%
-  filter(as.integer(draw) < min(as.integer(draw)) + 1000) %>% # thin samples
-  ungroup()
+    group_by(chain) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 1000) %>% # thin samples
+    ungroup()
 plans <- match_numbers(plans, "cd_2000")
 
 cli_process_done()
@@ -62,52 +62,52 @@ if (interactive()) {
 
     # Black VAP Performance Plot
     redist.plot.distr_qtys(plans, vap_black/total_vap,
-                           color_thresh = NULL,
-                           color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, "#3D77BB", "#B25D4C"),
-                           size = 0.5, alpha = 0.5) +
-      scale_y_continuous("Percent Black by VAP") +
-      labs(title = "Alabama Proposed Plan versus Simulations") +
-      scale_color_manual(values = c(cd_2020_prop = "black")) +
-      theme_bw()
+        color_thresh = NULL,
+        color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, "#3D77BB", "#B25D4C"),
+        size = 0.5, alpha = 0.5) +
+        scale_y_continuous("Percent Black by VAP") +
+        labs(title = "Alabama Proposed Plan versus Simulations") +
+        scale_color_manual(values = c(cd_2020_prop = "black")) +
+        theme_bw()
 
     # Minority VAP Performance Plot
     redist.plot.distr_qtys(plans, (total_vap - vap_white)/total_vap,
-                           color_thresh = NULL,
-                           color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, "#3D77BB", "#B25D4C"),
-                           size = 0.5, alpha = 0.5) +
-      scale_y_continuous("Minority Percentage by VAP") +
-      labs(title = "Alabama Proposed Plan versus Simulations") +
-      scale_color_manual(values = c(cd_2020_prop = "black")) +
-      theme_bw()
+        color_thresh = NULL,
+        color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, "#3D77BB", "#B25D4C"),
+        size = 0.5, alpha = 0.5) +
+        scale_y_continuous("Minority Percentage by VAP") +
+        labs(title = "Alabama Proposed Plan versus Simulations") +
+        scale_color_manual(values = c(cd_2020_prop = "black")) +
+        theme_bw()
 
     # Dem seats by BVAP rank -- numeric
     plans %>%
-      group_by(draw) %>%
-      mutate(bvap = vap_black/total_vap, bvap_rank = rank(bvap)) %>%
-      subset_sampled() %>%
-      select(draw, district, bvap, bvap_rank, ndv, nrv) %>%
-      mutate(dem = ndv > nrv) %>%
-      group_by(bvap_rank) %>%
-      summarize(dem = mean(dem))
+        group_by(draw) %>%
+        mutate(bvap = vap_black/total_vap, bvap_rank = rank(bvap)) %>%
+        subset_sampled() %>%
+        select(draw, district, bvap, bvap_rank, ndv, nrv) %>%
+        mutate(dem = ndv > nrv) %>%
+        group_by(bvap_rank) %>%
+        summarize(dem = mean(dem))
 
     # Total Black districts that are performing
     plans %>%
-      subset_sampled() %>%
-      group_by(draw) %>%
-      summarize(n_black_perf = sum(vap_black/total_vap > 0.3 & ndshare > 0.5)) %>%
-      count(n_black_perf)
+        subset_sampled() %>%
+        group_by(draw) %>%
+        summarize(n_black_perf = sum(vap_black/total_vap > 0.3 & ndshare > 0.5)) %>%
+        count(n_black_perf)
 
     # Total Black districts that are performing from subset
     plans %>%
-      subset_sampled() %>%
-      group_by(draw) %>%
-      summarize(n_black_perf = sum(vap_black/total_vap > 0.3 & ndshare > 0.5)) %>%
-      count(n_black_perf)
+        subset_sampled() %>%
+        group_by(draw) %>%
+        summarize(n_black_perf = sum(vap_black/total_vap > 0.3 & ndshare > 0.5)) %>%
+        count(n_black_perf)
 }
 
 bottleneck_split <- 6
 
 plot(
-  map,
-  rowMeans(as.matrix(plans) == bottleneck_split),
+    map,
+    rowMeans(as.matrix(plans) == bottleneck_split),
 )
