@@ -6,8 +6,33 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg MI_cd_1990}")
 
+ndists <- attr(map, "ndists")
+
+constr <- redist_constr(map) |>
+  # Black VAP: push for >= 0.40 in at least 2 districts
+  add_constr_min_group_frac(
+    strength      = -1,
+    group_pops    = list(map$vap_black),
+    total_pops    = list(map$vap),
+    min_fracs     = c(0.4),
+    thresh        = -1.9,
+    only_nregions = seq.int(3L, ndists)
+  )
+
 set.seed(1990)
-plans <- redist_smc(map, nsims = 1e4, runs = 5, counties = county, pop_temper=0.01)
+plans <- redist_smc(
+  map,
+  nsims = 2000,
+  runs = 5,
+  counties = pseudo_county,
+  constraints = constr,
+  split_params = list(splitting_schedule = "any_valid_sizes"),
+  sampling_space = "spanning_forest",
+  ms_params = list(frequency = 5L, mh_accept_per_smc = 20L),
+  pop_temper = 0.01,
+  seq_alpha = 0.95,
+  verbose = TRUE
+)
 
 plans <- plans |>
     group_by(chain) |>
