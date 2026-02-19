@@ -65,30 +65,30 @@ if (!file.exists(here(shp_path))) {
 
     # 1. Load the LEIP county CSV as `leip_cty` ----
     leip_cty <- read_csv(
-      here("data-raw/baseline_voteshare_leip_92.csv"),
-      show_col_types = FALSE
+        here("data-raw/baseline_voteshare_leip_92.csv"),
+        show_col_types = FALSE
     )
 
     # 2. Add county_fips column based on VTD GEOID ----
     sc_shp <- sc_shp |>
-      mutate(county_fips = stringr::str_sub(GEOID, 1, 5))
+        mutate(county_fips = stringr::str_sub(GEOID, 1, 5))
 
     names(sc_shp)
 
     # 3. For each county, logit-shift ndv/nrv to the 2000 target from MEDSL ----
     sc_shp <- sc_shp |>
-      group_by(county_fips) |>
-      group_split() |>
-      lapply(function(x) {
-        meds <- leip_cty |>
-          filter(county == x$county_fips[1])
-        target <- meds$dshare_92[1]
+        group_by(county_fips) |>
+        group_split() |>
+        lapply(function(x) {
+            meds <- leip_cty |>
+                filter(county == x$county_fips[1])
+            target <- meds$dshare_92[1]
 
-        if (is.na(target)) return(x)
+            if (is.na(target)) return(x)
 
-        logit_shift_baseline(x, ndv = ndv, nrv = nrv, target = target)
-      }) |>
-      bind_rows()
+            logit_shift_baseline(x, ndv = ndv, nrv = nrv, target = target)
+        }) |>
+        bind_rows()
 
     write_rds(sc_shp, here(shp_path), compress = "gz")
     cli_process_done()

@@ -9,37 +9,37 @@ cli_process_start("Running simulations for {.pkg SC_cd_1990}")
 ndists <- attr(map, "ndists")
 
 constr <- redist_constr(map) |>
-  # Black VAP: push for >= 0.40 in at least 2 districts
-  add_constr_min_group_frac(
-    strength      = -1,
-    group_pops    = list(map$vap_black),
-    total_pops    = list(map$vap),
-    min_fracs     = c(0.4),
-    thresh        = -.9,
-    only_nregions = seq.int(3L, ndists)
-  ) |>
-  # anti-cracking: encourage more districts with less BVAP share
-  add_constr_grp_inv_hinge(
-    3,
-    vap_black,
-    total_pop = vap,
-    tgts_group = c(0.2)
-  )
+    # Black VAP: push for >= 0.40 in at least 2 districts
+    add_constr_min_group_frac(
+        strength      = -1,
+        group_pops    = list(map$vap_black),
+        total_pops    = list(map$vap),
+        min_fracs     = c(0.4),
+        thresh        = -.9,
+        only_nregions = seq.int(3L, ndists)
+    ) |>
+    # anti-cracking: encourage more districts with less BVAP share
+    add_constr_grp_inv_hinge(
+        3,
+        vap_black,
+        total_pop = vap,
+        tgts_group = c(0.2)
+    )
 
 set.seed(1990)
 plans <- redist_smc(
-  map,
-  nsims = 5000,
-  runs = 6,
-  counties = pseudo_county,
-  constraints = constr,
-  split_params = list(splitting_schedule = "any_valid_sizes"),
-  sampling_space = "spanning_forest",
-  ms_params = list(frequency = 5L, mh_accept_per_smc = 20L),
-  ncores = 112,
-  pop_temper = 0.01,
-  seq_alpha = 0.95,
-  verbose = TRUE
+    map,
+    nsims = 5000,
+    runs = 6,
+    counties = pseudo_county,
+    constraints = constr,
+    split_params = list(splitting_schedule = "any_valid_sizes"),
+    sampling_space = "spanning_forest",
+    ms_params = list(frequency = 5L, mh_accept_per_smc = 20L),
+    ncores = 112,
+    pop_temper = 0.01,
+    seq_alpha = 0.95,
+    verbose = TRUE
 )
 
 cli_process_done()
@@ -51,14 +51,14 @@ cli_process_done()
 
 # read in from FASRC
 map <- readRDS(
-  here("data-out/SC_1990/SC_cd_1990_map.rds")
+    here("data-out/SC_1990/SC_cd_1990_map.rds")
 )
 plans <- readRDS(
-  here("data-out/SC_1990/SC_cd_1990_plans.rds")
+    here("data-out/SC_1990/SC_cd_1990_plans.rds")
 )
 stats <- read_csv(
-  here("data-out/SC_1990/SC_cd_1990_stats.csv"),
-  show_col_types = FALSE
+    here("data-out/SC_1990/SC_cd_1990_stats.csv"),
+    show_col_types = FALSE
 )
 
 # Compute summary statistics -----
