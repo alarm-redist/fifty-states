@@ -6,48 +6,33 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg AL_cd_2000}")
 
-map <- map %>%
-  mutate(
-    vap_safe = if_else(vap <= 0 | is.na(vap), 1, vap),
-    pop_safe = if_else(pop <= 0 | is.na(pop), 1, pop)
-  )
-
-
-tgts <- c(0.40, rep(0.33, 6))  # 1 high target, 6 low targets
-
-constr_al <- redist_constr(map) |>
-  # (A) Count constraint: exactly 1 district clears 0.40
-  # Keep this SOFT or SMC weights can overflow.
+BVAP_THRESH  <- 0.40
+DEM_THRESH   <- 0.50
+ndists <- attr(map, "ndists")
+constr <- redist_constr(map) |>
   add_constr_min_group_frac(
-    strength      = 0.03,      # << do NOT use 1 here
-    group_pops    = list(map$vap_black),
-    total_pops    = list(map$vap_safe),
-    min_fracs     = 0.40,
-    thresh        = -0.05,     # << do NOT use -0.8 / -0.9
-    only_nregions = 1L
-  ) |>
-  # (B) Shape: pull districts toward {0.40, 0.33,...}
-  add_constr_grp_hinge(
-    strength   = 25,
-    group_pop  = vap_black,
-    total_pop  = vap_safe,
-    tgts_group = tgts
-  ) |>
-  add_constr_grp_inv_hinge(
-    strength   = 25,
-    group_pop  = vap_black,
-    total_pop  = vap_safe,
-    tgts_group = tgts
+    strength = -1,
+    group_pops = list(map$vap_black, map$ndv),
+    total_pops = list(map$vap, map$nrv + map$ndv),
+    min_fracs = c(BVAP_THRESH, DEM_THRESH),
+    thresh = -.9,
+    only_nregions = seq.int(2, ndists)
   )
 
-set.seed(2000)
-plans <- redist_smc(map, nsims = 15e3, runs = 5, counties = pseudo_county, constraints = constr_al,
-                    pop_temper   = 0.05, verbose=TRUE)
+set.seed(1990)
+plans <- redist_smc(map, nsims = 3e3, runs = 6,
+                    counties = county, constraints = constr,
+                    split_params = list(splitting_schedule = "any_valid_sizes"),
+                    sampling_space = "spanning_forest",
+                    ms_params = list(frequency = -5, mh_accept_per_smc = 50),
+                    pop_temper = 0.01,
+                    ncores = 112,
+                    verbose = TRUE)
 
 plans <- plans %>%
-    group_by(chain) %>%
-    filter(as.integer(draw) < min(as.integer(draw)) + 1000) %>% # thin samples
-    ungroup()
+  group_by(chain) %>%
+  filter(as.integer(draw) < min(as.integer(draw)) + 1000) %>% # thin samples
+  ungroup()
 plans <- match_numbers(plans, "cd_2000")
 
 cli_process_done()
