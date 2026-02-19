@@ -10,29 +10,29 @@ BVAP_THRESH  <- 0.40
 DEM_THRESH   <- 0.50
 ndists <- attr(map, "ndists")
 constr <- redist_constr(map) |>
-  add_constr_min_group_frac(
-    strength = -1,
-    group_pops = list(map$vap_black, map$ndv),
-    total_pops = list(map$vap, map$nrv + map$ndv),
-    min_fracs = c(BVAP_THRESH, DEM_THRESH),
-    thresh = -.9,
-    only_nregions = seq.int(2, ndists)
-  )
+    add_constr_min_group_frac(
+        strength = -1,
+        group_pops = list(map$vap_black, map$ndv),
+        total_pops = list(map$vap, map$nrv + map$ndv),
+        min_fracs = c(BVAP_THRESH, DEM_THRESH),
+        thresh = -.9,
+        only_nregions = seq.int(2, ndists)
+    )
 
 set.seed(1990)
 plans <- redist_smc(map, nsims = 3e3, runs = 6,
-                    counties = county, constraints=constr,
-                    split_params = list(splitting_schedule = "any_valid_sizes"),
-                    sampling_space = "spanning_forest",
-                    ms_params = list(frequency = -5, mh_accept_per_smc = 50),
-                    pop_temper = 0.01,
-                    ncores = 112,
-                    verbose = TRUE)
+    counties = county, constraints = constr,
+    split_params = list(splitting_schedule = "any_valid_sizes"),
+    sampling_space = "spanning_forest",
+    ms_params = list(frequency = -5, mh_accept_per_smc = 50),
+    pop_temper = 0.01,
+    ncores = 112,
+    verbose = TRUE)
 
 plans <- plans %>%
-  group_by(chain) %>%
-  filter(as.integer(draw) < min(as.integer(draw)) + 1000) %>% # thin samples
-  ungroup()
+    group_by(chain) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 1000) %>% # thin samples
+    ungroup()
 plans <- match_numbers(plans, "cd_1990")
 
 cli_process_done()
@@ -44,14 +44,14 @@ cli_process_done()
 
 # read in from FASRC
 map <- readRDS(
-  here("data-out/AL_1990/AL_cd_1990_map.rds")
+    here("data-out/AL_1990/AL_cd_1990_map.rds")
 )
 plans <- readRDS(
-  here("data-out/AL_1990/AL_cd_1990_plans.rds")
+    here("data-out/AL_1990/AL_cd_1990_plans.rds")
 )
 stats <- read_csv(
-  here("data-out/AL_1990/AL_cd_1990_stats.csv"),
-  show_col_types = FALSE
+    here("data-out/AL_1990/AL_cd_1990_stats.csv"),
+    show_col_types = FALSE
 )
 
 # Compute summary statistics -----
