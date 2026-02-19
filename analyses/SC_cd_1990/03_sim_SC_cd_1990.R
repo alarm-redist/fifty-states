@@ -6,12 +6,6 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg SC_cd_1990}")
 
-# Custom constraints
-#constr <- redist_constr(map) %>%
-#    add_constr_splits(strength = 0.5, admin = county_muni) %>%
-#    add_constr_grp_hinge(45, vap_black, vap, 0.4) %>%
-#    add_constr_grp_hinge(-10, vap_black, vap, 0.6)
-
 ndists <- attr(map, "ndists")
 
 constr <- redist_constr(map) |>
@@ -31,16 +25,6 @@ constr <- redist_constr(map) |>
     total_pop = vap,
     tgts_group = c(0.2)
   )
-
-
-#set.seed(1990)
-#plans <- redist_smc(map, nsims = 10e5, ncores=112, runs = 10, counties = pseudo_county, seq_alpha = 0.95, pop_temper = 0.01, constraints = constr, verbose = TRUE, sampling_space = "linking_edge")
-
-#plans <- plans |>
-#    group_by(chain) |>
-#    filter(as.integer(draw) < min(as.integer(draw)) + 1000) |> # thin samples
-#    ungroup()
-#plans <- match_numbers(plans, "cd_1990")
 
 set.seed(1990)
 plans <- redist_smc(
