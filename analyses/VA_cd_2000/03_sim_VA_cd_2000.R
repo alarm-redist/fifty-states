@@ -10,16 +10,11 @@ constr <- redist_constr(map) %>%
     add_constr_grp_hinge(10, vap_black, vap, 0.5) %>%
     add_constr_grp_hinge(5, vap_black, vap, 0.4)
 
-sampling_space_val <- tryCatch(
-  getFromNamespace("LINKING_EDGE_SPACE", "redist"),
-  error = function(e) "linking_edge"
-)
-
 set.seed(2000)
 plans <- redist_smc(map, nsims = 20e3, runs = 5, counties = county, constraints = constr, seq_alpha = 0.99, pop_temper = 0.075,
-                    sampling_space = sampling_space_val,
-                    ms_params      = list(ms_frequency = 1L, ms_moves_multiplier = 160L),
-                    split_params   = list(splitting_schedule = "any_valid_sizes"))
+    sampling_space = "linking_edge",
+    ms_params      = list(ms_frequency = 1L, ms_moves_multiplier = 160L),
+    split_params   = list(splitting_schedule = "any_valid_sizes"))
 
 plans <- plans %>%
     group_by(chain) %>%

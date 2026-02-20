@@ -5,7 +5,7 @@
 cli_process_start("Creating {.cls redist_map} object for {.pkg AR_cd_2000}")
 
 map <- redist_map(ar_shp, pop_tol = 0.005,
-                  existing_plan = cd_2000, adj = ar_shp$adj)
+    existing_plan = cd_2000, adj = ar_shp$adj)
 
 # Add an analysis name attribute
 attr(map, "analysis_name") <- "AR_2000"
