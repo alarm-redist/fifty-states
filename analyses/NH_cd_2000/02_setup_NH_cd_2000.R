@@ -6,7 +6,7 @@ cli_process_start("Creating {.cls redist_map} object for {.pkg NH_cd_2000}")
 
 # Run simulations at the MCD-level.
 map <- redist_map(nh_shp, pop_tol = 0.005,
-                  existing_plan = cd_2000, adj = nh_shp$adj)
+    existing_plan = cd_2000, adj = nh_shp$adj)
 
 # Add an analysis name attribute
 attr(map, "analysis_name") <- "NH_2000"

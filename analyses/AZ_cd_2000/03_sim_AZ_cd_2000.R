@@ -63,11 +63,11 @@ if (interactive()) {
         labs(x = "Districts, ordered by HVAP", y = "Average Democratic share")
 
     plans_ranked <- plans %>%
-      mutate(hvap = vap_hisp / total_vap) %>%
-      number_by(hvap)
+        mutate(hvap = vap_hisp/total_vap) %>%
+        number_by(hvap)
 
     redist.plot.distr_qtys(plans_ranked, ndshare, sort = "none", geom = "boxplot") +
-      labs(x = "Districts, ordered by HVAP", y = "Average Democratic share")
+        labs(x = "Districts, ordered by HVAP", y = "Average Democratic share")
 
     redist.plot.distr_qtys(plans, vap_hisp/total_vap,
         color_thresh = NULL,

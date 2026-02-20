@@ -18,7 +18,7 @@ suppressMessages({
 # Download necessary files for analysis -----
 cli_process_start("Downloading files for {.pkg ID_cd_2000}")
 
-path_data <- download_redistricting_file("ID", "data-raw/ID", year = 2000, overwrite=TRUE)
+path_data <- download_redistricting_file("ID", "data-raw/ID", year = 2000, overwrite = TRUE)
 
 cli_process_done()
 
@@ -40,13 +40,13 @@ if (!file.exists(here(shp_path))) {
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = id_shp,
-                               perim_path = here(perim_path)) %>%
+        perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         id_shp <- rmapshaper::ms_simplify(id_shp, keep = 0.05,
-                                                 keep_shapes = TRUE) %>%
+            keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 
@@ -62,4 +62,3 @@ if (!file.exists(here(shp_path))) {
     id_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong ID} shapefile")
 }
-

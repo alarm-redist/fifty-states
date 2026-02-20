@@ -65,25 +65,25 @@ if (!file.exists(here(shp_path))) {
 
 # 1. Load the MEDSL county CSV as `medsl_cty` ----
 medsl_cty <- read_csv(
-  here("data-raw/baseline_voteshare_medsl_00.csv"),
-  show_col_types = FALSE
+    here("data-raw/baseline_voteshare_medsl_00.csv"),
+    show_col_types = FALSE
 )
 
 # 2. Add county_fips column based on VTD GEOID ----
 ms_shp <- ms_shp |>
-  mutate(county_fips = stringr::str_sub(GEOID, 1, 5))
+    mutate(county_fips = stringr::str_sub(GEOID, 1, 5))
 
 names(ms_shp)
 
 # 3. For each county, logit-shift ndv/nrv to the 2000 target from MEDSL ----
 ms_shp |>
-  group_by(county_fips) |>
-  group_split() |>
-  lapply(function(x) {
-    meds <- medsl_cty |>
-      filter(county == x$county_fips[1])
-    target <- meds$dshare_00[1]
+    group_by(county_fips) |>
+    group_split() |>
+    lapply(function(x) {
+        meds <- medsl_cty |>
+            filter(county == x$county_fips[1])
+        target <- meds$dshare_00[1]
 
-    x |>
-      logit_shift_baseline(ndv = ndv, nrv = nrv, target = target)
-  })
+        x |>
+            logit_shift_baseline(ndv = ndv, nrv = nrv, target = target)
+    })

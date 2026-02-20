@@ -30,8 +30,8 @@ if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong WI} shapefile")
     # read in redistricting data
     wi_shp <- read_csv(here(path_data), col_types = cols(GEOID = "c")) %>%
-      join_vtd_shapefile(year = 2000) %>%
-      st_transform(EPSG$WI)
+        join_vtd_shapefile(year = 2000) %>%
+        st_transform(EPSG$WI)
 
     wi_shp <- wi_shp %>%
         rename(muni = place) %>%
