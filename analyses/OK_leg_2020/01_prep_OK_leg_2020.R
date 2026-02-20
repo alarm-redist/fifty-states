@@ -42,10 +42,10 @@ if (!file.exists(here(shp_path))) {
         select(-vtd)
     d_ssd <- make_from_baf("OK", "SLDU", "VTD", year = 2020)  |>
         transmute(GEOID = paste0(censable::match_fips("OK"), vtd),
-                  ssd_2010 = as.integer(sldu))
+            ssd_2010 = as.integer(sldu))
     d_shd <- make_from_baf("OK", "SLDL", "VTD", year = 2020)  |>
         transmute(GEOID = paste0(censable::match_fips("OK"), vtd),
-                  shd_2010 = as.integer(sldl))
+            shd_2010 = as.integer(sldl))
 
     ok_shp <- ok_shp |>
         left_join(d_muni, by = "GEOID") |>
@@ -60,17 +60,17 @@ if (!file.exists(here(shp_path))) {
         left_join(y = leg_from_baf(state = "OK"), by = "GEOID")
 
     ok_shp <- ok_shp |>
-      mutate(across(contains(c("_16", "_18", "_20", "nrv", "ndv")), \(x) tidyr::replace_na(x, 0)))
+        mutate(across(contains(c("_16", "_18", "_20", "nrv", "ndv")), \(x) tidyr::replace_na(x, 0)))
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = ok_shp,
-                             perim_path = here(perim_path)) |>
+        perim_path = here(perim_path)) |>
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     ok_shp <- rmapshaper::ms_simplify(ok_shp, keep = 0.05,
-                                      keep_shapes = TRUE) |>
-      suppressWarnings()
+        keep_shapes = TRUE) |>
+        suppressWarnings()
 
     # create adjacency graph
     ok_shp$adj <- adjacency(ok_shp)
