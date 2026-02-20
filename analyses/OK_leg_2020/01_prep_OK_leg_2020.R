@@ -22,9 +22,6 @@ cli_process_start("Downloading files for {.pkg OK_leg_2020}")
 
 path_data <- download_redistricting_file("OK", "data-raw/OK", year = 2020)
 
-# TODO other files here (as necessary). All paths should start with `path_`
-# If large, consider checking to see if these files exist before downloading
-
 cli_process_done()
 
 # Compile raw data into a final shapefile for analysis -----
@@ -62,8 +59,6 @@ if (!file.exists(here(shp_path))) {
     ok_shp <- ok_shp |>
         left_join(y = leg_from_baf(state = "OK"), by = "GEOID")
 
-
-    # TODO any additional columns or data you want to add should go here
     ok_shp <- ok_shp |>
       mutate(across(contains(c("_16", "_18", "_20", "nrv", "ndv")), \(x) tidyr::replace_na(x, 0)))
 
@@ -73,17 +68,12 @@ if (!file.exists(here(shp_path))) {
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
-    if (requireNamespace("rmapshaper", quietly = TRUE)) {
-        ok_shp <- rmapshaper::ms_simplify(ok_shp, keep = 0.05,
-                                                 keep_shapes = TRUE) |>
-            suppressWarnings()
-    }
+    ok_shp <- rmapshaper::ms_simplify(ok_shp, keep = 0.05,
+                                      keep_shapes = TRUE) |>
+      suppressWarnings()
 
     # create adjacency graph
     ok_shp$adj <- adjacency(ok_shp)
-
-    # TODO any custom adjacency graph edits here
 
     # check max number of connected components
     # 1 is one fully connected component, more is worse
@@ -99,7 +89,3 @@ if (!file.exists(here(shp_path))) {
     ok_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong OK} shapefile")
 }
-
-# TODO visualize the enacted maps using:
-# redistio::draw(ok_shp, ok_shp$ssd_2020)
-# redistio::draw(ok_shp, ok_shp$shd_2020)
