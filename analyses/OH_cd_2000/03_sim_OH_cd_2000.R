@@ -7,29 +7,24 @@
 cli_process_start("Running simulations for {.pkg OH_cd_2000}")
 
 constr <- redist_constr(map) %>%
-  add_constr_grp_hinge(3,  vap_black, vap, 0.45) %>%  
+  add_constr_grp_hinge(3,  vap_black, vap, 0.45) %>%
   add_constr_grp_hinge(-2,  vap_black, vap, 0.35)
-
-sampling_space_val <- tryCatch(
-  getFromNamespace("LINKING_EDGE_SPACE", "redist"),
-  error = function(e) "linking_edge"
-)
 
 set.seed(2000)
 plans <- redist_smc(
-  map, 
-  nsims = 500, 
-  runs = 10, 
-  counties = county, 
+  map,
+  nsims = 500,
+  runs = 10,
+  counties = county,
   constraints = constr,
-  sampling_space = sampling_space_val,
+  sampling_space = "linking_edge",
   ms_params      = list(ms_frequency = 1L, ms_moves_multiplier = 160L),
   split_params   = list(splitting_schedule = "any_valid_sizes"),
   ncores = parallel::detectCores())
 
 plans <- plans %>%
   group_by(chain) %>%
-  filter(as.integer(draw) < min(as.integer(draw)) + 500) %>% 
+  filter(as.integer(draw) < min(as.integer(draw)) + 500) %>%
   ungroup()
 plans <- match_numbers(plans, "cd_2000")
 
@@ -53,8 +48,8 @@ cli_process_done()
 if (interactive()) {
   library(ggplot2)
   library(patchwork)
-  
-  # Black VAP Performance Plot  
+
+  # Black VAP Performance Plot
   redist.plot.distr_qtys(plans, vap_black / total_vap,
                          color_thresh = NULL,
                          color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, "#3D77BB", "#B25D4C"),
@@ -63,7 +58,7 @@ if (interactive()) {
     labs(title = "Ohio Proposed Plan versus Simulations") +
     scale_color_manual(values = c(cd_2000 = "black")) +
     theme_bw()
-  
+
   # Total Black districts that are performing
   plans %>%
     subset_sampled() %>%

@@ -10,9 +10,6 @@ constr <- redist_constr(map) %>%
   add_constr_grp_hinge(strength = 1.5, group_pop = vap_hisp,  total_pop = vap) %>%
   add_constr_grp_hinge(strength = 1.5, group_pop = vap_asian, total_pop = vap)
 
-sampling_space_val <- tryCatch(getFromNamespace("LINKING_EDGE_SPACE", "redist"),
-                               error = function(e) "linking_edge")
-
 set.seed(2000)
 plans <- redist_smc(
   map,
@@ -20,7 +17,7 @@ plans <- redist_smc(
   counties = pseudo_county,
   constraints = constr,
   pop_temper = 0.05, seq_alpha  = 0.95,
-  sampling_space = sampling_space_val,
+  sampling_space = "linking_edge",
   ms_params = list(frequency = 1L, mh_accept_per_smc = 65),
   split_params = list(splitting_schedule = "any_valid_sizes"),
   ncores = max(1, parallel::detectCores() - 1)
@@ -29,7 +26,7 @@ attr(plans, "existing_col") <- "cd_2000"
 
 plans <- plans %>%
   group_by(chain) %>%
-  filter(as.integer(draw) < min(as.integer(draw)) + 1000) %>% 
+  filter(as.integer(draw) < min(as.integer(draw)) + 1000) %>%
   ungroup()
 plans <- match_numbers(plans, "cd_2000")
 
@@ -53,16 +50,16 @@ cli_process_done()
 if (interactive()) {
   library(ggplot2)
   library(patchwork)
-  
+
   enac_sum <- plans %>% subset_ref() %>% mutate(total_vap = total_vap)
-  
+
   plans <- plans %>%
     group_by(draw, district) %>%
     mutate(e_dvs = if_else(sum(ndv + nrv, na.rm = TRUE) > 0,
                            sum(ndv, na.rm = TRUE) / sum(ndv + nrv, na.rm = TRUE),
                            NA_real_)) %>%
     ungroup()
-  
+
   p1 <- redist.plot.hist(plans %>% group_by(draw) %>%
                            mutate(hisp_dem = sum((vap_hisp/total_vap > 0.5) & e_dvs > 0.5)), qty = hisp_dem) +
     labs(x = "Number of Hispanic and Dem. Majority") +
@@ -91,10 +88,10 @@ if (interactive()) {
                        mutate(coalition_dem = sum(((vap_asian + vap_hisp + vap_black)/total_vap > 0.5) & e_dvs > 0.5)), qty = coalition_dem) +
     labs(x = "Number of Hispanic + Asian + Black and Dem. Majority") &
     theme_bw()
-  
+
   ggsave("data-raw/CA/hist.pdf", p1, width = 11, height = 8)
-  
-  
+
+
   enac_sum <- plans %>%
     subset_ref() %>%
     mutate(minority = (total_vap - vap_white)/(total_vap),
@@ -106,7 +103,7 @@ if (interactive()) {
            coalition_rank = rank(vap_hisp + vap_asian + vap_black),
            compact_rank = rank(comp_polsby)
     )
-  
+
   p2 <- redist.plot.distr_qtys(plans, vap_hisp/total_vap,
                                color_thresh = NULL,
                                color = ifelse(subset_sampled(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C"),
@@ -156,7 +153,7 @@ if (interactive()) {
     labs(title = "CA Enacted versus Simulations") +
     scale_color_manual(values = c(cd_2000 = "black")) +
     geom_hline(yintercept = 0.5, linetype = "dotted")
-  
+
   ggsave("data-raw/CA/boxplot.pdf", p2, width = 11, height = 8)
-  
+
 }
