@@ -9,10 +9,8 @@ map <- redist_map(id_shp, pop_tol = 0.005,
 
 # make pseudo counties with default settings
 map <- map |>
-    mutate(pseudo_county = pick_county_muni(map, counties = county.x, munis = muni,
+    mutate(pseudo_county = pick_county_muni(map, counties = county, munis = muni,
                                             pop_muni = get_target(map)))
-map <- map %>%
-  rename(county = county.x)
 # IF MERGING CORES OR OTHER UNITS:
 # make a new `map_cores` object that is merged & used for simulating. You can set `drop_geom=TRUE` for this.
 

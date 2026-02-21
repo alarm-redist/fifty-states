@@ -112,6 +112,10 @@ if (!file.exists(here(shp_path))) {
 
     id_shp$adj <- adj
 
+    id_shp$muni <- ifelse(is.na(id_shp$muni) | id_shp$muni == "NA",
+                     id_shp$county_muni,
+                     id_shp$muni)
+
     id_shp <- id_shp %>%
       fix_geo_assignment(muni)
 
