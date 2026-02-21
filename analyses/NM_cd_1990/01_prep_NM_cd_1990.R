@@ -39,7 +39,7 @@ if (!file.exists(here(shp_path))) {
   # manually set state to NM
   nm_shp = mutate(nm_shp, state = "NM") |>
     st_as_sf()
-  nm_shp = st_transform(nm_shp, EPSG$ID)
+  nm_shp = st_transform(nm_shp, EPSG$NM)
 
   nm_shp <- nm_shp |>
     mutate(county = coalesce(county.x, county.y)) |>
@@ -71,3 +71,4 @@ if (!file.exists(here(shp_path))) {
   nm_shp <- read_rds(here(shp_path))
   cli_alert_success("Loaded {.strong NM} shapefile")
 }
+
