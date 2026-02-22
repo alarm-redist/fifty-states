@@ -29,8 +29,6 @@ plans <- match_numbers(plans, "shd_2020")
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
 
-# TODO add any reference plans that aren't already included
-
 # Output the redist_map object. Do not edit this path.
 write_rds(plans, here("data-out/OK_2020/OK_shd_2020_plans.rds"), compress = "xz")
 cli_process_done()
@@ -51,7 +49,4 @@ if (interactive()) {
 
     validate_analysis(plans, map_shd)
     summary(plans)
-
-    # Extra validation plots for custom constraints -----
-    # TODO remove this section if no custom constraints
 }
