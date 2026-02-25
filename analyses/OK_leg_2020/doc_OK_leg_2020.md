@@ -1,13 +1,12 @@
 # 2020 Oklahoma State House/Senate Districts
 
 ## Redistricting requirements
-In Oklahoma, we consult [NCSL Redistricting Law 2020](https://documents.ncsl.org/wwwncsl/Redistricting-Census/Redistricting-Law-2020_NCSL%20FINAL.pdf) and impose the following constraints. In our simulations, legislative districts must:
+In Oklahoma, we consult the [Oklahoma Constitution](https://oklegal.onenet.net/okcon/V-9A.html) and the [Oklahoma House of Representatives's guidelines](https://redistricting.lls.edu/wp-content/uploads/OK-House-20210225-guidelines.pdf) and impose the following constraints. In our simulations, legislative districts must:
 
-1. be contiguous
-1. have equal populations
-1. be geographically compact
-1. preserve county and municipality boundaries as much as possible
-
+1. be contiguous [§V-9A; Guidelines 3]
+1. have equal populations [§V-9A; Guidelines 1]
+1. be geographically compact [§V-9A; Guidelines 3]
+1. preserve county and municipality boundaries as much as possible [§V-9A; Guidelines 2]
 
 ### Algorithmic Constraints
 We enforce a maximum population deviation of 5.0%.
@@ -19,10 +18,8 @@ Data for Oklahoma comes from the ALARM Project's [2020 Redistricting Data Files]
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample XX,XXX districting plans for Oklahoma's lower house across 5 independent runs of the SMC algorithm.
-We then thinned the number of samples to 10,000 [delete if only 10,000 total samples].
+We sample 10,000 districting plans for Oklahoma's lower house across 5 independent runs of the SMC algorithm.
 No special techniques were needed to produce the sample.
 
-We sample XX,XXX districting plans for Oklahoma's upper house across 5 independent runs of the SMC algorithm.
-We then thinned the number of samples to 10,000 [delete if only 10,000 total samples].
+We sample 10,000 districting plans for Oklahoma's upper house across 5 independent runs of the SMC algorithm.
 No special techniques were needed to produce the sample.
