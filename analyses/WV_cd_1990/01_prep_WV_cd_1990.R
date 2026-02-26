@@ -27,6 +27,7 @@ shp_path <- "data-out/WV_1990/shp_vtd.rds"
 perim_path <- "data-out/WV_1990/perim.rds"
 
 if (!file.exists(here(shp_path))) {
+  dir.create(here(dirname(shp_path)), showWarnings = FALSE, recursive = TRUE)
   cli_process_start("Preparing {.strong WV} shapefile")
   # read in redistricting data
   wv_df <- read_csv(here(path_data), col_types = cols(GEOID = "c"))
