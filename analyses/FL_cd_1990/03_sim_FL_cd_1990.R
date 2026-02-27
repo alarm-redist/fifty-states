@@ -7,8 +7,8 @@
 cli_process_start("Running simulations for {.pkg FL_cd_1990}")
 
 HISP_STRONG <- 0.60  # 2 districts
-BVAP_STRONG <- 0.50  # 2 districts
-BVAP_OPP <- 0.40  # 1 district
+BVAP_STRONG <- 0.40  # 2 districts
+BVAP_OPP <- 0.30  # 1 district
 BVAP_LOW <- 0.10
 
 ndists <- attr(map, "ndists")
@@ -24,7 +24,7 @@ constr <- redist_constr(map) |>
     only_nregions = seq.int(6L, ndists)
     # nregions counts, thresh is the val of districts you want minus .1, strength also needs to be negative one
   ) |>
-  # Black VAP: push for >= 0.50 in at least 2 districts
+  # Black VAP: push for >= 0.40 in at least 2 districts
   add_constr_min_group_frac(
     strength      = -1,
     group_pops    = list(map$vap_black),
@@ -33,7 +33,7 @@ constr <- redist_constr(map) |>
     thresh        = -1.9,
     only_nregions = seq.int(6L, ndists)
   ) |>
-  # Black VAP: push for >= 0.40 in at least 3 districts
+  # Black VAP: push for >= 0.30 in at least 3 districts
   add_constr_min_group_frac(
     strength      = -1,
     group_pops    = list(map$vap_black),
