@@ -30,7 +30,7 @@ set.seed(1990)
 plans <- redist_smc(
     map,
     nsims = 5000,
-    runs = 6,
+    runs = 5,
     counties = pseudo_county,
     constraints = constr,
     split_params = list(splitting_schedule = "any_valid_sizes"),
