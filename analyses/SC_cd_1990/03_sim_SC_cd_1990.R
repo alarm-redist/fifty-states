@@ -42,6 +42,12 @@ plans <- redist_smc(
     verbose = TRUE
 )
 
+plans <- plans %>%
+    group_by(chain) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 1000) %>% # thin samples
+    ungroup()
+plans <- match_numbers(plans, "cd_1990")
+
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
 
