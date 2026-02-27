@@ -30,7 +30,7 @@ constr <- redist_constr(map) |>
     group_pops    = list(map$vap_black),
     total_pops    = list(map$vap),
     min_fracs     = c(BVAP_STRONG),
-    thresh        = -1.9,
+    thresh        = -0.9,
     only_nregions = seq.int(6L, ndists)
   ) |>
   # Black VAP: push for >= 0.30 in at least 3 districts
