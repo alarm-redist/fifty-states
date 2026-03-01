@@ -72,17 +72,52 @@ if (!file.exists(here(shp_path))) {
     }
 
     # create adjacency graph
-    id_shp$adj <- adjacency(id_shp)
+    id_shp$adj <- redist.adjacency(id_shp)
 
+    cty <- id_shp %>%
+        group_by(county) %>%
+        summarize(geometry = sf::st_as_sfc(geos::geos_unary_union(geos::geos_make_collection(geometry))))
 
+    cty_adj <- adjacency(cty) %>% lapply(\(x) x + 1)
 
-    # check max number of connected components
-    # 1 is one fully connected component, more is worse
-    ccm(id_shp$adj, id_shp$ssd_2020)
-    ccm(id_shp$adj, id_shp$shd_2020)
+    cty_pair <- purrr::map_dfr(seq_along(cty_adj), \(x){
+        tibble(x = x, y = cty_adj[[x]])
+    })
 
+    roads <- tigris::primary_secondary_roads("ID") %>%
+        st_transform(st_crs(id_shp)) %>%
+        geos::as_geos_geometry()
 
-    id_shp <- id_shp |>
+    ints <- geos::geos_intersects_matrix(geom = roads, tree = cty)
+    tbl <- purrr::map_dfr(ints, \(x){
+        if (length(x) > 1) {
+            tidyr::expand_grid(x = x, y = x) %>% filter(
+                x != y
+            )
+        } else {
+            data.frame()
+        }
+    }) %>% distinct() %>%
+        mutate(magic = TRUE)
+
+    cty_pair <- cty_pair %>%
+        left_join(tbl, by = c("x", "y")) %>%
+        filter(is.na(magic))
+
+    cty_pair <- cty_pair %>%
+        mutate(x = cty$county[x],
+            y = cty$county[y])
+
+    adj <- id_shp$adj
+    for (i in seq_len(nrow(cty_pair))) {
+        adj <- seam_rip(adj, shp = id_shp,
+            admin = "county", seam = c(cty_pair$x[i], cty_pair$y[i])
+        )
+    }
+
+    id_shp$adj <- adj
+
+    id_shp <- id_shp %>%
         fix_geo_assignment(muni)
 
     write_rds(id_shp, here(shp_path), compress = "gz")
@@ -91,4 +126,3 @@ if (!file.exists(here(shp_path))) {
     id_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong ID} shapefile")
 }
-

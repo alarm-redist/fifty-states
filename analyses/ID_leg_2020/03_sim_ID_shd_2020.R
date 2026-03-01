@@ -9,9 +9,9 @@ cli_process_start("Running simulations for {.pkg ID_shd_2020}")
 set.seed(2020)
 
 constr <- redist_constr(map_shd) %>%
-  add_constr_total_splits(strength = 2, admin = map_shd$county)
+    add_constr_total_splits(strength = 2, admin = map_shd$county)
 
-mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3) + 25
+mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3) + 50
 
 plans <- redist_smc(
     map_shd,

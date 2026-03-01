@@ -17,6 +17,7 @@ map_ssd <- map_ssd |>
 map_shd <- map_shd |>
     mutate(pseudo_county = pick_county_muni(map_shd, counties = county, munis = muni,
         pop_muni = get_target(map_shd)))
+
 # IF MERGING CORES OR OTHER UNITS:
 # make a new `map_cores` object that is merged & used for simulating. You can set `drop_geom=TRUE` for this.
 
@@ -28,3 +29,4 @@ attr(map_shd, "analysis_name") <- "ID_SHD_2020"
 write_rds(map_ssd, "data-out/ID_2020/ID_leg_2020_map_ssd.rds", compress = "xz")
 write_rds(map_shd, "data-out/ID_2020/ID_leg_2020_map_shd.rds", compress = "xz")
 cli_process_done()
+
