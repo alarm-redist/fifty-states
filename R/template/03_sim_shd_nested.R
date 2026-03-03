@@ -47,7 +47,7 @@ outer_runs <- 5
 ncores <- min(inner_runs, parallel::detectCores() - 1)
 
 # Set up log file
-logfile <- "log.txt"
+logfile <- "data-out/``STATE``_``YEAR``/nested_log.txt"
 file.create(logfile)
 
 # Set up parallelization
@@ -75,6 +75,7 @@ plans_shd <- foreach(i = 1:final_sims, .combine='rbind',
     map_j <- redist_map(m, pop_tol = 0.05,
                             ndists = inner_splits, adj = m$adj)
 
+    ncores <- 1
     # Run inner simulation
     plans_j <- redist_smc(
       map_j,
@@ -83,11 +84,11 @@ plans_shd <- foreach(i = 1:final_sims, .combine='rbind',
       sampling_space = "linking_edge",
       ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
       split_params = list(splitting_schedule = "any_valid_sizes"),
-      verbose = T
+      verbose = TRUE
     ) %>%
-      filter(draw == inner_nsims*inner_runs) # select final plan
+      last_plan() # select final plan
 
-    plans_j$dist_keep = T
+    plans_j$dist_keep = TRUE
 
     # Save map and plan
     plan_list[[j]] <- list(map = map_j, plans = plans_j)
@@ -145,6 +146,3 @@ if (interactive()) {
   # TODO remove this section if no custom constraints
 
 }
-
-# Delete log file when done
-file.remove(logfile)
