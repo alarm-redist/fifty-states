@@ -1,7 +1,7 @@
 # 2020 New Mexico State House/Senate Districts
 
 ## Redistricting requirements
-In New Mexico, we consult [NCSL Redistricting Law 2020](https://documents.ncsl.org/wwwncsl/Redistricting-Census/Redistricting-Law-2020_NCSL%20FINAL.pdf) and impose the following constraints. In our simulations, legislative districts must:
+In New Mexico, we consult [NCSL Redistricting Law 2020](https://documents.ncsl.org/wwwncsl/Redistricting-Census/Redistricting-Law-2020_NCSL%20FINAL.pdf). State legislative districts in New Mexico must:
 
 1. be contiguous [NCSL 186]
 2. have equal populations
