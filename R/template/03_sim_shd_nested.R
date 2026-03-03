@@ -75,13 +75,13 @@ plans_shd <- foreach(i = 1:final_sims, .combine='rbind',
     map_j <- redist_map(m, pop_tol = 0.05,
                             ndists = inner_splits, adj = m$adj)
 
-    ncores <- 1
     # Run inner simulation
     plans_j <- redist_smc(
       map_j,
       nsims = inner_nsims, runs = inner_runs,
       counties = ssd_sim,
       sampling_space = "linking_edge",
+      ncores = 1,
       ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
       split_params = list(splitting_schedule = "any_valid_sizes"),
       verbose = TRUE
