@@ -1,4 +1,4 @@
-nested_smc <- function(plans, map_ssd, map_shd, inner_nsims = 50, inner_runs = 1, outer_runs = 5, ncores = min(inner_runs, parallel::detectCores() - 1)){
+nested_smc <- function(plans, map_ssd, map_shd, shp, inner_nsims = 50, inner_runs = 1, outer_runs = 5, ncores = min(inner_runs, parallel::detectCores() - 1)){
 
   library(foreach)
   library(doParallel)
@@ -8,8 +8,8 @@ nested_smc <- function(plans, map_ssd, map_shd, inner_nsims = 50, inner_runs = 1
   sample_ssd_matrix <- get_plans_matrix(subset_sampled(plans))
 
   # Create shd map object
-  map_shd_iterate <- redist_map(``state``_shp, pop_tol = 0.05,
-                              ndists = n_distinct(map_shd$shd_``YEAR``), adj = ``state``_shp$adj)
+  map_shd_iterate <- redist_map(shp, pop_tol = 0.05,
+                              ndists = n_distinct(map_shd$shd_``YEAR``), adj = shp$adj)
 
   # Unique ID for each row, will use later to reconnect pieces
   map_shd_iterate$row_id <- 1:nrow(map_shd_iterate)
