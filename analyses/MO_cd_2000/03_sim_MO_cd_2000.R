@@ -42,33 +42,33 @@ if (interactive()) {
 
     # Dem seats by bvap rank -- numeric
     plans %>%
-      group_by(draw) %>%
-      mutate(bvap = vap_black/total_vap, bvap_rank = rank(bvap)) %>%
-      subset_sampled() %>%
-      select(draw, district, bvap, bvap_rank, ndv, nrv) %>%
-      mutate(dem = ndv > nrv) %>%
-      group_by(bvap_rank) %>%
-      summarize(dem = mean(dem))
+        group_by(draw) %>%
+        mutate(bvap = vap_black/total_vap, bvap_rank = rank(bvap)) %>%
+        subset_sampled() %>%
+        select(draw, district, bvap, bvap_rank, ndv, nrv) %>%
+        mutate(dem = ndv > nrv) %>%
+        group_by(bvap_rank) %>%
+        summarize(dem = mean(dem))
 
     # VRA
     plans %>%
-      mutate(min = vap_black/total_vap) %>%
-      number_by(min) %>%
-      redist.plot.distr_qtys(ndshare, sort = "none", geom = "boxplot") +
-      labs(x = "Districts, ordered by bvap", y = "Average Democratic share")
+        mutate(min = vap_black/total_vap) %>%
+        number_by(min) %>%
+        redist.plot.distr_qtys(ndshare, sort = "none", geom = "boxplot") +
+        labs(x = "Districts, ordered by bvap", y = "Average Democratic share")
 
     plans_ranked <- plans %>%
-      mutate(bvap = vap_black / total_vap) %>%
-      number_by(bvap)
+        mutate(bvap = vap_black/total_vap) %>%
+        number_by(bvap)
 
     redist.plot.distr_qtys(plans_ranked, ndshare, sort = "none", geom = "boxplot") +
-      labs(x = "Districts, ordered by bvap", y = "Average Democratic share")
+        labs(x = "Districts, ordered by bvap", y = "Average Democratic share")
 
     redist.plot.distr_qtys(plans, vap_black/total_vap,
-                           color_thresh = NULL,
-                           color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, "#3D77BB", "#B25D4C"),
-                           size = 0.1) +
-      scale_y_continuous("Percent black by VAP") +
-      labs(title = "Approximate Performance") +
-      scale_color_manual(values = c(cd_2000 = "black"))
+        color_thresh = NULL,
+        color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, "#3D77BB", "#B25D4C"),
+        size = 0.1) +
+        scale_y_continuous("Percent black by VAP") +
+        labs(title = "Approximate Performance") +
+        scale_color_manual(values = c(cd_2000 = "black"))
 }

@@ -6,16 +6,13 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg PA_cd_1990}")
 
-sampling_space_val <- tryCatch(getFromNamespace("LINKING_EDGE_SPACE", "redist"),
-                               error = function(e) "linking_edge")
-
 set.seed(1990)
 plans <- redist_smc(
   map,
   nsims = 1200, runs = 5,
   counties = county,
   pop_temper = 0.01, seq_alpha  = 0.90,
-  sampling_space = sampling_space_val,
+  sampling_space = "linking_edge",
   ms_params = list(frequency = 1L, mh_accept_per_smc = 20),
   split_params = list(splitting_schedule = "any_valid_sizes")
 )
@@ -47,7 +44,7 @@ cli_process_done()
 if (interactive()) {
   library(ggplot2)
   library(patchwork)
-  
+
   validate_analysis(plans, map)
   summary(plans)
 }

@@ -12,9 +12,9 @@ plans <- redist_smc(map, nsims = 2e3, runs = 5, counties = pseudo_county)
 # make sure to call `pullback()` on this plans object!
 
 plans <- plans %>%
-  group_by(chain) %>%
-  filter(as.integer(draw) < min(as.integer(draw)) + 1000) %>% # thin samples
-  ungroup()
+    group_by(chain) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 1000) %>% # thin samples
+    ungroup()
 plans <- match_numbers(plans, "cd_2000")
 
 cli_process_done()

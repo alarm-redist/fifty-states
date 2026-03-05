@@ -44,14 +44,14 @@ cli_process_done()
 
 # read in from FASRC
 map <- readRDS(
-  here("data-out/AL_1990/AL_cd_1990_map.rds")
+    here("data-out/AL_1990/AL_cd_1990_map.rds")
 )
 plans <- readRDS(
-  here("data-out/AL_1990/AL_cd_1990_plans.rds")
+    here("data-out/AL_1990/AL_cd_1990_plans.rds")
 )
 stats <- read_csv(
-  here("data-out/AL_1990/AL_cd_1990_stats.csv"),
-  show_col_types = FALSE
+    here("data-out/AL_1990/AL_cd_1990_stats.csv"),
+    show_col_types = FALSE
 )
 
 # Compute summary statistics -----
