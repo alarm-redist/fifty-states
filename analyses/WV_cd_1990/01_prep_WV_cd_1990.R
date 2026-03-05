@@ -52,18 +52,11 @@ if (!file.exists(here(shp_path))) {
     left_join(wv_df_cnty %>% mutate(county = sprintf("%03s", county)),
               by = "county")
 
-  # Assign each county the most frequent cd_1990 from its VTDs
-  # Function to calculate mode
-  stat_mode <- function(x) {
-    ux <- na.omit(unique(x))
-    ux[which.max(tabulate(match(x, ux)))]
-  }
-
   # Mode cd_1990 per county from original VTD-level data
   county_cd1990 <- wv_df %>%
     mutate(county = sprintf("%03s", county)) %>%
     group_by(county) %>%
-    summarise(cd_1990 = stat_mode(cd_1990), .groups = "drop")
+    summarise(cd_1990 = Mode(cd_1990), .groups = "drop")
 
   # Join mode cd_1990 back to county-level shapefile
   wv_shp <- wv_shp %>%
