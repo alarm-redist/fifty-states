@@ -37,7 +37,7 @@
       # manually set state to MS
       ms_shp = mutate(ms_shp, state = "MS") |>
         st_as_sf()
-      ms_shp = st_transform(ms_shp, EPSG$ID)
+      ms_shp = st_transform(ms_shp, EPSG$MS)
 
       ms_shp <- ms_shp |>
         mutate(county = coalesce(county.x, county.y)) |>
