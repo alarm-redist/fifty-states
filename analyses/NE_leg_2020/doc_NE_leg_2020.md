@@ -6,7 +6,7 @@ In Nebraska, we consult [NCSL Redistricting Law 2020](https://documents.ncsl.org
 1. be contiguous [NCSL 184] 
 2. have equal populations [NCSL 24] 
 3. be geographically compacts [NCSL 184] 
-4. preserve county and municipality boundaries as much as possible
+4. preserve county and municipality boundaries as much as possible [NCSL 184] 
 5. preserve cores of prior districts  [NCSL 185]
 6. be not favoring any incumbent [NCSL 185]
 7. be not favoring any political party [NCSL 185]
