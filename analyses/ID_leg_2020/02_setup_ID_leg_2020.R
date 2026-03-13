@@ -5,7 +5,7 @@
 cli_process_start("Creating {.cls redist_map} object for {.pkg ID_leg_2020}")
 
 map_ssd <- redist_map(id_shp, pop_tol = 0.05,
-    existing_plan = ssd_2020, adj = id_shp$adj)
+    existing_plan = ssd_2020, adj = id_shp$adj) # 0.06 no improvement
 
 map_shd <- redist_map(id_shp, pop_tol = 0.05,
     existing_plan = shd_2020, adj = id_shp$adj)

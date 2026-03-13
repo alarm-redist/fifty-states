@@ -8,10 +8,24 @@ cli_process_start("Running simulations for {.pkg ID_shd_2020}")
 
 set.seed(2020)
 
-constr <- redist_constr(map_shd) %>%
-    add_constr_total_splits(strength = 2, admin = map_shd$county)
+#constr <- redist_constr(map_shd) %>%
+   # add_constr_total_splits(strength = 2, admin = map_shd$county) # original shared in the PR
 
-mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3) + 50
+# 03.09 need to try (1)
+#constr <- redist_constr(map_shd) %>%
+ # add_constr_total_plan_splits(strength = 2, admin = map_shd$county) # no improvement.. worse
+
+# or
+
+# constr <- redist_constr(map_shd) %>%
+# add_constr_plan_splits(admin = map_shd$county, strength = 1) %>%
+  # add_constr_total_plan_splits(admin = map_shd$county, strength = 2)
+
+constr <- redist_constr(map_shd) %>%
+  add_constr_plan_splits(admin = map_shd$county, strength = 5) %>%
+  add_constr_total_plan_splits(admin = map_shd$county, strength = 4)  # march 9 try (3)
+
+mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3) + 100
 
 plans <- redist_smc(
     map_shd,
