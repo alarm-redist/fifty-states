@@ -6,11 +6,6 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg TN_cd_1990}")
 
-sampling_space_val <- tryCatch(
-  getFromNamespace("LINKING_EDGE_SPACE", "redist"),
-  error = function(e) "linking_edge"
-)
-
 set.seed(1990)
 plans <- redist_smc(
   map,
@@ -18,7 +13,7 @@ plans <- redist_smc(
   runs = 5,
   counties = pseudo_county,
   constraints = constr,
-  sampling_space = sampling_space_val,
+  sampling_space = "linking_edge",
   ms_params = list(frequency = 1L, mh_accept_per_smc = 60),
   split_params = list(splitting_schedule = "any_valid_sizes")
 )
@@ -50,8 +45,8 @@ cli_process_done()
 if (interactive()) {
   library(ggplot2)
   library(patchwork)
-  
-  # Black VAP Performance Plot  
+
+  # Black VAP Performance Plot
   redist.plot.distr_qtys(plans, vap_black / total_vap,
                          color_thresh = NULL,
                          color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, "#3D77BB", "#B25D4C"),
@@ -60,7 +55,7 @@ if (interactive()) {
     labs(title = "Tennessee Proposed Plan versus Simulations") +
     scale_color_manual(values = c(cd_1990 = "black")) +
     theme_bw()
-  
+
   # Total Black districts that are performing
   plans %>%
     subset_sampled() %>%
