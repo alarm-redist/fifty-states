@@ -8,8 +8,7 @@ In Idaho, we consult [Idaho Redistricting Law 1990](https://www.commoncause.org/
 1. be geographically compact
 1. preserve county and municipality boundaries as much as possible 
 1. prevent floterial districts
-1. be connected by highways
-
+1. connect counties based on highways
 
 ### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
@@ -18,7 +17,7 @@ We enforce a maximum population deviation of 0.5%.
 Data for Idaho comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
 
 ## Pre-processing Notes
-A custom adjacency map based on the highways of Idaho was created. Columns where muni = NA had their muni values set to the county_muni values of that column.
+A custom adjacency map based on the highways of Idaho was created, where counties not connected by highways had their borders removed. Columns where muni = NA had their muni values set to the county_muni values of that column.
 
 ## Simulation Notes
 We sample 10,000 districting plans for Idaho across 5 independent runs of the SMC algorithm.
