@@ -58,7 +58,8 @@ nested_smc <- function(plans, map_ssd, map_shd, shp, inner_nsims = 50, inner_run
             ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
             split_params = list(splitting_schedule = "any_valid_sizes"),
             verbose = TRUE,
-            control = list(max_split_tries = max_split_tries)
+            control = list(max_split_tries = max_split_tries),
+            ncores = 1
           )
 
           # Catch error
@@ -71,7 +72,7 @@ nested_smc <- function(plans, map_ssd, map_shd, shp, inner_nsims = 50, inner_run
       # Catch fail to split warning
       if (is.null(result) || any(grepl("Failed to split", output))) {
         failed <- TRUE
-        cat("\nFAILURE at outer i =", i, "inner j =", j, "\n", file = "log.txt", append = TRUE)
+        cat("\nFAILURE at outer i =", i, "inner j =", j, "\n", file = logfile, append = TRUE)
         break
       }
 
@@ -97,7 +98,7 @@ nested_smc <- function(plans, map_ssd, map_shd, shp, inner_nsims = 50, inner_run
     plans_i <- redist_plans(plans = prep_mat, map_shd_iterate, algorithm = "smc")
 
     # Counter for log file
-    cat("\n FINISHED HOUSE DISTRICT ", i, " OF ", final_sims, file = "log.txt", append = TRUE)
+    cat("\n FINISHED HOUSE DISTRICT ", i, " OF ", final_sims, file = logfile, append = TRUE)
 
     plans_i
 
@@ -112,7 +113,7 @@ nested_smc <- function(plans, map_ssd, map_shd, shp, inner_nsims = 50, inner_run
     dplyr::select(survive)
 
   ess_prop <- mean(survive$survive)
-  ess <- ess_prop*final_sims
+  ess <- sum(survive$survive)
 
   # Add draw and chain numbering
   plans_shd <- plans_shd %>%
