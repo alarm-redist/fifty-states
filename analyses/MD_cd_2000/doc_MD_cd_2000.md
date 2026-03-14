@@ -22,4 +22,5 @@ We used a helper function to identify 35 discontiguity merge-groups, involving 1
 
 ## Simulation Notes
 We sample 15,000 districting plans for ``Maryland`` across 5 independent runs of the SMC algorithm.
-After the simulation, we filtered out plans with discontiguous districts and thinned the remaining sample to 5,000 plans.
+We then thinned the number of samples to 5,000. 
+No special techniques were needed to produce the sample.
