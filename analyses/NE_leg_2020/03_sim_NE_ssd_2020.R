@@ -48,26 +48,25 @@ save_summary_stats(plans, "data-out/NE_2020/NE_ssd_2020_stats.csv")
 cli_process_done()
 
 if (interactive()) {
-  library(ggplot2)
-  library(patchwork)
-  validate_analysis(plans, map_ssd)
-  summary(plans)
+    library(ggplot2)
+    library(patchwork)
+    validate_analysis(plans, map_ssd)
+    summary(plans)
 
-  # cores preservation plot -----
-  plans_nocores <- redist_smc(
-    map_ssd,
-    nsims = 200,
-    runs = 2,
-    counties = map_ssd$pseudo_county
-  )
+    # cores preservation plot -----
+    plans_nocores <- redist_smc(
+        map_ssd,
+        nsims = 200,
+        runs = 2,
+        counties = map_ssd$pseudo_county
+    )
 
-  d_overl <- bind_rows(
-    with_cores = as_tibble(match_numbers(plans, map_ssd$ssd_2010)),
-    no_cores = as_tibble(match_numbers(plans_nocores, map_ssd$ssd_2010)),
-    .id = "run"
-  )
+    d_overl <- bind_rows(
+        with_cores = as_tibble(match_numbers(plans, map_ssd$ssd_2010)),
+        no_cores = as_tibble(match_numbers(plans_nocores, map_ssd$ssd_2010)),
+        .id = "run"
+    )
 
-  ggplot(d_overl, aes(reorder(district, pop_overlap), pop_overlap, color = run)) +
-    geom_boxplot(coef = 1e6)
+    ggplot(d_overl, aes(reorder(district, pop_overlap), pop_overlap, color = run)) +
+        geom_boxplot(coef = 1e6)
 }
-
