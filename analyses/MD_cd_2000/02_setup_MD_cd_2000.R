@@ -15,7 +15,6 @@ map_merged <- map %>%
 attr(map, "analysis_name") <- "MD_2000"
 
 map$state <- "MD"
-map_merged$state <- "MD"
 
 # Output the redist_map object. Do not edit this path.
 write_rds(map, "data-out/MD_2000/MD_cd_2000_map.rds", compress = "xz")
