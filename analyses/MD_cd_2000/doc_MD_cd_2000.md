@@ -18,7 +18,7 @@ Data for ``Maryland`` comes from the [ALARM Project's update](https://dataverse.
 
 ## Pre-processing Notes
 We edited the adjacency graph so that districts cannot traverse the Bay. Specifically, we identified the Bay precincts, removed all of their existing adjacency links, and then reconnected each Bay precinct to a selected same-side neighbor to prevent cross-Bay connections.
-We used a helper function to identify 35 discontiguity merge-groups, involving 139 precincts (8.2% of all VTDs), which were merged prior to simulation.
+Because Maryland contains an unusually large number of discontiguous precincts, we used a helper function to identify 35 merge-groups involving 139 precincts (8.2% of all VTDs). These units were merged prior to simulation.
 
 ## Simulation Notes
 We sample 15,000 districting plans for ``Maryland`` across 5 independent runs of the SMC algorithm.
