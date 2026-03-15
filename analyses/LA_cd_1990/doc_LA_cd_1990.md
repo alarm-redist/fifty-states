@@ -19,4 +19,3 @@ No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
 We sample 100,000 districting plans for Louisiana across 5 independent runs of the SMC algorithm. We remove all plans that do not contain at least one district with BVAP above 30% and Democratic vote share above 45%. We then thin the filtered sample to 5,000 plans.
-No special techniques were needed to produce the sample.
