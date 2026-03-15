@@ -1,6 +1,6 @@
 ###############################################################################
 # Simulate plans for `MD_cd_2000`
-# © ALARM Project, February 2026
+# © ALARM Project, March 2026
 ###############################################################################
 
 # Run the simulation -----
@@ -8,11 +8,12 @@ cli_process_start("Running simulations for {.pkg MD_cd_2000}")
 
 set.seed(2000)
 plans <- redist_smc(
-    map,
+    map_merged,
     nsims = 3e3,
     runs = 5,
     counties = county
-)
+) %>%
+pullback(map)
 
 plans <- plans %>%
     group_by(chain) %>%
