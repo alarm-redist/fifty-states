@@ -7,25 +7,18 @@ cli_process_start("Creating {.cls redist_map} object for {.pkg NJ_cd_2000}")
 map <- redist_map(nj_shp, pop_tol = 0.005,
     existing_plan = cd_2000, adj = nj_shp$adj)
 
-map <- map %>% merge_by(merge_group, drop_geom = FALSE)
+# Merged map: use this only for simulation
+map_merged <- map %>%
+  merge_by(merge_group, drop_geom = FALSE)
 
-# Extract merged geometry as sf
-merged_sf <- sf::st_as_sf(map)
-
-redistmetrics::prep_perims(
-    shp = merged_sf,
-    perim_path = here(perim_path)
-) %>%
-    invisible()
-
-# Pseudo-county
-map <- map %>%
+# Pseudo-county on merged simulation map
+map_merged <- map_merged %>%
     mutate(
         pseudo_county = pick_county_muni(
-            map,
+            map_merged,
             counties = county,
             munis    = muni,
-            pop_muni = get_target(map)
+            pop_muni = get_target(map_merged)
         )
     )
 
