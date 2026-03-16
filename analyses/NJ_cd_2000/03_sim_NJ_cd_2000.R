@@ -8,28 +8,32 @@ cli_process_start("Running simulations for {.pkg NJ_cd_2000}")
 
 BVAP_THRESH <- 0.30
 DEM_THRESH  <- 0.50
-ndists <- attr(map, "ndists")
+ndists <- attr(map_merged, "ndists")
 
-constr <- redist_constr(map) |>
-    add_constr_min_group_frac(
-        strength      = -1,
-        group_pops    = list(map$vap_black, map$ndv),
-        total_pops    = list(map$vap, map$nrv + map$ndv),
-        min_fracs     = c(BVAP_THRESH, DEM_THRESH),
-        thresh        = -0.9,
-        only_nregions = ndists
-    )
+constr <- redist_constr(map_merged) |>
+  add_constr_min_group_frac(
+    strength      = -1,
+    group_pops    = list(map_merged$vap_black, map_merged$ndv),
+    total_pops    = list(map_merged$vap, map_merged$nrv + map_merged$ndv),
+    min_fracs     = c(BVAP_THRESH, DEM_THRESH),
+    thresh        = -0.9,
+    only_nregions = ndists
+  )
 
 set.seed(2000)
-plans <- redist_smc(map,
-    nsims = 1e3,
-    runs = 5,
-    counties = pseudo_county,
-    constraints = constr,
-    sampling_space = "spanning_forest",
-    ms_params = list(frequency = 1L, mh_accept_per_smc = 20),
-    split_params = list(splitting_schedule = "any_valid_sizes"),
-    verbose = T, pop_temper = 0.01)
+plans <- redist_smc(
+  map_merged,
+  nsims = 1e3,
+  runs = 5,
+  counties = pseudo_county,
+  constraints = constr,
+  sampling_space = "spanning_forest",
+  ms_params = list(frequency = 1L, mh_accept_per_smc = 20),
+  split_params = list(splitting_schedule = "any_valid_sizes"),
+  verbose = TRUE,
+  pop_temper = 0.01
+) %>%
+  pullback(map)
 
 plans <- plans %>%
     group_by(chain) %>%
