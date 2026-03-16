@@ -15,7 +15,7 @@ Data for ``New Jersey`` comes from the [ALARM Project's update](https://datavers
 
 ## Pre-processing Notes
 Because New Jersey contains an unusually large number of discontiguous precincts, we used a helper function to identify 20 discontiguity merge-groups, involving 46 precincts (0.75% of all VTDs). These units were merged prior to simulation.
-We apply a county-level logit shift to recalibrate ``ndv/nrv``. The adjustment needed to correct the vote shares was fairly large in several counties: Essex required a logit shift of about 1.39, Hudson about 1.33, Passaic about 0.98, and Union about 1.07. Because some of these values exceed 1, the original search interval ``[-1, 1]`` was too narrow for ``uniroot()`` to find the solution, so we widened the search interval to ``[-1.5, 1.5]`` to accommodate the larger correction.
+We apply a county-level logit shift to recalibrate ``ndv/nrv``. The adjustment needed to correct the vote shares was fairly large in several counties: Essex required a logit shift of about 1.39, Hudson about 1.33, Passaic about 0.98, and Union about 1.07. Because some of these values exceed 1, the original search interval [-1, 1] was too narrow for ``uniroot()`` to find the solution, so we widened the search interval to [-1.5, 1.5] to accommodate the larger correction.
 
 ## Simulation Notes
 We sample 5,000 districting plans for ``New Jersey`` across 5 independent runs of the SMC algorithm.
