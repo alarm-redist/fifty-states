@@ -4,6 +4,7 @@
 #' @param ndv Unquoted Democratic vote column name
 #' @param nrv Unquoted Republican vote column name
 #' @param target target to logit shift to
+#' @param interval interval passed to `uniroot()`
 #' @param tol
 #'
 #' @returns a data frame with adjusted vote columns
@@ -13,6 +14,7 @@
 #' # TODO
 logit_shift_baseline <- function(d_baseline, ndv, nrv,
                                  target = 0.5,
+                                 interval = c(-1, 1),
                                  tol = sqrt(.Machine$double.eps)) {
   if (missing(ndv) || missing(nrv)) {
     cli::cli_abort('Both {.arg ndv} and {.arg nrv} must be provided.')
@@ -33,7 +35,7 @@ logit_shift_baseline <- function(d_baseline, ndv, nrv,
 
   res <- uniroot(function(shift) {
     stats::weighted.mean(plogis(ldvs + shift), turn) - target
-  }, c(-1, 1), tol = tol)
+  }, interval = interval, tol = tol)
 
   ldvs <- ldvs + res$root
 
