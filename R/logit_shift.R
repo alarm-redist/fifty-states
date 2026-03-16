@@ -21,27 +21,27 @@ logit_shift_baseline <- function(d_baseline, ndv, nrv,
   }
   ndv_q <- rlang::enquo(ndv)
   nrv_q <- rlang::enquo(nrv)
-  
+
   ndv_vec <- dplyr::pull(d_baseline, !!ndv_q)
   nrv_vec <- dplyr::pull(d_baseline, !!nrv_q)
-  
+
   turn <- ndv_vec + nrv_vec
-  
+
   if (sum(turn) == 0) {
     return(d_baseline)
   }
-  
+
   ldvs <- dplyr::if_else(turn > 0, log(ndv_vec) - log(nrv_vec), 0)
-  
+
   res <- uniroot(function(shift) {
     stats::weighted.mean(plogis(ldvs + shift), turn) - target
   }, interval = interval, tol = tol)
-  
+
   ldvs <- ldvs + res$root
-  
+
   ndv_new <- turn * plogis(ldvs)
   nrv_new <- turn - ndv_new
-  
+
   dplyr::mutate(
     d_baseline,
     !!rlang::as_name(ndv_q) := ndv_new,
