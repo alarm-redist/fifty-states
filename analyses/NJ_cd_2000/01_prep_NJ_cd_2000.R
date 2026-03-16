@@ -57,10 +57,6 @@ if (!file.exists(here(shp_path))) {
     # create adjacency graph
     nj_shp$adj <- redist.adjacency(nj_shp)
 
-    ###############################################################################
-    # Logit-shift ndv/nrv
-    ###############################################################################
-
     # Logit shift
     medsl_cty <- read_csv(
         here::here("data-raw/baseline_voteshare_medsl_00.csv"),
