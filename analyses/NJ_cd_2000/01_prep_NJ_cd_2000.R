@@ -37,6 +37,10 @@ if (!file.exists(here(shp_path))) {
         mutate(muni = as.character(muni), county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_1990, .after = county)
 
+    redistmetrics::prep_perims(shp = nj_shp,
+                             perim_path = here(perim_path)) |>
+    invisible()
+
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         nj_shp <- rmapshaper::ms_simplify(nj_shp, keep = 0.05,
@@ -54,10 +58,10 @@ if (!file.exists(here(shp_path))) {
     nj_shp$adj <- redist.adjacency(nj_shp)
 
     ###############################################################################
-    # Logit-shift ndv/nrv to match 2000 MEDSL county results
+    # Logit-shift ndv/nrv
     ###############################################################################
 
-    # Use a wider uniroot interval because some counties require a shift beyond [-1, 1]
+    # Use a wider uniroot interval
     logit_shift_baseline <- function(d_baseline, ndv, nrv,
                                      target = 0.5,
                                      tol = sqrt(.Machine$double.eps)) {
@@ -80,7 +84,7 @@ if (!file.exists(here(shp_path))) {
 
         res <- uniroot(function(shift) {
             stats::weighted.mean(plogis(ldvs + shift), turn) - target
-        }, c(-5, 5), tol = tol)
+        }, c(-1.5, 1.5), tol = tol)
 
         ldvs <- ldvs + res$root
 
