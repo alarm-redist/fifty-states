@@ -17,7 +17,7 @@ constr <- redist_constr(map) |>
         group_pops    = list(map$vap_hisp),
         total_pops    = list(map$vap),
         min_fracs     = c(HISP_STRONG),
-        thresh        = -0.9,
+        thresh        = -1.9,
         only_nregions = seq.int(6L, ndists)
         # nregions counts, thresh is the val of districts you want minus .1, strength also needs to be negative one
     ) |>
@@ -31,7 +31,7 @@ constr <- redist_constr(map) |>
 set.seed(1990)
 plans <- redist_smc(
     map,
-    nsims = 20000,
+    nsims = 200000,
     runs = 5,
     counties = pseudo_county,
     constraints = constr,
