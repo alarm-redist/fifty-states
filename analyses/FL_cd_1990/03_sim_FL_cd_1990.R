@@ -7,9 +7,6 @@
 cli_process_start("Running simulations for {.pkg FL_cd_1990}")
 
 HISP_STRONG <- 0.60  # 2 districts
-BVAP_STRONG <- 0.30  # 2 districts
-# BVAP_OPP <- 0.30  # 1 district
-BVAP_LOW <- 0.10
 
 ndists <- attr(map, "ndists")
 
@@ -24,32 +21,6 @@ constr <- redist_constr(map) |>
     only_nregions = seq.int(6L, ndists)
     # nregions counts, thresh is the val of districts you want minus .1, strength also needs to be negative one
   ) |>
-  # Black VAP: push for >= 0.40 in at least 2 districts
-  add_constr_min_group_frac(
-    strength      = -1,
-    group_pops    = list(map$vap_black),
-    total_pops    = list(map$vap),
-    min_fracs     = c(BVAP_STRONG),
-    thresh        = -0.9,
-    only_nregions = seq.int(6L, ndists)
-  ) |>
-  # Black VAP: push for >= 0.30 in at least 3 districts
-  # add_constr_min_group_frac(
-  #   strength      = -1,
-  #   group_pops    = list(map$vap_black),
-  #   total_pops    = list(map$vap),
-  #   min_fracs     = c(BVAP_OPP),
-  #   thresh        = -2.9,
-  #   only_nregions = seq.int(6L, ndists)
-  # ) |>
-  # anti-cracking: encourage more districts with less BVAP share
-  # add_constr_grp_inv_hinge(
-  #   7,
-  #   vap_black,
-  #   total_pop = vap,
-  #   tgts_group = c(BVAP_LOW)
-  # ) |>
-  # anti-packing: discourage too many supermajority Hispanic districts
   add_constr_grp_inv_hinge(
     2,
     vap_hisp,
