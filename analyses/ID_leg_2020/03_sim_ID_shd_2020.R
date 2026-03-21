@@ -3,33 +3,35 @@
 # © ALARM Project, February 2026
 ###############################################################################
 
+suppressMessages({
+  library(dplyr)
+  library(readr)
+  library(redist)
+  library(cli)
+  library(here)
+  devtools::load_all()
+})
+
+options(mc.cores = as.integer(Sys.getenv("SLURM_CPUS_PER_TASK")))
+
+map_shd <- read_rds("ID_leg_2020_map_shd.rds")
+
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg ID_shd_2020}")
 
 set.seed(2020)
 
-#constr <- redist_constr(map_shd) %>%
-   # add_constr_total_splits(strength = 2, admin = map_shd$county) # original shared in the PR
-
-# 03.09 need to try (1)
-#constr <- redist_constr(map_shd) %>%
- # add_constr_total_plan_splits(strength = 2, admin = map_shd$county) # no improvement.. worse
-
-# or
-
-# constr <- redist_constr(map_shd) %>%
-# add_constr_plan_splits(admin = map_shd$county, strength = 1) %>%
-  # add_constr_total_plan_splits(admin = map_shd$county, strength = 2)
-
 constr <- redist_constr(map_shd) %>%
-  add_constr_plan_splits(admin = map_shd$county, strength = 5) %>%
-  add_constr_total_plan_splits(admin = map_shd$county, strength = 4)  # march 9 try (3)
+  add_constr_splits(admin = county, strength = 2.5) %>%
+  add_constr_multisplits(admin = county, strength = 1)
 
-mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3) + 100
+
+mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3) + 200
 
 plans <- redist_smc(
     map_shd,
     nsims = 2e3, runs = 5,
+    ncores = as.integer(Sys.getenv("SLURM_CPUS_PER_TASK")),
     counties = pseudo_county,
     constraints = constr,
     sampling_space = "linking_edge",
