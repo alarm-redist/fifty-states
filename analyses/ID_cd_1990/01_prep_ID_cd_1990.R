@@ -39,9 +39,6 @@ if (!file.exists(here(shp_path))) {
     # manually set state to ID
     id_shp = mutate(id_shp, state = "ID") |>
         st_as_sf()
-
-    # id_shp = join_vtd_shapefile(raw_data, year = 1990)
-
     id_shp = st_transform(id_shp, EPSG$ID)
 
     id_shp <- id_shp |>
@@ -55,7 +52,6 @@ if (!file.exists(here(shp_path))) {
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         id_shp <- rmapshaper::ms_simplify(id_shp, keep = 0.05,
                                                  keep_shapes = TRUE) |>
