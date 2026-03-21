@@ -20,7 +20,7 @@ constr <- redist_constr(map) |>
     )
 
 set.seed(1990)
-plans <- redist_smc(map, nsims = 3e3, runs = 5,
+plans <- redist_smc(map, nsims = 5e3, runs = 5,
     counties = county, constraints = constr,
     split_params = list(splitting_schedule = "any_valid_sizes"),
     sampling_space = "spanning_forest",
