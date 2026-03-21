@@ -20,7 +20,7 @@ constr <- redist_constr(map) |>
     )
 
 set.seed(1990)
-plans <- redist_smc(map, nsims = 3e3, runs = 6,
+plans <- redist_smc(map, nsims = 3e3, runs = 5,
     counties = county, constraints = constr,
     split_params = list(splitting_schedule = "any_valid_sizes"),
     sampling_space = "spanning_forest",
@@ -41,6 +41,18 @@ cli_process_start("Saving {.cls redist_plans} object")
 # Output the redist_map object. Do not edit this path.
 write_rds(plans, here("data-out/NJ_1990/NJ_cd_1990_plans.rds"), compress = "xz")
 cli_process_done()
+
+# read in from FASRC
+map <- readRDS(
+  here("data-out/NJ_1990/NJ_cd_1990_map.rds")
+)
+plans <- readRDS(
+  here("data-out/NJ_1990/NJ_cd_1990_plans.rds")
+)
+stats <- read_csv(
+  here("data-out/NJ_1990/NJ_cd_1990_stats.csv"),
+  show_col_types = FALSE
+)
 
 # Compute summary statistics -----
 cli_process_start("Computing summary statistics for {.pkg NJ_cd_1990}")
