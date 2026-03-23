@@ -3,35 +3,21 @@
 # © ALARM Project, February 2026
 ###############################################################################
 
-suppressMessages({
-  library(dplyr)
-  library(readr)
-  library(redist)
-  library(cli)
-  library(here)
-  devtools::load_all()
-})
-
-options(mc.cores = as.integer(Sys.getenv("SLURM_CPUS_PER_TASK")))
-
-map_shd <- read_rds("ID_leg_2020_map_shd.rds")
-
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg ID_shd_2020}")
 
 set.seed(2020)
 
 constr <- redist_constr(map_shd) %>%
-  add_constr_splits(admin = county, strength = 2.5) %>%
-  add_constr_multisplits(admin = county, strength = 1)
+    add_constr_total_splits(strength = 3.8, admin = map_shd$county)
 
-
-mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3) + 200
+mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3) + 260
 
 plans <- redist_smc(
     map_shd,
-    nsims = 2e3, runs = 5,
-    ncores = as.integer(Sys.getenv("SLURM_CPUS_PER_TASK")),
+    pop_temper = 0.02,
+    nsims = 2e3,
+    runs = 5,
     counties = pseudo_county,
     constraints = constr,
     sampling_space = "linking_edge",

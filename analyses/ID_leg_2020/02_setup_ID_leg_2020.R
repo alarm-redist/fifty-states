@@ -4,10 +4,10 @@
 ###############################################################################
 cli_process_start("Creating {.cls redist_map} object for {.pkg ID_leg_2020}")
 
-map_ssd <- redist_map(id_shp, pop_tol = 0.05,
-    existing_plan = ssd_2020, adj = id_shp$adj) # 0.06 no improvement
+map_ssd <- redist_map(id_shp, pop_tol = 0.08,
+    existing_plan = ssd_2020, adj = id_shp$adj)
 
-map_shd <- redist_map(id_shp, pop_tol = 0.05,
+map_shd <- redist_map(id_shp, pop_tol = 0.08,
     existing_plan = shd_2020, adj = id_shp$adj)
 
 # make pseudo counties with default settings
@@ -29,4 +29,3 @@ attr(map_shd, "analysis_name") <- "ID_SHD_2020"
 write_rds(map_ssd, "data-out/ID_2020/ID_leg_2020_map_ssd.rds", compress = "xz")
 write_rds(map_shd, "data-out/ID_2020/ID_leg_2020_map_shd.rds", compress = "xz")
 cli_process_done()
-
