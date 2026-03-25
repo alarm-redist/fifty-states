@@ -31,11 +31,11 @@ logit_shift_baseline <- function(d_baseline, ndv, nrv,
     return(d_baseline)
   }
 
-  ldvs <- dplyr::if_else(turn > 0, log(ndv_vec) - log(nrv_vec), 0)
+  ldvs <- dplyr::if_else(turn > 0, log(ndv_vec + 0.5) - log(nrv_vec + 0.5), 0)
 
   res <- uniroot(function(shift) {
     stats::weighted.mean(plogis(ldvs + shift), turn) - target
-  }, interval = interval, tol = tol)
+  }, interval = interval, extendInt = "yes", tol = tol)
 
   ldvs <- ldvs + res$root
 
