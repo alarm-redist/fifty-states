@@ -10,7 +10,7 @@
 #'
 #' @returns nothing
 #' @export
-finalize_analysis <- function(state, type = "cd", year = 2020, overwrite = TRUE) {
+finalize_analysis = function(state, type = "cd", year = 2020, overwrite = TRUE) {
     withr::with_options(list(warn = 1), {
 
 
