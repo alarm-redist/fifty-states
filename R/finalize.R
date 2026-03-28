@@ -195,7 +195,13 @@ pub_dataverse = function(slug, path_map, path_plans, path_stats) {
     zip(path_zip, slug, extras=str_glue("-x {slug}/.DS_Store"))
     setwd(cur_dir)
 
-    dv_id <- "doi:10.7910/DVN/SLCD3E"
+    year <- as.integer(stringr::str_extract(slug, "\\d{4}"))
+    dv_id <- if (year == 2000) {
+        "doi:10.7910/DVN/LV7VIX"
+    } else {
+        "doi:10.7910/DVN/SLCD3E"
+    }
+    
     dv_set <- get_dataset(dv_id)
     if (length(dv_set$files) > 0) {
         existing <- dplyr::filter(dv_set$files, str_detect(filename, slug)) |>
