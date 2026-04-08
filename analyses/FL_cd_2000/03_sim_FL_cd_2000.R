@@ -8,20 +8,20 @@ cli_process_start("Running simulations for {.pkg FL_cd_2000}")
 
 # Hinge constraints
 constraints <- redist_constr(map) %>%
-  add_constr_grp_hinge(5,  cvap_black, cvap, .45) %>%
-  add_constr_grp_hinge(-7, cvap_black, cvap, .2)  %>%
-  add_constr_grp_hinge(5,  cvap_hisp,  cvap, .55) %>%
-  add_constr_grp_hinge(-7, cvap_hisp,  cvap, .25) %>%
+  add_constr_grp_hinge(5,  vap_black, vap, .45) %>%
+  add_constr_grp_hinge(-7, vap_black, vap, .2)  %>%
+  add_constr_grp_hinge(5,  vap_hisp,  vap, .55) %>%
+  add_constr_grp_hinge(-7, vap_hisp,  vap, .25) %>%
   add_constr_grp_hinge(
     12,
-    cvap_hisp,
-    total_pop = cvap,
+    vap_hisp,
+    total_pop = vap,
     tgts_group = c(0.50)
   ) %>%
   add_constr_grp_hinge(
     12,
-    cvap_black,
-    total_pop = cvap,
+    vap_black,
+    total_pop = vap,
     tgts_group = c(0.50)
   )
 
@@ -60,10 +60,10 @@ cli_process_done()
 cli_process_start("Computing summary statistics for {.pkg FL_cd_2000}")
 
 plans <- add_summary_stats(plans, map) %>%
-  mutate(total_cvap = tally_var(map, cvap), .after = total_vap)
+  mutate(total_vap = tally_var(map, vap), .after = total_vap)
 
-cvap_cols <- names(map)[tidyselect::eval_select(starts_with("cvap_"), map)]
-for (col in rev(cvap_cols)) {
+vap_cols <- names(map)[tidyselect::eval_select(starts_with("vap_"), map)]
+for (col in rev(vap_cols)) {
   plans <- mutate(plans, {{ col }} := tally_var(map, map[[col]]), .after = vap_two)
 }
 
@@ -152,26 +152,26 @@ if (interactive()) {
   
   cpsum <- plans %>%
     group_by(draw) %>%
-    mutate(cvap_nonwhite = total_cvap - cvap_white) %>%
+    mutate(vap_nonwhite = total_vap - vap_white) %>%
     summarise(
-      all_hvap = sum((cvap_hisp/total_cvap) > 0.4),
-      all_bvap_40 = sum((cvap_black/total_cvap) > 0.4),
-      all_bvap_25 = sum((cvap_black/total_cvap) > 0.25),
-      mmd_all = sum(cvap_nonwhite/total_cvap > 0.5),
+      all_hvap = sum((vap_hisp/total_vap) > 0.4),
+      all_bvap_40 = sum((vap_black/total_vap) > 0.4),
+      all_bvap_25 = sum((vap_black/total_vap) > 0.25),
+      mmd_all = sum(vap_nonwhite/total_vap > 0.5),
       mmd_coalition = sum(((
-        cvap_hisp + cvap_black
-      )/total_cvap) > 0.5)
+        vap_hisp + vap_black
+      )/total_vap) > 0.5)
     )
   
   p8 <-
-    redist.plot.hist(cpsum, mmd_coalition) + labs(x = "HCVAP + BCVAP > 0.5", y = NULL)
+    redist.plot.hist(cpsum, mmd_coalition) + labs(x = "Hvap + Bvap > 0.5", y = NULL)
   p9 <-
-    redist.plot.hist(cpsum, all_hvap) + labs(x = "HCVAP > 0.4", y = NULL)
+    redist.plot.hist(cpsum, all_hvap) + labs(x = "Hvap > 0.4", y = NULL)
   p12 <-
-    redist.plot.hist(cpsum, all_bvap_40) + labs(x = "BCVAP > 0.4", y = NULL)
+    redist.plot.hist(cpsum, all_bvap_40) + labs(x = "Bvap > 0.4", y = NULL)
   p13 <-
-    redist.plot.hist(cpsum, all_bvap_25) + labs(x = "BCVAP > 0.25", y = NULL)
+    redist.plot.hist(cpsum, all_bvap_25) + labs(x = "Bvap > 0.25", y = NULL)
   
-  ggsave("data-raw/FL/cvap_histograms.png", p8/p9/p12/p13, height = 10)
+  ggsave("data-raw/FL/vap_histograms.png", p8/p9/p12/p13, height = 10)
   
 }
