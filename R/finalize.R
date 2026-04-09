@@ -187,6 +187,21 @@ finalize_analysis = function(state, type = "cd", year = 2020, overwrite = TRUE) 
                 attr(map_in, "existing_col") <- "cd_2000"
                 warns <- TRUE
             }
+
+            # ensure unshifted election data from ROAD
+            road_path <- str_glue(
+                "https://raw.githubusercontent.com/alarm-redist/census-2020/road/road-2000/{state}_{year}.csv"
+            )
+            
+            road_dat <- readr::read_csv(road_path, show_col_types = FALSE) |>
+            dplyr::select(GEOID, ndv, nrv)
+            
+            map_in <- map_in |>
+            dplyr::select(-dplyr::any_of(c("ndv", "nrv"))) |>
+            dplyr::left_join(road_dat, by = "GEOID")
+            
+            warns <- TRUE
+            
             if (warns && overwrite) {
                 cli::cli_alert_warning("Updating {.cls redist_map} file.")
                 readr::write_rds(map_in, path_map, compress = "xz")
