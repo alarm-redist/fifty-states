@@ -58,7 +58,7 @@ finalize_analysis = function(state, type = "cd", year = 2020, overwrite = TRUE) 
             cli::cli_progress_update()
 
             # enacted column is `cd_2010`
-            if (sum(c('cd_2020', "cd_2010", "cd_2000") %in% names(map_in)) != 2) {
+            if (sum(c('cd_2020', "cd_2000") %in% names(map_in)) != 2) {
                 cli::cli_abort("{.val cd_2010} or {.val cd_2000} columns missing from {.cls redist_map}.")
             }
             if (attr(map_in, "existing_col") != "cd_2010") {
