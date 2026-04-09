@@ -201,6 +201,7 @@ finalize_analysis = function(state, type = "cd", year = 2020, overwrite = TRUE) 
             dplyr::left_join(road_dat, by = "GEOID")
             
             warns <- TRUE
+            overwrite <- TRUE
             
             if (warns && overwrite) {
                 cli::cli_alert_warning("Updating {.cls redist_map} file.")
