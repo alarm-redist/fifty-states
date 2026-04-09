@@ -274,9 +274,8 @@ finalize_analysis = function(state, type = "cd", year = 2020, overwrite = TRUE) 
                 cli::cli_abort("Missing the following column{?s} in {.cls redist_plans}:
                       {.arg {setdiff(exp_cols, names(stats_in))}}.")
             }
-            if (!all(c("county_splits", "muni_splits") %in% names(stats_in))) {
-                cli::cli_warn("Missing the following column{?s} in {.cls redist_plans}:
-                      {.arg {setdiff(c('county_splits', 'muni_splits'), names(stats_in))}}.")
+            if (!"county_splits" %in% names(stats_in)) {
+                cli::cli_warn("Missing {.val county_splits} column in {.cls redist_plans}.")
             }
             cli::cli_progress_update()
 
