@@ -392,10 +392,12 @@ quality_control <- function(state, type = "cd", year = 2020, make_valid = FALSE,
     )
     utils::browseURL(wiki_url)
 
-    aar_url <- stringr::str_glue(
-        'https://redistricting.lls.edu/state/{stringr::str_replace(tools::toTitleCase(state_name), " ", "-")}/?cycle={year}&level=Congress'
-    )
-    utils::browseURL(aar_url)
+    if (year %in% c(2010, 2020)) {
+        aar_url <- stringr::str_glue(
+            'https://redistricting.lls.edu/state/{stringr::str_replace(tools::toTitleCase(state_name), " ", "-")}/?cycle={year}&level=Congress'
+        )
+        utils::browseURL(aar_url)
+    }
 
     if (!local) {
         # also browse the github
