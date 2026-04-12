@@ -6,20 +6,10 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg ID_cd_1990}")
 
-#  - For many districts / tighter population tolerances, try setting
-#  `pop_temper=0.01` and nudging upward from there. Monitor the output for
-#  efficiency!
-#  - Monitor the output (i.e. leave `verbose=TRUE`) to ensure things aren't breaking
-#  - Don't change the number of simulations unless you have a good reason
-#  - If the sampler freezes, try turning off the county split constraint to see
-#  if that's the problem.
-#  - Ask for help!
 set.seed(1990)
 
 
 plans <- redist_smc(map, nsims = 2e3, runs = 5, counties = county)
-# IF CORES OR OTHER UNITS HAVE BEEN MERGED:
-# make sure to call `pullback()` on this plans object!
 
 plans <- plans |>
     group_by(chain) |>
@@ -52,4 +42,3 @@ if (interactive()) {
     validate_analysis(plans, map)
     summary(plans)
 }
-
