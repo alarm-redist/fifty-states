@@ -92,6 +92,29 @@ if (interactive()) {
     labs(title = "Partisanship of seats by BVAP rank") +
     scale_color_manual(values = c(cd_2000 = "black"))
 
+
+  redist.plot.distr_qtys(
+    plans, vap_black/total_vap,
+    color_thresh = NULL,
+    color = ifelse(
+      subset_sampled(plans)$ndv > subset_sampled(plans)$nrv,
+      "#3D77BB", "#B25D4C"),
+    size = 0.5, alpha = 0.5) +
+    scale_y_continuous("Percent Black by VAP") +
+    labs(title = "Partisanship of seats by BVAP rank") +
+    scale_color_manual(values = c(cd_1990 = "black"))
+
+  redist.plot.distr_qtys(
+    plans, vap_hisp/total_vap,
+    color_thresh = NULL,
+    color = ifelse(
+      subset_sampled(plans)$ndv > subset_sampled(plans)$nrv,
+      "#3D77BB", "#B25D4C"),
+    size = 0.5, alpha = 0.5) +
+    scale_y_continuous("Percent Hispanic by VAP") +
+    labs(title = "Partisanship of seats by HVAP rank") +
+    scale_color_manual(values = c(cd_1990 = "black"))
+
   # Dem seats by BVAP rank -- numeric
   plans %>%
     group_by(draw) %>%
