@@ -30,7 +30,7 @@ sampling_space_val <- tryCatch(getFromNamespace("LINKING_EDGE_SPACE", "redist"),
 
 set.seed(2000)
 plans <- redist_smc(
-  map, nsims = 1200, runs = 5,
+  map, nsims = 1000, runs = 5,
   counties = pseudo_county,
   constraints = constraints,
   pop_temper = 0.05, seq_alpha = 0.95,
