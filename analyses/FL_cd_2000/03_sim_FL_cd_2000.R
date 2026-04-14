@@ -30,10 +30,10 @@ sampling_space_val <- tryCatch(getFromNamespace("LINKING_EDGE_SPACE", "redist"),
 
 set.seed(2000)
 plans <- redist_smc(
-  map, nsims = 1000, runs = 5,
+  map, nsims = 2000, runs = 5,
   counties = pseudo_county,
   constraints = constraints,
-  pop_temper = 0.05, seq_alpha = 0.95,
+  pop_temper = 0.05, seq_alpha = 1,
   sampling_space = sampling_space_val,
   ms_params = list(frequency = 1L, mh_accept_per_smc = 65),
   split_params = list(splitting_schedule = "any_valid_sizes"),
