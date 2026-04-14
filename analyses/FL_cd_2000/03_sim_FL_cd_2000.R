@@ -37,7 +37,8 @@ plans <- redist_smc(
   sampling_space = sampling_space_val,
   ms_params = list(frequency = 1L, mh_accept_per_smc = 65),
   split_params = list(splitting_schedule = "any_valid_sizes"),
-  verbose = T
+  verbose = T,
+  ncores = 112
 )
 
 plans <- plans %>% filter(draw != "cd_2000") %>%
