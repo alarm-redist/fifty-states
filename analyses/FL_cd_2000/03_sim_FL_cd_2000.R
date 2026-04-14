@@ -142,7 +142,13 @@ if (interactive()) {
     summarize(n_black_perf = sum(vap_black/total_vap > 0.3 & ndshare > 0.5)) %>%
     count(n_black_perf)
 
+  # Total Hispanic districts that are performing
   plans %>%
+    subset_sampled() %>%
+    group_by(draw) %>%
+    summarize(n_hisp_perf = sum(vap_hisp/total_vap > 0.3 & ndshare > 0.5)) %>%
+    count(n_hisp_perf)
+
   ## VAP charts
   d1 <- redist.plot.distr_qtys(
     plans,
