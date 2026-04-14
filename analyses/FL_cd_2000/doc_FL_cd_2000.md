@@ -19,7 +19,7 @@ Data for Florida comes from the [ALARM Project's update](https://dataverse.harva
 We estimate CVAP populations with the [cvap](https://github.com/christopherkenny/cvap) R package.
 
 ## Simulation Notes
-We sample 6,000 districting plans for Florida across 5 independent runs of the SMC algorithm.
+We sample 10,000 districting plans for Florida across 5 independent runs of the SMC algorithm.
 We then thinned the number of samples to 5,000.
 We use a pseudo-county constraint to limit the county and municipality splits.
 We also use new algorithmic mergesplit parameters to improve mixing.
