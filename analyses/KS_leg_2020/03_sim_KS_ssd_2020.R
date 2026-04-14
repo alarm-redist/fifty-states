@@ -8,11 +8,17 @@ cli_process_start("Running simulations for {.pkg KS_ssd_2020}")
 
 set.seed(2020)
 
-mh_accept_per_smc <- ceiling(n_distinct(map_ssd$ssd_2020)/3)
+mh_accept_per_smc <- ceiling(n_distinct(map_ssd$ssd_2020)/3) + 20
+
+# County splits constraints
+constr <- redist_constr(map_ssd)
+constr <- add_constr_splits(constr, strength = 2, admin = county)
+constr <- add_constr_total_splits(constr, strength = 2, admin = county)
+
 
 plans <- redist_smc(
     map_ssd,
-    nsims = 2e3, runs = 5,
+    nsims = 2e3, runs = 5, ncores = 15L,
     counties = pseudo_county,
     sampling_space = "linking_edge",
     ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
