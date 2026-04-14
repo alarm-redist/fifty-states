@@ -125,6 +125,16 @@ if (interactive()) {
     group_by(bvap_rank) %>%
     summarize(dem = mean(dem))
 
+  # Dem seats by HVAP rank -- numeric
+  plans %>%
+    group_by(draw) %>%
+    mutate(hvap = vap_hisp/total_vap, hvap_rank = rank(hvap)) %>%
+    subset_sampled() %>%
+    select(draw, district, hvap, hvap_rank, ndv, nrv) %>%
+    mutate(dem = ndv > nrv) %>%
+    group_by(hvap_rank) %>%
+    summarize(dem = mean(dem))
+
   # Total Black districts that are performing
   plans %>%
     subset_sampled() %>%
@@ -132,6 +142,7 @@ if (interactive()) {
     summarize(n_black_perf = sum(vap_black/total_vap > 0.3 & ndshare > 0.5)) %>%
     count(n_black_perf)
 
+  plans %>%
   ## VAP charts
   d1 <- redist.plot.distr_qtys(
     plans,
