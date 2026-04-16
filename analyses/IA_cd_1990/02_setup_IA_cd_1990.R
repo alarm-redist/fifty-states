@@ -6,7 +6,7 @@
 cli_process_start("Creating {.cls redist_map} object for {.pkg IA_cd_1990}")
 # pop tol set lower because of no county split constraints
 map <- redist_map(ia_shp, pop_tol = 0.0001,
-                  existing_plan = cd_1990, adj = ia_shp$adj)
+    existing_plan = cd_1990, adj = ia_shp$adj)
 
 # Add an analysis name attribute
 attr(map, "analysis_name") <- "IA_1990"

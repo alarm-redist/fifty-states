@@ -4,15 +4,15 @@
 ###############################################################################
 
 suppressMessages({
-  library(dplyr)
-  library(readr)
-  library(sf)
-  library(redist)
-  library(geomander)
-  library(baf)
-  library(cli)
-  library(here)
-  devtools::load_all() # load utilities
+    library(dplyr)
+    library(readr)
+    library(sf)
+    library(redist)
+    library(geomander)
+    library(baf)
+    library(cli)
+    library(here)
+    devtools::load_all() # load utilities
 })
 
 # Download necessary files for analysis -----
@@ -27,44 +27,44 @@ shp_path <- "data-out/IA_1990/shp_vtd.rds"
 perim_path <- "data-out/IA_1990/perim.rds"
 
 if (!file.exists(here(shp_path))) {
-  cli_process_start("Preparing {.strong IA} shapefile")
-  # read in redistricting data
-  ia_shp <- read_csv(here(path_data), col_types = cols(GEOID = "c")) %>%
-    mutate(state = as.character(state)) %>%
-    join_vtd_shapefile(year = 1990) %>%
-    st_transform(EPSG$IA)
+    cli_process_start("Preparing {.strong IA} shapefile")
+    # read in redistricting data
+    ia_shp <- read_csv(here(path_data), col_types = cols(GEOID = "c")) %>%
+        mutate(state = as.character(state)) %>%
+        join_vtd_shapefile(year = 1990) %>%
+        st_transform(EPSG$IA)
 
-  ia_shp <- ia_shp %>%
-    rename(muni = place) %>%
-    mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
-    relocate(muni, county_muni, cd_1980, .after = county)
+    ia_shp <- ia_shp %>%
+        rename(muni = place) %>%
+        mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
+        relocate(muni, county_muni, cd_1980, .after = county)
 
-  # group by county to avoid county splits
-  ia_shp <- ia_shp %>%
-    group_by(state, county) %>%
-    summarize(cd_1980 = cd_1980[1],
-              cd_1990 = cd_1990[1],
-              across(pop:nrv, sum)) %>%
-    ungroup()
+    # group by county to avoid county splits
+    ia_shp <- ia_shp %>%
+        group_by(state, county) %>%
+        summarize(cd_1980 = cd_1980[1],
+            cd_1990 = cd_1990[1],
+            across(pop:nrv, sum)) %>%
+        ungroup()
 
-  # Create perimeters in case shapes are simplified
-  redistmetrics::prep_perims(shp = ia_shp,
-                             perim_path = here(perim_path)) %>%
-    invisible()
+    # Create perimeters in case shapes are simplified
+    redistmetrics::prep_perims(shp = ia_shp,
+        perim_path = here(perim_path)) %>%
+        invisible()
 
-  # simplifies geometry for faster processing, plotting, and smaller shapefiles
-  if (requireNamespace("rmapshaper", quietly = TRUE)) {
-    ia_shp <- rmapshaper::ms_simplify(ia_shp, keep = 0.05,
-                                      keep_shapes = TRUE) %>%
-      suppressWarnings()
-  }
+    # simplifies geometry for faster processing, plotting, and smaller shapefiles
+    if (requireNamespace("rmapshaper", quietly = TRUE)) {
+        ia_shp <- rmapshaper::ms_simplify(ia_shp, keep = 0.05,
+            keep_shapes = TRUE) %>%
+            suppressWarnings()
+    }
 
-  # create adjacency graph
-  ia_shp$adj <- redist.adjacency(ia_shp)
+    # create adjacency graph
+    ia_shp$adj <- redist.adjacency(ia_shp)
 
-  write_rds(ia_shp, here(shp_path), compress = "gz")
-  cli_process_done()
+    write_rds(ia_shp, here(shp_path), compress = "gz")
+    cli_process_done()
 } else {
-  ia_shp <- read_rds(here(shp_path))
-  cli_alert_success("Loaded {.strong IA} shapefile")
+    ia_shp <- read_rds(here(shp_path))
+    cli_alert_success("Loaded {.strong IA} shapefile")
 }
