@@ -22,7 +22,7 @@ map <- read_rds(here("data-out/IA_1990/IA_cd_1990_map.rds"))
 cli_process_start("Running simulations for {.pkg IA_cd_1990}")
 set.seed(1990)
 plans <- redist_smc(
-    map, nsims = 5000, runs = 5,
+    map, nsims = 2500, runs = 10,
     pop_temper = 0.05, seq_alpha = 1,
     # sampling_space = sampling_space_val,
     ms_params = list(frequency = 1L, mh_accept_per_smc = 70),
@@ -33,7 +33,7 @@ plans <- redist_smc(
 
 plans <- plans %>% filter(draw != "cd_1990") %>%
     group_by(chain) %>%
-    filter(as.integer(draw) < min(as.integer(draw)) + 1000) %>% # thin samples
+    filter(as.integer(draw) < min(as.integer(draw)) + 500) %>% # thin samples
     ungroup()
 
 plans <- plans %>% add_reference(ref_plan = map$cd_1990)
