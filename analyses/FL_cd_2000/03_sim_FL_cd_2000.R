@@ -25,9 +25,6 @@ constraints <- redist_constr(map) %>%
         tgts_group = c(0.50)
     )
 
-sampling_space_val <- tryCatch(getFromNamespace("LINKING_EDGE_SPACE", "redist"),
-    error = function(e) "linking_edge")
-
 set.seed(2000)
 plans <- redist_smc(
     map, nsims = 2000, runs = 5,
