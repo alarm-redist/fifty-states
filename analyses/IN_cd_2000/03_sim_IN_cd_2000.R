@@ -8,8 +8,6 @@ cli_process_start("Running simulations for {.pkg IN_cd_2000}")
 
 set.seed(2000)
 plans <- redist_smc(map, nsims = 2e3, runs = 5, counties = county)
-# IF CORES OR OTHER UNITS HAVE BEEN MERGED:
-# make sure to call `pullback()` on this plans object!
 
 plans <- plans %>%
     group_by(chain) %>%
@@ -19,8 +17,6 @@ plans <- match_numbers(plans, "cd_2000")
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
-
-# add any reference plans that aren't already included
 
 # Output the redist_map object. Do not edit this path.
 write_rds(plans, here("data-out/IN_2000/IN_cd_2000_plans.rds"), compress = "xz")
