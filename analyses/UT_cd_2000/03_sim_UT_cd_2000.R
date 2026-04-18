@@ -8,7 +8,7 @@ if (interactive()) {
     cli_process_start("Running simulations for {.pkg UT_cd_2000}")
 
     set.seed(2000)
-    plans <- redist_smc(map, nsims = 2e3, runs = 5, counties = pseudo_county)
+    plans <- redist_smc(map, nsims = 2e3, runs = 5, counties = county)
     plans <- plans %>%
         group_by(chain) %>%
         filter(as.integer(draw) < min(as.integer(draw)) + 1000) %>% # thin samples
