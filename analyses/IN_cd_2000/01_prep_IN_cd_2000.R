@@ -29,7 +29,6 @@ if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong IN} shapefile")
     # read in redistricting data
     in_shp <- read_csv(here(path_data), col_types = cols(GEOID = "c")) %>%
-        # If the state is not at the VTD-level, swap in a `tinytiger::tt_*` function
         join_vtd_shapefile(year = 2000) %>%
         st_transform(EPSG$IN)
 
@@ -38,17 +37,12 @@ if (!file.exists(here(shp_path))) {
         mutate(muni = as.character(muni), county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_1990, .after = county)
 
-    # any additional columns or data you want to add should go here
-    # add a stronger county constraint
-
-
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = in_shp,
         perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         in_shp <- rmapshaper::ms_simplify(in_shp, keep = 0.05,
             keep_shapes = TRUE) %>%
@@ -57,8 +51,6 @@ if (!file.exists(here(shp_path))) {
 
     # create adjacency graph
     in_shp$adj <- redist.adjacency(in_shp)
-
-    # any custom adjacency graph edits here
 
     in_shp <- in_shp %>%
         fix_geo_assignment(muni)
