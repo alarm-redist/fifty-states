@@ -193,7 +193,7 @@ finalize_analysis = function(state, type = "cd", year = 2020, overwrite = TRUE) 
                 "https://raw.githubusercontent.com/alarm-redist/census-2020/road/road-2000/{state}_{year}.csv"
             )
             
-            road_dat <- readr::read_csv(road_path, show_col_types = FALSE) |>
+            road_dat <- readr::read_csv(road_path, col_types = readr::cols(GEOID = readr::col_character()), show_col_types = FALSE) |>
             dplyr::select(GEOID, ndv, nrv)
             
             map_in <- map_in |>
