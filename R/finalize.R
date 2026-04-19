@@ -258,17 +258,18 @@ finalize_analysis = function(state, type = "cd", year = 2020, overwrite = TRUE) 
       }
       cli::cli_progress_update()
       
-      map_cols <- setdiff(
-        names(map_in)[grepl("^(pop|vap|pre|uss|gov|atg|sos)", names(map_in))],
-        c(
-          "GEOID", "state", "county", "muni", "county_muni", "cd_2000",
-          "cd_1990", "vtd", "pop", "vap", "area_land", "area_water", "adj",
-          "geometry", "pseudo_county"
-        )
+      map_cols <- setdiff(names(map_in)[map_in |>
+                                          dplyr::as_tibble() |>
+                                          tidyselect::eval_select(dplyr::starts_with(c(
+                                            'pop', 'vap', 'pre', 'uss', 'gov', 'atg', 'sos'
+                                          )), .)], c(
+                                            "GEOID", "state", "county", "muni", "county_muni", "cd_2000",
+                                            "cd_1990", "vtd", "pop", "vap", "area_land", "area_water", "adj",
+                                            "geometry", "pseudo_county")
       )
       exp_cols <- c("pop_overlap", "total_vap", "plan_dev", "comp_edge",
                     "comp_polsby", map_cols,
-                    "ndshare")
+                    "ndshare", "e_dvs", "pr_dem", "e_dem", "pbias", "egap")
       if (!all(exp_cols %in% names(stats_in))) {
         cli::cli_abort("Missing the following column{?s} in {.cls redist_plans}:
                       {.arg {setdiff(exp_cols, names(stats_in))}}.")
@@ -391,10 +392,12 @@ quality_control <- function(state, type = "cd", year = 2020, make_valid = FALSE,
   )
   utils::browseURL(wiki_url)
   
-  aar_url <- stringr::str_glue(
-    'https://redistricting.lls.edu/state/{stringr::str_replace(tools::toTitleCase(state_name), " ", "-")}/?cycle={year}&level=Congress'
-  )
-  utils::browseURL(aar_url)
+  if (year %in% c(2010, 2020)) {
+    aar_url <- stringr::str_glue(
+      'https://redistricting.lls.edu/state/{stringr::str_replace(tools::toTitleCase(state_name), " ", "-")}/?cycle={year}&level=Congress'
+    )
+    utils::browseURL(aar_url)
+  }
   
   if (!local) {
     # also browse the github
