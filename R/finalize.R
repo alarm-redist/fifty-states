@@ -339,8 +339,8 @@ pub_dataverse = function(slug, path_map, path_plans, path_stats) {
     
     dv_set <- get_dataset(dv_id)
     if (length(dv_set$files) > 0) {
-        existing <- dplyr::filter(dv_set$files, str_detect(filename, slug)) |>
-            dplyr::arrange(filename)
+        existing <- dv_set$files[grepl(slug, dv_set$files$filename), ]
+        existing <- existing[order(existing$filename), ]
     } else {
         existing = data.frame()
     }
