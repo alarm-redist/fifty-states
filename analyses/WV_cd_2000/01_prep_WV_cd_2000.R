@@ -55,7 +55,6 @@ if (!file.exists(here(shp_path))) {
         left_join(wv_df_cnty %>% mutate(county = sprintf("%03s", county)),
             by = "county")
 
-    # Assign each county the most frequent cd_2000 from its VTDs
     # Function to calculate mode
     stat_mode <- function(x) {
         ux <- na.omit(unique(x))
