@@ -43,13 +43,13 @@ if (!file.exists(here(shp_path))) {
         )
 
     cnty_sf <- tt_counties("WV", year = 2000) %>%
-    st_transform(EPSG$WV) %>%
-    transmute(
-      county = sprintf("%03s", COUNTYFP00),
-      GEOID = paste0("54", sprintf("%03s", COUNTYFP00)),
-      state = "WV",
-      geometry
-    )
+        st_transform(EPSG$WV) %>%
+        transmute(
+            county = sprintf("%03s", COUNTYFP00),
+            GEOID = paste0("54", sprintf("%03s", COUNTYFP00)),
+            state = "WV",
+            geometry
+        )
 
     wv_shp <- cnty_sf %>%
         left_join(wv_df_cnty %>% mutate(county = sprintf("%03s", county)),
@@ -63,17 +63,17 @@ if (!file.exists(here(shp_path))) {
 
     # Mode district assignments per county from original VTD-level data
     county_cds <- wv_df %>%
-    mutate(county = sprintf("%03s", county)) %>%
-    group_by(county) %>%
-    summarise(
-        cd_1990 = stat_mode(cd_1990),
-        cd_2000 = stat_mode(cd_2000),
-        .groups = "drop"
-    )
+        mutate(county = sprintf("%03s", county)) %>%
+        group_by(county) %>%
+        summarise(
+            cd_1990 = stat_mode(cd_1990),
+            cd_2000 = stat_mode(cd_2000),
+            .groups = "drop"
+        )
 
     # Join district assignments back to county-level shapefile
     wv_shp <- wv_shp %>%
-    left_join(county_cds, by = "county")
+        left_join(county_cds, by = "county")
 
     # Drop unwanted columns if present
     wv_shp <- wv_shp %>% select(-any_of(c("mcd", "shd", "ssd")))
