@@ -291,6 +291,150 @@ finalize_analysis = function(state, type = "cd", year = 2020, overwrite = TRUE) 
 
             cli::cli_progress_done()
         } # end year 2000 checks
+
+        # 1990 checks!
+        if (year == 1990) {
+            cli::cli_progress_bar("Performing automatic checks", total = 6)
+            # Map checks `n = 2` ----
+            map_in <- readr::read_rds(path_map)
+            warns <- FALSE
+
+            # state column is state abb
+            if (!"state" %in% names(map_in)) {
+                cli::cli_warn("{.val state} column missing from {.cls redist_map}.")
+                map_in$state <- censable::match_abb(state)
+                map_in <- dplyr::relocate(map_in, "state", .after = "GEOID")
+                warns <- TRUE
+            }
+            if (map_in$state[1] != censable::match_abb(map_in$state[1])) {
+                cli::cli_warn("State column is not the state abbreviation in {.cls redist_map}.")
+                map_in$state <- censable::match_abb(map_in$state[1])
+                warns <- TRUE
+            }
+            cli::cli_progress_update()
+
+            # enacted column is `cd_1990`
+            if (sum(c("cd_1990", "cd_1980") %in% names(map_in)) != 2) {
+                cli::cli_abort("{.val cd_1990} or {.val cd_1980} columns missing from {.cls redist_map}.")
+            }
+            if (attr(map_in, "existing_col") != "cd_1990") {
+                cli::cli_warn("{.code attr(map, \"existing_col\")} is not {.val cd_1990}.")
+                attr(map_in, "existing_col") <- "cd_1990"
+                warns <- TRUE
+            }
+
+            # ensure unshifted election data from ROAD
+            road_path <- str_glue(
+                "https://raw.githubusercontent.com/alarm-redist/census-2020/road/road-1990/{state}_{year}.csv"
+            )
+
+            road_dat <- readr::read_csv(
+                road_path,
+                col_types = readr::cols(GEOID = readr::col_character()),
+                show_col_types = FALSE
+            ) |>
+                dplyr::select(GEOID, ndv, nrv)
+
+            map_in <- map_in |>
+                dplyr::select(-dplyr::any_of(c("ndv", "nrv"))) |>
+                dplyr::left_join(road_dat, by = "GEOID")
+
+            warns <- TRUE
+            overwrite <- TRUE
+
+            if (warns && overwrite) {
+                cli::cli_alert_warning("Updating {.cls redist_map} file.")
+                readr::write_rds(map_in, path_map, compress = "xz")
+            }
+            cli::cli_progress_update()
+
+            # Plans checks `n = 3` ----
+            plans_in <- readr::read_rds(path_plans)
+            warns <- FALSE
+
+            # correct dimension for plans matrix
+            if (ncol(get_plans_matrix(plans_in)) != 5001) {
+                cli::cli_abort("{.cls redist_plans} for {state} contains the wrong number of sampled and/or reference plans.")
+            }
+
+            # plans has the enacted plan
+            if (!any(redist::subset_ref(plans_in)$draw == "cd_1990")) {
+                cli::cli_abort("{.cls redist_plans} does not have {.val cd_1990} as a reference plan.")
+            }
+
+            # plans has the right columns
+            if (length(names(plans_in)) > 5) {
+                cli::cli_warn("{.cls redist_plans} has too many columns.")
+                plans_in <- plans_in |>
+                    dplyr::select(dplyr::any_of(c("draw", "district", "total_pop", "chain", "pop_overlap")))
+            }
+            if (!all(c("draw", "district", "total_pop", "chain", "pop_overlap") %in% names(plans_in))) {
+                cli::cli_abort("{.cls redist_plans} is missing columns.")
+            }
+            cli::cli_progress_update()
+
+            if (warns && overwrite) {
+                cli::cli_alert_warning("Updating {.cls redist_plans} file.")
+                readr::write_rds(plans_in, path_plans, compress = "xz")
+            }
+            cli::cli_progress_update()
+
+            # Stats checks `n = 3` ----
+            stats_in <- readr::read_csv(path_stats, show_col_types = FALSE)
+            warns <- FALSE
+
+            # plans has no columns with .x suffix
+            if (any(endsWith(names(stats_in), ".x"))) {
+                stats_in <- dplyr::select(stats_in, -dplyr::ends_with(".x"))
+                cli::cli_warn("{.val stats} file contains columns with `.x`.")
+                warns <- TRUE
+            }
+            # plans has no columns with .y suffix
+            if (any(endsWith(names(stats_in), ".y"))) {
+                stats_in <- dplyr::rename_with(
+                    stats_in,
+                    function(x) stringr::str_sub(x, 1, -3),
+                    dplyr::ends_with(".y")
+                )
+                cli::cli_warn("{.val stats} file contains columns with `.y`.")
+                warns <- TRUE
+            }
+            cli::cli_progress_update()
+
+            map_cols <- setdiff(
+                names(map_in)[grepl("^(pop|vap|pre|uss|gov|atg|sos)", names(map_in))],
+                c(
+                    "GEOID", "state", "county", "muni", "county_muni", "cd_1990",
+                    "cd_1980", "vtd", "pop", "vap", "area_land", "area_water", "adj",
+                    "geometry", "pseudo_county"
+                )
+            )
+            exp_cols <- c(
+                "pop_overlap", "total_vap", "plan_dev", "comp_edge",
+                "comp_polsby", map_cols, "ndshare"
+            )
+            if (!all(exp_cols %in% names(stats_in))) {
+                cli::cli_abort("Missing the following column{?s} in {.cls redist_plans}:
+                      {.arg {setdiff(exp_cols, names(stats_in))}}.")
+            }
+            if (!"county_splits" %in% names(stats_in)) {
+                cli::cli_warn("Missing {.val county_splits} column in {.cls redist_plans}.")
+            }
+            cli::cli_progress_update()
+
+            # plans has no NAs
+            nas <- vapply(stats_in, \(x) sum(is.na(x)), integer(1))
+            if (sum(nas[-which(names(nas) == "chain")] > 0)) {
+                cli::cli_warn("{.val stats} file contains {.cls NA} values. Please verify that this is correct.")
+            }
+
+            if (warns && overwrite) {
+                cli::cli_alert_warning("Updating {.val stats} file.")
+                readr::write_csv(stats_in, path_stats)
+            }
+
+            cli::cli_progress_done()
+        } # end year 1990 checks
     }) # end withr
     if (utils::askYesNo('After reading any warnings in the console, do you want to continue?')) {
         cli::cli_process_start("Uploading {.pkg {slug}} to the dataverse")
@@ -331,7 +475,9 @@ pub_dataverse = function(slug, path_map, path_plans, path_stats) {
     setwd(cur_dir)
 
     year <- as.integer(stringr::str_extract(slug, "\\d{4}"))
-    dv_id <- if (year == 2000) {
+    dv_id <- if (year == 1990) {
+        "doi:10.7910/DVN/1990_DOI" # TODO: replace once the 1990 Dataverse dataset is created
+    } else if (year == 2000) {
         "doi:10.7910/DVN/LV7VIX"
     } else {
         "doi:10.7910/DVN/SLCD3E"
@@ -377,12 +523,13 @@ doc_render <- function(slug) {
 #' @param state the state abbreviation for the analysis, e.g. `WA`.
 #' @param type the type of districts: `cd`, `ssd`, or `shd`.
 #' @param year the analysis year
-#' @param make_valid should it run `sf::st_make_valid()` on the map? Default is `FALSE`.
+#' @param make_valid should it run `sf::st_make_valid()` on the map? Defaults to `TRUE` for 1990 and `FALSE` otherwise.
 #' @param local are the files saved on your computer? Default is `FALSE`.
 #'
 #' @returns a ggplot of a numbered map
 #' @export
-quality_control <- function(state, type = "cd", year = 2020, make_valid = FALSE, local = FALSE) {
+quality_control <- function(state, type = "cd", year = 2020,
+                            make_valid = as.integer(year) == 1990, local = FALSE) {
 
     # there isn't a consistent figure name for the 2010/2020 map names, so just open the general page
     state_name <- censable::match_name(state)
