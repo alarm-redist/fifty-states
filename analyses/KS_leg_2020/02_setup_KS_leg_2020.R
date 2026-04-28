@@ -17,6 +17,7 @@ map_ssd <- map_ssd |>
 map_shd <- map_shd |>
     mutate(pseudo_county = pick_county_muni(map_shd, counties = county, munis = muni,
         pop_muni = 3.5*get_target(map_shd)))
+
 # IF MERGING CORES OR OTHER UNITS:
 # make a new `map_cores` object that is merged & used for simulating. You can set `drop_geom=TRUE` for this.
 

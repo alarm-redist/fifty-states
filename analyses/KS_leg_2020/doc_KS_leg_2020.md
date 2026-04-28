@@ -21,8 +21,8 @@ No manual pre-processing decisions were necessary.
 ## Simulation Notes
 We generated an ensemble of plans for the Kansas State House using the merge-split SMC sampler. We ran 5 independent chains with 2,000 simulated plans per run. 
 We tuned the MCMC parameters so that each run accepted about 102 merge-split proposals on average. 
-We constructed pseudo-counties using `pick_county_muni()` with `pop_muni = 3.5 * get_target(map_shd)`, and we added split and total-split constraints during sampling.
+We constructed pseudo-counties using `pick_county_muni()` with `pop_muni = 3.5 * get_target(map_shd)`.
 
 We generated an ensemble of plans for the Kansas State Senate using the merge-split SMC sampler. We ran 5 independent chains with 2,000 simulated plans per run. 
 We tuned the MCMC parameters so that each run accepted about 34 merge-split proposals on average. 
-We constructed pseudo-counties using `pick_county_muni()` with `pop_muni = 3.5 * get_target(map_ssd)`, and we added split and total-split constraints during sampling.
+We constructed pseudo-counties using `pick_county_muni()` with `pop_muni = 3.5 * get_target(map_ssd)`.
