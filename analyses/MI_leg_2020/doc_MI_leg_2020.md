@@ -28,3 +28,4 @@ We constructed pseudo-counties using `pick_county_muni()` with `pop_muni = 3.5 *
 We generated an ensemble of plans for the Kansas State Senate using the merge-split SMC sampler. We ran 5 independent chains with 2,000 simulated plans per run.
 We tuned the MCMC parameters so that each run accepted about 24 merge-split proposals on average.
 We constructed pseudo-counties using `pick_county_muni()` with `pop_muni = 3.5 * get_target(map_ssd)`.
+We added a soft total municipality-splits constraint during sampling using `add_constr_total_splits()` with `strength = 0.5` and `admin = muni_constr`.
