@@ -8,9 +8,7 @@ cli_process_start("Running simulations for {.pkg MI_shd_2020}")
 
 set.seed(2020)
 
-# TODO set equal to one third of number of districts, increase by 10-15 if no convergence
-mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3) + 15
-
+mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3) + 40
 plans <- redist_smc(
     map_shd,
     nsims = 2e3, runs = 5, ncores = 15L,

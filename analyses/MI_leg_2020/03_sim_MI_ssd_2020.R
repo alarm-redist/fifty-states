@@ -1,6 +1,6 @@
 ###############################################################################
 # Simulate plans for `MI_ssd_2020` SSD
-# © ALARM Project,January 2026
+# © ALARM Project, January 2026
 ###############################################################################
 
 # Run the simulation -----
@@ -8,7 +8,7 @@ cli_process_start("Running simulations for {.pkg MI_ssd_2020}")
 
 set.seed(2020)
 
-mh_accept_per_smc <- ceiling(n_distinct(map_ssd$ssd_2020)/3)
+mh_accept_per_smc <- ceiling(n_distinct(map_ssd$ssd_2020)/3) + 10
 
 plans <- redist_smc(
     map_ssd,

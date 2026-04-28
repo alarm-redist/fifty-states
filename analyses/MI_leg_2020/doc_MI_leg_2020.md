@@ -21,8 +21,10 @@ Data for Michigan comes from the ALARM Project's [2020 Redistricting Data Files]
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 10,000 districting plans for Michigan's lower house across 5 independent runs of the SMC algorithm.
-To ensure chain convergence for this 110-district simulation, we tune the MCMC parameters such that each run of merge-split should accept 52 changes, on average.
+We generated an ensemble of plans for the Kansas State House using the merge-split SMC sampler. We ran 5 independent chains with 2,000 simulated plans per run.
+We tuned the MCMC parameters so that each run accepted about 82 merge-split proposals on average.
+We constructed pseudo-counties using `pick_county_muni()` with `pop_muni = 3.5 * get_target(map_shd)`.
 
-We sample 10,000 districting plans for Michigan's upper house across 5 independent runs of the SMC algorithm.
-No special techniques were needed to produce the sample.
+We generated an ensemble of plans for the Kansas State Senate using the merge-split SMC sampler. We ran 5 independent chains with 2,000 simulated plans per run.
+We tuned the MCMC parameters so that each run accepted about 24 merge-split proposals on average.
+We constructed pseudo-counties using `pick_county_muni()` with `pop_muni = 3.5 * get_target(map_ssd)`.
