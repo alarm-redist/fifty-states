@@ -22,6 +22,11 @@ export REDIST_NCORES="${SLURM_CPUS_PER_TASK:-112}"
 export ALARMDATA_RETRIES=5
 export ALARMDATA_RETRY_WAIT=30
 
+module load R
+
+which Rscript
+Rscript --version
+
 Rscript - <<'RSCRIPT'
 analysis <- Sys.getenv("ANALYSIS")
 repo <- Sys.getenv("REPO")
