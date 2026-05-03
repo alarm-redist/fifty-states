@@ -6,161 +6,23 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg FL_cd_2010}")
 
-set.seed(2010)
+sampling_space_val <- tryCatch(
+    getFromNamespace("LINKING_EDGE_SPACE", "redist"),
+    error = function(e) "linking_edge"
+)
 
-# Global settings
-cluster_tol <- .005
-nsims_south <- 60000
-nsims_north <- 40000
-nsims <- 35000
-
-map$row_num <- 1:nrow(map)
-
-# South Florida
-
-map_south <- map %>% filter(section == "South")
-
-attr(map_south, "pop_bounds") <- attr(map, "pop_bounds")
-
-map_south <- set_pop_tol(map_south, cluster_tol)
-
-map <- map %>%
-    mutate(cluster_edge = ifelse(row_num %in% map_south$row_num, 1, 0))
-
-z <- geomander::seam_geom(map$adj, map, admin = "cluster_edge", seam = c(0, 1))
-
-z <- z[z$cluster_edge == 1, ]
-
-map_south$cluster_edge <- map_south$row_num %in% z$row_num
-
-constraints <- redist_constr(map_south) %>%
+constraints <- redist_constr(map) %>%
+    # Keep the VRA hinge constraints from the prior South Florida stage.
     add_constr_grp_hinge(5, cvap_black, cvap, .45) %>%
-    add_constr_grp_hinge(-7, cvap_black, cvap, .2)  %>%
+    add_constr_grp_hinge(-7, cvap_black, cvap, .2) %>%
     add_constr_grp_hinge(5, cvap_hisp, cvap, .6) %>%
     add_constr_grp_hinge(-7, cvap_hisp, cvap, .3) %>%
-    add_constr_custom(
-        strength = 10,
-        fn = function(plan, distr) {
-            as.numeric(!any(plan[map_south$cluster_edge] == 0))
-        }
-    )
-
-n_steps <- (sum(map_south$pop)/attr(map_south, "pop_bounds")[2]) %>% floor()
-
-plans_south <- redist_smc(map_south,
-    counties = pseudo_county,
-    nsims = nsims_south,
-    runs = 4L, ncores = 31L,
-    n_steps = n_steps,
-    pop_temper = .02,
-    seq_alpha = .65,
-    constraints = constraints,
-    verbose = T)
-
-plans_south <- plans_south %>%
-    mutate(ndv = group_frac(map_south, ndv, ndv + nrv),
-        hvap = group_frac(map_south, vap_hisp, vap),
-        bvap = group_frac(map_south, vap_black, vap),
-        hcvap = group_frac(map_south, cvap_hisp, cvap),
-        bcvap = group_frac(map_south, cvap_black, cvap),
-        dem16 = group_frac(map_south, adv_16, arv_16 + adv_16),
-        dem18 = group_frac(map_south, adv_18, arv_18 + adv_18),
-        dem20 = group_frac(map_south, adv_20, arv_20 + adv_20))
-
-plans_south <- plans_south %>% group_by(draw) %>%
-    mutate(first = max(bvap), second = sort(bvap, decreasing = TRUE)[2]) %>%
-    ungroup() %>% filter((first > 0.4 & second > .25) | draw == "cd_2010") %>%
-    select(-c(first, second))
-
-samp <- sample(seq_len(ncol(get_plans_matrix(plans_south))), 35000)
-
-plans_south <- plans_south %>% group_by(draw) %>%
-    mutate(id = cur_group_id()) %>%
-    ungroup(draw) %>% filter(id %in% samp) %>% select(-c(id))
-
-summary(plans_south)
-
-###
-
-# North Florida
-
-map_north <- map %>% filter(section == "North")
-
-attr(map_north, "pop_bounds") <- attr(map, "pop_bounds")
-
-map_north <- set_pop_tol(map_north, cluster_tol)
-
-map <- map %>%
-    mutate(cluster_edge = ifelse(row_num %in% map_north$row_num, 1, 0))
-
-z <- geomander::seam_geom(map$adj, map, admin = "cluster_edge", seam = c(0, 1))
-
-z <- z[z$cluster_edge == 1, ]
-
-map_north$cluster_edge <- map_north$row_num %in% z$row_num
-
-constraints <- redist_constr(map_north) %>%
+    # Keep the VRA hinge constraints from the prior North Florida stage.
     add_constr_grp_hinge(6, cvap_black, cvap, .5) %>%
     add_constr_grp_hinge(-6, cvap_black, cvap, .2) %>%
     add_constr_grp_hinge(3, cvap_hisp, cvap, .7) %>%
     add_constr_grp_hinge(-6, cvap_hisp, cvap, .3) %>%
-    add_constr_custom(
-        strength = 10,
-        fn = function(plan, distr) {
-            as.numeric(!any(plan[map_north$cluster_edge] == 0))
-        }
-    )
-
-n_steps <- (sum(map_north$pop)/attr(map, "pop_bounds")[2]) %>% floor()
-
-plans_north <- redist_smc(map_north,
-    counties = pseudo_county,
-    nsims = nsims_north,
-    runs = 2L, ncores = 31L,
-    n_steps = n_steps,
-    constraints = constraints,
-    verbose = T)
-
-plans_north <- plans_north %>%
-    mutate(hvap = group_frac(map_north, vap_hisp, vap),
-        bvap = group_frac(map_north, vap_black, vap),
-        hcvap = group_frac(map_north, cvap_hisp, cvap),
-        bcvap = group_frac(map_north, cvap_black, cvap),
-        dem16 = group_frac(map_north, adv_16, arv_16 + adv_16),
-        dem18 = group_frac(map_north, adv_18, arv_18 + adv_18),
-        dem20 = group_frac(map_north, adv_20, arv_20 + adv_20))
-
-plans_north <- plans_north %>% group_by(draw) %>%
-    mutate(count = sum(bvap >= .25 & district != 0)) %>% ungroup() %>% filter(count > 0) %>%
-    select(-c(count))
-
-samp <- sample(seq_len(ncol(get_plans_matrix(plans_north))), 35000)
-
-plans_north <- plans_north %>% group_by(draw) %>%
-    mutate(id = cur_group_id()) %>%
-    ungroup(draw) %>% filter(id %in% samp) %>% select(-c(id))
-
-summary(plans_north)
-
-# Merge north and south
-
-plans_north <- plans_north %>% filter(draw != "cd_2010")
-plans_south <- plans_south %>% filter(draw != "cd_2010")
-
-plans_south$dist_keep <- ifelse(plans_south$district == 0, FALSE, TRUE)
-plans_north$dist_keep <- ifelse(plans_north$district == 0, FALSE, TRUE)
-
-prep_mat <- prep_particles(map = map,
-    map_plan_list = list(
-        list(map = map_south, plans = plans_south),
-        list(map = map_north, plans = plans_north)),
-    uid = row_num,
-    dist_keep = dist_keep,
-    nsims = nsims)
-
-# Central Florida
-
-constraints <- redist_constr(map) %>%
+    # Keep the VRA hinge constraints from the prior statewide remainder stage.
     add_constr_grp_hinge(
         12,
         cvap_hisp,
@@ -174,19 +36,24 @@ constraints <- redist_constr(map) %>%
         tgts_group = c(0.55)
     )
 
-plans <- redist_smc(map, nsims = nsims, runs = 2L, ncores = 31L,
+set.seed(2010)
+plans <- redist_smc(
+    map, nsims = 2000, runs = 5,
     counties = pseudo_county,
-    init_particles = prep_mat, verbose = T)
-
-plans <- plans %>% filter(draw != "cd_2010") %>%
+    constraints = constraints,
+    pop_temper = 0.05, seq_alpha = 1,
+    sampling_space = sampling_space_val,
+    ms_params = list(frequency = 1L, mh_accept_per_smc = 65),
+    split_params = list(splitting_schedule = "any_valid_sizes"),
+    verbose = TRUE,
+    ncores = max(1, parallel::detectCores() - 1)
+) %>%
+    filter(draw != "cd_2010") %>%
     group_by(chain) %>%
-    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
+    filter(as.integer(draw) < min(as.integer(draw)) + 1000) %>%
     ungroup()
 
 plans <- plans %>% add_reference(ref_plan = map$cd_2010)
-
-# IF CORES OR OTHER UNITS HAVE BEEN MERGED:
-# make sure to call `pullback()` on this plans object!
 plans <- match_numbers(plans, "cd_2010")
 
 cli_process_done()
@@ -201,6 +68,8 @@ cli_process_start("Computing summary statistics for {.pkg FL_cd_2010}")
 
 plans <- add_summary_stats(plans, map) %>%
     mutate(total_cvap = tally_var(map, cvap), .after = total_vap)
+
+summary(plans)
 
 cvap_cols <- names(map)[tidyselect::eval_select(starts_with("cvap_"), map)]
 for (col in rev(cvap_cols)) {

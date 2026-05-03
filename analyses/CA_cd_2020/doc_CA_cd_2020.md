@@ -21,22 +21,19 @@ Data for California comes from the ALARM Project's [2020 Redistricting Data File
 Islands were connected to their nearest point within county on the mainland.
 
 ## Simulation Notes
-We sample 20,000 districting plans in each cluster across 2 indpenednet runs of the SMC algorithm.
-We next sample 40,000 districting plans for California across 2 independent runs of the SMC algorithm for the remainder.
-We then thin the sample to down to 5,000 plans.
-To balance county and municipality splits, we create pseudocounties for use in the county constraint. These are counties are Alameda County, Contra Costa County, Fresno County, Kern County, Los Angeles County, Orange County, Riverside County, Sacramento County, San Bernardino County, San Diego County, San Francisco County, San Joaquin County, San Mateo County, Santa Clara County, and Ventura County, which are larger than a congressional district in population.
-A small population tempering value was used for each cluster to avoid losing diversity at the final step based on initial runs.
+We sample 10,000 statewide candidate districting plans for California across
+five independent linking-edge merge-split SMC runs, then keep the first 1,000
+plans from each run for a 5,000-plan ensemble. This replaces the prior South
+California / Bay Area partial-SMC workflow with a statewide workflow matching
+the newer convergent California simulations used for 1990, 2000, and the
+Callais 2020 run.
 
-### 1. Clustering Procedure
-First, we run partial SMC in two pieces: the south and the Bay Area. The counties in each cluster are:
-
-* Los Angeles, San Bernardino, Orange, Riverside, San Diego, and Imperial
-
-* Alameda, Contra Costa, Fresno, Kings, Madera, Madera, Merced, Monterey, Sacramento, San Benito, San Francisco, San Joaquin, San Mateo, Santa Clara, Santa Cruz, Solano, Stanislaus, Tulare, and Yolo
-
-We sample in each of these regions with a population deviation of 0.5%. We sample 27 districts in the southern region and 15 districts in the Bay Area. Because each cluster will have leftover population, we apply an additional constraint that
-incentivizes leaving any unassigned areas on the edge of these clusters to
-avoid discontiguities. For each cluster, we add VRA constraints encouraging Hispanic VAP and Asian VAP concentrations in districts, in line with the enacted plan.
-
-### 2. Combination Procedure
-Then, these partial map simulations are combined to run statewide simulations. We sample 10 districts in the remainder.
+The simulation keeps the VRA hinge constraints from the prior regional workflow:
+Hispanic VAP concentration constraints from the Southern California stage, and
+Hispanic and Asian VAP concentration constraints from the Bay Area stage. To
+balance county and municipality splits, we continue to create pseudocounties for
+use in the county constraint. These are Alameda County, Contra Costa County,
+Fresno County, Kern County, Los Angeles County, Orange County, Riverside County,
+Sacramento County, San Bernardino County, San Diego County, San Francisco
+County, San Joaquin County, San Mateo County, Santa Clara County, and Ventura
+County, which are larger than a congressional district in population.

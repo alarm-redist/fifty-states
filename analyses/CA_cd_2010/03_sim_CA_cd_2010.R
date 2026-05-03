@@ -6,27 +6,17 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg CA_cd_2010}")
 
-nsim <- 12500
+sampling_space_val <- tryCatch(
+    getFromNamespace("LINKING_EDGE_SPACE", "redist"),
+    error = function(e) "linking_edge"
+)
 
-# Simulate southern CA ----
-seam_south <- sapply(
-    list(
-        c("037", "111"),
-        c("037", "029"),
-        c("071", "029"),
-        c("071", "027")
-    ),
-    FUN = \(x) seam_geom(adj = map$adj, shp = map, admin = "county", seam = x) %>%
-        pull(GEOID)
-) %>% unlist()
-
-map_south$boundary <- map_south$GEOID %in% seam_south
-
-cons_south <- redist_constr(map_south) %>%
+constr <- redist_constr(map) %>%
+    # Keep the VRA hinge constraints from the prior Southern California stage.
     add_constr_grp_hinge(
         strength = 9,
         group_pop = vap_hisp,
-        total_pop = vap,
+        total_pop = vap
     ) %>%
     add_constr_grp_hinge(
         strength = -6,
@@ -40,69 +30,11 @@ cons_south <- redist_constr(map_south) %>%
         total_pop = vap,
         tgts_group = .2
     ) %>%
-    add_constr_custom(
-        strength = 10,
-        fn = function(plan, distr) {
-            as.numeric(!any(plan[map_south$boundary] == 0))
-        }
-    )
-
-n_steps <- (sum(map_south$pop)/attr(map, "pop_bounds")[2]) %>% floor()
-
-set.seed(2010)
-
-plans_south <- redist_smc(
-    map_south,
-    nsims = nsim, runs = 2L, ncores = 8,
-    counties = pseudo_county,
-    compactness = 1,
-    constraints = cons_south,
-    n_steps = n_steps, pop_temper = 0.03, seq_alpha = 0.95
-)
-
-write_rds(plans_south, here("data-raw/CA/plans_south.rds"), compress = "xz")
-
-# Simulate large bay area ----
-seam_bay <- sapply(
-    list(
-        c("075", "041"),
-        c("013", "041"),
-        c("095", "097"),
-        c("095", "055"),
-        c("113", "055"),
-        c("113", "033"),
-        c("113", "011"),
-        c("113", "101"),
-        c("067", "101"),
-        c("067", "061"),
-        c("067", "017"),
-        c("067", "005"),
-        c("077", "005"),
-        c("077", "009"),
-        c("099", "009"),
-        c("099", "109"),
-        c("047", "043"),
-        c("047", "019"),
-        c("039", "043"),
-        c("039", "109"),
-        c("039", "051"),
-        c("039", "019"),
-        c("069", "019"),
-        c("053", "079"),
-        c("053", "031"),
-        c("053", "029")
-    ),
-    FUN = \(x) seam_geom(adj = map$adj, shp = map, admin = "county", seam = x) %>%
-        pull(GEOID)
-) %>% unlist()
-
-map_bay$boundary <- map_bay$GEOID %in% seam_bay
-
-cons_bay <- redist_constr(map_bay) %>%
+    # Keep the VRA hinge constraints from the prior Bay Area stage.
     add_constr_grp_hinge(
         strength = 3,
         group_pop = vap_hisp,
-        total_pop = vap,
+        total_pop = vap
     ) %>%
     add_constr_grp_hinge(
         strength = -3,
@@ -119,7 +51,7 @@ cons_bay <- redist_constr(map_bay) %>%
     add_constr_grp_hinge(
         strength = 4,
         group_pop = vap_asian,
-        total_pop = vap,
+        total_pop = vap
     ) %>%
     add_constr_grp_hinge(
         strength = -4,
@@ -132,64 +64,26 @@ cons_bay <- redist_constr(map_bay) %>%
         group_pop = vap_asian,
         total_pop = vap,
         tgts_group = .2
-    ) %>%
-    add_constr_custom(
-        strength = 10,
-        fn = function(plan, distr) {
-            as.numeric(!any(plan[map_bay$boundary] == 0))
-        }
     )
 
-n_steps <- (sum(map_bay$pop)/attr(map, "pop_bounds")[2]) %>% floor()
-
 set.seed(2010)
-
-plans_bay <- redist_smc(
-    map_bay,
-    nsims = nsim, runs = 2L, ncores = 8,
-    counties = pseudo_county,
-    constraints = cons_bay,
-    n_steps = n_steps, pop_temper = 0.05
-)
-
-write_rds(plans_bay, here("data-raw/CA/plans_bay.rds"), compress = "xz")
-
-
-# Pull it all together ----
-init <- prep_particles(
-    map = map,
-    map_plan_list = list(
-        south = list(
-            map = map_south,
-            plans = plans_south %>% mutate(keep = district > 0)
-        ),
-        bay = list(
-            map = map_bay,
-            plans = plans_bay %>% mutate(keep = district > 0)
-        )
-    ),
-    uid = uid,
-    dist_keep = keep,
-    nsims = nsim*2
-)
-
-
-set.seed(2010)
-
 plans <- redist_smc(
     map,
-    nsims = nsim*2, runs = 2L, ncores = 8,
-    counties = county,
-    compactness = 1,
-    init_particles = init
+    nsims = 2000, runs = 5L,
+    ncores = max(1, parallel::detectCores() - 1),
+    counties = pseudo_county,
+    constraints = constr,
+    pop_temper = 0.05, seq_alpha = 0.95,
+    sampling_space = sampling_space_val,
+    ms_params = list(frequency = 1L, mh_accept_per_smc = 65),
+    split_params = list(splitting_schedule = "any_valid_sizes"),
+    verbose = TRUE
 )
-
 attr(plans, "prec_pop") <- map$pop
 
-# Thin plans
 plans_5k <- plans %>%
     group_by(chain) %>%
-    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
+    filter(as.integer(draw) < min(as.integer(draw)) + 1000) %>%
     ungroup()
 
 plans_5k <- match_numbers(plans_5k, "cd_2010")
@@ -205,6 +99,8 @@ cli_process_done()
 cli_process_start("Computing summary statistics for {.pkg CA_cd_2010}")
 
 plans_5k <- add_summary_stats(plans_5k, map)
+
+summary(plans_5k)
 
 # Output the summary statistics. Do not edit this path.
 save_summary_stats(plans_5k, "data-out/CA_2010/CA_cd_2010_stats.csv")

@@ -19,26 +19,18 @@ Data for Florida comes from the ALARM Project's [2020 Redistricting Data Files](
 Data for Florida's 2020 congressional district map comes from the [Dave's Redistricting](https://davesredistricting.org/maps#home)
 
 ## Pre-processing Notes
-We estimate CVAP populations with the [cvap](https://github.com/christopherkenny/cvap) R package. We also pre-process the map to split it into clusters for simulation, which has a slight effect on the types of redistrict plans that will be sampled.
+We estimate CVAP populations with the [cvap](https://github.com/christopherkenny/cvap) R package.
 
 ## Simulation Notes
-We sample 160,000 districting plans for Florida across two independent runs of the SMC algorithm, and then thin the sample down to 5,000 plans. Due to the size, shape, and complexity of Florida, we split the simulations into multiple steps.
+We sample 10,000 statewide candidate districting plans for Florida across five
+independent linking-edge merge-split SMC runs, then keep the first 1,000 plans
+from each run for a 5,000-plan ensemble. This replaces the prior Southern,
+Northern, and Central Florida partial-SMC workflow with a statewide workflow
+matching the newer convergent Florida simulations used for 2000 and the Callais
+2020 run.
 
-1. **Regional clustering**.
-First, we cluster Florida counties into 3 regions--Southern Florida, Northern Florida, and Central Florida--with the following county assignments:
-    
-    Southern Florida: Broward, Charlotte, Collier, DeSoto, Glades, Hardee, Hendry, Highlands, Lee, Manatee, Martin, Miami-Dade, Monroe, Okeechobee, Palm Beach, Sarasota, and St. Lucie
-    
-    Northern Florida: Alachua, Baker, Bay, Bradford, Calhoun, Clay, Columbia, Dixie, Duval, Escambia, Franklin, Gadsden, Gilchrist, Gulf, Hamilton, Holmes, Jackson, Jefferson, Lafayette, Leon, Levy, Liberty, Madison, Marion, Nassau, Okaloosa, Putnam, Santa Rosa, St. Johns, Suwannee, Taylor, Union, Wakulla, Walton, and Washington
-    
-    Central Florida: Brevard, Citrus, Flagler, Hernando, Hillsborough, Indian River, Lake, Lake, Orange, Osceola, Pasco, Pinellas, Polk, Seminole, Sumter, and Volusia
-    
-    County assignments were based on the collections of counties that define Metropolitan and Combined Statistical Areas and on past and current Congressional district maps.
-
-2. **Simulating Northern and Southern Florida**.
-We run simulations first in Northern and Southern Florida. These simulations run the SMC algorithm within each cluster with a 0.5% population tolerance. Because each cluster will have leftover population, we apply an additional constraint that encourages unassigned areas to be set on each cluster's border with the Central Florida cluster, thereby avoiding district discontiguities.
-
-    In both the Northern Florida cluster and the Southern Florida cluster, we apply Gibbs constraints to encourage the formation of Black and Hispanic opportunity districts. To balance county and municipality splits, we create pseudocounties for use in the county constraint, which leads to fewer municipality splits than using only a county constraint.
-
-3. **Simulating Central Florida**.
-The partial map simulations from the Southern and Northern Florida clusters are then combined, with unassigned areas being absorbed into the Central Florida cluster. We then run simulations in Central Florida, applying Gibbs hinge constraints to encourage the formation of minority opportunity districts. To limit county and municipality splits, we create pseudocounties for use in the county constraint.
+The simulation keeps the VRA hinge constraints from the prior regional workflow:
+Black and Hispanic VAP opportunity constraints from the South and North Florida
+stages, plus the statewide remainder constraints used to encourage Black and
+Hispanic opportunity districts. To balance county and municipality splits, we
+continue to create pseudocounties for use in the county constraint.

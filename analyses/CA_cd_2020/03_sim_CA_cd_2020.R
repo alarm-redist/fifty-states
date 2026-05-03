@@ -6,25 +6,17 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg CA_cd_2020}")
 
-# simulate southern CA ----
-seam_south <- sapply(
-    list(
-        c("Los Angeles County", "Ventura County"),
-        c("Los Angeles County", "Kern County"),
-        c("San Bernardino County", "Kern County"),
-        c("San Bernardino County", "Inyo County")
-    ),
-    FUN = \(x) seam_geom(adj = map$adj, shp = map, admin = "county", seam = x) %>%
-        pull(tract)
-) %>% unlist()
+sampling_space_val <- tryCatch(
+    getFromNamespace("LINKING_EDGE_SPACE", "redist"),
+    error = function(e) "linking_edge"
+)
 
-map_south$boundary <- map_south$tract %in% seam_south
-
-cons_south <- redist_constr(map_south) %>%
+constr <- redist_constr(map) %>%
+    # Keep the VRA hinge constraints from the prior Southern California stage.
     add_constr_grp_hinge(
         strength = 9,
         group_pop = vap_hisp,
-        total_pop = vap,
+        total_pop = vap
     ) %>%
     add_constr_grp_hinge(
         strength = -6.8,
@@ -38,64 +30,11 @@ cons_south <- redist_constr(map_south) %>%
         total_pop = vap,
         tgts_group = .2
     ) %>%
-    add_constr_custom(
-        strength = 10,
-        fn = function(plan, distr) {
-            as.numeric(!any(plan[map_south$boundary] == 0))
-        }
-    )
-
-set.seed(2020)
-
-plans_south <- redist_smc(
-    map_south,
-    nsims = 1e4, runs = 2L, ncores = 8,
-    counties = pseudo_county,
-    constraints = cons_south,
-    n_steps = 27, pop_temper = 0.005, seq_alpha = 0.95
-)
-
-# simulate large bay area ----
-seam_bay <- sapply(
-    list(
-        c("San Francisco County", "Marin County"),
-        c("Contra Costa County", "Marin County"),
-        c("Solano County", "Sonoma County"),
-        c("Solano County", "Napa County"),
-        c("Yolo County", "Napa County"),
-        c("Yolo County", "Lake County"),
-        c("Yolo County", "Colusa County"),
-        c("Yolo County", "Sutter County"),
-        c("Sacramento County", "Sutter County"),
-        c("Sacramento County", "Placer County"),
-        c("Sacramento County", "El Dorado  County"),
-        c("Sacramento County", "Amador County"),
-        c("San Joaquin County", "Amador County"),
-        c("San Joaquin County", "Calaveras County"),
-        c("Stanislaus County", "Calaveras County"),
-        c("Stanislaus County", "Tuolumne County"),
-        c("Merced County", "Mariposa County"),
-        c("Merced County", "Fresno County"),
-        c("Madera County", "Mariposa County"),
-        c("Madera County", "Tuolumne County"),
-        c("Madera County", "Mono County"),
-        c("Madera County", "Fresno County"),
-        c("San Benito County", "Fresno County"),
-        c("Monterey County", "San Luis Obispo County"),
-        c("Monterey County", "Kings County"),
-        c("Monterey County", "Kern County")
-    ),
-    FUN = \(x) seam_geom(adj = map$adj, shp = map, admin = "county", seam = x) %>%
-        pull(tract)
-) %>% unlist()
-
-map_bay$boundary <- map_bay$tract %in% seam_bay
-
-cons_bay <- redist_constr(map_bay) %>%
+    # Keep the VRA hinge constraints from the prior Bay Area stage.
     add_constr_grp_hinge(
         strength = 10,
         group_pop = vap_hisp,
-        total_pop = vap,
+        total_pop = vap
     ) %>%
     add_constr_grp_hinge(
         strength = -7.5,
@@ -112,7 +51,7 @@ cons_bay <- redist_constr(map_bay) %>%
     add_constr_grp_hinge(
         strength = 10,
         group_pop = vap_asian,
-        total_pop = vap,
+        total_pop = vap
     ) %>%
     add_constr_grp_hinge(
         strength = -7.5,
@@ -125,57 +64,26 @@ cons_bay <- redist_constr(map_bay) %>%
         group_pop = vap_asian,
         total_pop = vap,
         tgts_group = .2
-    ) %>%
-    add_constr_custom(
-        strength = 10,
-        fn = function(plan, distr) {
-            as.numeric(!any(plan[map_bay$boundary] == 0))
-        }
     )
-set.seed(2020)
-
-plans_bay <- redist_smc(
-    map_bay,
-    nsims = 1e4, runs = 2L, ncores = 8,
-    counties = pseudo_county,
-    constraints = cons_bay,
-    n_steps = 13, pop_temper = 0.0025
-)
-
-
-# pull it all together ----
-init <- prep_particles(
-    map = map,
-    map_plan_list = list(
-        south = list(
-            map = map_south,
-            plans = plans_south %>% mutate(keep = district > 0)
-        ),
-        bay = list(
-            map = map_bay,
-            plans = plans_bay %>% mutate(keep = district > 0)
-        )
-    ),
-    uid = uid,
-    dist_keep = keep,
-    nsims = 1e4*2
-)
-
 
 set.seed(2020)
-
 plans <- redist_smc(
     map,
-    nsims = 2e4, runs = 2L, ncores = 8,
-    counties = county,
-    init_particles = init
+    nsims = 2000, runs = 5L,
+    ncores = max(1, parallel::detectCores() - 1),
+    counties = pseudo_county,
+    constraints = constr,
+    pop_temper = 0.05, seq_alpha = 0.95,
+    sampling_space = sampling_space_val,
+    ms_params = list(frequency = 1L, mh_accept_per_smc = 65),
+    split_params = list(splitting_schedule = "any_valid_sizes"),
+    verbose = TRUE
 )
-
 attr(plans, "prec_pop") <- map$pop
 
 plans <- plans %>%
     group_by(chain) %>%
-    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
+    filter(as.integer(draw) < min(as.integer(draw)) + 1000) %>%
     ungroup()
 
 plans <- match_numbers(plans, "cd_2020")
@@ -191,6 +99,8 @@ cli_process_done()
 cli_process_start("Computing summary statistics for {.pkg CA_cd_2020}")
 
 plans <- add_summary_stats(plans, map)
+
+summary(plans)
 
 # Output the summary statistics. Do not edit this path.
 save_summary_stats(plans, "data-out/CA_2020/CA_cd_2020_stats.csv")
