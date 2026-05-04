@@ -476,7 +476,7 @@ pub_dataverse = function(slug, path_map, path_plans, path_stats) {
 
     year <- as.integer(stringr::str_extract(slug, "\\d{4}"))
     dv_id <- if (year == 1990) {
-        "doi:10.7910/DVN/1990_DOI" # TODO: replace once the 1990 Dataverse dataset is created
+        "doi:10.7910/DVN/ETICVW"
     } else if (year == 2000) {
         "doi:10.7910/DVN/LV7VIX"
     } else {
