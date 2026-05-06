@@ -19,7 +19,7 @@ Data for Florida comes from the [ALARM Project's update](https://dataverse.harva
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 100,000 districting plans for Florida across 5 independent runs of the SMC algorithm.
+We sample 10,000 districting plans for Florida across 5 independent runs of the SMC algorithm.
 We then thinned the number of samples to 5,000. 
-No special techniques were needed to produce the sample.
+We use merge-split sampling after each SMC step, with an increased target number of accepted merge-split moves, to improve mixing without drawing and discarding a much larger simulation sample.
 Both BVAP districts were not replicated due to manual review that indicated districts were geomandered to a degree that would not be possible to replicate in simulation.
