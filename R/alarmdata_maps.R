@@ -140,11 +140,11 @@ prepare_alarmdata_2020_map <- function(map, state, year) {
   state <- toupper(state)
   objects <- list()
 
+  map <- add_missing_alarmdata_pseudo_county(map, state)
+
   if (!identical(as.integer(year), 2020L)) {
     return(list(map = map, objects = objects))
   }
-
-  map <- add_missing_alarmdata_pseudo_county(map, state)
 
   if (identical(state, "CA")) {
     map <- map %>%
