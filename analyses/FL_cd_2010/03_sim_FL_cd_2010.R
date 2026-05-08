@@ -86,6 +86,9 @@ if (interactive()) {
     library(ggplot2)
     library(patchwork)
 
+    validate_analysis(plans, map)
+    summary(plans)
+
     ## VAP charts
     d1 <- redist.plot.distr_qtys(
         plans,

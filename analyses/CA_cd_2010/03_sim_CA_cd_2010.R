@@ -96,6 +96,9 @@ if (interactive()) {
     library(ggplot2)
     library(patchwork)
 
+    validate_analysis(plans_5k, map)
+    summary(plans_5k)
+
     p1 <- redist.plot.hist(plans_5k %>% group_by(draw) %>%
         mutate(hisp_dem = sum((vap_hisp/total_vap > 0.5) & e_dvs > 0.5)), qty = hisp_dem) +
         labs(x = "Number of Hispanic and Dem. Majority") +
@@ -146,7 +149,7 @@ if (interactive()) {
         size = 0.5, alpha = 0.5) +
         scale_y_continuous("Percent Hispanic by VAP") +
         labs(title = "CA Enacted versus Simulations") +
-        scale_color_manual(values = c(cd_2020 = "black")) +
+        scale_color_manual(values = c(cd_2010 = "black")) +
         geom_hline(yintercept = 0.5, linetype = "dotted") +
         geom_text(data = enac_sum, aes(x = hisp_rank, label = round(e_dvs, 2)),
             vjust = 3, y = Inf, size = 2.5, fontface = "bold", lineheight = 0.8, alpha = 0.8,
@@ -157,7 +160,7 @@ if (interactive()) {
             size = 0.5, alpha = 0.5) +
         scale_y_continuous("Percent Asian by VAP") +
         labs(title = "CA Enacted versus Simulations") +
-        scale_color_manual(values = c(cd_2020 = "black")) +
+        scale_color_manual(values = c(cd_2010 = "black")) +
         geom_hline(yintercept = 0.5, linetype = "dotted") +
         geom_text(data = enac_sum, aes(x = asian_rank, label = round(e_dvs, 2)),
             vjust = 3, y = Inf, size = 2.5, fontface = "bold", lineheight = 0.8, alpha = 0.8,
@@ -168,7 +171,7 @@ if (interactive()) {
             size = 0.5, alpha = 0.5) +
         scale_y_continuous("Percent Hispanic or Asian by VAP") +
         labs(title = "CA Enacted versus Simulations") +
-        scale_color_manual(values = c(cd_2020 = "black")) +
+        scale_color_manual(values = c(cd_2010 = "black")) +
         geom_hline(yintercept = 0.5, linetype = "dotted") +
         geom_text(data = enac_sum, aes(x = ha_rank, label = round(e_dvs, 2)),
             vjust = 3, y = Inf, size = 2.5, fontface = "bold", lineheight = 0.8, alpha = 0.8,
@@ -179,7 +182,7 @@ if (interactive()) {
             size = 0.5, alpha = 0.5) +
         scale_y_continuous("Percent Coalition by VAP") +
         labs(title = "CA Enacted versus Simulations") +
-        scale_color_manual(values = c(cd_2020 = "black")) +
+        scale_color_manual(values = c(cd_2010 = "black")) +
         geom_hline(yintercept = 0.5, linetype = "dotted") +
         redist.plot.distr_qtys(plans_5k %>% number_by(e_dvs), (vap_asian + vap_hisp + vap_black)/total_vap, sort = FALSE,
             color_thresh = NULL,
@@ -187,7 +190,7 @@ if (interactive()) {
             size = 0.5, alpha = 0.5) +
         scale_y_continuous("Percent Coalition by VAP") +
         labs(title = "CA Enacted versus Simulations") +
-        scale_color_manual(values = c(cd_2020 = "black")) +
+        scale_color_manual(values = c(cd_2010 = "black")) +
         geom_hline(yintercept = 0.5, linetype = "dotted")
 
     ggsave("data-raw/CA/boxplot.pdf", p2, width = 11, height = 8)
