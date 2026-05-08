@@ -77,6 +77,8 @@ plans <- add_summary_stats(plans, map) %>%
 
 summary(plans)
 
+validate_analysis(plans, map)
+
 # cvap columns
 cvap_cols <- names(map)[tidyselect::eval_select(starts_with("cvap_"), map)]
 for (col in rev(cvap_cols)) {
