@@ -20,8 +20,8 @@ Data for Florida comes from the ALARM Project's [2010 Redistricting Data Files](
 We estimate CVAP populations with the [cvap](https://github.com/christopherkenny/cvap) R package.
 
 ## Simulation Notes
-We sample 10,000 statewide candidate districting plans for Florida across five
-independent linking-edge merge-split SMC runs, then keep the first 1,000 plans
+We sample 20,000 statewide candidate districting plans for Florida across eight
+independent linking-edge merge-split SMC runs, then keep the first 625 plans
 from each run for a 5,000-plan ensemble. This replaces the prior Miami/South,
 North, and Central Florida partial-SMC workflow with a statewide workflow
 matching the newer convergent Florida simulations used for 2000 and 2020.
