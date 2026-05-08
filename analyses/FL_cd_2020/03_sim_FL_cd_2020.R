@@ -44,7 +44,7 @@ constraints <- redist_constr(map) %>%
 
 set.seed(2020)
 plans <- redist_smc(
-    map, nsims = 2000, runs = 5,
+    map, nsims = 2500, runs = 8L,
     counties = pseudo_county,
     constraints = constraints,
     pop_temper = 0.05, seq_alpha = 1,

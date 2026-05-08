@@ -22,8 +22,8 @@ Data for Florida's 2020 congressional district map comes from the [Dave's Redist
 We estimate CVAP populations with the [cvap](https://github.com/christopherkenny/cvap) R package.
 
 ## Simulation Notes
-We sample 10,000 statewide candidate districting plans for Florida across five
-independent linking-edge merge-split SMC runs, then keep the first 1,000 plans
+We sample 20,000 statewide candidate districting plans for Florida across eight
+independent linking-edge merge-split SMC runs, then keep the first 625 plans
 from each run for a 5,000-plan ensemble. This replaces the prior Southern,
 Northern, and Central Florida partial-SMC workflow with a statewide workflow
 matching the newer convergent Florida simulations used for 2000 and the Callais
