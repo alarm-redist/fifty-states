@@ -12,7 +12,8 @@ sampling_space_val <- tryCatch(
 )
 
 constr <- redist_constr(map) %>%
-    # Keep the VRA hinge constraints from the prior Southern California stage.
+    # Use one statewide Hispanic VAP bundle rather than stacking the prior
+    # Southern California and Bay Area Hispanic bundles.
     add_constr_grp_hinge(
         strength = 9,
         group_pop = vap_hisp,
@@ -30,24 +31,7 @@ constr <- redist_constr(map) %>%
         total_pop = vap,
         tgts_group = .2
     ) %>%
-    # Keep the VRA hinge constraints from the prior Bay Area stage.
-    add_constr_grp_hinge(
-        strength = 3,
-        group_pop = vap_hisp,
-        total_pop = vap
-    ) %>%
-    add_constr_grp_hinge(
-        strength = -3,
-        group_pop = vap_hisp,
-        total_pop = vap,
-        tgts_group = .3
-    ) %>%
-    add_constr_grp_hinge(
-        strength = -3,
-        group_pop = vap_hisp,
-        total_pop = vap,
-        tgts_group = .2
-    ) %>%
+    # Keep the Asian VAP bundle from the prior Bay Area stage.
     add_constr_grp_hinge(
         strength = 4,
         group_pop = vap_asian,

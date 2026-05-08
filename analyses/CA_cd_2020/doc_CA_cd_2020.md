@@ -28,12 +28,13 @@ California / Bay Area partial-SMC workflow with a statewide workflow matching
 the newer convergent California simulations used for 1990, 2000, and the
 Callais 2020 run.
 
-The simulation keeps the VRA hinge constraints from the prior regional workflow:
-Hispanic VAP concentration constraints from the Southern California stage, and
-Hispanic and Asian VAP concentration constraints from the Bay Area stage. To
-balance county and municipality splits, we continue to create pseudocounties for
-use in the county constraint. These are Alameda County, Contra Costa County,
-Fresno County, Kern County, Los Angeles County, Orange County, Riverside County,
-Sacramento County, San Bernardino County, San Diego County, San Francisco
-County, San Joaquin County, San Mateo County, Santa Clara County, and Ventura
-County, which are larger than a congressional district in population.
+The simulation uses one statewide Hispanic VAP concentration constraint bundle
+and one Asian VAP concentration constraint bundle. This avoids stacking the
+separate Southern California and Bay Area Hispanic bundles from the prior
+regional workflow. To balance county and municipality splits, we continue to
+create pseudocounties for use in the county constraint. These are Alameda
+County, Contra Costa County, Fresno County, Kern County, Los Angeles County,
+Orange County, Riverside County, Sacramento County, San Bernardino County, San
+Diego County, San Francisco County, San Joaquin County, San Mateo County, Santa
+Clara County, and Ventura County, which are larger than a congressional district
+in population.
