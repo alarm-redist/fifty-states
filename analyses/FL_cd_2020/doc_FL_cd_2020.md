@@ -29,8 +29,9 @@ Northern, and Central Florida partial-SMC workflow with a statewide workflow
 matching the newer convergent Florida simulations used for 2000 and the Callais
 2020 run.
 
-The simulation keeps the VRA hinge constraints from the prior regional workflow:
-Black and Hispanic VAP opportunity constraints from the South and North Florida
-stages, plus the statewide remainder constraints used to encourage Black and
-Hispanic opportunity districts. To balance county and municipality splits, we
-continue to create pseudocounties for use in the county constraint.
+The simulation uses one statewide VRA constraint bundle modeled on the converged
+Florida 2000 run, with Black and Hispanic VAP opportunity constraints. This
+avoids stacking the separate South Florida, North Florida, and statewide
+remainder VRA bundles from the prior regional workflow. To balance county and
+municipality splits, we continue to create pseudocounties for use in the county
+constraint.

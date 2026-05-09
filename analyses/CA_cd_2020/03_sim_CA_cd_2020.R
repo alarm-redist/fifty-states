@@ -12,48 +12,14 @@ sampling_space_val <- tryCatch(
 )
 
 constr <- redist_constr(map) %>%
-    # Use one statewide Hispanic VAP bundle rather than stacking the prior
-    # Southern California and Bay Area Hispanic bundles.
-    add_constr_grp_hinge(
-        strength = 10,
-        group_pop = vap_hisp,
-        total_pop = vap
-    ) %>%
-    add_constr_grp_hinge(
-        strength = -7.5,
-        group_pop = vap_hisp,
-        total_pop = vap,
-        tgts_group = .3
-    ) %>%
-    add_constr_grp_hinge(
-        strength = -7.5,
-        group_pop = vap_hisp,
-        total_pop = vap,
-        tgts_group = .2
-    ) %>%
-    # Keep the Asian VAP bundle from the prior Bay Area stage.
-    add_constr_grp_hinge(
-        strength = 10,
-        group_pop = vap_asian,
-        total_pop = vap
-    ) %>%
-    add_constr_grp_hinge(
-        strength = -7.5,
-        group_pop = vap_asian,
-        total_pop = vap,
-        tgts_group = .3
-    ) %>%
-    add_constr_grp_hinge(
-        strength = -7.5,
-        group_pop = vap_asian,
-        total_pop = vap,
-        tgts_group = .2
-    )
+    # Use the lighter statewide VRA hinge style from the converged CA 2000 run.
+    add_constr_grp_hinge(strength = 1.5, group_pop = vap_hisp, total_pop = vap) %>%
+    add_constr_grp_hinge(strength = 1.5, group_pop = vap_asian, total_pop = vap)
 
 set.seed(2020)
 plans <- redist_smc(
     map,
-    nsims = 2000, runs = 5L,
+    nsims = 2500, runs = 8L,
     ncores = max(1, parallel::detectCores() - 1),
     counties = pseudo_county,
     constraints = constr,
@@ -67,7 +33,7 @@ attr(plans, "prec_pop") <- map$pop
 
 plans <- plans %>%
     group_by(chain) %>%
-    filter(as.integer(draw) < min(as.integer(draw)) + 1000) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 625) %>%
     ungroup()
 
 plans <- match_numbers(plans, "cd_2020")
@@ -99,7 +65,7 @@ if (interactive()) {
     validate_analysis(plans, map)
     summary(plans)
 
-    redist.plot.hist(plans %>% group_by(draw) %>%
+    p1 <- redist.plot.hist(plans %>% group_by(draw) %>%
         mutate(hisp_dem = sum((vap_hisp/total_vap > 0.5) & e_dvs > 0.5)), qty = hisp_dem) +
         labs(x = "Number of Hispanic and Dem. Majority") +
         redist.plot.hist(plans %>% group_by(draw) %>%
@@ -128,6 +94,7 @@ if (interactive()) {
         labs(x = "Number of Hispanic + Asian + Black and Dem. Majority") &
         theme_bw()
 
+    ggsave("data-raw/CA/hist.pdf", p1, width = 11, height = 8)
 
     enac_sum <- plans %>%
         subset_ref() %>%
@@ -141,7 +108,7 @@ if (interactive()) {
             compact_rank = rank(comp_polsby)
         )
 
-    redist.plot.distr_qtys(plans, vap_hisp/total_vap,
+    p2 <- redist.plot.distr_qtys(plans, vap_hisp/total_vap,
         color_thresh = NULL,
         color = ifelse(subset_sampled(plans)$e_dvs > 0.5, "#3D77BB", "#B25D4C"),
         size = 0.5, alpha = 0.5) +
@@ -190,5 +157,7 @@ if (interactive()) {
         labs(title = "CA Enacted versus Simulations") +
         scale_color_manual(values = c(cd_2020 = "black")) +
         geom_hline(yintercept = 0.5, linetype = "dotted")
+
+    ggsave("data-raw/CA/boxplot.pdf", p2, width = 11, height = 8)
 
 }

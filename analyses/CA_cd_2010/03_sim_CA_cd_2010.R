@@ -12,48 +12,14 @@ sampling_space_val <- tryCatch(
 )
 
 constr <- redist_constr(map) %>%
-    # Use one statewide Hispanic VAP bundle rather than stacking the prior
-    # Southern California and Bay Area Hispanic bundles.
-    add_constr_grp_hinge(
-        strength = 9,
-        group_pop = vap_hisp,
-        total_pop = vap
-    ) %>%
-    add_constr_grp_hinge(
-        strength = -6,
-        group_pop = vap_hisp,
-        total_pop = vap,
-        tgts_group = .3
-    ) %>%
-    add_constr_grp_hinge(
-        strength = -6,
-        group_pop = vap_hisp,
-        total_pop = vap,
-        tgts_group = .2
-    ) %>%
-    # Keep the Asian VAP bundle from the prior Bay Area stage.
-    add_constr_grp_hinge(
-        strength = 4,
-        group_pop = vap_asian,
-        total_pop = vap
-    ) %>%
-    add_constr_grp_hinge(
-        strength = -4,
-        group_pop = vap_asian,
-        total_pop = vap,
-        tgts_group = .3
-    ) %>%
-    add_constr_grp_hinge(
-        strength = -4,
-        group_pop = vap_asian,
-        total_pop = vap,
-        tgts_group = .2
-    )
+    # Use the lighter statewide VRA hinge style from the converged CA 2000 run.
+    add_constr_grp_hinge(strength = 1.5, group_pop = vap_hisp, total_pop = vap) %>%
+    add_constr_grp_hinge(strength = 1.5, group_pop = vap_asian, total_pop = vap)
 
 set.seed(2010)
 plans <- redist_smc(
     map,
-    nsims = 2000, runs = 5L,
+    nsims = 2500, runs = 8L,
     ncores = max(1, parallel::detectCores() - 1),
     counties = pseudo_county,
     constraints = constr,
@@ -67,7 +33,7 @@ attr(plans, "prec_pop") <- map$pop
 
 plans_5k <- plans %>%
     group_by(chain) %>%
-    filter(as.integer(draw) < min(as.integer(draw)) + 1000) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 625) %>%
     ungroup()
 
 plans_5k <- match_numbers(plans_5k, "cd_2010")

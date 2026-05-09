@@ -12,28 +12,23 @@ sampling_space_val <- tryCatch(
 )
 
 constraints <- redist_constr(map) %>%
-    # Keep the VRA hinge constraints from the prior South Florida stage.
+    # Use one statewide VRA bundle rather than stacking the prior regional
+    # Florida bundles, following the converged FL 2000 statewide run.
     add_constr_grp_hinge(5, cvap_black, cvap, .45) %>%
-    add_constr_grp_hinge(-7, cvap_black, cvap, .2) %>%
-    add_constr_grp_hinge(5, cvap_hisp, cvap, .6) %>%
-    add_constr_grp_hinge(-7, cvap_hisp, cvap, .3) %>%
-    # Keep the VRA hinge constraints from the prior North Florida stage.
-    add_constr_grp_hinge(6, cvap_black, cvap, .5) %>%
-    add_constr_grp_hinge(-6, cvap_black, cvap, .2) %>%
-    add_constr_grp_hinge(3, cvap_hisp, cvap, .7) %>%
-    add_constr_grp_hinge(-6, cvap_hisp, cvap, .3) %>%
-    # Keep the VRA hinge constraints from the prior statewide remainder stage.
+    add_constr_grp_hinge(-7, cvap_black, cvap, .20) %>%
+    add_constr_grp_hinge(5, cvap_hisp, cvap, .55) %>%
+    add_constr_grp_hinge(-7, cvap_hisp, cvap, .25) %>%
     add_constr_grp_hinge(
         12,
         cvap_hisp,
         total_pop = cvap,
-        tgts_group = c(0.55)
+        tgts_group = c(0.50)
     ) %>%
     add_constr_grp_hinge(
         12,
         cvap_black,
         total_pop = cvap,
-        tgts_group = c(0.55)
+        tgts_group = c(0.50)
     )
 
 set.seed(2010)
