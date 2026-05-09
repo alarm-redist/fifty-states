@@ -10,11 +10,10 @@ set.seed(1990)
 
 # attempt to create single bvap mmd
 constr_sc <- redist_constr(map) %>%
-  add_constr_grp_hinge(20, vap_black, vap, 0.60) %>%
-  add_constr_grp_hinge(-15, vap_black, vap, 0.3) %>%
-  add_constr_grp_hinge(-15, vap_black, vap, 0.3)
+  add_constr_grp_hinge(10, vap_black, vap, 0.60) %>%
+  add_constr_grp_hinge(-8, vap_black, vap, 0.3)
 
-plans <- redist_smc(map, nsims = 2e3, runs = 5, counties = county)
+plans <- redist_smc(map, nsims = 2e3, runs = 5, counties = county, constraints = constr_sc)
 
 plans <- plans |>
     group_by(chain) |>
