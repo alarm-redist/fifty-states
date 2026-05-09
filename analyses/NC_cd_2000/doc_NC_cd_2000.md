@@ -24,6 +24,6 @@ Data for North Carolina comes from the [ALARM Project's update](https://datavers
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 10,000 districting plans for North Carolina across 5 independent runs of the SMC algorithm.
-We then thinned the number of samples to 5,000. 
+We sample 18,000 districting plans for North Carolina across 6 independent runs of the SMC algorithm.
+We then thinned the number of samples to 5,000.
 No special techniques were needed to produce the sample.

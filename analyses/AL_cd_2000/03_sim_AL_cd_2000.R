@@ -29,9 +29,19 @@ plans <- redist_smc(map, nsims = 3e3, runs = 6,
     ncores = 112,
     verbose = TRUE)
 
+target_plans <- 5000L
+chains <- sort(unique(plans$chain))
+n_keep <- rep(target_plans %/% length(chains), length(chains))
+n_keep[seq_len(target_plans %% length(chains))] <-
+    n_keep[seq_len(target_plans %% length(chains))] + 1L
+names(n_keep) <- as.character(chains)
+
 plans <- plans %>%
     group_by(chain) %>%
-    filter(as.integer(draw) < min(as.integer(draw)) + 1000) %>% # thin samples
+    filter(
+        is.na(chain) |
+            dense_rank(as.integer(draw)) <= n_keep[as.character(first(chain))]
+    ) %>% # thin samples to 5,000 while retaining every chain
     ungroup()
 plans <- match_numbers(plans, "cd_2000")
 
@@ -41,18 +51,6 @@ cli_process_start("Saving {.cls redist_plans} object")
 # Output the redist_map object. Do not edit this path.
 write_rds(plans, here("data-out/AL_2000/AL_cd_2000_plans.rds"), compress = "xz")
 cli_process_done()
-
-# read in from FASRC
-map <- readRDS(
-    here("data-out/AL_1990/AL_cd_1990_map.rds")
-)
-plans <- readRDS(
-    here("data-out/AL_1990/AL_cd_1990_plans.rds")
-)
-stats <- read_csv(
-    here("data-out/AL_1990/AL_cd_1990_stats.csv"),
-    show_col_types = FALSE
-)
 
 # Compute summary statistics -----
 cli_process_start("Computing summary statistics for {.pkg AL_cd_2000}")
