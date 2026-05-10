@@ -30,12 +30,12 @@ constraints <- redist_constr(map) %>%
 
 set.seed(2020)
 plans <- redist_smc(
-    map, nsims = 2500, runs = 8L,
+    map, nsims = 3000, runs = 10L,
     counties = pseudo_county,
     constraints = constraints,
     pop_temper = 0.05, seq_alpha = 1,
     sampling_space = sampling_space_val,
-    ms_params = list(frequency = 1L, mh_accept_per_smc = 65),
+    ms_params = list(frequency = 1L, mh_accept_per_smc = 80),
     split_params = list(splitting_schedule = "any_valid_sizes"),
     verbose = TRUE,
     ncores = max(1, parallel::detectCores() - 1)

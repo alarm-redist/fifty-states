@@ -94,7 +94,7 @@ if (interactive()) {
         labs(x = "Number of Hispanic + Asian + Black and Dem. Majority") &
         theme_bw()
 
-    ggsave("data-raw/CA/hist.pdf", p1, width = 11, height = 8)
+    ggsave("data-raw/CA/hist.png", p1, width = 11, height = 8)
 
     enac_sum <- plans %>%
         subset_ref() %>%
@@ -158,6 +158,6 @@ if (interactive()) {
         scale_color_manual(values = c(cd_2020 = "black")) +
         geom_hline(yintercept = 0.5, linetype = "dotted")
 
-    ggsave("data-raw/CA/boxplot.pdf", p2, width = 11, height = 8)
+    ggsave("data-raw/CA/boxplot.png", p2, width = 11, height = 8)
 
 }
