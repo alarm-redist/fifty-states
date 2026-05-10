@@ -30,7 +30,7 @@ constraints <- redist_constr(map) %>%
 
 set.seed(2020)
 plans <- redist_smc(
-    map, nsims = 3000, runs = 10L,
+    map, nsims = 3000, runs = 16L,
     counties = pseudo_county,
     constraints = constraints,
     pop_temper = 0.05, seq_alpha = 1,
@@ -42,7 +42,7 @@ plans <- redist_smc(
 ) %>%
     filter(draw != "cd_2020") %>%
     group_by(chain) %>%
-    filter(as.integer(draw) < min(as.integer(draw)) + 625) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 1000) %>%
     ungroup()
 
 plans <- plans %>% add_reference(ref_plan = map$cd_2020)

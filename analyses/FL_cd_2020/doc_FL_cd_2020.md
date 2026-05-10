@@ -22,18 +22,19 @@ Data for Florida's 2020 congressional district map comes from the [Dave's Redist
 We estimate CVAP populations with the [cvap](https://github.com/christopherkenny/cvap) R package.
 
 ## Simulation Notes
-We sample 30,000 statewide candidate districting plans for Florida across ten
-independent linking-edge merge-split SMC runs, then keep the first 625 plans
-from each run for a 6,250-plan ensemble. This replaces the prior Southern,
-Northern, and Central Florida partial-SMC workflow with a statewide workflow
-matching the newer convergent Florida simulations used for 2000 and the Callais
-2020 run.
+We sample 48,000 statewide candidate districting plans for Florida across
+sixteen independent linking-edge merge-split SMC runs, then keep the first
+1,000 plans from each run for a 16,000-plan ensemble. This replaces the prior
+Southern, Northern, and Central Florida partial-SMC workflow with a statewide
+workflow matching the newer convergent Florida simulations used for 2000 and
+the Callais 2020 run.
 
 The simulation uses one statewide VRA constraint bundle modeled on the converged
 Florida 2000 run, with Black and Hispanic VAP opportunity constraints. This
 avoids stacking the separate South Florida, North Florida, and statewide
 remainder VRA bundles from the prior regional workflow. To balance county and
 municipality splits, we continue to create pseudocounties for use in the county
-constraint. After the eight-run statewide simulation left several ordered
-summary R-hats above 1.05, the merge-split acceptance target is increased from
-65 to 80 to improve chain mixing.
+constraint. After the eight-run and ten-run statewide simulations left several
+ordered summary R-hats above 1.05, the merge-split acceptance target is
+increased from 65 to 80 and more independent runs are retained to improve chain
+mixing.
