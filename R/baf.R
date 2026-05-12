@@ -175,13 +175,13 @@ leg_from_baf <- function(state, to = "VTD", year_shd = 2023, year_ssd = 2023) {
     state = state,
     year = year_shd,
     geographies = 'shd'
-  )$SHD2022 |>
+  )[[1]] |>
     rename(BLOCKID = GEOID, shd_20 = SLDLST)
   ssd_baf <- baf::baf(
     state = state,
     year = year_ssd,
     geographies = 'ssd'
-  )$SSD2022 |>
+  )[[1]] |>
     rename(BLOCKID = GEOID, ssd_20 = SLDUST)
 
   if (to == 'VTD') {
