@@ -16,8 +16,6 @@ suppressMessages({
     devtools::load_all()
 })
 
-map <- read_rds(here("data-out/IA_1990/IA_cd_1990_map.rds"))
-
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg IA_cd_1990}")
 set.seed(1990)
