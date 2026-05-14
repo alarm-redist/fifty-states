@@ -22,12 +22,12 @@ map <- read_rds(here("data-out/IA_1990/IA_cd_1990_map.rds"))
 cli_process_start("Running simulations for {.pkg IA_cd_1990}")
 set.seed(1990)
 plans <- redist_smc(
-    map, nsims = 2500, runs = 10,
-    pop_temper = 0.05, seq_alpha = 1,
-    # sampling_space = sampling_space_val,
-    ms_params = list(frequency = 1L, mh_accept_per_smc = 70),
+    map, nsims = 5000, runs = 10,
+    sampling_space = "linking_edge",
+    pop_temper = 0.01, seq_alpha = 0.95,
+    ms_params = list(frequency = 1L, mh_accept_per_smc = 40),
     split_params = list(splitting_schedule = "any_valid_sizes"),
-    verbose = T,
+    verbose = TRUE,
     ncores = 112
 )
 
