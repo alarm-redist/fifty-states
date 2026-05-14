@@ -8,11 +8,6 @@ cli_process_start("Creating {.cls redist_map} object for {.pkg IA_cd_2000}")
 map <- redist_map(ia_shp, pop_tol = 0.0001,
     existing_plan = cd_2000, adj = ia_shp$adj)
 
-# make pseudo counties with default settings
-map <- map %>%
-    mutate(pseudo_county = pick_county_muni(map, counties = county, munis = muni,
-                                            pop_muni = get_target(map)))
-
 # Add an analysis name attribute
 attr(map, "analysis_name") <- "IA_2000"
 

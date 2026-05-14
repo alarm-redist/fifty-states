@@ -7,13 +7,19 @@
 cli_process_start("Running simulations for {.pkg IA_cd_2000}")
 
 set.seed(2000)
-plans <- redist_smc(map, nsims = 2e3, runs = 5, counties = county)
-# IF CORES OR OTHER UNITS HAVE BEEN MERGED:
-# make sure to call `pullback()` on this plans object!
+plans <- redist_smc(
+    map, nsims = 5000, runs = 10,
+    sampling_space = "linking_edge",
+    pop_temper = 0.01, seq_alpha = 1,
+    ms_params = list(frequency = 1L, mh_accept_per_smc = 40),
+    split_params = list(splitting_schedule = "any_valid_sizes"),
+    verbose = TRUE,
+    ncores = 112
+)
 
-plans <- plans %>%
+plans <- plans %>% filter(draw != "cd_2000") %>%
     group_by(chain) %>%
-    filter(as.integer(draw) < min(as.integer(draw)) + 1000) %>% # thin samples
+    filter(as.integer(draw) < min(as.integer(draw)) + 500) %>% # thin samples
     ungroup()
 plans <- match_numbers(plans, "cd_2000")
 

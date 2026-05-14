@@ -38,6 +38,15 @@ if (!file.exists(here(shp_path))) {
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
         relocate(muni, county_muni, cd_1990, .after = county)
 
+    # group by county to avoid county splits
+    ia_shp <- ia_shp %>%
+        group_by(state, county) %>%
+        summarize(cd_1990 = cd_1990[1],
+            cd_2000 = cd_2000[1],
+            across(pop:nrv, sum)) %>%
+        ungroup() %>%
+        st_make_valid()
+
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = ia_shp,
                                perim_path = here(perim_path)) %>%
@@ -50,14 +59,8 @@ if (!file.exists(here(shp_path))) {
             suppressWarnings()
     }
 
-    # make every feature valid
-    ia_shp <- st_make_valid(ia_shp)
-
     # create adjacency graph
     ia_shp$adj <- redist.adjacency(ia_shp)
-
-    ia_shp <- ia_shp %>%
-        fix_geo_assignment(muni)
 
     write_rds(ia_shp, here(shp_path), compress = "gz")
     cli_process_done()
