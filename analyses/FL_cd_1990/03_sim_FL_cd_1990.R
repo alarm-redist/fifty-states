@@ -37,7 +37,7 @@ plans <- redist_smc(
     constraints = constr,
     split_params = list(splitting_schedule = "any_valid_sizes"),
     sampling_space = "spanning_forest",
-    ms_params = list(frequency = 1L, mh_accept_per_smc = 40L),
+    ms_params = list(frequency = 1L, mh_accept_per_smc = 65L),
     ncores = 112,
     pop_temper = 0.01,
     seq_alpha = 1L,
