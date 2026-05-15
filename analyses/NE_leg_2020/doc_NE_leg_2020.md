@@ -20,7 +20,7 @@ We enforce a maximum population deviation of 5.0%.
 Data for Nebraska comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
 
 ## Pre-processing Notes
-To preserve the cores of prior districts, we merge all precincts which are more than two precincts away from a district border, under the 2010 plan. Precincts in counties which are split by existing district boundaries are merged only within their county.
+No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
 We sample 10,000 districting plans for Nebraska's unicameral legislature across 5 independent runs of the SMC algorithm.
