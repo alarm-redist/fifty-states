@@ -10,8 +10,9 @@ set.seed(1990)
 
 # attempt to create single bvap mmd
 constr_sc <- redist_constr(map) %>%
-  add_constr_grp_hinge(10, vap_black, vap, 0.60) %>%
-  add_constr_grp_hinge(-8, vap_black, vap, 0.3)
+  add_constr_grp_hinge(15, vap_black, vap, 0.50) %>%
+  add_constr_grp_hinge(-8, vap_black, vap, 0.40) %>%
+  add_constr_grp_hinge(-10, vap_black, vap, 0.20)
 
 plans <- redist_smc(map, nsims = 2e3, runs = 5, counties = county, constraints = constr_sc)
 
@@ -46,3 +47,10 @@ if (interactive()) {
     validate_analysis(plans, map)
     summary(plans)
 }
+redist.plot.distr_qtys(plans, vap_black / total_vap,
+                       color_thresh = NULL,
+                       color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, '#3D77BB', '#B25D4C'),
+                       size = 0.5, alpha = 0.5) +
+  scale_y_continuous('Percent Black by VAP') +
+  labs(title = 'Approximate Performance')
+
