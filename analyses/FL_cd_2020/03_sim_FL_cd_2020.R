@@ -3,168 +3,50 @@
 # © ALARM Project, March 2022
 ###############################################################################
 
-set.seed(2020)
-
-cluster_pop_tol <- 0.005
-nsims <- 40000
-
-# Unique ID for each row, will use later to reconnect pieces
-map$row_id <- 1:nrow(map)
-
-# Run the simulation -----
-cli_process_start("Running simulations for {.pkg FL_cd_2020}")
-
-########################################################################
-
-# Cluster #1: Southern Florida
-
-map_south <- map %>% filter(region == "South")
-map_south <- set_pop_tol(map_south, cluster_pop_tol)
-
-########################################################################
-
-# Setup for cluster constraint
-map <- map %>%
-    mutate(cluster_edge = ifelse(row_id %in% map_south$row_id, 1, 0))
-
-z <- geomander::seam_geom(map$adj, map, admin = "cluster_edge", seam = c(0, 1))
-
-z <- z[z$cluster_edge == 1, ]
-
-border_idxs <- which(map_south$row_id %in% z$row_id)
-
-########################################################################
-
-constraints <- redist_constr(map_south) %>%
-    # reward districts with black vap % below 10% and above 40%, enforcing barrier in between
-    add_constr_grp_hinge(8, vap_black, vap, 0.4) %>%
-    add_constr_grp_inv_hinge(-10, vap_black, vap, 0.1) %>%
-    # reward districts with hispanic vap % below 30% and above 70%, enforcing barrier in between
-    add_constr_grp_hinge(5, vap_hisp, vap, 0.7) %>%
-    add_constr_grp_hinge(-8, vap_hisp, vap, 0.3) %>%
-    # constrain the unassigned area be on the border, to ensure contiguity
-    add_constr_custom(strength = 8, function(plan, distr) {
-        ifelse(any(plan[border_idxs] == 0), 0, 1)
-    })
-
-n_steps <- (sum(map_south$pop)/attr(map, "pop_bounds")[2]) %>% floor()
-
-plans_south <- redist_smc(map_south,
-    counties = pseudo_county,
-    nsims = nsims,
-    runs = 2L, ncores = 4,
-    n_steps = n_steps,
-    constraints = constraints,
-    pop_temper = 0.06,
-    seq_alpha = 0.65)
-
-plans_south <- plans_south %>%
-    mutate(hvap = group_frac(map_south, vap_hisp, vap),
-           bvap = group_frac(map_south, vap_black, vap),
-           dem16 = group_frac(map_south, adv_16, arv_16 + adv_16),
-           dem18 = group_frac(map_south, adv_18, arv_18 + adv_18),
-           dem20 = group_frac(map_south, adv_20, arv_20 + adv_20))
-
-summary(plans_south)
-#############################################################
-
-# Cluster #2: North Florida
-
-map_north <- map %>% filter(region == "North")
-map_north <- set_pop_tol(map_north, cluster_pop_tol)
-
-########################################################################
-
-# Setup for cluster constraint
-map <- map %>%
-    mutate(cluster_edge = ifelse(row_id %in% map_north$row_id, 1, 0))
-
-z <- geomander::seam_geom(map$adj, map, admin = "cluster_edge", seam = c(0, 1))
-
-z <- z[z$cluster_edge == 1, ]
-
-border_idxs <- which(map_north$row_id %in% z$row_id)
-
-########################################################################
-
-constraints <- redist_constr(map_north) %>%
-    # reward districts with hispanic vap % above 45%
-    add_constr_grp_hinge(
-        10,
-        vap_hisp,
-        total_pop = vap,
-        tgts_group = c(0.45)
-    ) %>%
-    # reward districts with black vap % below 15% and above 30%, enforcing barrier in between
-    add_constr_grp_hinge(
-        10,
-        vap_black,
-        total_pop = vap,
-        tgts_group = c(0.30)) %>%
-    add_constr_grp_hinge(-12, vap_black, vap, 0.15) %>%
-    # constrain the unassigned area be on the border, to ensure contiguity
-    add_constr_custom(strength = 10, function(plan, distr) {
-        ifelse(any(plan[border_idxs] == 0), 0, 1)
-    })
-
-n_steps <- (sum(map_north$pop)/attr(map, "pop_bounds")[2]) %>% floor()
-
-plans_north <- redist_smc(map_north, counties = pseudo_county,
-    nsims = nsims,
-    runs = 2L, ncores = 4,
-    n_steps = n_steps,
-    constraints = constraints)
-
-plans_north <- plans_north %>%
-    mutate(hvap = group_frac(map_north, vap_hisp, vap),
-           bvap = group_frac(map_north, vap_black, vap),
-           dem16 = group_frac(map_north, adv_16, arv_16 + adv_16),
-           dem18 = group_frac(map_north, adv_18, arv_18 + adv_18),
-           dem20 = group_frac(map_north, adv_20, arv_20 + adv_20))
-
-summary(plans_north)
-#############################################################
-
-## Combine North and South Clusters
-plans_north <- plans_north %>% filter(draw != "cd_2020")
-plans_south$dist_keep <- ifelse(plans_south$district == 0, FALSE, TRUE)
-plans_north$dist_keep <- ifelse(plans_north$district == 6, FALSE, TRUE)
-
-fl_plan_list <- list(list(map = map_south, plans = plans_south),
-    list(map = map_north, plans = plans_north))
-
-prep_mat <- prep_particles(map = map, map_plan_list = fl_plan_list,
-    uid = row_id, dist_keep = dist_keep, nsims = nsims*2)
-
-#############################################################
-
-# Cluster #3: Central Florida (with leftover VTDs from North and South)
+sampling_space_val <- tryCatch(
+    getFromNamespace("LINKING_EDGE_SPACE", "redist"),
+    error = function(e) "linking_edge"
+)
 
 constraints <- redist_constr(map) %>%
-    # reward districts with hispanic vap % above 40%
+    # Use one statewide VRA bundle rather than stacking the prior regional
+    # Florida bundles, following the converged FL 2000 statewide run.
+    add_constr_grp_hinge(5, vap_black, vap, 0.45) %>%
+    add_constr_grp_hinge(-7, vap_black, vap, 0.20) %>%
+    add_constr_grp_hinge(5, vap_hisp, vap, 0.55) %>%
+    add_constr_grp_hinge(-7, vap_hisp, vap, 0.25) %>%
     add_constr_grp_hinge(
-        5,
+        12,
         vap_hisp,
         total_pop = vap,
-        tgts_group = c(0.40)
+        tgts_group = c(0.50)
     ) %>%
-    # reward districts with hispanic vap % above 40%
     add_constr_grp_hinge(
-        5,
+        12,
         vap_black,
         total_pop = vap,
-        tgts_group = c(0.40))
+        tgts_group = c(0.50)
+    )
 
-plans <- redist_smc(map, nsims = nsims*2, runs = 2L, ncores = 4,
+set.seed(2020)
+plans <- redist_smc(
+    map, nsims = 3000, runs = 16L,
     counties = pseudo_county,
     constraints = constraints,
-    init_particles = prep_mat,
-    pop_temper = 0.05, seq_alpha = 0.65)  %>%
+    pop_temper = 0.05, seq_alpha = 1,
+    sampling_space = sampling_space_val,
+    ms_params = list(frequency = 1L, mh_accept_per_smc = 80),
+    split_params = list(splitting_schedule = "any_valid_sizes"),
+    verbose = TRUE,
+    ncores = max(1, parallel::detectCores() - 1)
+) %>%
+    filter(draw != "cd_2020") %>%
     group_by(chain) %>%
-    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
+    filter(as.integer(draw) < min(as.integer(draw)) + 1000) %>%
     ungroup()
 
 plans <- plans %>% add_reference(ref_plan = map$cd_2020)
+plans <- match_numbers(plans, "cd_2020")
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
@@ -179,6 +61,10 @@ cli_process_start("Computing summary statistics for {.pkg FL_cd_2020}")
 plans <- add_summary_stats(plans, map) %>%
     mutate(total_cvap = tally_var(map, cvap), .after = total_vap)
 
+summary(plans)
+
+validate_analysis(plans, map)
+
 # cvap columns
 cvap_cols <- names(map)[tidyselect::eval_select(starts_with("cvap_"), map)]
 for (col in rev(cvap_cols)) {
@@ -189,3 +75,181 @@ for (col in rev(cvap_cols)) {
 save_summary_stats(plans, "data-out/FL_2020/FL_cd_2020_stats.csv")
 
 cli_process_done()
+
+# Extra validation plots for custom constraints -----
+if (interactive()) {
+    library(ggplot2)
+    library(patchwork)
+
+    validate_analysis(plans, map)
+    summary(plans)
+
+    redist.plot.distr_qtys(
+        plans, vap_black/total_vap,
+        color_thresh = NULL,
+        color = ifelse(
+            subset_sampled(plans)$ndv > subset_sampled(plans)$nrv,
+            "#3D77BB", "#B25D4C"),
+        size = 0.5, alpha = 0.5) +
+        scale_y_continuous("Percent Black by VAP") +
+        labs(title = "Partisanship of seats by BVAP rank") +
+        scale_color_manual(values = c(cd_2020 = "black"))
+
+    redist.plot.distr_qtys(
+        plans, vap_hisp/total_vap,
+        color_thresh = NULL,
+        color = ifelse(
+            subset_sampled(plans)$ndv > subset_sampled(plans)$nrv,
+            "#3D77BB", "#B25D4C"),
+        size = 0.5, alpha = 0.5) +
+        scale_y_continuous("Percent Hispanic by VAP") +
+        labs(title = "Partisanship of seats by HVAP rank") +
+        scale_color_manual(values = c(cd_2020 = "black"))
+
+    plans %>%
+        group_by(draw) %>%
+        mutate(bvap = vap_black/total_vap, bvap_rank = rank(bvap)) %>%
+        subset_sampled() %>%
+        select(draw, district, bvap, bvap_rank, ndv, nrv) %>%
+        mutate(dem = ndv > nrv) %>%
+        group_by(bvap_rank) %>%
+        summarize(dem = mean(dem))
+
+    plans %>%
+        group_by(draw) %>%
+        mutate(hvap = vap_hisp/total_vap, hvap_rank = rank(hvap)) %>%
+        subset_sampled() %>%
+        select(draw, district, hvap, hvap_rank, ndv, nrv) %>%
+        mutate(dem = ndv > nrv) %>%
+        group_by(hvap_rank) %>%
+        summarize(dem = mean(dem))
+
+    plans %>%
+        subset_sampled() %>%
+        group_by(draw) %>%
+        summarize(n_black_perf = sum(vap_black/total_vap > 0.3 & ndshare > 0.5)) %>%
+        count(n_black_perf)
+
+    plans %>%
+        subset_sampled() %>%
+        group_by(draw) %>%
+        summarize(n_hisp_perf = sum(vap_hisp/total_vap > 0.3 & ndshare > 0.5)) %>%
+        count(n_hisp_perf)
+
+    d1 <- redist.plot.distr_qtys(
+        plans,
+        vap_black/total_vap,
+        color_thresh = NULL,
+        color = ifelse(
+            subset_sampled(plans)$ndv > subset_sampled(plans)$nrv,
+            "#3D77BB",
+            "#B25D4C"
+        ),
+        size = 0.5,
+        alpha = 0.5
+    ) +
+        scale_y_continuous("Percent Black by VAP") +
+        labs(title = "FL Proposed Plan versus Simulations") +
+        scale_color_manual(values = c(cd_2020 = "black"))
+
+    d2 <- redist.plot.distr_qtys(
+        plans,
+        vap_hisp/total_vap,
+        color_thresh = NULL,
+        color = ifelse(
+            subset_sampled(plans)$ndv > subset_sampled(plans)$nrv,
+            "#3D77BB",
+            "#B25D4C"
+        ),
+        size = 0.5,
+        alpha = 0.5
+    ) +
+        scale_y_continuous("Percent Hispanic by VAP") +
+        labs(title = "FL Proposed Plan versus Simulations") +
+        scale_color_manual(values = c(cd_2020 = "black"))
+
+    d3 <- redist.plot.distr_qtys(
+        plans,
+        (vap_hisp + vap_black)/total_vap,
+        color_thresh = NULL,
+        color = ifelse(
+            subset_sampled(plans)$ndv > subset_sampled(plans)$nrv,
+            "#3D77BB",
+            "#B25D4C"
+        ),
+        size = 0.5,
+        alpha = 0.5
+    ) +
+        scale_y_continuous("HVAP + BVAP / VAP") +
+        labs(title = "FL Proposed Plan versus Simulations") +
+        scale_color_manual(values = c(cd_2020 = "black"))
+
+    ggsave(
+        plot = d1/d2,
+        filename = "data-raw/FL/vap_plots.png",
+        height = 9,
+        width = 9
+    )
+    ggsave(
+        plot = d3,
+        filename = "data-raw/FL/vap_sum_plots.png",
+        height = 9,
+        width = 9
+    )
+
+    psum <- plans %>%
+        group_by(draw) %>%
+        mutate(vap_nonwhite = total_vap - vap_white) %>%
+        summarize(
+            all_hvap = sum((vap_hisp/total_vap) > 0.4),
+            dem_hvap = sum((vap_hisp/total_vap) > 0.4 &
+                (ndv > nrv)),
+            rep_hvap = sum((vap_hisp/total_vap) > 0.4 &
+                (nrv > ndv)),
+            all_bvap_40 = sum((vap_black/total_vap) > 0.4),
+            all_bvap_25 = sum((vap_black/total_vap) > 0.25),
+            dem_bvap_25 = sum((vap_black/total_vap) > 0.25 & (ndv > nrv)),
+            mmd_all = sum(vap_nonwhite/total_vap > 0.5),
+            mmd_coalition = sum(((
+                vap_hisp + vap_black
+            )/total_vap) > 0.5)
+        )
+
+    p1 <- redist.plot.hist(psum, mmd_coalition) + labs(x = "HVAP + BVAP > 0.5", y = NULL)
+    p2 <- redist.plot.hist(psum, all_hvap) + labs(x = "HVAP > 0.4", y = NULL)
+    p3 <- redist.plot.hist(psum, dem_hvap) + labs(x = "HVAP > 0.4 & Dem > Rep", y = NULL)
+    p4 <- redist.plot.hist(psum, rep_hvap) + labs(x = "HVAP > 0.4 & Dem < Rep", y = NULL)
+    p5 <- redist.plot.hist(psum, all_bvap_40) + labs(x = "BVAP > 0.4", y = NULL)
+    p6 <- redist.plot.hist(psum, all_bvap_25) + labs(x = "BVAP > 0.25", y = NULL)
+    p7 <- redist.plot.hist(psum, dem_bvap_25) + labs(x = "BVAP > 0.25 & Dem > Rep", y = NULL)
+
+    ggsave("data-raw/FL/vap_histograms.png", p1/p2/p3/p4/p5/p6/p7, height = 10)
+
+    cpsum <- plans %>%
+        group_by(draw) %>%
+        mutate(cvap_nonwhite = total_cvap - cvap_white) %>%
+        summarize(
+            all_hvap = sum((cvap_hisp/total_cvap) > 0.4),
+            dem_hvap = sum((cvap_hisp/total_cvap) > 0.4 &
+                (ndv > nrv)),
+            rep_hvap = sum((cvap_hisp/total_cvap) > 0.4 &
+                (nrv > ndv)),
+            all_bvap_40 = sum((cvap_black/total_cvap) > 0.4),
+            all_bvap_25 = sum((cvap_black/total_cvap) > 0.25),
+            dem_bvap_25 = sum((cvap_black/total_cvap) > 0.25 & (ndv > nrv)),
+            mmd_all = sum(cvap_nonwhite/total_cvap > 0.5),
+            mmd_coalition = sum(((
+                cvap_hisp + cvap_black
+            )/total_cvap) > 0.5)
+        )
+
+    p8 <- redist.plot.hist(cpsum, mmd_coalition) + labs(x = "HCVAP + BCVAP > 0.5", y = NULL)
+    p9 <- redist.plot.hist(cpsum, all_hvap) + labs(x = "HCVAP > 0.4", y = NULL)
+    p10 <- redist.plot.hist(cpsum, dem_hvap) + labs(x = "HCVAP > 0.4 & Dem > Rep", y = NULL)
+    p11 <- redist.plot.hist(cpsum, rep_hvap) + labs(x = "HCVAP > 0.4 & Dem < Rep", y = NULL)
+    p12 <- redist.plot.hist(cpsum, all_bvap_40) + labs(x = "BCVAP > 0.4", y = NULL)
+    p13 <- redist.plot.hist(cpsum, all_bvap_25) + labs(x = "BCVAP > 0.25", y = NULL)
+    p14 <- redist.plot.hist(cpsum, dem_bvap_25) + labs(x = "BCVAP > 0.25 & Dem > Rep", y = NULL)
+
+    ggsave("data-raw/FL/cvap_histograms.png", p8/p9/p10/p11/p12/p13/p14, height = 10)
+}
