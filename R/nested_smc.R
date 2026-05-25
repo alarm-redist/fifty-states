@@ -1,4 +1,4 @@
-nested_smc <- function(plans, map_ssd, map_shd, shp, inner_nsims = 50, inner_runs = 1, outer_runs = 5, ncores = min(inner_runs, parallel::detectCores() - 1)){
+nested_smc <- function(plans, map_ssd, map_shd, shp, inner_nsims = 50, inner_runs = 1, outer_runs = 5, max_split_tries = 100000, ncores = min(inner_runs, parallel::detectCores() - 1)){
 
   library(foreach)
   library(doParallel)
@@ -58,7 +58,7 @@ nested_smc <- function(plans, map_ssd, map_shd, shp, inner_nsims = 50, inner_run
                                  ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
                                  split_params = list(splitting_schedule = "any_valid_sizes"),
                                  verbose = TRUE,
-                                 control = list(max_split_tries = 100000)
+                                 control = list(max_split_tries = max_split_tries)
                                )
 
                                # Catch error
