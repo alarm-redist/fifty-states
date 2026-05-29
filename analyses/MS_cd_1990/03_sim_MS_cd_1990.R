@@ -10,11 +10,11 @@ set.seed(1990)
 
 # attempt to create single bvap mmd
 constr_sc <- redist_constr(map) %>%
-  add_constr_grp_hinge(15, vap_black, vap, 0.50) %>%
+  add_constr_grp_hinge(15, vap_black, vap, 0.55) %>%
   add_constr_grp_hinge(-8, vap_black, vap, 0.40) %>%
   add_constr_grp_hinge(-10, vap_black, vap, 0.20)
 
-plans <- redist_smc(map, nsims = 2e3, runs = 5, counties = county, constraints = constr_sc)
+plans <- redist::redist_smc(map, nsims = 2e3+20, runs = 5, counties = county, constraints = constr_sc)
 
 plans <- plans |>
     group_by(chain) |>
@@ -39,6 +39,14 @@ save_summary_stats(plans, "data-out/MS_1990/MS_cd_1990_stats.csv")
 
 cli_process_done()
 
+plans <- plans %>%
+  group_by(draw) %>%
+  mutate(
+    n_black_perf = sum(vap_black / total_vap > 0.3 & ndshare > 0.5)
+  ) %>%
+  ungroup() %>%
+  filter(n_black_perf > 0 | draw == "cd_1990")
+
 # Extra validation plots for custom constraints -----
 if (interactive()) {
     library(ggplot2)
@@ -53,4 +61,8 @@ redist.plot.distr_qtys(plans, vap_black / total_vap,
                        size = 0.5, alpha = 0.5) +
   scale_y_continuous('Percent Black by VAP') +
   labs(title = 'Approximate Performance')
-
+    plans |>
+        subset_sampled() |>
+        group_by(draw) |>
+        summarize(n_black_perf = sum(vap_black/total_vap > 0.3 & ndshare > 0.5)) |>
+        count(n_black_perf)
