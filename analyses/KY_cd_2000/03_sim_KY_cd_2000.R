@@ -8,12 +8,12 @@ cli_process_start("Running simulations for {.pkg KY_cd_2000}")
 
 set.seed(2000)
 plans <- redist_smc(map_cores, nsims = 2e3, runs = 5, counties = pseudo_county) %>%
-  pullback(map)
+    pullback(map)
 
 plans <- plans %>%
-  group_by(chain) %>%
-  filter(as.integer(draw) < min(as.integer(draw)) + 1000) %>% # thin samples
-  ungroup()
+    group_by(chain) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 1000) %>% # thin samples
+    ungroup()
 plans <- match_numbers(plans, "cd_2000")
 
 cli_process_done()

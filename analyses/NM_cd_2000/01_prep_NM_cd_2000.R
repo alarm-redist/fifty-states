@@ -4,21 +4,21 @@
 ###############################################################################
 
 suppressMessages({
-  library(dplyr)
-  library(readr)
-  library(sf)
-  library(redist)
-  library(geomander)
-  library(baf)
-  library(cli)
-  library(here)
-  devtools::load_all() # load utilities
+    library(dplyr)
+    library(readr)
+    library(sf)
+    library(redist)
+    library(geomander)
+    library(baf)
+    library(cli)
+    library(here)
+    devtools::load_all() # load utilities
 })
 
 # Download necessary files for analysis -----
 cli_process_start("Downloading files for {.pkg NM_cd_2000}")
 
-path_data <- download_redistricting_file("NM", "data-raw/NM", year = 2000, overwrite=TRUE)
+path_data <- download_redistricting_file("NM", "data-raw/NM", year = 2000, overwrite = TRUE)
 
 cli_process_done()
 
@@ -59,7 +59,7 @@ if (!file.exists(here(shp_path))) {
   write_rds(nm_shp, here(shp_path), compress = "gz")
   cli_process_done()
 } else {
-  nm_shp <- read_rds(here(shp_path))
-  cli_alert_success("Loaded {.strong NM} shapefile")
+    nm_shp <- read_rds(here(shp_path))
+    cli_alert_success("Loaded {.strong NM} shapefile")
 }
 

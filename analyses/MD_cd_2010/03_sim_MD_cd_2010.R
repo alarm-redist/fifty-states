@@ -1,6 +1,6 @@
 ###############################################################################
 # Simulate plans for `MD_cd_2010`
-# © ALARM Project, January 2023
+# © ALARM Project, November 2025
 ###############################################################################
 
 # Run the simulation -----
@@ -9,9 +9,9 @@ cli_process_start("Running simulations for {.pkg MD_cd_2010}")
 set.seed(2010)
 
 plans <- redist_smc(
-    map,
-    nsims = 2500, runs = 2L,
-    counties = county
+  map,
+  nsims = 2500, runs = 2,
+  counties = county
 )
 
 plans <- match_numbers(plans, "cd_2010")
@@ -34,4 +34,3 @@ plans <- plans |> select(-ends_with('.y')) |> rename_with(.fn = \(x) str_sub(x, 
 save_summary_stats(plans, "data-out/MD_2010/MD_cd_2010_stats.csv")
 
 cli_process_done()
-

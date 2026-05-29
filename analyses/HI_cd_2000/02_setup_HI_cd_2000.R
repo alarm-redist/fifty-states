@@ -1,16 +1,16 @@
 ###############################################################################
 # Set up redistricting simulation for `HI_cd_2000`
-# © ALARM Project, July 2025
+# © ALARM Project, January 2026
 ###############################################################################
 cli_process_start("Creating {.cls redist_map} object for {.pkg HI_cd_2000}")
 
 map <- redist_map(hi_shp, pop_tol = 0.005,
-                  existing_plan = cd_2000, adj = hi_shp$adj)
+    existing_plan = cd_2000, adj = hi_shp$adj)
 
 # Create sub-map for Honolulu County
 map_honolulu <- map %>%
-  filter(county == "003") %>%
-  `attr<-`("pop_bounds", attr(map, "pop_bounds"))
+    filter(county == "003") %>%
+    `attr<-`("pop_bounds", attr(map, "pop_bounds"))
 
 attr(map, "analysis_name") <- "HI_2000"
 
