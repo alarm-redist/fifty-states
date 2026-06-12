@@ -8,10 +8,12 @@ cli_process_start("Running simulations for {.pkg NY_ssd_2020}")
 
 set.seed(2020)
 
-mh_accept_per_smc <- ceiling(n_distinct(map_ssd$ssd_2020)/3) + 150
+mh_accept_per_smc <- ceiling(n_distinct(map_ssd$ssd_2020)/3) + 180
 
-constr <- redist_constr(map_ssd) |>
-    add_constr_total_splits(strength = 1.5, admin = map_ssd$county)
+constr <- redist_constr(map_cores_ssd) |>
+    add_constr_total_plan_splits(strength = 2.2, admin = map_cores_ssd$county) |>
+    add_constr_plan_splits(strength = 0.8, admin = map_cores_ssd$county) |>
+    add_constr_total_plan_splits(strength = 0.3, admin = map_cores_ssd$county_muni)
 
 plans <- redist_smc(
     map_cores_ssd,
@@ -56,26 +58,15 @@ if (interactive()) {
     summary(plans)
 
     # competitiveness plot -----
-    plans <- plans |> mutate(dvs_20 = group_frac(map_ssd, adv_20, adv_20 + arv_20))
-    redist.plot.distr_qtys(plans, qty = dvs_20, geom = "boxplot") + theme_bw() +
+    plans_comp <- plans |> mutate(dvs_20 = group_frac(map_ssd, adv_20, adv_20 + arv_20))
+    p_comp <- redist.plot.distr_qtys(plans_comp, qty = dvs_20, geom = "boxplot") + theme_bw() +
         lims(y = c(0.25, 0.9)) +
         labs(title = "Competitiveness")
+    print(p_comp)
 
     # cores preservation plot -----
-    plans_nocores <- redist_smc(
-        map_ssd,
-        nsims = 200,
-        runs = 2,
-        counties = map_ssd$pseudo_county
-    )
-
-    d_overl <- bind_rows(
-        with_cores = as_tibble(match_numbers(plans, map_ssd$ssd_2010)),
-        no_cores = as_tibble(match_numbers(plans_nocores, map_ssd$ssd_2010)),
-        .id = "run"
-    )
-
-    ggplot(d_overl |> distinct(run, draw, pop_overlap),
-        aes(x = pop_overlap, color = run, fill = run)) +
-        geom_density(alpha = 0.3)
+    p_core <- plans |>
+        match_numbers(map_ssd$ssd_2010) |>
+        hist(pop_overlap)
+    print(p_core)
 }

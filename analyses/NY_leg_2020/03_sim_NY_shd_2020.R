@@ -8,22 +8,22 @@ cli_process_start("Running simulations for {.pkg NY_shd_2020}")
 
 set.seed(2020)
 
-mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3) + 70
+mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3) + 150
 
-constr <- redist_constr(map_cores_shd) %>%
-    add_constr_total_plan_splits(admin = map_cores_shd$county, strength = 2)
+constr <- redist_constr(map_shd) |>
+    add_constr_total_splits(strength = 1.6, admin = map_shd$county)
 
 plans <- redist_smc(
-    map_cores_shd,
+    map_shd,
     nsims = 2e3, runs = 5,
     # ncores = as.integer(Sys.getenv("SLURM_CPUS_PER_TASK")),
-    counties = pseudo_county,
     constraints = constr,
+    counties = map_shd$shd_2010,
     sampling_space = "linking_edge",
     ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
     split_params = list(splitting_schedule = "any_valid_sizes"),
     verbose = TRUE
-) |> pullback(map_shd)
+)
 
 plans <- plans |>
     group_by(chain) |>
@@ -56,27 +56,15 @@ if (interactive()) {
     summary(plans)
 
     # competitiveness plot -----
-    plans <- plans |> mutate(dvs_20 = group_frac(map_shd, adv_20, adv_20 + arv_20))
-    redist.plot.distr_qtys(plans, qty = dvs_20, geom = "boxplot") + theme_bw() +
+    plans_comp <- plans |> mutate(dvs_20 = group_frac(map_shd, adv_20, adv_20 + arv_20))
+    p_comp <- redist.plot.distr_qtys(plans_comp, qty = dvs_20, geom = "boxplot") + theme_bw() +
         lims(y = c(0.25, 0.9)) +
         labs(title = "Competitiveness")
+    print(p_comp)
 
     # cores preservation plot -----
-    plans_nocores <- redist_smc(
-        map_shd,
-        nsims = 200,
-        runs = 2,
-        counties = map_shd$pseudo_county
-    )
-
-    d_overl <- bind_rows(
-        with_cores = as_tibble(match_numbers(plans, map_shd$shd_2010)),
-        no_cores = as_tibble(match_numbers(plans_nocores, map_shd$shd_2010)),
-        .id = "run"
-    )
-
-    ggplot(d_overl |> distinct(run, draw, pop_overlap),
-        aes(x = pop_overlap, color = run, fill = run)) +
-        geom_density(alpha = 0.3)
-
+    p_core <- plans |>
+        match_numbers(map_shd$shd_2010) |>
+        hist(pop_overlap)
+    print(p_core)
 }

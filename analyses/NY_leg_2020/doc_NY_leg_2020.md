@@ -15,20 +15,19 @@ In New York, we consult [NCSL Redistricting Law 2020](https://documents.ncsl.org
 
 
 ### Algorithmic Constraints
-We enforce a maximum population deviation of 5.0%.
+We enforce a maximum population deviation of 5.0%. 
+For New York's lower house, to preserve the cores of prior districts, we use the previous SHDs in the counties argument, which limits splits of prior districts during simulation.
 
 ## Data Sources
 Data for New York comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
 
 ## Pre-processing Notes
 Islands are connected to their nearest point on land. 
-(To preserve the cores of prior districts, we merge all precincts which are more than two precincts away from a district border, under the 2010 plan. Precincts in counties which are split by existing district boundaries are merged only within their county.)
+For New York's upper house, to preserve the cores of prior districts, we merge precincts that are not adjacent to a district boundary under the 2010 plan. Core groups are merged within counties.
 
 ## Simulation Notes
 We sample 10,000 districting plans for New York's lower house across 5 independent runs of the SMC algorithm.
-We then thinned the number of samples to 10,000.
-No special techniques were needed to produce the sample.
+We impose a county-split constraint and increase the number of merge-split proposals per SMC step.
 
-We sample 10,000 districting plans for New York's upper house across 5 independent runs of the SMC algorithm.
-We then thinned the number of samples to 10,000.
-No special techniques were needed to produce the sample.
+We sample 10,000 districting plans for New York's upper chamber across 5 independent runs of the SMC algorithm. 
+We impose county- and municipality-split constraints and increase the number of merge-split proposals per SMC step.
