@@ -12,7 +12,7 @@ mh_accept_per_smc <- 180
 
 
 constr <- redist_constr(map_ssd) |>
-	add_constr_total_plan_splits(6.5, map_ssd$county)
+    add_constr_total_plan_splits(6.5, map_ssd$county)
 
 
 plans <- redist_smc(

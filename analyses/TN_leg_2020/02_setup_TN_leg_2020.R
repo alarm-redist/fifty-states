@@ -13,7 +13,7 @@ map_shd <- redist_map(tn_shp, pop_tol = 0.05,
 # make pseudo counties with default settings
 map_ssd <- map_ssd |>
     mutate(pseudo_county = pick_county_muni(map_ssd, counties = county, munis = muni,
-        pop_muni = get_target(map_ssd)* 6))
+        pop_muni = get_target(map_ssd)*6))
 map_shd <- map_shd |>
     mutate(pseudo_county = pick_county_muni(map_shd, counties = county, munis = muni,
         pop_muni = get_target(map_shd)*12))
