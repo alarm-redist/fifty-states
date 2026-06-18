@@ -23,7 +23,7 @@ plans <- redist_smc(
     sampling_space = "linking_edge",
     ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
     split_params = list(splitting_schedule = "any_valid_sizes"),
-    verbose = TRUE
+    verbose = TRUE, ncores = 0L
 )
 
 plans <- plans |>
