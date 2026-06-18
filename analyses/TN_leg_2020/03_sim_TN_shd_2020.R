@@ -8,10 +8,10 @@ cli_process_start("Running simulations for {.pkg TN_shd_2020}")
 
 set.seed(2020)
 
-mh_accept_per_smc <- 80
+mh_accept_per_smc <- 160
 
 constr <- redist_constr(map_shd) |> 
-	add_constr_total_plan_splits(3.8, map_shd$county)
+	add_constr_total_plan_splits(4.15, map_shd$county)
 
 plans <- redist_smc(
     map_shd,
