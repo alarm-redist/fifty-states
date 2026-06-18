@@ -7,7 +7,7 @@
 cli_process_start("Running simulations for {.pkg ID_cd_2000}")
 
 set.seed(2000)
-plans <- redist_smc(map, nsims = 2000, runs = 10, counties = county, verbose=TRUE, pop_temper=0.05)
+plans <- redist_smc(map, nsims = 2000, runs = 10, counties = county, verbose = TRUE, pop_temper = 0.05)
 
 plans <- plans %>%
     group_by(chain) %>%
@@ -40,4 +40,3 @@ if (interactive()) {
     validate_analysis(plans, map)
     summary(plans)
 }
-

@@ -6,11 +6,6 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg IL_cd_1990}")
 
-sampling_space_val <- tryCatch(
-  getFromNamespace("LINKING_EDGE_SPACE", "redist"),
-  error = function(e) "linking_edge"
-)
-
 # Hinge constraints
 constr <- redist_constr(map) %>%
   # Black opportunity shaping
@@ -18,18 +13,18 @@ constr <- redist_constr(map) %>%
   add_constr_grp_hinge(-3, vap_black, vap, 0.25) %>%
   add_constr_grp_hinge(-3, vap_black, vap, 0.08) %>%
   # Hispanic opportunity shaping
-  add_constr_grp_hinge( 8, vap_hisp,  vap, 0.40) %>%  
-  add_constr_grp_hinge(-6, vap_hisp,  vap, 0.25) %>%  
+  add_constr_grp_hinge( 8, vap_hisp,  vap, 0.40) %>%
+  add_constr_grp_hinge(-6, vap_hisp,  vap, 0.25) %>%
   add_constr_grp_hinge(-3, vap_hisp,  vap, 0.10)
 
 set.seed(1990)
 plans <- redist_smc(
-  map, 
-  nsims = 1000, 
-  runs = 10, 
+  map,
+  nsims = 1000,
+  runs = 10,
   counties = county,
   pop_temper = 0.01, seq_alpha = 0.90,
-  sampling_space = sampling_space_val,
+  sampling_space = "linking_edge",
   ms_params      = list(frequency = 1L, mh_accept_per_smc = 40),
   split_params   = list(splitting_schedule = "any_valid_sizes"),
   constraints    = constr)
@@ -80,11 +75,11 @@ cli_process_done()
 if (interactive()) {
   library(ggplot2)
   library(patchwork)
-  
+
   # General validation
   validate_analysis(plans, map)
   summary(plans)
-  
+
   # Opportunity diagnostics: Black & Hispanic VAP
   p_black <- redist.plot.distr_qtys(
     plans, vap_black / total_vap,
@@ -99,7 +94,7 @@ if (interactive()) {
     labs(title = "Approximate Performance (Black VAP)") +
     scale_color_manual(values = c(cd_1990 = "black")) +
     theme_bw()
-  
+
   p_hisp <- redist.plot.distr_qtys(
     plans, vap_hisp / total_vap,
     color_thresh = NULL,
@@ -113,6 +108,6 @@ if (interactive()) {
     labs(title = "Approximate Performance (Hispanic VAP)") +
     scale_color_manual(values = c(cd_1990 = "black")) +
     theme_bw()
-  
+
   p_black + p_hisp
 }

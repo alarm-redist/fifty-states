@@ -251,11 +251,11 @@ vest_crosswalk <- function(cvap, state) {
 }
 
 
-load_plans <- function(state) {
-  plans <<- read_rds(here(str_glue("data-out/{state}_2020/{state}_cd_2020_plans.rds")))
+load_plans <- function(state, type = "cd", year = 2020) {
+  plans <<- read_rds(here(str_glue("data-out/{state}_{year}/{state}_{type}_{year}_plans.rds")))
 }
-load_map <- function(state) {
-  map <<- read_rds(here(str_glue("data-out/{state}_2020/{state}_cd_2020_map.rds")))
+load_map <- function(state, type = "cd", year = 2020) {
+  map <<- read_rds(here(str_glue("data-out/{state}_{year}/{state}_{type}_{year}_map.rds")))
 }
 rename_cd <- function(plans) {
   m <- as.matrix(plans)

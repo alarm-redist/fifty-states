@@ -13,12 +13,12 @@ target_per_chain <- 2500L
 runs <- 2L
 
 # Start reasonably large
-nsims <- 30000L   
+nsims <- 30000L
 
 plans_raw <- redist_smc(
-  map,
-  nsims = nsims, runs = runs,
-  counties = dplyr::coalesce(as.character(muni), as.character(county))
+    map,
+    nsims = nsims, runs = runs,
+    counties = dplyr::coalesce(as.character(muni), as.character(county))
 )
 
 cli_process_done()
@@ -27,7 +27,7 @@ cli_process_done()
 cli_process_start("HI_cd_2000: filter draws")
 
 mat_all <- get_plans_matrix(plans_raw)
-mat_sim <- if (ncol(mat_all) == nsims * runs + 1L) mat_all[, -1, drop = FALSE] else mat_all
+mat_sim <- if (ncol(mat_all) == nsims*runs + 1L) mat_all[, -1, drop = FALSE] else mat_all
 
 w_all <- get_plans_weights(plans_raw)
 w_sim <- if (length(w_all) == ncol(mat_sim) + 1L) w_all[-1] else w_all
@@ -48,9 +48,9 @@ chain_keep <- chain_all[keep]
 
 # take first `target_per_chain` kept per chain
 pick <- unlist(lapply(seq_len(runs), function(ch) {
-  idx <- which(chain_keep == ch)
-  if (length(idx) < target_per_chain) cli_abort("need more draws (chain {ch})")
-  idx[seq_len(target_per_chain)]
+    idx <- which(chain_keep == ch)
+    if (length(idx) < target_per_chain) cli_abort("need more draws (chain {ch})")
+    idx[seq_len(target_per_chain)]
 }))
 
 mat_final <- mat_keep[, pick, drop = FALSE]
@@ -67,33 +67,33 @@ storage.mode(mat_final) <- "integer"
 colnames(mat_final) <- NULL
 
 plans <- redist_plans(
-  plans     = mat_final,
-  map       = map,
-  algorithm = "smc",
-  wgt       = w_final
+    plans     = mat_final,
+    map       = map,
+    algorithm = "smc",
+    wgt       = w_final
 )
 
 # chain column: redist_plans sometimes has 1 row per draw or 2 rows per draw
 n <- nrow(plans)
 if (n == length(chain_cols)) {
-  plans <- plans |> dplyr::mutate(chain = chain_cols, .after = draw)
-} else if (n == 2L * length(chain_cols)) {
-  plans <- plans |> dplyr::mutate(chain = rep(chain_cols, each = 2L), .after = draw)
+    plans <- plans |> dplyr::mutate(chain = chain_cols, .after = draw)
+} else if (n == 2L*length(chain_cols)) {
+    plans <- plans |> dplyr::mutate(chain = rep(chain_cols, each = 2L), .after = draw)
 } else {
-  cli_abort("chain length mismatch")
+    cli_abort("chain length mismatch")
 }
 
 plans <- plans |>
-  add_reference(ref_plan = map$cd_2000, name = "cd_2000")
+    add_reference(ref_plan = map$cd_2000, name = "cd_2000")
 
 # if reference got added once, copy for chain 2
 if ("is_reference" %in% names(plans)) {
-  ref_rows <- dplyr::filter(plans, is_reference)
-  if (nrow(ref_rows) == 1L && runs == 2L) {
-    ref2 <- ref_rows
-    ref2$chain <- setdiff(seq_len(runs), ref_rows$chain)[1]
-    plans <- dplyr::bind_rows(plans, ref2)
-  }
+    ref_rows <- dplyr::filter(plans, is_reference)
+    if (nrow(ref_rows) == 1L && runs == 2L) {
+        ref2 <- ref_rows
+        ref2$chain <- setdiff(seq_len(runs), ref_rows$chain)[1]
+        plans <- dplyr::bind_rows(plans, ref2)
+    }
 }
 
 # relabel to match the enacted plan
@@ -117,6 +117,6 @@ cli_process_done()
 
 # Validation
 if (interactive()) {
-  validate_analysis(plans, map)
-  summary(plans)
+    validate_analysis(plans, map)
+    summary(plans)
 }
