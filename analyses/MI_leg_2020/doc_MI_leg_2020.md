@@ -21,11 +21,12 @@ Data for Michigan comes from the ALARM Project's [2020 Redistricting Data Files]
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We generated an ensemble of plans for the Kansas State House using the merge-split SMC sampler. We ran 5 independent chains with 2,000 simulated plans per run.
-We tuned the MCMC parameters so that each run accepted about 82 merge-split proposals on average.
-We constructed pseudo-counties using `pick_county_muni()` with `pop_muni = 3.5 * get_target(map_shd)`.
 
-We generated an ensemble of plans for the Kansas State Senate using the merge-split SMC sampler. We ran 5 independent chains with 2,000 simulated plans per run.
+We generated an ensemble of plans for the Michigan State House using the merge-split SMC sampler. We ran 5 independent chains with 2,000 simulated plans per run.
+We tuned the MCMC parameters so that each run accepted about 82 merge-split proposals on average.
+We used a pseudo-county constraint to limit county and municipality splits while preserving population balance and contiguity.
+
+We generated an ensemble of plans for the Michigan State Senate using the merge-split SMC sampler. We ran 5 independent chains with 2,000 simulated plans per run.
 We tuned the MCMC parameters so that each run accepted about 24 merge-split proposals on average.
-We constructed pseudo-counties using `pick_county_muni()` with `pop_muni = 3.5 * get_target(map_ssd)`.
-We added a soft total municipality-splits constraint during sampling using `add_constr_total_splits()` with `strength = 0.5` and `admin = muni_constr`.
+We used a pseudo-county constraint to limit county and municipality splits while preserving population balance and contiguity.
+We also added a soft municipality-splits constraint to encourage the simulated plans to better respect municipal boundaries where feasible.
