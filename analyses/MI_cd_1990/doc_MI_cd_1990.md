@@ -19,6 +19,6 @@ Data for Michigan comes from the [ALARM Project's update](https://dataverse.harv
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 10,000 districting plans for Michigan across 5 independent runs of the SMC algorithm.
+We sample 50,000 districting plans for Michigan across 5 independent runs of the SMC algorithm.
 We then thinned the number of samples to 5,000. 
 No special techniques were needed to produce the sample.

@@ -12,11 +12,6 @@ plans <- redist_smc(map,
     runs = 2L,
     counties = county_muni)
 
-plans %>%
-    group_by(chain) %>%
-    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
-    ungroup()
-
 plans <- match_numbers(plans, "cd_2010")
 
 cli_process_done()

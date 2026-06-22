@@ -1,3 +1,12 @@
+# Dataset Version 16
+- Removes unused constraint code from IL CD 2010 and 2020 simulation scripts. The `constr` objects were defined but never passed to `redist_smc()`, so removing them does not change the sampled plans.
+- Corrects the NE CD 2020 documentation, which described a Gibbs anti-county-split constraint that was never applied in the simulation code.
+- Documents the VRA/minority constraints that the simulation code applies but the documentation omitted: AL, NC, SC, TX, and VA CD 1990; SC and VA CD 2000; MI CD 2010.
+- Corrects plan and run counts in the documentation to match the simulation code: AL, IA, MI, NC, and SC CD 1990; AR, AZ, and ID CD 2000; OH CD 2020.
+- Corrects the documented hinge constraint strength for MS CD 2020 (20->25).
+- Removes a thinning step in ID CD 2010 that was never assigned and had no effect.
+- Fixes minor documentation errors: NM and NC CD 2010 (removed "no special techniques", since a constraint/filter is used), NV CD 2010 (algorithm name), ME CD 1990 (state name), and NV CD 1990 (section headers).
+
 # Dataset Version 15
 - Thins extra plans out of UT CD 2020 plans (https://github.com/alarm-redist/fifty-states/issues/182)
 - Corrects the correction of GA, NE, and IN 2020 CD files to remove `.y` column.
