@@ -11,7 +11,8 @@ set.seed(2020)
 mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3) + 230
 
 constr <- redist_constr(map_shd) |>
-    add_constr_total_splits(strength = 2.6, admin = map_shd$county)
+    add_constr_total_splits(strength = 2.5, admin = map_shd$county)  |>
+    add_constr_polsby(strength = 1)
 
 plans <- redist_smc(
     map_shd,
