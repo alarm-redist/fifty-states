@@ -38,7 +38,7 @@ cli_process_start("Saving {.cls redist_plans} object")
 write_rds(plans, here("data-out/WA_2020/WA_shd_2020_plans.rds"), compress = "xz")
 cli_process_done()
 
-# Bella added below (uncomment when viewing validation)
+# The following line is uncommented when when viewing validation plots
 # plans <- readRDS("data-out/WA_2020/WA_shd_2020_plans.rds")
 
 # Compute summary statistics -----
