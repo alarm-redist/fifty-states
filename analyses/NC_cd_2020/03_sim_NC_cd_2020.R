@@ -12,7 +12,7 @@ constr <- redist_constr(map) %>%
     add_constr_grp_inv_hinge(20, vap_black, vap, 0.37)
 
 set.seed(2020)
-plans <- redist_smc(map, nsims = 10e3,
+plans <- redist_smc(map, nsims = 20e3,
     runs = 2L,
     compactness = 1,
     counties = pseudo_county,

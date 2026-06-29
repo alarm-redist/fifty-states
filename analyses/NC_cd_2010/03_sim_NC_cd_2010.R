@@ -13,7 +13,7 @@ constr <- redist_constr(map) %>%
     add_constr_grp_hinge(-8, vap - vap_white, vap, 0.35) %>%
     add_constr_grp_inv_hinge(8, vap - vap_white, vap, 0.62)
 
-plans <- redist_smc(map, nsims = 12e3,
+plans <- redist_smc(map, nsims = 24e3,
     runs = 2L,
     ncores = 2L,
     counties = county,

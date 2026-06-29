@@ -13,7 +13,7 @@ constr <- redist_constr(map) %>%
 
 set.seed(2020)
 
-plans <- redist_smc(map, nsims = 12e3, runs = 4, counties = pseudo_county,
+plans <- redist_smc(map, nsims = 24e3, runs = 4, counties = pseudo_county,
     constraints = constr, pop_temper = 0.02, seq_alpha = 0.9) %>%
     group_by(chain) %>%
     filter(as.integer(draw) < min(as.integer(draw)) + 1250) %>% # thin samples

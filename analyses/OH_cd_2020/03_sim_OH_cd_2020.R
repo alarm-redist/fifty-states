@@ -25,13 +25,14 @@ constr <- redist_constr(map_cleve) %>%
 
 set.seed(2020)
 
+N <- 60000 # Cleveland-stage simulations (defines N used below)
 pl_cleve <- redist_smc(map_cleve, N, runs = 4, counties = split_unit,
     constraints = constr, n_steps = 1, pop_temper = 0.05, verbose = TRUE) %>%
     mutate(black = group_frac(map_cleve, vap_black, vap)) %>%
     number_by(black)
 
 # prepare for simulating remainder
-N <- 30000 # simulations
+N <- 60000 # simulations (remainder stage; scaled with Cleveland stage above)
 
 m_cleve <- pl_cleve %>%
     group_by(draw) %>%
