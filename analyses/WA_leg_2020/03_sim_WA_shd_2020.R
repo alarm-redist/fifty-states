@@ -6,30 +6,20 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg WA_shd_2020}")
 
-# TODO any pre-computation (VRA targets, etc.)
-
-# TODO customize as needed. Recommendations:
-#  - For many districts / tighter population tolerances, try setting
-#  `pop_temper=0.01` and nudging upward from there. Monitor the output for
-#  efficiency!
-#  - Monitor the output (i.e. leave `verbose=TRUE`) to ensure things aren't breaking
-#  - Don't change the number of simulations unless you have a good reason
-#  - If the sampler freezes, try turning off the county split constraint to see
-#  if that's the problem.
-#  - Ask for help!
 set.seed(2020)
 
-# TODO set equal to one third of number of districts, increase by 10-15 if no convergence
-mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3)
+mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3) + 10
 
 plans <- redist_smc(
-  map_shd,
-  nsims = 2e3, runs = 5,
-  counties = pseudo_county,
-  sampling_space = "linking_edge",
-  ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
-  split_params = list(splitting_schedule = "any_valid_sizes"),
-  verbose = TRUE
+    map_shd,
+    nsims = 5000, runs = 5,
+    constraints = constr,
+    ncores = 0,
+    counties = pseudo_county,
+    sampling_space = "linking_edge",
+    ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
+    split_params = list(splitting_schedule = "any_valid_sizes"),
+    verbose = TRUE
 )
 
 # IF CORES OR OTHER UNITS HAVE BEEN MERGED:
@@ -44,11 +34,12 @@ plans <- match_numbers(plans, "shd_2020")
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
 
-# TODO add any reference plans that aren't already included
-
 # Output the redist_map object. Do not edit this path.
 write_rds(plans, here("data-out/WA_2020/WA_shd_2020_plans.rds"), compress = "xz")
 cli_process_done()
+
+# Bella added below (uncomment when viewing validation)
+# plans <- readRDS("data-out/WA_2020/WA_shd_2020_plans.rds")
 
 # Compute summary statistics -----
 cli_process_start("Computing summary statistics for {.pkg WA_shd_2020}")
@@ -67,6 +58,4 @@ if (interactive()) {
     validate_analysis(plans, map_shd)
     summary(plans)
 
-    # Extra validation plots for custom constraints -----
-    # TODO remove this section if no custom constraints
 }

@@ -12,6 +12,8 @@ In Washington, we consult [NCSL Redistricting Law 2020](https://documents.ncsl.o
 7. be competitive [187]
 8. have the House nested in Senate or Congress [187]
 
+Note: Washington is a state with simple multi-member legislative districts, where chambers have identical plans with different numbers of members per district.
+
 ### Algorithmic Constraints
 We enforce a maximum population deviation of 5.0%.
 
@@ -22,10 +24,9 @@ Data for Washington comes from the ALARM Project's [2020 Redistricting Data File
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 10,000 districting plans for Washington's lower house across 5 independent runs of the SMC algorithm.
-We then thinned the number of samples to 10,000 [TODO delete if only 10,000 total samples].
-No special techniques were needed to produce the sample.
+We sample 25,000 district plans for Washington's lower house across 5 independent runs of the SMC algorithm. We 
+introduce a Polsby-Popper constraint of strength 3 and increase the number of merge-split proposals per SMC step 
+to 27 total. The ncores argument in redist_smc() was set to 0.
 
-We sample XX,XXX districting plans for Washington's upper house across 5 independent runs of the SMC algorithm.
-We then thinned the number of samples to 10,000 [TODO delete if only 10,000 total samples].
-No special techniques were needed to produce the sample.
+Washington uses the same district plans for its upper house, so please note that the
+plans simulated for the State House were copy-and-pasted under "State Senate."
