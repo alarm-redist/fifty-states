@@ -6,7 +6,7 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg CA_cd_2010}")
 
-nsim <- 12500
+nsim <- 25000
 
 # Simulate southern CA ----
 seam_south <- sapply(

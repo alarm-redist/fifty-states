@@ -49,7 +49,7 @@ set.seed(2020)
 
 plans_south <- redist_smc(
     map_south,
-    nsims = 1e4, runs = 2L, ncores = 8,
+    nsims = 2e4, runs = 2L, ncores = 8,
     counties = pseudo_county,
     constraints = cons_south,
     n_steps = 27, pop_temper = 0.005, seq_alpha = 0.95
@@ -136,7 +136,7 @@ set.seed(2020)
 
 plans_bay <- redist_smc(
     map_bay,
-    nsims = 1e4, runs = 2L, ncores = 8,
+    nsims = 2e4, runs = 2L, ncores = 8,
     counties = pseudo_county,
     constraints = cons_bay,
     n_steps = 13, pop_temper = 0.0025
@@ -158,7 +158,7 @@ init <- prep_particles(
     ),
     uid = uid,
     dist_keep = keep,
-    nsims = 1e4*2
+    nsims = 2e4*2
 )
 
 
@@ -166,7 +166,7 @@ set.seed(2020)
 
 plans <- redist_smc(
     map,
-    nsims = 2e4, runs = 2L, ncores = 8,
+    nsims = 4e4, runs = 2L, ncores = 8,
     counties = county,
     init_particles = init
 )

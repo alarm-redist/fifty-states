@@ -6,7 +6,7 @@
 set.seed(2020)
 
 cluster_pop_tol <- 0.005
-nsims <- 40000
+nsims <- 80000
 
 # Unique ID for each row, will use later to reconnect pieces
 map$row_id <- 1:nrow(map)
