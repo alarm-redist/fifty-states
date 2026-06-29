@@ -6,21 +6,16 @@ cli_process_start("Creating {.cls redist_map} object for {.pkg NJ_leg_2020}")
 
 # TODO any pre-computation (usually not necessary)
 
+# BELLA added --------------------------------
+
 # Total pop variable retrieved from: https://www.census.gov/library/stories/state-by-state/new-jersey.html
 TOTAL_POP_NJ = 9288994
 
-# BELLA added --------------------------------
-new_nj_shp <- nj_shp |>
+nj_shp <- nj_shp |>
   group_by(muni) |>
   mutate(total_pop_per_muni = sum(pop)) |>
-  mutate(large_muni = total_pop_per_muni > ((1/40)*TOTAL_POP_NJ))
-
-new_nj_shp <- if(new_nj_shp$large_muni) {
-  merge_by(new_nj_shp$muni)
-}
-
-nj_shp <- new_nj_shp |>
-  select(-total_pop_per_muni, -large_muni)
+  mutate(large_muni = total_pop_per_muni > ((1/40)*TOTAL_POP_NJ)) |>
+  mutate(merge_group = if_else(large_muni,muni,as.character(row_number())))
 
 #----------------------------------------------
 
@@ -31,6 +26,16 @@ map_shd <- redist_map(nj_shp, pop_tol = 0.05,
     existing_plan = shd_2020, adj = nj_shp$adj)
 
 # TODO any filtering, cores, merging, etc.
+
+# Merging
+
+map_ssd <- map_ssd |>
+  merge_by(merge_group) |>
+  select(-total_pop_per_muni, -large_muni, -merge_group)
+
+map_shd <- map_shd |>
+  merge_by(merge_group) |>
+  select(-total_pop_per_muni, -large_muni, -merge_group)
 
 # Added the following total splits constraint
 constr <- redist_constr(map_shd) |>
