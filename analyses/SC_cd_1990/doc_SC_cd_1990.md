@@ -11,6 +11,7 @@ In South Carolina, we consult [NCSL Redistricting Law 2000](https://web.archive.
 
 ### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
+We add a constraint to encourage a district with Black voting-age population above 40%, along with an inverse hinge constraint discouraging Black VAP below 20% to limit cracking, in line with the Voting Rights Act.
 
 ## Data Sources
 Data for South Carolina comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
@@ -19,6 +20,5 @@ Data for South Carolina comes from the [ALARM Project's update](https://datavers
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 30,000 districting plans for South Carolina across 6 independent runs of the SMC algorithm.
-We then thinned the number of samples to 5,000. 
-No special techniques were needed to produce the sample.
+We sample 25,000 districting plans for South Carolina across 5 independent runs of the SMC algorithm.
+We then thinned the number of samples to 5,000.

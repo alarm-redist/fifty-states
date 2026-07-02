@@ -27,4 +27,4 @@ No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
 
-We sample 5,000 districting plans for Nevada across 2 independent runs of the sequential Markov Chain algorithm. No special techniques were needed to produce the sample.
+We sample 5,000 districting plans for Nevada across 2 independent runs of the SMC algorithm. No special techniques were needed to produce the sample.
