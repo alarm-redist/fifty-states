@@ -1,25 +1,28 @@
-nested_smc <- function(plans, map_ssd, map_shd, shp, inner_nsims = 50, inner_runs = 1, outer_runs = 5, max_split_tries = 100000, ncores = min(inner_runs, parallel::detectCores() - 1)){
+nested_smc <- function(plans, map_ssd, map_shd, shp, inner_nsims = 50, inner_runs = 1, outer_runs = 5, year = 2020, state, max_split_tries = 100000, ncores = min(inner_runs, parallel::detectCores() - 1)){
 
   library(foreach)
   library(doParallel)
   library(doRNG)
+
+  shd_col <- paste0("shd_", year)
+  ssd_col <- paste0("ssd_", year)
 
   # Generate district assignment matrix
   sample_ssd_matrix <- get_plans_matrix(subset_sampled(plans))
 
   # Create shd map object
   map_shd_iterate <- redist_map(shp, pop_tol = 0.05,
-                                ndists = n_distinct(map_shd$shd_``YEAR``), adj = shp$adj)
+                                ndists = n_distinct(map_shd[[shd_col]]), adj = shp$adj)
 
   # Unique ID for each row, will use later to reconnect pieces
   map_shd_iterate$row_id <- 1:nrow(map_shd_iterate)
 
   # Simulation hyperparameters
-  inner_splits <- n_distinct(map_shd$shd_``YEAR``)/n_distinct(map_ssd$ssd_``YEAR``)
+  inner_splits <- n_distinct(map_shd[[shd_col]])/n_distinct(map_ssd[[ssd_col]])
   final_sims <- ncol(sample_shd_matrix)
 
   # Set up log file
-  logfile <- "data-out/``STATE``_``YEAR``/nested_log.txt"
+  logfile <- sprintf("data-out/%s_%s/nested_log.txt", state, year)
   file.create(logfile)
 
   # Set up parallelization
@@ -125,14 +128,14 @@ nested_smc <- function(plans, map_ssd, map_shd, shp, inner_nsims = 50, inner_run
                            algorithm = "smc")
 
   # Add draw and chain numbering
-  plans_shd$draw <- as.factor(rep(1:sum(survive$survive), each = n_distinct(map_shd$shd_``YEAR``)))
+  plans_shd$draw <- as.factor(rep(1:sum(survive$survive), each = n_distinct(map_shd[[shd_col]])))
 
-  full_chain <- rep(1:outer_runs, each = n_distinct(map_shd$shd_``YEAR``) * final_sims / outer_runs)
+  full_chain <- rep(1:outer_runs, each = n_distinct(map_shd[[shd_col]]) * final_sims / outer_runs)
 
   plans_shd$chain <- full_chain[survive_all$survive_all]
 
   # Add enacted plan
-  plans_shd <- add_reference(plans_shd, ref_plan = map_shd$shd_``YEAR``, name = "shd_``YEAR``")
+  plans_shd <- add_reference(plans_shd, ref_plan = map_shd[[shd_col]], name = shd_col)
 
   return(plans_shd)
 
