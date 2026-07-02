@@ -9,6 +9,11 @@ cli_process_start("Running simulations for {.pkg OK_cd_2010}")
 set.seed(2010)
 plans <- redist_smc(map, nsims = 5e3, counties = pseudo_county, runs = 2)
 
+plans <- plans %>%
+    group_by(chain) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>%
+    ungroup()
+
 plans <- match_numbers(plans, "cd_2010")
 
 cli_process_done()
