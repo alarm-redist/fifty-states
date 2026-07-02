@@ -9,19 +9,9 @@ cli_process_start("Running simulations for {.pkg MN_cd_2000}")
 set.seed(2000)
 plans <- redist_smc(map, nsims = 2e3, runs = 10, counties = county)
 
-target_plans <- 5000L
-chains <- sort(unique(plans$chain))
-n_keep <- rep(target_plans %/% length(chains), length(chains))
-n_keep[seq_len(target_plans %% length(chains))] <-
-    n_keep[seq_len(target_plans %% length(chains))] + 1L
-names(n_keep) <- as.character(chains)
-
 plans <- plans %>%
     group_by(chain) %>%
-    filter(
-        is.na(chain) |
-            dense_rank(as.integer(draw)) <= n_keep[as.character(first(chain))]
-    ) %>% # thin samples to 5,000 while retaining every chain
+    filter(as.integer(draw) < min(as.integer(draw)) + 500) %>% # thin samples
     ungroup()
 plans <- match_numbers(plans, "cd_2000")
 
