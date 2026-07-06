@@ -14,6 +14,7 @@ TOTAL_POP_NJ = 9288994
 nj_shp <- nj_shp |>
   group_by(muni) |>
   mutate(total_pop_per_muni = sum(pop)) |>
+  ungroup() |>
   mutate(large_muni = total_pop_per_muni > ((1/40)*TOTAL_POP_NJ)) |>
   mutate(merge_group = if_else(large_muni,muni,as.character(row_number())))
 
@@ -27,20 +28,23 @@ map_shd <- redist_map(nj_shp, pop_tol = 0.05,
 
 # TODO any filtering, cores, merging, etc.
 
-# Merging
+# Bella added merging ------------------------
 
 map_ssd <- map_ssd |>
-  merge_by(merge_group) |>
+  merge_by(merge_group, drop_geom = FALSE) |>
   select(-total_pop_per_muni, -large_muni, -merge_group)
 
 map_shd <- map_shd |>
-  merge_by(merge_group) |>
+  merge_by(merge_group, drop_geom = FALSE) |>
   select(-total_pop_per_muni, -large_muni, -merge_group)
+
 
 # Added the following total splits constraint
 constr <- redist_constr(map_shd) |>
 add_constr_total_splits(strength = 1.5, admin = map_shd$county) |>
 add_constr_total_splits(strength = 3, admin = map_shd$county_muni)
+
+# ------------------------------------------------
 
 
 # TODO remove if not necessary. Adjust pop_muni as needed to balance county/muni splits

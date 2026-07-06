@@ -20,12 +20,13 @@ cli_process_start("Running simulations for {.pkg NJ_shd_2020}")
 set.seed(2020)
 
 # TODO set equal to one third of number of districts, increase by 10-15 if no convergence
-mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3) + 6
+mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3) + 26
 
 plans <- redist_smc(
   map_shd,
-  nsims = 3000, runs = 5,
+  nsims = 5000, runs = 5,
   constraints = constr,
+  ncores = 0,
   counties = pseudo_county,
   sampling_space = "linking_edge",
   ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
@@ -37,6 +38,7 @@ plans <- redist_smc(
 # make sure to call `pullback()` on this plans object!
 
 plans <- plans |>
+  pullback() |>
     group_by(chain) |>
     filter(as.integer(draw) < min(as.integer(draw)) + 2000) |> # thin samples
     ungroup()

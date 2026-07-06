@@ -62,7 +62,6 @@ if (!file.exists(here(shp_path))) {
     nj_shp <- nj_shp |>
         left_join(y = leg_from_baf(state = "NJ"), by = "GEOID")
 
-
     # TODO any additional columns or data you want to add should go here
 
     # Create perimeters in case shapes are simplified
