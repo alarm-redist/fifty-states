@@ -8,16 +8,23 @@ cli_process_start("Running simulations for {.pkg CO_shd_2020}")
 
 set.seed(2020)
 
-mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3) + 40
+constr <- redist_constr(map_shd) %>%
+    add_constr_total_plan_splits(strength = 1.4, admin = map_shd$county) %>%
+    add_constr_total_plan_splits(strength = 3, admin = map_shd$county_muni)
+
+mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3) + 630
 
 plans <- redist_smc(
     map_shd,
-    nsims = 2e3, runs = 5,
+    nsims = 3e3, runs = 5,
     counties = pseudo_county,
+    constraints = constr,
     sampling_space = "linking_edge",
     ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
     split_params = list(splitting_schedule = "any_valid_sizes"),
-    verbose = TRUE
+    verbose = TRUE,
+    pop_temper = 0.04,
+    ncores = 0L
 )
 
 plans <- plans |>
