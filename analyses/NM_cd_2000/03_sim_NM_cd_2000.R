@@ -7,17 +7,17 @@
 cli_process_start("Running simulations for {.pkg NM_cd_2000}")
 set.seed(2000)
 plans <- redist_smc(map,
-    nsims = 2000,
-    runs = 10,
-    counties = pseudo_county,
-    sampling_space = "linking_edge",
-    pop_temper = 0.05,
-    seq_alpha  = 0.9,
-    ms_params = list(
-        frequency = 1,
-        mh_accept_per_smc = 50,
-        pair_rule = "uniform")
-)
+                    nsims = 2000,
+                    runs = 10,
+                    counties = pseudo_county,
+                    sampling_space = "linking_edge",
+                    pop_temper = 0.05,
+                    seq_alpha  = 0.9,
+                    ms_params = list(
+                      frequency = 1,
+                      mh_accept_per_smc = 50,
+                      pair_rule = "uniform")
+                    )
 
 plans <- plans %>%
     group_by(chain) %>%
@@ -44,9 +44,10 @@ cli_process_done()
 
 # Extra validation plots for custom constraints -----
 if (interactive()) {
-    library(ggplot2)
-    library(patchwork)
+  library(ggplot2)
+  library(patchwork)
 
-    validate_analysis(plans, map)
-    summary(plans)
+  validate_analysis(plans, map)
+  summary(plans)
 }
+
