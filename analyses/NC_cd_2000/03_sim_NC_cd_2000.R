@@ -35,6 +35,13 @@ plans <- redist_smc(map, nsims = 3e3, runs = 6,
     ncores = 112,
     verbose = TRUE)
 
+target_plans <- 5000L
+chains <- sort(unique(plans$chain))
+n_keep <- rep(target_plans %/% length(chains), length(chains))
+n_keep[seq_len(target_plans %% length(chains))] <-
+    n_keep[seq_len(target_plans %% length(chains))] + 1L
+names(n_keep) <- as.character(chains)
+
 plans <- plans %>%
     group_by(chain) %>%
     filter(as.integer(draw) < min(as.integer(draw)) + 833 + (chain %in% 1:2)) %>% # thin samples to 5,000

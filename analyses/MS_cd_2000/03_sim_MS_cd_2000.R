@@ -15,6 +15,13 @@ constr_sc <- redist_constr(map) %>%
 set.seed(2000)
 plans <- redist_smc(map, nsims = 2500, runs = 20, counties = county, constraints = constr_sc)
 
+target_plans <- 5000L
+chains <- sort(unique(plans$chain))
+n_keep <- rep(target_plans %/% length(chains), length(chains))
+n_keep[seq_len(target_plans %% length(chains))] <-
+    n_keep[seq_len(target_plans %% length(chains))] + 1L
+names(n_keep) <- as.character(chains)
+
 plans <- plans %>%
     group_by(chain) %>%
     filter(as.integer(draw) < min(as.integer(draw)) + 250) %>% # thin samples

@@ -6,14 +6,6 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg IL_cd_2010}")
 
-constr <- redist_constr(map) %>%
-    add_constr_grp_hinge(18, vap_black, vap, tgts_group = 0.48) %>%
-    add_constr_grp_hinge(-18, vap_black, vap, tgts_group = 0.30) %>%
-    add_constr_grp_inv_hinge(18, vap_black, vap, tgts_group = 0.62) %>%
-    add_constr_grp_hinge(24, vap_hisp, vap, tgts_group = 0.62) %>%
-    add_constr_grp_hinge(12, vap_hisp, vap, tgts_group = 0.45) %>%
-    add_constr_grp_hinge(-24, vap_hisp, vap, tgts_group = 0.32)
-
 set.seed(2010)
 plans <- redist_smc(map, nsims = 2e4, runs = 2L, counties = pseudo_county) %>%
     group_by(chain) %>%
