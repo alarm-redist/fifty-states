@@ -4,8 +4,6 @@
 ###############################################################################
 cli_process_start("Creating {.cls redist_map} object for {.pkg AR_leg_2020}")
 
-# TODO any pre-computation (usually not necessary)
-
 map_ssd <- redist_map(ar_shp, pop_tol = 0.05,
     existing_plan = ssd_2020, adj = ar_shp$adj)
 
