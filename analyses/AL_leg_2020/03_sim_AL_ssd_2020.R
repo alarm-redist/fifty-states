@@ -11,14 +11,14 @@ set.seed(2020)
 mh_accept_per_smc <- ceiling(n_distinct(map_ssd$ssd_2020)/3) + 35
 
 plans <- redist_smc(
-  map_ssd,
-  nsims = 5000, runs = 5,
-  constraints = constr,
-  counties = pseudo_county,
-  sampling_space = "linking_edge",
-  ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
-  split_params = list(splitting_schedule = "any_valid_sizes"),
-  verbose = TRUE
+    map_ssd,
+    nsims = 5000, runs = 5,
+    constraints = constr,
+    counties = pseudo_county,
+    sampling_space = "linking_edge",
+    ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
+    split_params = list(splitting_schedule = "any_valid_sizes"),
+    verbose = TRUE
 )
 
 plans <- plans |>
@@ -56,17 +56,17 @@ if (interactive()) {
 
     # Extra validation plots for custom constraints -----
 
-    visual <- redist.plot.distr_qtys(plans, vap_black / total_vap,
-                                     color_thresh = NULL,
-                                     color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, '#3D77BB', '#B25D4C'),
-                                     size = 0.5, alpha = 0.5) +
-      scale_y_continuous('Percent Black by VAP') +
-      labs(title = 'Approximate Performance')
+    visual <- redist.plot.distr_qtys(plans, vap_black/total_vap,
+        color_thresh = NULL,
+        color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, "#3D77BB", "#B25D4C"),
+        size = 0.5, alpha = 0.5) +
+        scale_y_continuous("Percent Black by VAP") +
+        labs(title = "Approximate Performance")
     plans |>
-      subset_sampled() |>
-      group_by(draw) |>
-      summarize(n_black_perf = sum(vap_black/total_vap > 0.3 & ndshare > 0.5)) |>
-      count(n_black_perf)
+        subset_sampled() |>
+        group_by(draw) |>
+        summarize(n_black_perf = sum(vap_black/total_vap > 0.3 & ndshare > 0.5)) |>
+        count(n_black_perf)
 
     print(visual)
 }

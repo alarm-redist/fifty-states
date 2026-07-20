@@ -21,10 +21,10 @@ constr_shd <- add_constr_total_splits(constr_shd, strength = 1.3, admin = map_sh
 # make pseudo counties with default settings
 map_ssd <- map_ssd |>
     mutate(pseudo_county = pick_county_muni(map_ssd, counties = county, munis = muni,
-                                            pop_muni = get_target(map_ssd)))
+        pop_muni = get_target(map_ssd)))
 map_shd <- map_shd |>
     mutate(pseudo_county = pick_county_muni(map_shd, counties = county, munis = muni,
-                                            pop_muni = get_target(map_shd)))
+        pop_muni = get_target(map_shd)))
 
 # Add an analysis name attribute
 attr(map_ssd, "analysis_name") <- "AL_SSD_2020"
