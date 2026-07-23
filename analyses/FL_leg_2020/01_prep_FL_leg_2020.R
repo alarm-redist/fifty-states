@@ -77,23 +77,23 @@ if (!file.exists(here(shp_path))) {
     # Manually add bridges for separated VTD pieces that are used
     # together in the enacted legislative districts.
     fl_shp$adj <- fl_shp$adj |>
-      add_edge(
-        v1 = c(
-          "12101000044", "1209500630C", "12057000920",
-          "12103000254", "12101000045", "12101000046",
-          "12101000047", "1209500433B", "12097000153",
-          "12103000019", "12115000060", "12099000735",
-          "12099000705", "1201100X045", "12099000233"
-        ),
-        v2 = c(
-          "12101000043", "12095000631", "12057000914",
-          "12103000265", "12101000043", "12101000043",
-          "12101000043", "1209500440C", "1209500126A",
-          "12057000940", "12115000069", "12099000704",
-          "12099000731", "1201100X019", "12099000234"
-        ),
-        ids = fl_shp$GEOID
-      )
+        add_edge(
+            v1 = c(
+                "12101000044", "1209500630C", "12057000920",
+                "12103000254", "12101000045", "12101000046",
+                "12101000047", "1209500433B", "12097000153",
+                "12103000019", "12115000060", "12099000735",
+                "12099000705", "1201100X045", "12099000233"
+            ),
+            v2 = c(
+                "12101000043", "12095000631", "12057000914",
+                "12103000265", "12101000043", "12101000043",
+                "12101000043", "1209500440C", "1209500126A",
+                "12057000940", "12115000069", "12099000704",
+                "12099000731", "1201100X019", "12099000234"
+            ),
+            ids = fl_shp$GEOID
+        )
 
     # check max number of connected components
     # 1 is one fully connected component, more is worse
@@ -103,13 +103,9 @@ if (!file.exists(here(shp_path))) {
     fl_shp <- fl_shp |>
         fix_geo_assignment(muni)
 
-    # compute merge groups
-    fl_shp$merge_group <- contiguity_merges(fl_shp)
-
     write_rds(fl_shp, here(shp_path), compress = "gz")
     cli_process_done()
 } else {
     fl_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong FL} shapefile")
 }
-

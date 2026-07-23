@@ -17,11 +17,11 @@ We enforce a maximum population deviation of 5.0%.
 Data for Florida comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
 
 ## Pre-processing Notes
-No manual pre-processing decisions were necessary.
+Manual adjacency bridges were added to address disconnected components identified in the enacted Senate and House plans under the geometry-derived adjacency graph.
 
 ## Simulation Notes
 We sample 10,000 districting plans for Florida's lower house across 5 independent runs of the SMC algorithm.
-We introduce mild population tempering (pop_temper = 0.04), impose a county-split constraint, and increase the number of merge-split proposals per SMC step (270).
+We introduce mild population tempering, impose a county-split constraint and a Polsby-Popper compactness constraint, and increase the number of merge-split proposals per SMC step (390).
 
 We sample 10,000 districting plans for Florida's upper house across 5 independent runs of the SMC algorithm.
-We introduce mild population tempering (pop_temper = 0.03), impose a county-split constraint, and increase the number of merge-split proposals per SMC step (104).
+We introduce mild population tempering, impose a county-split constraint and a Polsby-Popper compactness constraint, and increase the number of merge-split proposals per SMC step (174).

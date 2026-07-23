@@ -8,24 +8,24 @@ cli_process_start("Running simulations for {.pkg FL_ssd_2020}")
 
 set.seed(2020)
 
-mh_accept_per_smc <- ceiling(n_distinct(map_ssd$ssd_2020)/3) + 60
+mh_accept_per_smc <- ceiling(n_distinct(map_ssd$ssd_2020)/3) + 160
 
-constr <- redist_constr(map_ssd_merged) |>
-  add_constr_total_splits(strength = 2.4, admin = map_ssd_merged$county) |>
-  add_constr_total_splits(strength = 0.4, admin = map_ssd_merged$muni)
+constr <- redist_constr(map_ssd) |>
+    add_constr_total_splits(strength = 2.55, admin = map_ssd$county) |>
+    add_constr_polsby(strength = 1.1)
 
 plans <- redist_smc(
-  map_ssd_merged,
-  nsims = 2e3, runs = 3,
-  ncores = as.integer(Sys.getenv("SLURM_CPUS_PER_TASK")),
-  counties = county,
-  constraints = constr,
-  compactness = 1.2,
-  sampling_space = "linking_edge",
-  ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
-  split_params = list(splitting_schedule = "any_valid_sizes"),
-  verbose = TRUE
-) |> pullback(map_ssd)
+    map_ssd,
+    nsims = 2e3, runs = 5,
+    ncores = as.integer(Sys.getenv("SLURM_CPUS_PER_TASK")),
+    counties = pseudo_county,
+    constraints = constr,
+    pop_temper = 0.04,
+    sampling_space = "linking_edge",
+    ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
+    split_params = list(splitting_schedule = "any_valid_sizes"),
+    verbose = TRUE
+)
 
 plans <- plans |>
     group_by(chain) |>
@@ -57,4 +57,3 @@ if (interactive()) {
     validate_analysis(plans, map_ssd)
     summary(plans)
 }
-

@@ -8,23 +8,24 @@ cli_process_start("Running simulations for {.pkg FL_shd_2020}")
 
 set.seed(2020)
 
-mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3) + 50
+mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3) + 350
 
-constr <- redist_constr(map_shd_merged) |>
-  add_constr_total_splits(strength = 2.3, admin = map_shd_merged$county)
+constr <- redist_constr(map_shd) |>
+    add_constr_total_splits(strength = 2.4, admin = map_shd$county)  |>
+    add_constr_polsby(strength = 1)
 
 plans <- redist_smc(
-  map_shd_merged,
-  nsims = 2e3, runs = 5,
-  ncores = as.integer(Sys.getenv("SLURM_CPUS_PER_TASK")),
-  counties = county,
-  constraints = constr,
-  compactness = 1.2,
-  sampling_space = "linking_edge",
-  ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
-  split_params = list(splitting_schedule = "any_valid_sizes"),
-  verbose = TRUE
-) |> pullback(map_shd)
+    map_shd,
+    nsims = 2e3, runs = 5,
+    ncores = as.integer(Sys.getenv("SLURM_CPUS_PER_TASK")),
+    counties = pseudo_county,
+    constraints = constr,
+    pop_temper = 0.05,
+    sampling_space = "linking_edge",
+    ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
+    split_params = list(splitting_schedule = "any_valid_sizes"),
+    verbose = TRUE
+)
 
 plans <- plans |>
     group_by(chain) |>
