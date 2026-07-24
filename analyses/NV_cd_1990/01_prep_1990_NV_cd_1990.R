@@ -51,7 +51,8 @@ if (!file.exists(here(shp_path))) {
   # create adjacency graph
   nv_shp$adj <- redist.adjacency(nv_shp)
 
-  # REMOVED: fix_geo_assignment(muni) - not needed
+  nv_shp <- nv_shp %>%
+    fix_geo_assignment(muni)
 
   write_rds(nv_shp, here(shp_path), compress = "gz")
   cli_process_done()

@@ -52,15 +52,15 @@ if (!file.exists(here(shp_path))) {
     left_join(wv_df_cnty %>% mutate(county = sprintf("%03s", county)),
               by = "county")
 
-  # Mode cd_1990 per county from original VTD-level data
-  county_cd1990 <- wv_df %>%
+  # Mode cd_1990/cd_1980 per county from original VTD-level data
+  county_cd <- wv_df %>%
     mutate(county = sprintf("%03s", county)) %>%
     group_by(county) %>%
-    summarise(cd_1990 = Mode(cd_1990), .groups = "drop")
+    summarise(cd_1990 = Mode(cd_1990), cd_1980 = Mode(cd_1980), .groups = "drop")
 
-  # Join mode cd_1990 back to county-level shapefile
+  # Join mode cd_1990/cd_1980 back to county-level shapefile
   wv_shp <- wv_shp %>%
-    left_join(county_cd1990, by = "county")
+    left_join(county_cd, by = "county")
 
   # Drop unwanted columns if present
   wv_shp <- wv_shp %>% select(-any_of(c("mcd", "shd", "ssd")))
