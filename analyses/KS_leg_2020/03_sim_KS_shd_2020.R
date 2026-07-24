@@ -8,12 +8,19 @@ cli_process_start("Running simulations for {.pkg KS_shd_2020}")
 
 set.seed(2020)
 
-mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3) + 60
+mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3) + 550
+
+# Add a soft constraint to increase total municipality splits so that the
+# simulated ensemble better matches the enacted House plan.
+constr <- redist_constr(map_shd)
+constr <- add_constr_total_splits(constr, strength = 0.75, admin = map_shd$county_muni)
 
 plans <- redist_smc(
     map_shd,
-    nsims = 2e3, runs = 5, ncores = 15L,
+    nsims = 2e3, runs = 5,
+    ncores = as.integer(Sys.getenv("SLURM_CPUS_PER_TASK", "1")),
     counties = pseudo_county,
+    constraints = constr,
     sampling_space = "linking_edge",
     ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
     split_params = list(splitting_schedule = "any_valid_sizes"),
