@@ -343,23 +343,38 @@ finalize_analysis = function(state, type = "cd", year = 2020, overwrite = TRUE) 
             }
 
             # ensure unshifted election data from ROAD
-            road_path <- str_glue(
-                "https://raw.githubusercontent.com/alarm-redist/census-2020/road/road-1990/{state}_{year}.csv"
-            )
+            road_rejoin_exceptions <- c("IA", "WV")
 
-            road_dat <- readr::read_csv(
-                road_path,
-                col_types = readr::cols(GEOID = readr::col_character()),
-                show_col_types = FALSE
-            ) |>
-                dplyr::select(GEOID, ndv, nrv)
+            if (type == "cd" && state %in% road_rejoin_exceptions) {
+                if (!all(c("ndv", "nrv") %in% names(map_in)) ||
+                    anyNA(map_in$ndv) || anyNA(map_in$nrv)) {
+                    cli::cli_abort(
+                        "{.pkg {slug}} is a ROAD rejoin exception but does not have complete {.val ndv}/{.val nrv}."
+                    )
+                }
 
-            map_in <- map_in |>
-                dplyr::select(-dplyr::any_of(c("ndv", "nrv"))) |>
-                dplyr::left_join(road_dat, by = "GEOID")
+                cli::cli_alert_info(
+                    "Skipping ROAD {.val ndv}/{.val nrv} rejoin for {.pkg {slug}}."
+                )
+            } else {
+                road_path <- str_glue(
+                    "https://raw.githubusercontent.com/alarm-redist/census-2020/road/road-1990/{state}_{year}.csv"
+                )
 
-            warns <- TRUE
-            overwrite <- TRUE
+                road_dat <- readr::read_csv(
+                    road_path,
+                    col_types = readr::cols(GEOID = readr::col_character()),
+                    show_col_types = FALSE
+                ) |>
+                    dplyr::select(GEOID, ndv, nrv)
+
+                map_in <- map_in |>
+                    dplyr::select(-dplyr::any_of(c("ndv", "nrv"))) |>
+                    dplyr::left_join(road_dat, by = "GEOID")
+
+                warns <- TRUE
+                overwrite <- TRUE
+            }
 
             if (warns && overwrite) {
                 cli::cli_alert_warning("Updating {.cls redist_map} file.")
