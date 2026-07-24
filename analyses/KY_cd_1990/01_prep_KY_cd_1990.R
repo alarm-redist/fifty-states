@@ -29,21 +29,10 @@ perim_path <- "data-out/KY_1990/perim.rds"
 if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong KY} shapefile")
     # read in redistricting data
-    tract_path = "data-raw/KY/21_tracts.gpkg"
-    raw_data <- read_csv(here(path_data), col_types = cols(GEOID = "c"))
-    raw_data$state = as.character(raw_data$state)
-    shapefile <- st_read(tract_path, quiet = TRUE) |>
-      rename(state_shp = state)
-    ky_shp <- raw_data |>
-      left_join(shapefile, by = "GEOID")
-    # manually set state to KY
-    ky_shp = mutate(ky_shp, state = "KY") |>
-      st_as_sf()
-    ky_shp = st_transform(ky_shp, EPSG$ID)
-
-    ky_shp <- ky_shp |>
-      mutate(county = coalesce(county.x, county.y)) |>
-      select(-county.x, -county.y)
+    ky_shp <- read_csv(here(path_data), col_types = cols(GEOID = "c")) |>
+        mutate(state = as.character(state)) |>
+        join_vtd_shapefile(year = 1990) |>
+        st_transform(EPSG$KY)
 
     ky_shp <- ky_shp |>
         rename(muni = place) |>
