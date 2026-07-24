@@ -20,18 +20,18 @@ suppressMessages({
 cli_process_start("Running simulations for {.pkg IA_cd_1990}")
 set.seed(1990)
 plans <- redist_smc(
-    map, nsims = 5500, runs = 10,
+    map, nsims = 4000, runs = 20,
     sampling_space = "linking_edge",
     pop_temper = 0.01, seq_alpha = 1,
     ms_params = list(frequency = 1L, mh_accept_per_smc = 40),
     split_params = list(splitting_schedule = "any_valid_sizes"),
     verbose = TRUE,
-    ncores = 112
+    ncores = 14
 )
 
 plans <- plans %>% filter(draw != "cd_1990") %>%
     group_by(chain) %>%
-    filter(as.integer(draw) < min(as.integer(draw)) + 550) %>% # thin samples
+    filter(as.integer(draw) < min(as.integer(draw)) + 250) %>% # thin samples
     ungroup()
 
 plans <- plans %>% add_reference(ref_plan = map$cd_1990)
