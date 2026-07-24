@@ -25,26 +25,19 @@ cli_process_done()
 # Compile raw data into a final shapefile for analysis -----
 shp_path <- "data-out/ID_1990/shp_vtd.rds"
 perim_path <- "data-out/ID_1990/perim.rds"
-tract_path <- "data-raw/ID/16_tracts.gpkg"
 
 if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong ID} shapefile")
     # read in redistricting data
-    raw_data <- read_csv(here(path_data), col_types = cols(GEOID = "c"))
-    raw_data$state = as.character(raw_data$state)
-    shapefile <- st_read(tract_path, quiet = TRUE) |>
-        rename(state_shp = state)
-    id_shp <- raw_data |>
-        left_join(shapefile, by = "GEOID")
-    # manually set state to ID
-    id_shp = mutate(id_shp, state = "ID") |>
-        st_as_sf()
-    id_shp = st_transform(id_shp, EPSG$ID)
+    id_shp <- read_csv(here(path_data), col_types = cols(GEOID = "c")) |>
+        mutate(state = as.character(state)) |>
+        join_vtd_shapefile(year = 1990) |>
+        st_transform(EPSG$ID)
 
     id_shp <- id_shp |>
         rename(muni = place) |>
-        mutate(county_muni = if_else(is.na(muni), county.x, str_c(county.x, muni))) |>
-        relocate(muni, county_muni, cd_1980, .after = county.x)
+        mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) |>
+        relocate(muni, county_muni, cd_1980, .after = county)
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = id_shp,
@@ -57,11 +50,6 @@ if (!file.exists(here(shp_path))) {
                                                  keep_shapes = TRUE) |>
             suppressWarnings()
     }
-    id_shp <- id_shp |>
-      select(-county.y, -tract.y, -state_shp)
-    id_shp <- id_shp %>%
-      rename(county = county.x)
-
     # create adjacency graph
     id_shp$adj <- redist.adjacency(id_shp)
 
