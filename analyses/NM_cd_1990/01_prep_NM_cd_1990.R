@@ -29,21 +29,10 @@ perim_path <- "data-out/NM_1990/perim.rds"
 if (!file.exists(here(shp_path))) {
   cli_process_start("Preparing {.strong NM} shapefile")
   # read in redistricting data
-  tract_path = "data-raw/NM/35_tracts.gpkg"
-  raw_data <- read_csv(here(path_data), col_types = cols(GEOID = "c"))
-  raw_data$state = as.character(raw_data$state)
-  shapefile <- st_read(tract_path, quiet = TRUE) |>
-    rename(state_shp = state)
-  nm_shp <- raw_data |>
-    left_join(shapefile, by = "GEOID")
-  # manually set state to NM
-  nm_shp = mutate(nm_shp, state = "NM") |>
-    st_as_sf()
-  nm_shp = st_transform(nm_shp, EPSG$NM)
-
-  nm_shp <- nm_shp |>
-    mutate(county = coalesce(county.x, county.y)) |>
-    select(-county.x, -county.y)
+  nm_shp <- read_csv(here(path_data), col_types = cols(GEOID = "c")) |>
+    mutate(state = as.character(state)) |>
+    join_vtd_shapefile(year = 1990) |>
+    st_transform(EPSG$NM)
 
   nm_shp <- nm_shp |>
     rename(muni = place) |>

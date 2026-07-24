@@ -29,21 +29,10 @@ perim_path <- "data-out/MA_1990/perim.rds"
 if (!file.exists(here(shp_path))) {
     cli_process_start("Preparing {.strong MA} shapefile")
     # read in redistricting data
-    tract_path = "data-raw/MA/25_tracts.gpkg"
-    raw_data <- read_csv(here(path_data), col_types = cols(GEOID = "c"))
-    raw_data$state = as.character(raw_data$state)
-    shapefile <- st_read(tract_path, quiet = TRUE) |>
-      rename(state_shp = state)
-    ma_shp <- raw_data |>
-      left_join(shapefile, by = "GEOID")
-    # manually set state to MA
-    ma_shp = mutate(ma_shp, state = "MA") |>
-      st_as_sf()
-    ma_shp = st_transform(ma_shp, EPSG$MA)
-
-    ma_shp <- ma_shp |>
-      mutate(county = coalesce(county.x, county.y)) |>
-      select(-county.x, -county.y)
+    ma_shp <- read_csv(here(path_data), col_types = cols(GEOID = "c")) |>
+        mutate(state = as.character(state)) |>
+        join_vtd_shapefile(year = 1990) |>
+        st_transform(EPSG$MA)
 
     ma_shp <- ma_shp |>
         rename(muni = place) |>
