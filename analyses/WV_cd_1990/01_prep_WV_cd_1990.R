@@ -46,15 +46,15 @@ if (!file.exists(here(shp_path))) {
   cnty_sf <- tigris::counties(state = "WV", year = 1990, cb = TRUE) %>%
     st_as_sf() %>%
     st_transform(EPSG$WV) %>%
-    transmute(county = sprintf("%03s", COUNTYFP), geometry)
+    transmute(county = str_pad(COUNTYFP, 3, "left", "0"), geometry)
 
   wv_shp <- cnty_sf %>%
-    left_join(wv_df_cnty %>% mutate(county = sprintf("%03s", county)),
+    left_join(wv_df_cnty %>% mutate(county = str_pad(county, 3, "left", "0")),
               by = "county")
 
   # Mode cd_1990/cd_1980 per county from original VTD-level data
   county_cd <- wv_df %>%
-    mutate(county = sprintf("%03s", county)) %>%
+    mutate(county = str_pad(county, 3, "left", "0")) %>%
     group_by(county) %>%
     summarise(cd_1990 = Mode(cd_1990), cd_1980 = Mode(cd_1980), .groups = "drop")
 
