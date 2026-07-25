@@ -2,7 +2,7 @@
 
 # Re-run the non-converged 2010/2020 congressional analyses on FASRC.
 #
-# This wraps `R/rerun_unconverged.R` (the cross-platform driver) with the
+# This wraps `scripts/rerun_unconverged.R` (the cross-platform driver) with the
 # FASRC niceties used elsewhere in the ALARM repos: it re-execs itself inside a
 # Slurm allocation when launched from a login node, loads the R module, and tees
 # a summary. The R driver runs each state-year in its own fresh R subprocess
@@ -90,5 +90,5 @@ echo "Targets:     ${TARGETS[*]:-<all default targets>}"
 echo "================================================================"
 
 # Hand off to the R driver. With no targets it re-runs the full default set.
-Rscript R/rerun_unconverged.R ${TARGETS[@]+"${TARGETS[@]}"}
+Rscript scripts/rerun_unconverged.R ${TARGETS[@]+"${TARGETS[@]}"}
 exit $?

@@ -2,7 +2,7 @@
 
 # Submit the non-converged 2010/2020 congressional re-runs as Slurm arrays on
 # FASRC. Each array task re-runs one state-year via scripts/run_rerun_fasrc.sh
-# (which calls R/rerun_unconverged.R for that one target).
+# (which calls scripts/rerun_unconverged.R for that one target).
 #
 # The default split puts the heaviest analyses (largest nsims / the two-stage
 # OH_2020) in their own higher-core array, and runs the rest as a throttled
@@ -34,7 +34,9 @@ if [[ -z "${REPO_DIR:-}" ]]; then
     fi
 fi
 
-PARTITION="${PARTITION:-test}"
+# The test partition caps users at 5 jobs and each array index counts as a
+# job, so arrays this size must go to shared (where the July 2026 reruns ran).
+PARTITION="${PARTITION:-shared}"
 TIME="${TIME:-0-12:00}"
 REGULAR_MEM="${REGULAR_MEM:-80G}"
 HEAVY_MEM="${HEAVY_MEM:-80G}"

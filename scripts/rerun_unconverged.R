@@ -13,8 +13,14 @@
 # split-R-hat values and any SMC efficiency warnings.
 #
 # Usage (from the repo root):
-#   Rscript R/rerun_unconverged.R                # re-run every target
-#   Rscript R/rerun_unconverged.R OH_2020 NY_2020   # re-run a subset
+#   Rscript scripts/rerun_unconverged.R                # re-run every target
+#   Rscript scripts/rerun_unconverged.R OH_2020 NY_2020   # re-run a subset
+#
+# NOTE: this file must live in scripts/, NOT R/. The 01_prep scripts call
+# devtools::load_all(), which sources every file under R/ — top-level code
+# there gets executed, so a driver in R/ re-launches itself from inside each
+# subprocess (infinite fork bomb; see the banner-only CO_2010 logs from the
+# June/July 2026 cluster runs).
 #
 # Logs (full stdout/stderr incl. summary() + warnings) are written to
 #   data-raw/rerun_logs/<STATE>_<YEAR>_<timestamp>.log
@@ -103,7 +109,7 @@ message("\nInspect each log for the new split-R-hat values (target: 1.00-1.05)")
 message("and for any SMC efficiency / low-acceptance warnings. If a state-year")
 message("still shows R-hat > 1.05 or warns that it needs more samples or runs,")
 message("bump `nsims` further (or add a run) in its 03_sim file and re-run it,")
-message("e.g.  Rscript R/rerun_unconverged.R ", targets[1])
+message("e.g.  Rscript scripts/rerun_unconverged.R ", targets[1])
 
 failed <- results$target[results$status != "ok"]
 if (length(failed) > 0) {
