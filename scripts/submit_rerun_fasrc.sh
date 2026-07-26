@@ -47,8 +47,10 @@ LOG_DIR="${LOG_DIR:-$REPO_DIR/data-raw/rerun_logs}"
 
 # Fail (R-hat > 1.1) + Marginal (1.05-1.1), excl. TX/CA/FL. The heaviest by
 # nsims / structure are split off into their own array.
-HEAVY_TARGETS="${HEAVY_TARGETS:-NY_2010 GA_2010 IL_2010 NY_2020 OH_2020}"
-REGULAR_TARGETS="${REGULAR_TARGETS:-CO_2010 AL_2010 PA_2010 IN_2010 WA_2010 SC_2010 IA_2010 MI_2010 NC_2010 OH_2010 PA_2020 KS_2020 MI_2020 NC_2020 AL_2020 CO_2020 SC_2020 MS_2020 WA_2020}"
+# ${VAR-default}, not ${VAR:-default}: an explicitly empty list means
+# "submit nothing for this array", not "use the defaults".
+HEAVY_TARGETS="${HEAVY_TARGETS-NY_2010 GA_2010 IL_2010 NY_2020 OH_2020}"
+REGULAR_TARGETS="${REGULAR_TARGETS-CO_2010 AL_2010 PA_2010 IN_2010 WA_2010 SC_2010 IA_2010 MI_2010 NC_2010 OH_2010 PA_2020 KS_2020 MI_2020 NC_2020 AL_2020 CO_2020 SC_2020 MS_2020 WA_2020}"
 
 submit_array() {
     local label="$1"
