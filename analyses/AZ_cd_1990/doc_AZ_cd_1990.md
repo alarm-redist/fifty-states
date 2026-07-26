@@ -1,16 +1,15 @@
 # 1990 Arizona Congressional Districts
 
 ## Redistricting requirements
-Arizona law for 1990s redistricting is not publicly available. We consult the 2000 guidelines created for a bipartisan commission.
+We use the redistricting criteria established by the federal court in Arizonans for [Fair Representation v. Symington (1992), which governed Arizona’s 1990s congressional plan](https://law.justia.com/cases/federal/district-courts/FSupp/828/684/2352036/).
 
-In Arizona, districts must: 
+In Arizona, districts should: 
 
 1. be contiguous
-1. have equal populations
+1. have nearly equal populations
 1. be geographically compact
-1. preserve county and municipality boundaries as much as possible
-1. follow the Voting Rights Act
-
+1. preserve communities of interest and city and county boundaries as much as practicable; and
+1. comply with the Voting Rights Act.
 
 ### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
@@ -24,4 +23,4 @@ No manual pre-processing decisions were necessary.
 ## Simulation Notes
 We sample 10,000 districting plans for Arizona across 5 independent runs of the SMC algorithm.
 We then thinned the number of samples to 5,000. 
-No special techniques were needed to produce the sample.
+To preserve communities of interest and city and county boundaries, we create pseudocounties for use in the county constraint.
