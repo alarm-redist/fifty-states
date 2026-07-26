@@ -14,7 +14,7 @@ cons <- redist_constr(map) %>%
 set.seed(2020)
 plans <- redist_smc(
     map,
-    nsims = 20000, runs = 4L,
+    nsims = 40000, runs = 4L,
     counties = county,
     constraints = cons,
     ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4"))
