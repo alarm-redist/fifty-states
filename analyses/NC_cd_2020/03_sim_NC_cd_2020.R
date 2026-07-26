@@ -17,7 +17,8 @@ plans <- redist_smc(map, nsims = 20e3,
     compactness = 1,
     counties = pseudo_county,
     constraints = constr,
-    pop_temper = 0.01)
+    pop_temper = 0.01,
+    ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4")))
 
 plans_5k <- plans %>%
     group_by(chain) %>%

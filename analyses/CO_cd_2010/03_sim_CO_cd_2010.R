@@ -11,7 +11,7 @@ constr <- redist_constr(map) %>%
 
 set.seed(2010)
 plans <- redist_smc(map, nsims = 1e4, runs = 2L, counties = pseudo_county,
-    constraints = constr) %>%
+    constraints = constr, ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4"))) %>%
     group_by(chain) %>%
     filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>%
     ungroup()

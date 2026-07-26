@@ -8,7 +8,8 @@ cli_process_start("Running simulations for {.pkg KS_cd_2020}")
 
 set.seed(2020)
 plans <- redist_smc(map_m, nsims = 5e3,
-    runs = 2L, counties = county, seq_alpha = 0.7) %>%
+    runs = 2L, counties = county, seq_alpha = 0.7,
+    ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4"))) %>%
     pullback(map) %>%
     group_by(chain) %>%
     filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin to 5000 draws

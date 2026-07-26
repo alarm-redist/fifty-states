@@ -27,7 +27,8 @@ set.seed(2020)
 
 N <- 60000 # Cleveland-stage simulations (defines N used below)
 pl_cleve <- redist_smc(map_cleve, N, runs = 4, counties = split_unit,
-    constraints = constr, n_steps = 1, pop_temper = 0.05, verbose = TRUE) %>%
+    constraints = constr, n_steps = 1, pop_temper = 0.05, verbose = TRUE,
+    ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4"))) %>%
     mutate(black = group_frac(map_cleve, vap_black, vap)) %>%
     number_by(black)
 
@@ -62,7 +63,8 @@ set.seed(2020)
 
 plans <- redist_smc(map_2020, N, runs = 2, counties = split_unit,
     constraints = constr, init_particles = m_init, pop_temper = 0.04,
-    seq_alpha = 0.95, verbose = TRUE) %>%
+    seq_alpha = 0.95, verbose = TRUE,
+    ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4"))) %>%
     pullback(map) %>%
     group_by(chain) %>%
     filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples

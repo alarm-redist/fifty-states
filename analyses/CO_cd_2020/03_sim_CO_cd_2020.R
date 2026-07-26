@@ -16,7 +16,8 @@ plans <- redist_smc(
     map,
     nsims = 5000, runs = 2L,
     counties = pseudo_county,
-    constraints = cons
+    constraints = cons,
+    ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4"))
 ) %>%
     group_by(chain) %>%
     filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin to 5000 draws
