@@ -13,7 +13,13 @@ map_cleve <- slice(map_2020, idxs) %>%
     suppressWarnings() %>%
     `attr<-`("ndists", 2L) %>%
     `attr<-`("existing_col", NULL) %>%
-    `attr<-`("pop_bounds", attr(map, "pop_bounds")) %>%
+    # redist 5.x checks that the remainder region can hold its remaining
+    # districts within bounds at every split (redist 4 never checked the
+    # leftover piece, which this two-stage trick relied on). Cuyahoga's
+    # ~475k remainder makes the true bounds infeasible, so widen only the
+    # lower bound; the target stays the true district population and the
+    # filter below still enforces the real lower bound on the VRA district.
+    `attr<-`("pop_bounds", c(470000, attr(map, "pop_bounds")[2], attr(map, "pop_bounds")[3])) %>%
     # redist 5.x validates seat attributes that redist 4 didn't have; without
     # them the partial-map trick fails its districts-vs-seats check.
     `attr<-`("nseats", 2L) %>%
@@ -30,7 +36,10 @@ constr <- redist_constr(map_cleve) %>%
 
 set.seed(2020)
 
-N <- 60000 # Cleveland-stage simulations (defines N used below)
+# Under the widened lower bound only ~8% of Cleveland-stage draws yield a
+# full-size majority-minority district, and the remainder stage samples
+# 60000 of them without replacement, so oversample here.
+N <- 300000 # Cleveland-stage simulations
 pl_cleve <- redist_smc(map_cleve, N, runs = 4, counties = split_unit,
     constraints = constr, n_steps = 1, pop_temper = 0.05, verbose = TRUE,
     ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4"))) %>%
