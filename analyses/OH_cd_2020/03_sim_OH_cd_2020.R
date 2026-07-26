@@ -56,8 +56,10 @@ m_cleve <- pl_cleve %>%
 N_valid <- ncol(m_cleve)
 m_init <- matrix(0L, nrow = nrow(map_2020), ncol = N)
 m_init[idxs, ] <- m_cleve[, sample(N_valid, N, replace = FALSE)]
-m_init[m_init != 2] <- 0L
-m_init[m_init == 2] <- 1L
+# redist 5.x wants one-indexed init plans plus explicit per-region seat
+# counts (its inference chokes on edge-case draws): region 1 = the
+# unfinished remainder (14 seats), region 2 = the seeded VRA district.
+m_init[m_init != 2] <- 1L
 
 
 ## Then simulate the remainder of the district -----
@@ -76,7 +78,8 @@ constr <- redist_constr(map_2020) %>%
 set.seed(2020)
 
 plans <- redist_smc(map_2020, N, runs = 2, counties = split_unit,
-    constraints = constr, init_particles = m_init, pop_temper = 0.04,
+    constraints = constr, init_particles = m_init,
+    init_seats = matrix(rep(c(14L, 1L), N), nrow = 2), pop_temper = 0.04,
     seq_alpha = 0.95, verbose = TRUE,
     ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4"))) %>%
     pullback(map) %>%
