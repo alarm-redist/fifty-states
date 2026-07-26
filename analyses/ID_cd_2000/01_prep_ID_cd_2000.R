@@ -1,6 +1,6 @@
 ###############################################################################
 # Download and prepare data for `ID_cd_2000` analysis
-# © ALARM Project, July 2025
+# © ALARM Project, July 2026
 ###############################################################################
 
 suppressMessages({
@@ -52,6 +52,49 @@ if (!file.exists(here(shp_path))) {
 
     # create adjacency graph
     id_shp$adj <- redist.adjacency(id_shp)
+
+    cty <- id_shp %>%
+        group_by(county) %>%
+        summarize(geometry = sf::st_as_sfc(geos::geos_unary_union(geos::geos_make_collection(geometry))))
+
+    cty_adj <- adjacency(cty) %>% lapply(\(x) x + 1)
+
+    cty_pair <- purrr::map_dfr(seq_along(cty_adj), \(x){
+        tibble(x = x, y = cty_adj[[x]])
+    })
+
+    roads <- tigris::primary_secondary_roads("ID") %>%
+        st_transform(st_crs(id_shp)) %>%
+        geos::as_geos_geometry()
+
+    ints <- geos::geos_intersects_matrix(geom = roads, tree = cty)
+    tbl <- purrr::map_dfr(ints, \(x){
+        if (length(x) > 1) {
+            tidyr::expand_grid(x = x, y = x) %>% filter(
+                x != y
+            )
+        } else {
+            data.frame()
+        }
+    }) %>% distinct() %>%
+        mutate(magic = TRUE)
+
+    cty_pair <- cty_pair %>%
+        left_join(tbl, by = c("x", "y")) %>%
+        filter(is.na(magic))
+
+    cty_pair <- cty_pair %>%
+        mutate(x = cty$county[x],
+            y = cty$county[y])
+
+    adj <- id_shp$adj
+    for (i in seq_len(nrow(cty_pair))) {
+        adj <- seam_rip(adj, shp = id_shp,
+            admin = "county", seam = c(cty_pair$x[i], cty_pair$y[i])
+        )
+    }
+
+    id_shp$adj <- adj
 
     id_shp <- id_shp %>%
         fix_geo_assignment(muni)
