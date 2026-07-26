@@ -1,6 +1,6 @@
 ###############################################################################
 # Download and prepare data for `AZ_cd_1990` analysis
-# © ALARM Project, December 2025
+# © ALARM Project, July 2026
 ###############################################################################
 
 suppressMessages({
@@ -39,7 +39,7 @@ if (!file.exists(here(shp_path))) {
     # manually set state to AZ
     az_shp = mutate(az_shp, state = "AZ") |>
       st_as_sf()
-    az_shp = st_transform(az_shp, EPSG$ID)
+    az_shp = st_transform(az_shp, EPSG$AZ)
 
     az_shp <- az_shp |>
       mutate(county = coalesce(county.x, county.y)) |>
@@ -50,15 +50,12 @@ if (!file.exists(here(shp_path))) {
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) |>
         relocate(muni, county_muni, cd_1980, .after = county)
 
-    # TODO any additional columns or data you want to add should go here
-
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = az_shp,
                                perim_path = here(perim_path)) |>
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         az_shp <- rmapshaper::ms_simplify(az_shp, keep = 0.05,
                                                  keep_shapes = TRUE) |>
@@ -67,8 +64,6 @@ if (!file.exists(here(shp_path))) {
 
     # create adjacency graph
     az_shp$adj <- redist.adjacency(az_shp)
-
-    # TODO any custom adjacency graph edits here
 
     write_rds(az_shp, here(shp_path), compress = "gz")
     cli_process_done()
