@@ -14,9 +14,13 @@ cons <- redist_constr(map) %>%
 set.seed(2020)
 plans <- redist_smc(
     map,
-    nsims = 40000, runs = 4L,
+    nsims = 20000, runs = 4L,
     counties = county,
     constraints = cons,
+    # R-hat was erratic across nsims with the default seq_alpha (chains
+    # collapsing into different hinge-constraint basins); 0.9 gave a fully
+    # clean R-hat battery in a 3-variant sweep.
+    seq_alpha = 0.9,
     ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4"))
 ) %>%
     group_by(chain) %>%
