@@ -7,7 +7,7 @@
 cli_process_start("Running simulations for {.pkg OH_cd_2010}")
 
 set.seed(2010)
-plans <- redist_smc(map, nsims = 13000, runs = 2L, counties = pseudo_county,
+plans <- redist_smc(map, nsims = 26000, runs = 2L, counties = pseudo_county,
     ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4"))) %>%
     pullback(map) %>%
     group_by(chain) %>%

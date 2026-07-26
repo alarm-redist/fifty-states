@@ -8,7 +8,7 @@ cli_process_start("Running simulations for {.pkg NY_cd_2010}")
 
 set.seed(2010)
 plans <- redist_smc(map,
-    nsims = 6e4,
+    nsims = 1.2e5,
     seq_alpha = .95,
     runs = 2L,
     counties = pseudo_county, verbose = TRUE,

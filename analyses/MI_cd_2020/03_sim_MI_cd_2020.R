@@ -26,9 +26,13 @@ cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
 
 # filter to ≥ 2 VRA districts
-vra_ok <- redist.group.percent(as.matrix(plans), map$vap - map$vap_white, map$vap) %>%
-    apply(2, function(x) sort(x)[12]) %>%
-    `>`(0.5)
+# (redist.group.percent was removed in redist 5.x)
+grp_pop <- map$vap - map$vap_white
+tot_pop <- map$vap
+vra_ok <- apply(as.matrix(plans), 2, function(d) {
+    shares <- tapply(grp_pop, d, sum)/tapply(tot_pop, d, sum)
+    sort(shares)[12]
+}) > 0.5
 if (sum(vra_ok) < 5e3) {
     stop("Not enough VRA-compliant plans")
 } else {

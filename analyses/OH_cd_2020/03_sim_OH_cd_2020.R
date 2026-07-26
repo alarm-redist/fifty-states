@@ -11,9 +11,14 @@ cli_process_start("Running simulations for {.pkg OH_cd_2020}")
 idxs <- which(map_2020$county == "Cuyahoga County")
 map_cleve <- slice(map_2020, idxs) %>%
     suppressWarnings() %>%
-    `attr<-`("ndists", 2) %>%
+    `attr<-`("ndists", 2L) %>%
     `attr<-`("existing_col", NULL) %>%
-    `attr<-`("pop_bounds", attr(map, "pop_bounds"))
+    `attr<-`("pop_bounds", attr(map, "pop_bounds")) %>%
+    # redist 5.x validates seat attributes that redist 4 didn't have; without
+    # them the partial-map trick fails its districts-vs-seats check.
+    `attr<-`("nseats", 2L) %>%
+    `attr<-`("seats_range", 1L) %>%
+    `attr<-`("districting_scheme", "single")
 
 constr <- redist_constr(map_cleve) %>%
     add_constr_custom(100.0, function(pl, i) {
