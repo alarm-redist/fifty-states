@@ -1,45 +1,57 @@
 ###############################################################################
 # Simulate plans for `AZ_cd_1990`
-# © ALARM Project, December 2025
+# © ALARM Project, July 2026
 ###############################################################################
 
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg AZ_cd_1990}")
 
-# TODO any pre-computation (VRA targets, etc.)
-
-# TODO customize as needed. Recommendations:
-#  - For many districts / tighter population tolerances, try setting
-#  `pop_temper=0.01` and nudging upward from there. Monitor the output for
-#  efficiency!
-#  - Monitor the output (i.e. leave `verbose=TRUE`) to ensure things aren't breaking
-#  - Don't change the number of simulations unless you have a good reason
-#  - If the sampler freezes, try turning off the county split constraint to see
-#  if that's the problem.
-#  - Ask for help!
 set.seed(1990)
-plans <- redist_smc(map, nsims = 2e3, runs = 5, counties = county)
-# IF CORES OR OTHER UNITS HAVE BEEN MERGED:
-# make sure to call `pullback()` on this plans object!
 
 constr_az <- redist_constr(map) %>%
-  add_constr_splits(strength = 1, admin = county_muni) %>%
-  add_constr_grp_hinge(30, vap_hisp, vap, 0.5) %>%
-  add_constr_grp_hinge(-30, vap_hisp, vap, 0.28)
+  add_constr_splits(
+    strength = 0.25,
+    admin = county_muni
+  ) %>%
+  add_constr_grp_hinge(
+    20,
+    vap_hisp,
+    vap,
+    0.32
+  ) %>%
+  add_constr_grp_hinge(
+    -20,
+    vap_hisp,
+    vap,
+    0.27
+  )
+
+plans <- redist_smc(
+  map,
+  nsims = 4000,
+  runs = 5,
+  counties = pseudo_county,
+  constraints = constr_az
+)
 
 plans <- plans |>
-    group_by(chain) |>
-    filter(as.integer(draw) < min(as.integer(draw)) + 1000) |> # thin samples
-    ungroup()
+  group_by(chain) |>
+  filter(as.integer(draw) < min(as.integer(draw)) + 1000) |>
+  ungroup()
+
 plans <- match_numbers(plans, "cd_1990")
 
 cli_process_done()
+
+# Save plans -----
 cli_process_start("Saving {.cls redist_plans} object")
 
-# TODO add any reference plans that aren't already included
+write_rds(
+  plans,
+  here("data-out/AZ_1990/AZ_cd_1990_plans.rds"),
+  compress = "xz"
+)
 
-# Output the redist_map object. Do not edit this path.
-write_rds(plans, here("data-out/AZ_1990/AZ_cd_1990_plans.rds"), compress = "xz")
 cli_process_done()
 
 # Compute summary statistics -----
@@ -47,18 +59,54 @@ cli_process_start("Computing summary statistics for {.pkg AZ_cd_1990}")
 
 plans <- add_summary_stats(plans, map)
 
-# Output the summary statistics. Do not edit this path.
-save_summary_stats(plans, "data-out/AZ_1990/AZ_cd_1990_stats.csv")
+save_summary_stats(
+  plans,
+  "data-out/AZ_1990/AZ_cd_1990_stats.csv"
+)
 
 cli_process_done()
 
-# Extra validation plots for custom constraints -----
-# TODO remove this section if no custom constraints
+# Validation plots -----
 if (interactive()) {
-    library(ggplot2)
-    library(patchwork)
-
-    validate_analysis(plans, map)
-    summary(plans)
+  library(ggplot2)
+  
+  validate_analysis(plans, map)
+  summary(plans)
+  
+  sampled <- subset_sampled(plans)
+  
+  print(
+    redist.plot.distr_qtys(
+      plans,
+      vap_hisp / total_vap,
+      color_thresh = NULL,
+      color = ifelse(
+        sampled$ndshare > 0.5,
+        "#3D77BB",
+        "#B25D4C"
+      ),
+      size = 0.5,
+      alpha = 0.5
+    ) +
+      scale_y_continuous("Hispanic share of VAP") +
+      labs(title = "Hispanic Performance") +
+      scale_color_manual(values = c(cd_1990 = "black"))
+  )
+  
+  perf_summary <- perf |>
+    group_by(threshold) |>
+    summarize(
+      plans_with_any = sum(n[n_hisp_perf > 0]),
+      pct_with_any = plans_with_any / sum(n),
+      plans_with_two_or_more = sum(n[n_hisp_perf >= 2]),
+      .groups = "drop"
+    ) |>
+    mutate(
+      pct_with_any = scales::percent(
+        pct_with_any,
+        accuracy = 0.01
+      )
+    )
+  
+  print(perf_summary)
 }
-
