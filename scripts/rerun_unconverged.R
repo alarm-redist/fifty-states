@@ -61,14 +61,63 @@ stamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
 
 rscript <- file.path(R.home("bin"), "Rscript")
 
-# Body run inside each isolated subprocess: source the three analysis scripts
-# in order, then print convergence diagnostics for the freshly built plans.
+# Body run inside each isolated subprocess. Instead of re-running
+# 01_prep/02_setup (many of their source URLs have rotted), download the
+# published redist_map from the ALARM Dataverse deposit via alarmdata — the
+# deposit files ARE each 02_setup's output, so this reproduces the original
+# runs' exact inputs. Falls back to sourcing 01_prep/02_setup if the download
+# fails. Only 03_sim then runs, and we print summary() diagnostics.
+# (Uses a @SLUG@ token, not sprintf: the body contains %>%.)
 runner_template <- '
-slug <- "%s_cd_%s"
+slug <- "@SLUG@"
+parts <- strsplit(slug, "_")[[1]]
+state <- parts[1]
+year <- as.integer(parts[3])
 dir <- here::here("analyses", slug)
 message("==== Re-running ", slug, " ====")
-source(file.path(dir, paste0("01_prep_", slug, ".R")))
-source(file.path(dir, paste0("02_setup_", slug, ".R")))
+suppressMessages({
+    library(dplyr); library(readr); library(stringr); library(sf)
+    library(redist); library(cli); library(here)
+    devtools::load_all()
+})
+map_path <- here("data-out", paste0(state, "_", year), paste0(slug, "_map.rds"))
+have_map <- file.exists(map_path)
+if (!have_map) {
+    have_map <- tryCatch({
+        # The deposit is public; a stale personal key causes a 401.
+        Sys.unsetenv("DATAVERSE_KEY")
+        m <- alarmdata::alarm_50state_map(state, year = year)
+        dir.create(dirname(map_path), recursive = TRUE, showWarnings = FALSE)
+        write_rds(m, map_path, compress = "xz")
+        TRUE
+    }, error = function(e) {
+        message("alarmdata download failed (", conditionMessage(e),
+            "); falling back to 01_prep/02_setup")
+        FALSE
+    })
+}
+if (have_map) {
+    map <- read_rds(map_path)
+    # Objects some 03_sim scripts expect from 02_setup, rebuilt from the
+    # published map (its columns already include what 02_setup computed).
+    if (slug == "KS_cd_2020") {
+        map_m <- merge_by(map, core_id)
+    }
+    if (slug == "OH_cd_2020") {
+        map_2020 <- map %>%
+            st_drop_geometry() %>%
+            group_by(merge_unit, county, cd_2020) %>%
+            summarize(across(matches("(pop|vap)"), sum),
+                muni = muni[1],
+                class_co = class_co[1],
+                class_muni = class_muni[1]) %>%
+            ungroup() %>%
+            mutate(split_unit = if_else(class_muni == "B(4)(a)", muni, county))
+    }
+} else {
+    source(file.path(dir, paste0("01_prep_", slug, ".R")))
+    source(file.path(dir, paste0("02_setup_", slug, ".R")))
+}
 source(file.path(dir, paste0("03_sim_", slug, ".R")))
 message("==== summary() diagnostics for ", slug, " ====")
 print(summary(plans))
@@ -95,7 +144,7 @@ for (i in seq_along(targets)) {
     message(sprintf("[%d/%d] Re-running %s ... (log: %s)",
         i, length(targets), sy, log_file))
 
-    code <- sprintf(runner_template, state, year)
+    code <- gsub("@SLUG@", paste0(state, "_cd_", year), runner_template, fixed = TRUE)
     rc <- system2(rscript, args = c("-e", shQuote(code)),
         stdout = log_file, stderr = log_file)
 
