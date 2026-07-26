@@ -67,7 +67,7 @@ if (!file.exists(here(shp_path))) {
     oh_shp <- filter(oh_shp, !str_starts(GEOID, water_precs))
 
     # Create perimeters in case shapes are simplified
-    redist.prep.polsbypopper(shp = oh_shp,
+    redistmetrics::prep_perims(shp = oh_shp,
         perim_path = here(perim_path)) %>%
         invisible()
 

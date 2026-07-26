@@ -88,6 +88,10 @@ for (i in seq_along(targets)) {
     log_file <- file.path(log_dir, paste0(sy, "_", stamp, ".log"))
     results$log[i] <- log_file
 
+    # The prep scripts write_rds() into data-out/<STATE>_<YEAR>/ without
+    # creating it, which fails on a fresh clone.
+    dir.create(here("data-out", sy), showWarnings = FALSE, recursive = TRUE)
+
     message(sprintf("[%d/%d] Re-running %s ... (log: %s)",
         i, length(targets), sy, log_file))
 
