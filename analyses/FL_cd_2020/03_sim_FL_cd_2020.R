@@ -6,7 +6,7 @@
 set.seed(2020)
 
 cluster_pop_tol <- 0.005
-nsims <- 80000
+nsims <- 160000
 
 # Unique ID for each row, will use later to reconnect pieces
 map$row_id <- 1:nrow(map)
@@ -52,7 +52,7 @@ n_steps <- (sum(map_south$pop)/attr(map, "pop_bounds")[2]) %>% floor()
 plans_south <- redist_smc(map_south,
     counties = pseudo_county,
     nsims = nsims,
-    runs = 2L, ncores = 4,
+    runs = 2L, ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4")),
     n_steps = n_steps,
     constraints = constraints,
     pop_temper = 0.06,
@@ -111,7 +111,7 @@ n_steps <- (sum(map_north$pop)/attr(map, "pop_bounds")[2]) %>% floor()
 
 plans_north <- redist_smc(map_north, counties = pseudo_county,
     nsims = nsims,
-    runs = 2L, ncores = 4,
+    runs = 2L, ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4")),
     n_steps = n_steps,
     constraints = constraints)
 
@@ -155,7 +155,7 @@ constraints <- redist_constr(map) %>%
         total_pop = vap,
         tgts_group = c(0.40))
 
-plans <- redist_smc(map, nsims = nsims*2, runs = 2L, ncores = 4,
+plans <- redist_smc(map, nsims = nsims*2, runs = 2L, ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4")),
     counties = pseudo_county,
     constraints = constraints,
     init_particles = prep_mat,

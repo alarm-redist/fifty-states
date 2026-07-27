@@ -10,8 +10,8 @@ set.seed(2010)
 
 # Global settings
 cluster_tol <- .005
-nsims_south <- 120000
-nsims_north <- 80000
+nsims_south <- 240000
+nsims_north <- 160000
 nsims <- 70000
 
 map$row_num <- 1:nrow(map)
@@ -50,7 +50,7 @@ n_steps <- (sum(map_south$pop)/attr(map_south, "pop_bounds")[2]) %>% floor()
 plans_south <- redist_smc(map_south,
     counties = pseudo_county,
     nsims = nsims_south,
-    runs = 4L, ncores = 31L,
+    runs = 4L, ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4")),
     n_steps = n_steps,
     pop_temper = .02,
     seq_alpha = .65,
@@ -116,7 +116,7 @@ n_steps <- (sum(map_north$pop)/attr(map, "pop_bounds")[2]) %>% floor()
 plans_north <- redist_smc(map_north,
     counties = pseudo_county,
     nsims = nsims_north,
-    runs = 2L, ncores = 31L,
+    runs = 2L, ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4")),
     n_steps = n_steps,
     constraints = constraints,
     verbose = T)
@@ -174,7 +174,7 @@ constraints <- redist_constr(map) %>%
         tgts_group = c(0.55)
     )
 
-plans <- redist_smc(map, nsims = nsims, runs = 2L, ncores = 31L,
+plans <- redist_smc(map, nsims = nsims, runs = 2L, ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4")),
     counties = pseudo_county,
     init_particles = prep_mat, verbose = T)
 

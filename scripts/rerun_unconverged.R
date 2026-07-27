@@ -43,12 +43,14 @@ marginal <- c(
     "MI_2020", "NC_2020", "AL_2020", "CO_2020", "SC_2020", "MS_2020", "WA_2020"
 )
 all_targets <- c(fail, marginal)
+# The heavy states excluded from the default set; valid when named explicitly.
+heavy_extra <- c("CA_2010", "CA_2020", "TX_2010", "TX_2020", "FL_2010", "FL_2020")
 
 # --- Resolve which targets to run from the command line ----------------------
 cli_args <- commandArgs(trailingOnly = TRUE)
 targets <- if (length(cli_args) > 0) cli_args else all_targets
 
-unknown <- setdiff(targets, all_targets)
+unknown <- setdiff(targets, c(all_targets, heavy_extra))
 if (length(unknown) > 0) {
     stop("Unknown target(s): ", paste(unknown, collapse = ", "),
         "\nValid targets:\n  ", paste(all_targets, collapse = ", "))
