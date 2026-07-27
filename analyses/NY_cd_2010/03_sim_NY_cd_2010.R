@@ -30,10 +30,12 @@ cli_process_done()
 # Compute summary statistics -----
 cli_process_start("Computing summary statistics for {.pkg NY_cd_2010}")
 
-plans <- add_summary_stats(plans, map)
+# Stats on the full unthinned plans OOM'd at 240k draws and were never
+# saved anyway; compute them only for the published thinned draws.
 thinned_plans <- add_summary_stats(thinned_plans, map)
 
 # Output the summary statistics. Do not edit this path.
 save_summary_stats(thinned_plans, "data-out/NY_2010/NY_cd_2010_stats.csv")
+plans <- thinned_plans # downstream diagnostics read `plans`
 
 cli_process_done()
