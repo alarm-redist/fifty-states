@@ -12,7 +12,7 @@ set.seed(2010)
 cluster_tol <- .005
 nsims_south <- 240000
 nsims_north <- 160000
-nsims <- 70000
+nsims <- 140000
 
 map$row_num <- 1:nrow(map)
 
