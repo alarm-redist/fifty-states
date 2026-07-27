@@ -15,7 +15,11 @@ constr <- redist_constr(map) %>%
     add_constr_grp_hinge(-24, vap_hisp, vap, tgts_group = 0.32)
 
 set.seed(2010)
-plans <- redist_smc(map, nsims = 1.6e5, runs = 2L, counties = pseudo_county,
+plans <- redist_smc(map, nsims = 8e4, runs = 2L, counties = pseudo_county,
+    # The VRA hinge block above was previously built but never passed, so the
+    # sampler ran unconstrained and chains split across VRA modes (513 stats
+    # with R-hat > 1.1 at 1.6e5). seq_alpha 0.9 per the MS_2020 sweep.
+    constraints = constr, seq_alpha = 0.9,
     ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4"))) %>%
     group_by(chain) %>%
     filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
