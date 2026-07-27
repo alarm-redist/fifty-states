@@ -164,7 +164,11 @@ plans <- redist_smc(map, nsims = nsims*2, runs = 2L, ncores = as.integer(Sys.get
     filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
     ungroup()
 
-plans <- plans %>% add_reference(ref_plan = map$cd_2020)
+# The staged sims already carry the cd_2020 reference through; adding it
+# again errors ("Reference plan name already exists").
+if (!"cd_2020" %in% as.character(unique(plans$draw))) {
+    plans <- plans %>% add_reference(ref_plan = map$cd_2020)
+}
 
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
