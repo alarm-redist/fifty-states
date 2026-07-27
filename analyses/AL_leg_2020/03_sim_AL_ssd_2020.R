@@ -12,7 +12,7 @@ mh_accept_per_smc <- ceiling(n_distinct(map_ssd$ssd_2020)/3) + 35
 
 plans <- redist_smc(
     map_ssd,
-    nsims = 5000, runs = 5,
+    nsims = 2000, runs = 5,
     constraints = constr,
     counties = pseudo_county,
     sampling_space = "linking_edge",
@@ -35,7 +35,7 @@ write_rds(plans, here("data-out/AL_2020/AL_ssd_2020_plans.rds"), compress = "xz"
 cli_process_done()
 
 # The following line is uncommented when viewing validation plots
-# plans <- readRDS("data-out/AL_2020/AL_ssd_2020_plans.rds")
+ plans <- readRDS("data-out/AL_2020/AL_ssd_2020_plans.rds")
 
 # Compute summary statistics -----
 cli_process_start("Computing summary statistics for {.pkg AL_ssd_2020}")
@@ -68,5 +68,20 @@ if (interactive()) {
         summarize(n_black_perf = sum(vap_black/total_vap > 0.3 & ndshare > 0.5)) |>
         count(n_black_perf)
 
-    print(visual)
+    # Dem seats by BVAP rank -- numeric
+   dem_seats <- plans |>
+      group_by(draw) |>
+      mutate(bvap = vap_black/total_vap, bvap_rank = rank(bvap)) |>
+      subset_sampled() |>
+      select(draw, district, bvap, bvap_rank, ndv, nrv) |>
+      mutate(dem = ndv > nrv) |>
+      group_by(bvap_rank) |>
+      summarize(dem = mean(dem))
+
+    # Total Black districts that are performing
+    performing <- plans |>
+      subset_sampled() |>
+      group_by(draw) |>
+      summarize(n_black_perf = sum(vap_black/total_vap > 0.3 & ndshare > 0.5)) |>
+      count(n_black_perf)
 }
