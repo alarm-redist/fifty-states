@@ -7,11 +7,13 @@
 cli_process_start("Running simulations for {.pkg IL_cd_2010}")
 
 set.seed(2010)
-# Unconstrained like the published analysis. A VRA hinge block added during
-# the rerun effort made R-hat far worse (731 of 960 stats > 1.1) and was
-# dropped; a 3-variant sweep found 8e4 with 4 chains converges all 960
-# stats with no sampler-parameter changes.
+# Unconstrained like the published analysis (a VRA hinge block tried during
+# the rerun effort regressed convergence badly and was dropped). The target
+# is severely multimodal: identical default-sampler runs ranged from all 960
+# stats clean to 285 above 1.1, and seq_alpha 0.9 was the only configuration
+# never observed to fail.
 plans <- redist_smc(map, nsims = 8e4, runs = 4L, counties = pseudo_county,
+    seq_alpha = 0.9,
     ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4"))) %>%
     group_by(chain) %>%
     filter(as.integer(draw) < min(as.integer(draw)) + 1250) %>% # thin to 5000 draws
