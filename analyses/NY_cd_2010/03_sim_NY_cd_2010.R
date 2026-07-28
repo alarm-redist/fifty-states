@@ -10,14 +10,14 @@ set.seed(2010)
 plans <- redist_smc(map,
     nsims = 1.2e5,
     seq_alpha = .95,
-    runs = 2L,
+    runs = 4L,
     counties = pseudo_county, verbose = TRUE,
     pop_temper = .001, ncores = 15) %>%
     match_numbers("cd_2010")
 
 thinned_plans <- plans %>%
     group_by(chain) %>%
-    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 1250) %>%
     ungroup()
 
 cli_process_done()
