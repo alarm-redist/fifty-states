@@ -35,7 +35,7 @@ write_rds(plans, here("data-out/AL_2020/AL_ssd_2020_plans.rds"), compress = "xz"
 cli_process_done()
 
 # The following line is uncommented when viewing validation plots
- plans <- readRDS("data-out/AL_2020/AL_ssd_2020_plans.rds")
+# plans <- readRDS("data-out/AL_2020/AL_ssd_2020_plans.rds")
 
 # Compute summary statistics -----
 cli_process_start("Computing summary statistics for {.pkg AL_ssd_2020}")
