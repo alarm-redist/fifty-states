@@ -10,10 +10,10 @@ constr <- redist_constr(map) %>%
     add_constr_splits(strength = 1, admin = map$county_muni)
 
 set.seed(2010)
-plans <- redist_smc(map, nsims = 2e4, runs = 4L, counties = pseudo_county, seq_alpha = 0.9,
+plans <- redist_smc(map, nsims = 2e4, runs = 8L, counties = pseudo_county, seq_alpha = 0.9,
     constraints = constr, ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4"))) %>%
     group_by(chain) %>%
-    filter(as.integer(draw) < min(as.integer(draw)) + 1250) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 625) %>%
     ungroup()
 plans <- match_numbers(plans, "cd_2010")
 
