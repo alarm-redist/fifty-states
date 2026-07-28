@@ -58,4 +58,20 @@ if (interactive()) {
     validate_analysis(plans, map_shd)
     summary(plans)
 
+    # Extra validation plots for custom constraints -----
+
+    visual <- redist.plot.distr_qtys(plans, vap_hisp/total_vap,
+                                     color_thresh = NULL,
+                                     color = ifelse(subset_sampled(plans)$ndv > subset_sampled(plans)$nrv, "#3D77BB", "#B25D4C"),
+                                     size = 0.5, alpha = 0.5) +
+      scale_y_continuous("Percent Hisp by VAP") +
+      labs(title = "Approximate Performance")
+    plans |>
+      subset_sampled() |>
+      group_by(draw) |>
+      summarize(n_hisp_perf = sum(vap_hisp/total_vap > 0.3 & ndshare > 0.5)) |>
+      count(n_hisp_perf)
+
+    print(visual)
+
 }
