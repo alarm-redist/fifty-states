@@ -41,7 +41,7 @@ if (!file.exists(here(shp_path))) {
 
     d_cd <- make_from_baf("OH", "CD", "VTD", year = 2010)  %>%
         transmute(GEOID = paste0(censable::match_fips("OH"), vtd),
-                  cd_2000 = as.integer(cd))
+            cd_2000 = as.integer(cd))
 
     oh_shp <- left_join(oh_shp, d_muni, by = "GEOID") %>%
         left_join(d_cd, by = "GEOID") %>%
@@ -49,20 +49,20 @@ if (!file.exists(here(shp_path))) {
         relocate(muni, county_muni, cd_2000, .after = county)
 
     # add the enacted plan
-    baf_cd113 <- make_from_baf('OH', from = read_baf_cd113('OH'), year = 2010) %>%
-        rename(GEOID = vtd) %>% mutate(GEOID = paste0('39', GEOID))
+    baf_cd113 <- make_from_baf("OH", from = read_baf_cd113("OH"), year = 2010) %>%
+        rename(GEOID = vtd) %>% mutate(GEOID = paste0("39", GEOID))
     oh_shp <- oh_shp %>%
         left_join(baf_cd113, by = "GEOID")
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = oh_shp,
-                             perim_path = here(perim_path)) %>%
+        perim_path = here(perim_path)) %>%
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         oh_shp <- rmapshaper::ms_simplify(oh_shp, keep = 0.05,
-                                                 keep_shapes = TRUE) %>%
+            keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 

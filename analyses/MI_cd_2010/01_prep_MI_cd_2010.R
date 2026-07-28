@@ -42,7 +42,7 @@ if (!file.exists(here(shp_path))) {
         select(-vtd)
     d_cd <- make_from_baf("MI", "CD", "VTD", year = 2010)  %>%
         transmute(GEOID = paste0(censable::match_fips("MI"), vtd),
-                  cd_2000 = as.integer(cd))
+            cd_2000 = as.integer(cd))
     mi_shp <- left_join(mi_shp, d_muni, by = "GEOID") %>%
         left_join(d_cd, by = "GEOID") %>%
         mutate(county_muni = if_else(is.na(muni), county, str_c(county, muni))) %>%
@@ -64,12 +64,12 @@ if (!file.exists(here(shp_path))) {
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = mi_shp,
-                               perim_path = here(perim_path)) %>%
+        perim_path = here(perim_path)) %>%
         invisible()
 
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         mi_shp <- rmapshaper::ms_simplify(mi_shp, keep = 0.05,
-                                          keep_shapes = TRUE) %>%
+            keep_shapes = TRUE) %>%
             suppressWarnings()
     }
 
@@ -80,7 +80,7 @@ if (!file.exists(here(shp_path))) {
         mi_shp$cd_2010[i] <- Mode(mi_shp$cd_2010[mi_shp$adj[[i]] + 1])
     }
 
-    #Check for missing connections
+    # Check for missing connections
     if (FALSE) {
         redist.plot.adj(mi_shp, mi_shp$adj, centroids = F)
         x <- redist:::contiguity(mi_shp$adj, rep(1, length(mi_shp$adj)))
@@ -89,7 +89,7 @@ if (!file.exists(here(shp_path))) {
         idx <- which(x > 1 & str_detect(mi_shp$county, "097"))
         bbox <- st_bbox(st_buffer(mi_shp$geometry[idx], 800))
         lbls <- rep("", nrow(mi_shp))
-        #adj_idxs <- c(idx, unlist(adj_nowater[idx]) + 1L)
+        # adj_idxs <- c(idx, unlist(adj_nowater[idx]) + 1L)
         # adj_idxs = c(adj_idxs, unlist(adj_nowater[adj_idxs]) + 1L)
         lbls[idx] <- mi_shp$GEOID[idx]
         ggplot(mi_shp) +
@@ -112,7 +112,7 @@ if (!file.exists(here(shp_path))) {
     add_update_edge("26029029017", "26029029016")
 
     # Connect UP
-    #add_update_edge("26047047022", "26097097010")
+    # add_update_edge("26047047022", "26097097010")
 
     # Connect UP attempt 2
     add_update_edge("26047000220", "26097000010")
@@ -130,4 +130,3 @@ if (!file.exists(here(shp_path))) {
     mi_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong MI} shapefile")
 }
-

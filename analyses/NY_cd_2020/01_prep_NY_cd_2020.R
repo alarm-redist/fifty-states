@@ -50,7 +50,7 @@ if (!file.exists(path_enacted_old)) {
 
 if (!file.exists(path_enacted)) {
     download(url = "https://latfor.state.ny.us/maps/2022congress/congress_block.csv",
-             path = path_enacted)
+        path = path_enacted)
 }
 
 cli_process_done()
