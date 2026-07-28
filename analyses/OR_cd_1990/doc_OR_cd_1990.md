@@ -17,7 +17,7 @@ We apply a county/municipality constraint, as described below.
 To reflect the transportation links constraint, we remove edges in the adjacency graph for counties not connected by a state or federal highway. 
 
 ## Data Sources
-Data for New Hampshire comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
+Data for Oregon comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
 
 ## Pre-processing Notes
 As described above, counties lacking state or federal highway links were manually disconnected. Given the stability of major highway connectivity over time, we apply the same county disconnections as in prior analyses.

@@ -19,4 +19,4 @@ No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
 We sample 24,000 districting plans for North Carolina, and thin to 5,000 final plans.
-No special techniques were needed to produce the sample.
+We remove plans that do not contain at least two districts with minority voting-age population above 40%.

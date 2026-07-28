@@ -22,4 +22,4 @@ Data for Iowa comes from Iowa's [legislative guide to redistricting](https://www
 Simulations are done at the county level, which is a requirement for congressional districts in Iowa per state law.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Iowa across five independent runs of the SMC algorithm.
+We sample 55,000 districting plans for Iowa across 10 independent runs of the SMC algorithm, and then thinned the number of samples to 5,500.

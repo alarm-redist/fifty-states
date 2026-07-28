@@ -22,4 +22,4 @@ No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
 We sample 5,000 districting plans for Mississippi, across two independent runs of the SMC algorithm.
-We apply a hinge Gibbs constraint of strength 25 to encourage drawing a majority black district.
+We apply a hinge Gibbs constraint of strength 20 to encourage drawing a majority black district.

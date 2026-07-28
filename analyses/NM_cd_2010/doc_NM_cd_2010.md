@@ -22,4 +22,3 @@ To preserve the cores of prior districts, we merge all precincts which are more 
 
 ## Simulation Notes
 We sample 5,000 districting plans for New Mexico across two independent runs of the SMC algorithm.
-No special techniques were needed to produce the sample.

@@ -21,6 +21,6 @@ No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
 We sample 20000 redistricting plans for Idaho across 10 independent runs of the SMC algorithm.
-We then thinned the number of samples to 5000.
+We then thinned the number of samples to 10,000.
 We use a pseudo-county constraint to limit the county and municipality (i.e., city and township) splits.
 No special techniques were needed to produce the sample.

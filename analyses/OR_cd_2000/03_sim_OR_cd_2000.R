@@ -20,10 +20,7 @@ names(n_keep) <- as.character(chains)
 
 plans <- plans %>%
     group_by(chain) %>%
-    filter(
-        is.na(chain) |
-            dense_rank(as.integer(draw)) <= n_keep[as.character(first(chain))]
-    ) %>% # thin samples to 5,000 while retaining every chain
+    filter(as.integer(draw) < min(as.integer(draw)) + 500) %>% # thin samples
     ungroup()
 plans <- match_numbers(plans, "cd_2000")
 

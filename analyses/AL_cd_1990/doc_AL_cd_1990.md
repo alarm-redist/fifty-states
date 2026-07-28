@@ -14,6 +14,7 @@ In Alabama, we consult [NCSL Redistricting Law 2000](https://web.archive.org/web
 
 ### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
+We add a constraint to encourage at least one district with Black voting-age population above 40% and a Democratic vote share above 50%, in line with the Voting Rights Act.
 
 ## Data Sources
 Data for Alabama comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
@@ -22,6 +23,5 @@ Data for Alabama comes from the [ALARM Project's update](https://dataverse.harva
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 18,000 districting plans for Alabama across 6 independent runs of the SMC algorithm.
-We then thinned the number of samples to 6,000. 
-No special techniques were needed to produce the sample.
+We sample 15,000 districting plans for Alabama across 5 independent runs of the SMC algorithm.
+We then thinned the number of samples to 5,000.
