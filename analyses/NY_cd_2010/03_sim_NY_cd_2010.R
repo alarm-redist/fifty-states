@@ -9,10 +9,11 @@ cli_process_start("Running simulations for {.pkg NY_cd_2010}")
 set.seed(2010)
 plans <- redist_smc(map,
     nsims = 1.2e5,
-    seq_alpha = .95,
+    seq_alpha = 0.9,
     runs = 4L,
     counties = pseudo_county, verbose = TRUE,
-    pop_temper = .001, ncores = 15) %>%
+    pop_temper = .001,
+    ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4"))) %>%
     match_numbers("cd_2010")
 
 thinned_plans <- plans %>%
