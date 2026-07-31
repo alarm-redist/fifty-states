@@ -22,9 +22,6 @@ cli_process_start("Downloading files for {.pkg MO_leg_2020}")
 
 path_data <- download_redistricting_file("MO", "data-raw/MO", year = 2020)
 
-# TODO other files here (as necessary). All paths should start with `path_`
-# If large, consider checking to see if these files exist before downloading
-
 cli_process_done()
 
 # Compile raw data into a final shapefile for analysis -----
@@ -62,16 +59,12 @@ if (!file.exists(here(shp_path))) {
     mo_shp <- mo_shp |>
         left_join(y = leg_from_baf(state = "MO"), by = "GEOID")
 
-
-    # TODO any additional columns or data you want to add should go here
-
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = mo_shp,
         perim_path = here(perim_path)) |>
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    # TODO feel free to delete if this dependency isn't available
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
         mo_shp <- rmapshaper::ms_simplify(mo_shp, keep = 0.05,
             keep_shapes = TRUE) |>
@@ -80,8 +73,6 @@ if (!file.exists(here(shp_path))) {
 
     # create adjacency graph
     mo_shp$adj <- adjacency(mo_shp)
-
-    # TODO any custom adjacency graph edits here
 
     # check max number of connected components
     # 1 is one fully connected component, more is worse
@@ -97,7 +88,3 @@ if (!file.exists(here(shp_path))) {
     mo_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong MO} shapefile")
 }
-
-# TODO visualize the enacted maps using:
-# redistio::draw(mo_shp, mo_shp$ssd_2020)
-# redistio::draw(mo_shp, mo_shp$shd_2020)
