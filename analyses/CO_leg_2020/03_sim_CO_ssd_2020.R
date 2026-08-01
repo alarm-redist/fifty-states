@@ -9,10 +9,10 @@ cli_process_start("Running simulations for {.pkg CO_ssd_2020}")
 set.seed(2020)
 
 constr <- redist_constr(map_ssd) %>%
-    add_constr_total_plan_splits(strength = 2, admin = map_ssd$county) %>%
-    add_constr_total_plan_splits(strength = 1, admin = map_ssd$county_muni)
+  add_constr_total_plan_splits(strength = 2.6, admin = map_ssd$county) %>%
+  add_constr_total_plan_splits(strength = 1, admin = map_ssd$county_muni)
 
-mh_accept_per_smc <- ceiling(n_distinct(map_ssd$ssd_2020)/3) + 50
+mh_accept_per_smc <- ceiling(n_distinct(map_ssd$ssd_2020)/3) + 170
 
 plans <- redist_smc(
     map_ssd,
