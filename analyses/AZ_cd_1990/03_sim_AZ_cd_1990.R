@@ -50,47 +50,45 @@ save_summary_stats(plans, "data-out/AZ_1990/AZ_cd_1990_stats.csv")
 
 cli_process_done()
 
-# Validation plots -----
+# Extra validation plots for custom constraints -----
 if (interactive()) {
-  library(ggplot2)
-  
-  validate_analysis(plans, map)
-  summary(plans)
-  
-  sampled <- subset_sampled(plans)
-  
-  print(
-    redist.plot.distr_qtys(
-      plans,
-      vap_hisp / total_vap,
-      color_thresh = NULL,
-      color = ifelse(
-        sampled$ndshare > 0.5,
-        "#3D77BB",
-        "#B25D4C"
-      ),
-      size = 0.5,
-      alpha = 0.5
-    ) +
-      scale_y_continuous("Hispanic share of VAP") +
-      labs(title = "Hispanic Performance") +
-      scale_color_manual(values = c(cd_1990 = "black"))
-  )
-  
-  perf_summary <- perf |>
-    group_by(threshold) |>
-    summarize(
-      plans_with_any = sum(n[n_hisp_perf > 0]),
-      pct_with_any = plans_with_any / sum(n),
-      plans_with_two_or_more = sum(n[n_hisp_perf >= 2]),
-      .groups = "drop"
-    ) |>
-    mutate(
-      pct_with_any = scales::percent(
-        pct_with_any,
-        accuracy = 0.01
-      )
-    )
-  
-  print(perf_summary)
+    library(ggplot2)
+    library(patchwork)
+
+    validate_analysis(plans, map)
+    summary(plans)
+
+    # Opportunity-district benchmarks, computed from the current data
+    enacted <- sf::st_drop_geometry(map) |>
+        group_by(cd_1990) |>
+        summarize(hvap = sum(vap_hisp)/sum(vap), hpop = sum(pop_hisp)/sum(pop))
+    enacted_hvap <- max(enacted$hvap) # 0.4344, CD 5
+    enacted_hpop <- max(enacted$hpop) # 0.4923, CD 5
+
+    # Hispanic VAP by district, against the opportunity-district benchmarks
+    plans |>
+        mutate(hvap = vap_hisp/total_vap) |>
+        redist.plot.distr_qtys(hvap, sort = "asc", geom = "boxplot",
+            color_thresh = NULL, size = 0.2) +
+        geom_hline(yintercept = 0.40, linetype = "dashed", color = "#1f6f8b") +
+        geom_hline(yintercept = enacted_hvap, linetype = "solid", color = "#b3382c") +
+        geom_hline(yintercept = 0.4477, linetype = "dotted", color = "#5a5a5a") +
+        scale_y_continuous("Percent Hispanic by VAP", labels = scales::percent) +
+        labs(x = "Districts, ordered by Hispanic VAP",
+            title = "Hispanic VAP against the 1992 court-plan benchmarks")
+
+    # Opportunity districts, defined on Hispanic VAP alone
+    plans |>
+        subset_sampled() |>
+        mutate(hvap = vap_hisp/total_vap) |>
+        group_by(draw) |>
+        summarize(max_hvap = max(hvap)) |>
+        summarize(median_max_hvap = median(max_hvap),
+            q10_max_hvap = quantile(max_hvap, 0.10),
+            q90_max_hvap = quantile(max_hvap, 0.90),
+            p_ge_0.35 = mean(max_hvap >= 0.35),
+            p_ge_0.40 = mean(max_hvap >= 0.40),
+            p_ge_enacted = mean(max_hvap >= enacted_hvap),
+            p_ge_0.4477 = mean(max_hvap >= 0.4477)) |>
+        print(width = Inf)
 }
