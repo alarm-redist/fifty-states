@@ -13,14 +13,14 @@ In Arizona, districts should:
 
 ### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
+To operationalize the preservation of local administrative geography, we construct pseudocounties and pass them to the `counties` argument of the SMC algorithm.
+We also use Hispanic voting-age-population hinge constraints to encourage the simulation to generate a district with a comparatively high Hispanic VAP.
 
 ## Data Sources
 Data for Arizona comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
 
 ## Pre-processing Notes
-No manual pre-processing decisions were necessary.
+No manual pre-processing was required. We use predefined pseudocounties in the county constraint and penalize splits of county–municipality units.
 
 ## Simulation Notes
-We sample 10,000 districting plans for Arizona across 5 independent runs of the SMC algorithm.
-We then thinned the number of samples to 5,000. 
-To preserve communities of interest and city and county boundaries, we create pseudocounties for use in the county constraint.
+We use a two-stage SMC procedure. First, we generate 30,000 preliminary plans under a stronger Hispanic-VAP constraint and randomly select 4,000 as initial particles. We then sample 20,000 plans across five independent runs and retain 1,000 plans from each run, producing a final ensemble of 5,000 plans.
