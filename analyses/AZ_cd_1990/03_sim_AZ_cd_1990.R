@@ -52,43 +52,118 @@ cli_process_done()
 
 # Extra validation plots for custom constraints -----
 if (interactive()) {
-    library(ggplot2)
-    library(patchwork)
-
-    validate_analysis(plans, map)
-    summary(plans)
-
-    # Opportunity-district benchmarks, computed from the current data
-    enacted <- sf::st_drop_geometry(map) |>
-        group_by(cd_1990) |>
-        summarize(hvap = sum(vap_hisp)/sum(vap), hpop = sum(pop_hisp)/sum(pop))
-    enacted_hvap <- max(enacted$hvap) # 0.4344, CD 5
-    enacted_hpop <- max(enacted$hpop) # 0.4923, CD 5
-
-    # Hispanic VAP by district, against the opportunity-district benchmarks
-    plans |>
-        mutate(hvap = vap_hisp/total_vap) |>
-        redist.plot.distr_qtys(hvap, sort = "asc", geom = "boxplot",
-            color_thresh = NULL, size = 0.2) +
-        geom_hline(yintercept = 0.40, linetype = "dashed", color = "#1f6f8b") +
-        geom_hline(yintercept = enacted_hvap, linetype = "solid", color = "#b3382c") +
-        geom_hline(yintercept = 0.4477, linetype = "dotted", color = "#5a5a5a") +
-        scale_y_continuous("Percent Hispanic by VAP", labels = scales::percent) +
-        labs(x = "Districts, ordered by Hispanic VAP",
-            title = "Hispanic VAP against the 1992 court-plan benchmarks")
-
-    # Opportunity districts, defined on Hispanic VAP alone
-    plans |>
-        subset_sampled() |>
-        mutate(hvap = vap_hisp/total_vap) |>
-        group_by(draw) |>
-        summarize(max_hvap = max(hvap)) |>
-        summarize(median_max_hvap = median(max_hvap),
-            q10_max_hvap = quantile(max_hvap, 0.10),
-            q90_max_hvap = quantile(max_hvap, 0.90),
-            p_ge_0.35 = mean(max_hvap >= 0.35),
-            p_ge_0.40 = mean(max_hvap >= 0.40),
-            p_ge_enacted = mean(max_hvap >= enacted_hvap),
-            p_ge_0.4477 = mean(max_hvap >= 0.4477)) |>
-        print(width = Inf)
+  library(ggplot2)
+  library(patchwork)
+  
+  validate_analysis(plans, map)
+  summary(plans)
+  
+  plans_sampled <- subset_sampled(plans)
+  
+  # Hispanic VAP plot -----
+  p_hvap <- redist.plot.distr_qtys(
+    plans,
+    vap_hisp / total_vap,
+    color_thresh = NULL,
+    color = ifelse(
+      plans_sampled$ndv > plans_sampled$nrv,
+      "#3D77BB",
+      "#B25D4C"
+    ),
+    size = 0.5,
+    alpha = 0.5
+  ) +
+    scale_y_continuous(
+      name = "Percent Hispanic by VAP",
+      labels = scales::percent_format(accuracy = 1)
+    ) +
+    labs(
+      title = "Arizona 1990 Enacted Plan versus Simulations",
+      x = "Districts, ordered by Hispanic VAP"
+    ) +
+    scale_color_manual(
+      values = c(cd_1990 = "black")
+    ) +
+    theme_bw()
+  
+  print(p_hvap)
+  
+  # Share of plans containing a district above each HVAP threshold -----
+  plan_hvap <- plans_sampled |>
+    as_tibble() |>
+    mutate(
+      hvap = vap_hisp / total_vap
+    ) |>
+    group_by(chain, draw) |>
+    summarise(
+      max_hvap = max(hvap, na.rm = TRUE),
+      .groups = "drop"
+    )
+  
+  if (nrow(plan_hvap) != 5000L) {
+    warning(
+      "Expected 5,000 simulated plans, but found ",
+      nrow(plan_hvap),
+      "."
+    )
+  }
+  
+  hvap_thresholds <- tibble(
+    threshold = c(0.20, 0.30),
+    label = factor(
+      c("HVAP ≥ 20%", "HVAP ≥ 30%"),
+      levels = c("HVAP ≥ 20%", "HVAP ≥ 30%")
+    )
+  ) |>
+    rowwise() |>
+    mutate(
+      n_plans = sum(
+        plan_hvap$max_hvap >= threshold,
+        na.rm = TRUE
+      ),
+      total_plans = nrow(plan_hvap),
+      proportion = n_plans / total_plans
+    ) |>
+    ungroup()
+  
+  print(hvap_thresholds)
+  
+  p_hvap_thresholds <- ggplot(
+    hvap_thresholds,
+    aes(x = label, y = proportion)
+  ) +
+    geom_col(width = 0.6) +
+    geom_text(
+      aes(
+        label = paste0(
+          scales::percent(proportion, accuracy = 0.1),
+          "\n(",
+          scales::comma(n_plans),
+          " of ",
+          scales::comma(total_plans),
+          ")"
+        )
+      ),
+      vjust = -0.3,
+      size = 4
+    ) +
+    scale_y_continuous(
+      name = "Share of simulated plans",
+      labels = scales::percent_format(accuracy = 1),
+      breaks = seq(0, 1, by = 0.2)
+    ) +
+    coord_cartesian(
+      ylim = c(0, 1.05),
+      clip = "off"
+    ) +
+    labs(
+      title = paste0(
+        "Arizona 1990: Plans Containing a District ",
+        "Above Each Hispanic-VAP Threshold"
+      ),
+      x = NULL
+    ) +
+    theme_bw()
+  
+  print(p_hvap_thresholds)
 }
