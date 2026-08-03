@@ -39,7 +39,7 @@ plans <- redist_smc(
 
 plans <- plans |>
   # Why is no merged indexing found
-  pullback() |>
+  pullback(map = map_shd) |>
     group_by(chain) |>
     filter(as.integer(draw) < min(as.integer(draw)) + 2000) |> # thin samples
     ungroup()
