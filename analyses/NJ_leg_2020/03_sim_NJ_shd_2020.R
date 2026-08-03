@@ -44,6 +44,8 @@ plans <- plans |>
     filter(as.integer(draw) < min(as.integer(draw)) + 2000) |> # thin samples
     ungroup()
 
+attr(plans, "prec_pop") <- map_shd[[attr(map_shd, "pop_col")]]
+
 plans <- match_numbers(plans, "shd_2020", total_pop = nj_shp$pop)
 
 cli_process_done()
