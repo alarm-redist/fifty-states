@@ -20,10 +20,10 @@ cli_process_start("Running simulations for {.pkg NJ_shd_2020}")
 set.seed(2020)
 
 # TODO set equal to one third of number of districts, increase by 10-15 if no convergence
-mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3) # + 26
+mh_accept_per_smc <- ceiling(n_distinct(map_shd_merged$shd_2020)/3) # + 26
 
 plans <- redist_smc(
-  map_shd,
+  map_shd_merged,
   nsims = 2000, runs = 2,
   constraints = constr,
   ncores = 0,
@@ -75,12 +75,12 @@ if (interactive()) {
     library(ggplot2)
     library(patchwork)
 
-    # Bella had to change something in this function
+    # NOT ANYMORE THO Bella had to change something in this function
     # in fifty-states/R/validate.R
     # Bella changed to: plan_div <- plans_diversity(
     #plans,
     #n_max = 150,
-    #total_pop = map$pop
+    #total_pop = map_shd_merged$pop
     #)
     validate_analysis(plans, nj_shp)
     summary(plans)
