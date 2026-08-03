@@ -76,7 +76,7 @@ cli_process_done()
 if (interactive()) {
     library(ggplot2)
     library(patchwork)
-    validate_analysis(plans, nj_shp)
+    validate_analysis(plans, map_shd)
     summary(plans)
 
     # Extra validation plots for custom constraints -----
