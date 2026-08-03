@@ -74,14 +74,6 @@ cli_process_done()
 if (interactive()) {
     library(ggplot2)
     library(patchwork)
-
-    # NOT ANYMORE THO Bella had to change something in this function
-    # in fifty-states/R/validate.R
-    # Bella changed to: plan_div <- plans_diversity(
-    #plans,
-    #n_max = 150,
-    #total_pop = map_shd_merged$pop
-    #)
     validate_analysis(plans, nj_shp)
     summary(plans)
 
