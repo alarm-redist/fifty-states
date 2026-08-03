@@ -1,6 +1,6 @@
 ###############################################################################
-# Download and prepare data for `TN_leg_2020` analysis
-# © ALARM Project, November 2025
+# Download and prepare data for `NV_leg_2020` analysis
+# © ALARM Project, June 2026
 ###############################################################################
 
 suppressMessages({
@@ -18,36 +18,36 @@ suppressMessages({
 stopifnot(utils::packageVersion("redist") >= "5.0.0.1")
 
 # Download necessary files for analysis -----
-cli_process_start("Downloading files for {.pkg TN_leg_2020}")
+cli_process_start("Downloading files for {.pkg NV_leg_2020}")
 
-path_data <- download_redistricting_file("TN", "data-raw/TN", year = 2020)
+path_data <- download_redistricting_file("NV", "data-raw/NV", year = 2020)
 
 cli_process_done()
 
 # Compile raw data into a final shapefile for analysis -----
-shp_path <- "data-out/TN_2020/shp_vtd.rds"
-perim_path <- "data-out/TN_2020/perim.rds"
+shp_path <- "data-out/NV_2020/shp_vtd.rds"
+perim_path <- "data-out/NV_2020/perim.rds"
 
 if (!file.exists(here(shp_path))) {
-    cli_process_start("Preparing {.strong TN} shapefile")
+    cli_process_start("Preparing {.strong NV} shapefile")
     # read in redistricting data
-    tn_shp <- read_csv(here(path_data), col_types = cols(GEOID20 = "c")) |>
+    nv_shp <- read_csv(here(path_data), col_types = cols(GEOID20 = "c")) |>
         join_vtd_shapefile(year = 2020) |>
-        st_transform(EPSG$TN)  |>
+        st_transform(EPSG$NV)  |>
         rename_with(function(x) gsub("[0-9.]", "", x), starts_with("GEOID"))
 
     # add municipalities
-    d_muni <- make_from_baf("TN", "INCPLACE_CDP", "VTD", year = 2020)  |>
-        mutate(GEOID = paste0(censable::match_fips("TN"), vtd)) |>
+    d_muni <- make_from_baf("NV", "INCPLACE_CDP", "VTD", year = 2020)  |>
+        mutate(GEOID = paste0(censable::match_fips("NV"), vtd)) |>
         select(-vtd)
-    d_ssd <- make_from_baf("TN", "SLDU", "VTD", year = 2020)  |>
-        transmute(GEOID = paste0(censable::match_fips("TN"), vtd),
+    d_ssd <- make_from_baf("NV", "SLDU", "VTD", year = 2020)  |>
+        transmute(GEOID = paste0(censable::match_fips("NV"), vtd),
             ssd_2010 = as.integer(sldu))
-    d_shd <- make_from_baf("TN", "SLDL", "VTD", year = 2020)  |>
-        transmute(GEOID = paste0(censable::match_fips("TN"), vtd),
+    d_shd <- make_from_baf("NV", "SLDL", "VTD", year = 2020)  |>
+        transmute(GEOID = paste0(censable::match_fips("NV"), vtd),
             shd_2010 = as.integer(sldl))
 
-    tn_shp <- tn_shp |>
+    nv_shp <- nv_shp |>
         left_join(d_muni, by = "GEOID") |>
         left_join(d_ssd, by = "GEOID") |>
         left_join(d_shd, by = "GEOID") |>
@@ -56,35 +56,40 @@ if (!file.exists(here(shp_path))) {
         relocate(muni, county_muni, shd_2010, .after = county)
 
     # add the enacted plan
-    tn_shp <- tn_shp |>
-        left_join(y = leg_from_baf(state = "TN"), by = "GEOID")
+    nv_shp <- nv_shp |>
+        left_join(y = leg_from_baf(state = "NV"), by = "GEOID")
+
 
     # Create perimeters in case shapes are simplified
-    redistmetrics::prep_perims(shp = tn_shp,
+    redistmetrics::prep_perims(shp = nv_shp,
         perim_path = here(perim_path)) |>
         invisible()
 
     # simplifies geometry for faster processing, plotting, and smaller shapefiles
     if (requireNamespace("rmapshaper", quietly = TRUE)) {
-        tn_shp <- rmapshaper::ms_simplify(tn_shp, keep = 0.05,
+        nv_shp <- rmapshaper::ms_simplify(nv_shp, keep = 0.05,
             keep_shapes = TRUE) |>
             suppressWarnings()
     }
 
     # create adjacency graph
-    tn_shp$adj <- adjacency(tn_shp)
+    nv_shp$adj <- adjacency(nv_shp)
+
 
     # check max number of connected components
     # 1 is one fully connected component, more is worse
-    ccm(tn_shp$adj, tn_shp$ssd_2020)
-    ccm(tn_shp$adj, tn_shp$shd_2020)
+    ccm(nv_shp$adj, nv_shp$ssd_2020)
+    ccm(nv_shp$adj, nv_shp$shd_2020)
 
-    tn_shp <- tn_shp |>
+    nv_shp <- nv_shp |>
         fix_geo_assignment(muni)
 
-    write_rds(tn_shp, here(shp_path), compress = "gz")
+    write_rds(nv_shp, here(shp_path), compress = "gz")
     cli_process_done()
 } else {
-    tn_shp <- read_rds(here(shp_path))
-    cli_alert_success("Loaded {.strong TN} shapefile")
+    nv_shp <- read_rds(here(shp_path))
+    cli_alert_success("Loaded {.strong NV} shapefile")
 }
+
+redistio::draw(nv_shp, nv_shp$ssd_2020)
+redistio::draw(nv_shp, nv_shp$shd_2020)
