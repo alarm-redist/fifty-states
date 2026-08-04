@@ -41,8 +41,9 @@ map_shd_merged <- map_shd |>
 
 # Added the following total splits constraint
 constr <- redist_constr(map_shd_merged) |>
-add_constr_total_splits(strength = 1.5, admin = map_shd_merged$county) #|>
-#add_constr_total_splits(strength = 3, admin = map_shd$county_muni)
+#add_constr_total_splits(strength = 0.2, admin = map_shd_merged$county) |>
+add_constr_total_splits(strength = 2.4, admin = map_shd_merged$muni)
+# note for above -- map_shd_merged$muni used to be map_shd_merged$county_muni
 
 # ------------------------------------------------
 
@@ -56,7 +57,7 @@ map_ssd_merged <- map_ssd_merged |>
                                             pop_muni = get_target(map_ssd_merged)))
 map_shd_merged <- map_shd_merged |>
     mutate(pseudo_county = pick_county_muni(map_shd_merged, counties = county, munis = muni,
-                                            pop_muni = 3*get_target(map_shd)))
+                                            pop_muni = 3*get_target(map_shd_merged)))
 # IF MERGING CORES OR OTHER UNITS:
 # make a new `map_cores` object that is merged & used for simulating. You can set `drop_geom=TRUE` for this.
 

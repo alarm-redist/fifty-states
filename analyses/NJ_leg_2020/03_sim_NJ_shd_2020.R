@@ -20,11 +20,11 @@ cli_process_start("Running simulations for {.pkg NJ_shd_2020}")
 set.seed(2020)
 
 # TODO set equal to one third of number of districts, increase by 10-15 if no convergence
-mh_accept_per_smc <- ceiling(n_distinct(map_shd_merged$shd_2020)/3) # + 26
+mh_accept_per_smc <- ceiling(n_distinct(map_shd_merged$shd_2020)/3) + 10
 
 plans <- redist_smc(
   map_shd_merged,
-  nsims = 2000, runs = 2,
+  nsims = 3000, runs = 5,
   constraints = constr,
   ncores = 0,
   counties = pseudo_county,
