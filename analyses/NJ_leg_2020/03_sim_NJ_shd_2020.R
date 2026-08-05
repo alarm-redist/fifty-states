@@ -20,7 +20,7 @@ cli_process_start("Running simulations for {.pkg NJ_shd_2020}")
 set.seed(2020)
 
 # TODO set equal to one third of number of districts, increase by 10-15 if no convergence
-mh_accept_per_smc <- ceiling(n_distinct(map_shd_merged$shd_2020)/3) + 25
+mh_accept_per_smc <- ceiling(n_distinct(map_shd_merged$shd_2020)/3) + 125
 
 plans <- redist_smc(
   map_shd_merged,
@@ -58,7 +58,7 @@ write_rds(plans, here("data-out/NJ_2020/NJ_shd_2020_plans.rds"), compress = "xz"
 cli_process_done()
 
 # Bella added below (uncomment when viewing validation)
-#plans <- readRDS("data-out/NJ_2020/NJ_shd_2020_plans.rds")
+plans <- readRDS("data-out/NJ_2020/NJ_shd_2020_plans.rds")
 
 # Compute summary statistics -----
 cli_process_start("Computing summary statistics for {.pkg NJ_shd_2020}")
