@@ -6,20 +6,8 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg NJ_shd_2020}")
 
-# TODO any pre-computation (VRA targets, etc.)
-
-# TODO customize as needed. Recommendations:
-#  - For many districts / tighter population tolerances, try setting
-#  `pop_temper=0.01` and nudging upward from there. Monitor the output for
-#  efficiency!
-#  - Monitor the output (i.e. leave `verbose=TRUE`) to ensure things aren't breaking
-#  - Don't change the number of simulations unless you have a good reason
-#  - If the sampler freezes, try turning off the county split constraint to see
-#  if that's the problem.
-#  - Ask for help!
 set.seed(2020)
 
-# TODO set equal to one third of number of districts, increase by 10-15 if no convergence
 mh_accept_per_smc <- ceiling(n_distinct(map_shd_merged$shd_2020)/3) + 125
 
 plans <- redist_smc(
@@ -34,11 +22,7 @@ plans <- redist_smc(
   verbose = TRUE
 )
 
-# IF CORES OR OTHER UNITS HAVE BEEN MERGED:
-# make sure to call `pullback()` on this plans object!
-
 plans <- plans |>
-  # Why is no merged indexing found
   pullback(map = map_shd) |>
     group_by(chain) |>
     filter(as.integer(draw) < min(as.integer(draw)) + 2000) |> # thin samples
@@ -51,20 +35,15 @@ plans <- match_numbers(plans, "shd_2020", total_pop = nj_shp$pop)
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
 
-# TODO add any reference plans that aren't already included
-
 # Output the redist_map object. Do not edit this path.
 write_rds(plans, here("data-out/NJ_2020/NJ_shd_2020_plans.rds"), compress = "xz")
 cli_process_done()
 
-# Bella added below (uncomment when viewing validation)
-plans <- readRDS("data-out/NJ_2020/NJ_shd_2020_plans.rds")
+# The following line is uncommented when viewing validation plots
+# plans <- readRDS("data-out/NJ_2020/NJ_shd_2020_plans.rds")
 
 # Compute summary statistics -----
 cli_process_start("Computing summary statistics for {.pkg NJ_shd_2020}")
-
-#Bella added
-#plans$district <- as.integer(as.character(plans$district))
 
 plans <- add_summary_stats(plans, map_shd)
 
@@ -78,7 +57,4 @@ if (interactive()) {
     library(patchwork)
     validate_analysis(plans, map_shd)
     summary(plans)
-
-    # Extra validation plots for custom constraints -----
-    # TODO remove this section if no custom constraints
 }
