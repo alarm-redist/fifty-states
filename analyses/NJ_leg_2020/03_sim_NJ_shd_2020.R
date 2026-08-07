@@ -14,7 +14,6 @@ plans <- redist_smc(
   map_shd_merged,
   nsims = 3000, runs = 5,
   constraints = constr,
-  #ncores = 0,
   counties = pseudo_county,
   sampling_space = "linking_edge",
   ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
