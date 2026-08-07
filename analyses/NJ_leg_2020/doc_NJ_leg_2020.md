@@ -25,7 +25,8 @@ Where NJ's total pop came from: https://www.census.gov/library/stories/state-by-
 
 ## Simulation Notes
 We sample 15,000 districting plans for New Jersey's lower house across 5 independent runs of the SMC algorithm. We introduce
-a total municipality splits constraint of strength 2.4 and increase the number of merge-split proposals per SMC step to 
+a total municipality splits constraint of strength 2.4 and increase the number of merge-split proposals per SMC step to 139
+total. Additionally, we balanced county/muni splits by setting pop_muni in the shd merged map to 3*get_target(map_shd_merged).
 
 
 We sample XX,XXX districting plans for Illinois's upper house across 5 independent runs of the SMC algorithm.
