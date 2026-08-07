@@ -24,4 +24,4 @@ We sample 10,000 districting plans for Florida's lower house across 5 independen
 We introduce mild population tempering, impose a county-split constraint and a Polsby-Popper compactness constraint, and increase the number of merge-split proposals per SMC step (390).
 
 We sample 10,000 districting plans for Florida's upper house across 5 independent runs of the SMC algorithm.
-We introduce mild population tempering, impose a county-split constraint and a Polsby-Popper compactness constraint, and increase the number of merge-split proposals per SMC step (174).
+We introduce mild population tempering, impose a county-split constraint and a Polsby-Popper compactness constraint, and increase the number of merge-split proposals per SMC step (284).

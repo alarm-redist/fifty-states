@@ -8,11 +8,11 @@ cli_process_start("Running simulations for {.pkg FL_ssd_2020}")
 
 set.seed(2020)
 
-mh_accept_per_smc <- ceiling(n_distinct(map_ssd$ssd_2020)/3) + 160
+mh_accept_per_smc <- ceiling(n_distinct(map_ssd$ssd_2020)/3) + 270
 
 constr <- redist_constr(map_ssd) |>
-    add_constr_total_splits(strength = 2.55, admin = map_ssd$county) |>
-    add_constr_polsby(strength = 1.1)
+  add_constr_total_splits(strength = 2.62, admin = map_ssd$county) |>
+  add_constr_polsby(strength = 1.1)
 
 plans <- redist_smc(
     map_ssd,
@@ -20,7 +20,7 @@ plans <- redist_smc(
     ncores = as.integer(Sys.getenv("SLURM_CPUS_PER_TASK")),
     counties = pseudo_county,
     constraints = constr,
-    pop_temper = 0.04,
+    pop_temper = 0.05,
     sampling_space = "linking_edge",
     ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
     split_params = list(splitting_schedule = "any_valid_sizes"),
