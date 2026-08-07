@@ -11,18 +11,18 @@ set.seed(2020)
 mh_accept_per_smc <- ceiling(n_distinct(map_shd_merged$shd_2020)/3) + 125
 
 plans <- redist_smc(
-  map_shd_merged,
-  nsims = 3000, runs = 5,
-  constraints = constr,
-  counties = pseudo_county,
-  sampling_space = "linking_edge",
-  ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
-  split_params = list(splitting_schedule = "any_valid_sizes"),
-  verbose = TRUE
+    map_shd_merged,
+    nsims = 3000, runs = 5,
+    constraints = constr,
+    counties = pseudo_county,
+    sampling_space = "linking_edge",
+    ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
+    split_params = list(splitting_schedule = "any_valid_sizes"),
+    verbose = TRUE
 )
 
 plans <- plans |>
-  pullback(map = map_shd) |>
+    pullback(map = map_shd) |>
     group_by(chain) |>
     filter(as.integer(draw) < min(as.integer(draw)) + 2000) |> # thin samples
     ungroup()
