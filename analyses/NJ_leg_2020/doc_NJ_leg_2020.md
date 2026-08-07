@@ -21,8 +21,6 @@ Data for New Jersey comes from the ALARM Project's [2020 Redistricting Data File
 The [State of New Jersey](https://www.nj.gov/redistricting/legislative/) requires that "no county or municipality shall be divided among Assembly districts unless it shall contain more than one-fortieth of the total number of inhabitants of the State..." Therefore, municipalities with populations less than one-fourtieth of the total population of New Jersey were merged. [Census data from 2020](https://www.census.gov/library/stories/state-by-state/new-jersey.html) provided the figure used for New Jersey's total population.
 
 ## Simulation Notes
-We sample 15,000 districting plans for New Jersey's lower house across 5 independent runs of the SMC algorithm. We introduce
-a total municipality splits constraint of strength 2.4 and increase the number of merge-split proposals per SMC step to 139
-total. Additionally, we balanced county/muni splits by setting pop_muni in the shd merged map to 3*get_target(map_shd_merged).
+We sample 15,000 districting plans for New Jersey's lower house across 5 independent runs of the SMC algorithm. We introduce a total municipality splits constraint of strength 2.4 and increase the number of merge-split proposals per SMC step to 139 total. Additionally, we balanced county/muni splits by setting pop_muni in the shd merged map to 3*get_target(map_shd_merged).
 
 New Jersey uses the same district plans for its upper house, so please note that the plans simulated for the State House were copy-and-pasted under "State Senate."
