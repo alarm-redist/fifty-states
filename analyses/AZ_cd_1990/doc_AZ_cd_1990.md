@@ -13,6 +13,7 @@ In Arizona, districts should:
 
 ### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
+We use a pseudo-county constraint to help preserve county and municipality boundaries, as described below.
 We also use a single Hispanic VAP hinge constraint to encourage the simulation to generate a district with a comparatively high Hispanic VAP.
 
 ## Data Sources
@@ -24,3 +25,4 @@ No manual pre-processing was required.
 ## Simulation Notes
 We sample 40,000 districting plans for Arizona across five runs of the SMC algorithm.
 We retain 1,000 plans from each run, producing a final ensemble of 5,000 plans.
+We use a pseudo-county constraint to limit the county and municipality splits.
