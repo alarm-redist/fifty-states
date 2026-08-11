@@ -8,11 +8,9 @@ cli_process_start("Running simulations for {.pkg HI_cd_1990}")
 
 set.seed(1990)
 
-# Target output
+# Simulation settings
 target_per_chain <- 2500L
 runs <- 2L
-
-# Start reasonably large
 nsims <- 30000L   
 
 plans_raw <- redist_smc(
@@ -27,11 +25,16 @@ cli_process_done()
 cli_process_start("HI_cd_1990: filter draws")
 
 mat_all <- get_plans_matrix(plans_raw)
-mat_sim <- if (ncol(mat_all) == nsims * runs + 1L) mat_all[, -1, drop = FALSE] else mat_all
-
 w_all <- get_plans_weights(plans_raw)
-w_sim <- if (length(w_all) == ncol(mat_sim) + 1L) w_all[-1] else w_all
-if (length(w_sim) != ncol(mat_sim)) stop("weights/cols mismatch")
+
+stopifnot(
+  ncol(mat_all) == nsims * runs + 1L,
+  identical(colnames(mat_all)[1], "cd_1990"),
+  length(w_all) == ncol(mat_all)
+)
+
+mat_sim <- mat_all[, -1, drop = FALSE]
+w_sim <- w_all[-1]
 
 non_hnl <- map$county != "003"
 
@@ -43,7 +46,7 @@ w_keep <- w_sim[keep]
 
 cli_alert_info("Kept {ncol(mat_keep)} / {ncol(mat_sim)}")
 
-chain_all  <- rep(seq_len(runs), each = nsims)
+chain_all <- rep(seq_len(runs), each = nsims)
 chain_keep <- chain_all[keep]
 
 # take first `target_per_chain` kept per chain
@@ -54,7 +57,7 @@ pick <- unlist(lapply(seq_len(runs), function(ch) {
 }))
 
 mat_final <- mat_keep[, pick, drop = FALSE]
-w_final   <- w_keep[pick]
+w_final <- w_keep[pick]
 chain_cols <- chain_keep[pick]
 
 cli_process_done()
@@ -73,28 +76,14 @@ plans <- redist_plans(
   wgt       = w_final
 )
 
-# chain column: redist_plans sometimes has 1 row per draw or 2 rows per draw
-n <- nrow(plans)
-if (n == length(chain_cols)) {
-  plans <- plans |> dplyr::mutate(chain = chain_cols, .after = draw)
-} else if (n == 2L * length(chain_cols)) {
-  plans <- plans |> dplyr::mutate(chain = rep(chain_cols, each = 2L), .after = draw)
-} else {
-  cli_abort("chain length mismatch")
-}
+# Add chain labels
+stopifnot(nrow(plans) == 2L * length(chain_cols))
+
+plans <- plans |>
+  dplyr::mutate(chain = rep(chain_cols, each = 2L), .after = draw)
 
 plans <- plans |>
   add_reference(ref_plan = map$cd_1990, name = "cd_1990")
-
-# if reference got added once, copy for chain 2
-if ("is_reference" %in% names(plans)) {
-  ref_rows <- dplyr::filter(plans, is_reference)
-  if (nrow(ref_rows) == 1L && runs == 2L) {
-    ref2 <- ref_rows
-    ref2$chain <- setdiff(seq_len(runs), ref_rows$chain)[1]
-    plans <- dplyr::bind_rows(plans, ref2)
-  }
-}
 
 # relabel to match the enacted plan
 plans <- match_numbers(plans, "cd_1990")
