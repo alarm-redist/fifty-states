@@ -92,7 +92,7 @@ cli_process_done()
 
 cli_process_start("Saving {.cls redist_plans} object")
 
-# Output the redist_map object. Do not edit this path.
+# Output the redist_plans object. Do not edit this path.
 write_rds(plans, here("data-out/HI_1990/HI_cd_1990_plans.rds"), compress = "xz")
 cli_process_done()
 
