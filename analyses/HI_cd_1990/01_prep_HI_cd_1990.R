@@ -61,7 +61,7 @@ if (!file.exists(here(shp_path))) {
   # create adjacency graph
   hi_shp$adj <- redist.adjacency(hi_shp)
   
-  # Connect precicnts
+  # Connect precincts
   island_codes <- tribble(
     ~v1,            ~v2,
     "15001000201",  "15001000202",
