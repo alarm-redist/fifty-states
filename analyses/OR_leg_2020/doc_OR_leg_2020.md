@@ -27,7 +27,7 @@ The full list of these counties can be found in the `01_prep_OR_leg_2020.R` file
 ## Simulation Notes
 We sample 55,000 districting plans for Minnesota's upper house across 5 independent runs of the SMC algorithm.
 We then thinned the number of samples to 10,000.
-We impose a total municipality splits constraint, and increase the number of merge-split proposals per SMC step (30).
+We increase the number of merge-split proposals per SMC step (30).
 
 We use the top-down nested procedure to sample Minnesota's lower house districts, with 50 inner-simulations for each of the 55,000 upper house districts.
 11,373 districting plans remain in the surviving sample.
