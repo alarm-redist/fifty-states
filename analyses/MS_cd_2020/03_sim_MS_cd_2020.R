@@ -17,9 +17,6 @@ plans <- redist_smc(
     nsims = 20000, runs = 4L,
     counties = county,
     constraints = cons,
-    # R-hat was erratic across nsims with the default seq_alpha (chains
-    # collapsing into different hinge-constraint basins); 0.9 gave a fully
-    # clean R-hat battery in a 3-variant sweep.
     seq_alpha = 0.9,
     ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4"))
 ) %>%
