@@ -7,11 +7,6 @@
 cli_process_start("Running simulations for {.pkg IL_cd_2010}")
 
 set.seed(2010)
-# Unconstrained like the published analysis (a VRA hinge block tried during
-# the rerun effort regressed convergence badly and was dropped). The target
-# is severely multimodal: identical default-sampler runs ranged from all 960
-# stats clean to 285 above 1.1, and seq_alpha 0.9 was the only configuration
-# never observed to fail.
 plans <- redist_smc(map, nsims = 8e4, runs = 4L, counties = pseudo_county,
     seq_alpha = 0.9,
     ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4"))) %>%
