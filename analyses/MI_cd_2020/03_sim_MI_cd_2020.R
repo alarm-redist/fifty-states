@@ -17,9 +17,6 @@ plans <- redist_smc(map, nsims = 96e3, runs = 4, counties = pseudo_county,
     constraints = constr, pop_temper = 0.02, seq_alpha = 0.9,
     ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4"))) %>%
     group_by(chain) %>%
-    # Thin to a 2500/chain pool (10k): the VRA filter below samples its 5000
-    # final draws from the compliant subset, which under redist 5.x is no
-    # longer nearly all of them.
     filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
     ungroup()
 
