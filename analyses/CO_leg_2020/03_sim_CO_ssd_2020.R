@@ -12,7 +12,7 @@ constr <- redist_constr(map_ssd) %>%
   add_constr_total_plan_splits(strength = 2.6, admin = map_ssd$county) %>%
   add_constr_total_plan_splits(strength = 1, admin = map_ssd$county_muni)
 
-mh_accept_per_smc <- ceiling(n_distinct(map_ssd$ssd_2020)/3) + 170
+mh_accept_per_smc <- ceiling(n_distinct(map_ssd$ssd_2020)/3) + 300
 
 plans <- redist_smc(
     map_ssd,
