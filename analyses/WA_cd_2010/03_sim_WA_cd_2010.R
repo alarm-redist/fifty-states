@@ -11,8 +11,8 @@ constr <- redist_constr(map) %>%
     add_constr_grp_hinge(-12.0, vap - vap_white, vap, c(0.35, 0.25))
 
 set.seed(2010)
-plans <- redist_smc(map, nsims = 13000, counties = pseudo_county, constraints = constr, runs = 8L, seq_alpha = 0.9,
-    ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4"))) %>%
+plans <- redist_smc(map, nsims = 13000, counties = pseudo_county, constraints = constr,
+    runs = 8L, seq_alpha = 0.9) %>%
     match_numbers("cd_2010") %>%
     group_by(chain) %>%
     filter(as.integer(draw) < min(as.integer(draw)) + 625) %>% # thin samples

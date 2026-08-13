@@ -11,8 +11,7 @@ set.seed(2020)
 plans <- redist_smc(
     map,
     nsims = 4e4, runs = 2L,
-    seq_alpha = 0.95, counties = pseudo_county, pop_temper = 0.001,
-    ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4"))
+    seq_alpha = 0.95, counties = pseudo_county, pop_temper = 0.001
 )
 
 plans <- plans %>%

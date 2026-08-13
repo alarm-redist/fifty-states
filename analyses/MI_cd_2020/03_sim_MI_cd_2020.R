@@ -14,8 +14,7 @@ constr <- redist_constr(map) %>%
 set.seed(2020)
 
 plans <- redist_smc(map, nsims = 96e3, runs = 4, counties = pseudo_county,
-    constraints = constr, pop_temper = 0.02, seq_alpha = 0.9,
-    ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4"))) %>%
+    constraints = constr, pop_temper = 0.02, seq_alpha = 0.9) %>%
     group_by(chain) %>%
     filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
     ungroup()
@@ -26,7 +25,6 @@ cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
 
 # filter to ≥ 2 VRA districts
-# (redist.group.percent was removed in redist 5.x)
 grp_pop <- map$vap - map$vap_white
 tot_pop <- map$vap
 vra_ok <- apply(as.matrix(plans), 2, function(d) {

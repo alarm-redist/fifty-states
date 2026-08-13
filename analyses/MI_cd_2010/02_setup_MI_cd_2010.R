@@ -13,7 +13,7 @@ map <- map %>%
 # make pseudo counties with default settings
 map <- map %>%
     mutate(pseudo_county = pick_county_muni(map, counties = county, munis = muni,
-        pop_muni = get_target(map)))
+                                            pop_muni = get_target(map)))
 
 # Add an analysis name attribute
 attr(map, "analysis_name") <- "MI_2010"

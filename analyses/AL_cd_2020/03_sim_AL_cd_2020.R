@@ -13,8 +13,7 @@ constr <- redist_constr(map) %>%
 
 set.seed(2020)
 plans <- redist_smc(map, nsims = 20e3, runs = 4L,
-    counties = county, constr = constr, pop_temper = 0.05,
-    ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4")))
+    counties = county, constr = constr, pop_temper = 0.05)
 plans <- match_numbers(plans, "cd_2020")
 
 # Subset plans that are not performing

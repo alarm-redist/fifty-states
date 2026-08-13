@@ -8,17 +8,16 @@ cli_process_start("Running simulations for {.pkg NY_cd_2010}")
 
 set.seed(2010)
 plans <- redist_smc(map,
-    nsims = 2.4e5,
-    seq_alpha = 0.9,
-    runs = 4L,
+    nsims = 1.2e5,
+    seq_alpha = 0.95,
+    runs = 2L,
     counties = pseudo_county, verbose = TRUE,
-    pop_temper = .001,
-    ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4"))) %>%
+    pop_temper = .001) %>%
     match_numbers("cd_2010")
 
 thinned_plans <- plans %>%
     group_by(chain) %>%
-    filter(as.integer(draw) < min(as.integer(draw)) + 1250) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>%
     ungroup()
 
 cli_process_done()
@@ -31,12 +30,10 @@ cli_process_done()
 # Compute summary statistics -----
 cli_process_start("Computing summary statistics for {.pkg NY_cd_2010}")
 
-# Stats on the full unthinned plans OOM'd at 240k draws and were never
-# saved anyway; compute them only for the published thinned draws.
 thinned_plans <- add_summary_stats(thinned_plans, map)
 
 # Output the summary statistics. Do not edit this path.
 save_summary_stats(thinned_plans, "data-out/NY_2010/NY_cd_2010_stats.csv")
-plans <- thinned_plans # downstream diagnostics read `plans`
+plans <- thinned_plans
 
 cli_process_done()

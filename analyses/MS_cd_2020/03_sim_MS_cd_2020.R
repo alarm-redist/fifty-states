@@ -17,11 +17,10 @@ plans <- redist_smc(
     nsims = 20000, runs = 4L,
     counties = county,
     constraints = cons,
-    seq_alpha = 0.9,
-    ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4"))
+    seq_alpha = 0.9
 ) %>%
     group_by(chain) %>%
-    filter(as.integer(draw) < min(as.integer(draw)) + 1250) %>% # thin to 5000 draws (1250 x 4 chains)
+    filter(as.integer(draw) < min(as.integer(draw)) + 1250) %>% # thin samples
     ungroup()
 plans <- match_numbers(plans, "cd_2020")
 

@@ -17,12 +17,11 @@ plans <- redist_smc(map, nsims = 40e3,
     compactness = 1,
     counties = pseudo_county,
     constraints = constr,
-    pop_temper = 0.01,
-    ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4")))
+    pop_temper = 0.01)
 
 plans_5k <- plans %>%
     group_by(chain) %>%
-    filter(as.integer(draw) < min(as.integer(draw)) + 1250) %>% # thin samples (1250 x 4 chains)
+    filter(as.integer(draw) < min(as.integer(draw)) + 1250) %>% # thin samples
     ungroup()
 
 plans_5k <- match_numbers(plans_5k, "cd_2020")

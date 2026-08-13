@@ -15,7 +15,6 @@ constr <- redist_constr(map) %>%
 
 plans <- redist_smc(map, nsims = 24e3,
     runs = 4L,
-    ncores = as.integer(Sys.getenv("REDIST_NCORES", unset = "4")),
     counties = county,
     constraints = constr,
     pop_temper = 0.05)
