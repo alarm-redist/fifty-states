@@ -24,21 +24,15 @@ plans <- match_numbers(plans, map$cd_2020)
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
 
-# filter to ≥ 2 VRA districts
-grp_pop <- map$vap - map$vap_white
-tot_pop <- map$vap
-vra_ok <- apply(as.matrix(plans), 2, function(d) {
-    shares <- tapply(grp_pop, d, sum)/tapply(tot_pop, d, sum)
-    sort(shares)[12]
-}) > 0.5
-if (sum(vra_ok) < 5e3) {
-    stop("Not enough VRA-compliant plans: ", sum(vra_ok), " of ", length(vra_ok))
-} else {
-    vra_idx <- sample(which(vra_ok), 5e3, replace = FALSE)
-    plans <- filter(plans, as.integer(draw) %in% vra_idx) %>%
-        mutate(draw = as.factor(as.integer(draw)))
-}
-
+plans <- plans %>%
+    mutate(vap_minority = group_frac(map, vap - vap_white, vap)) %>%
+    group_by(draw) %>%
+    filter(sum(vap_minority > 0.5) >= 2) %>%
+    ungroup() %>%
+    group_by(chain) %>%
+    slice(1:(1250*attr(map, "ndists"))) %>% # thin samples
+    ungroup() %>%
+    select(-vap_minority)
 
 # Output the redist_map object. Do not edit this path.
 write_rds(plans, here("data-out/MI_2020/MI_cd_2020_plans.rds"), compress = "xz")
