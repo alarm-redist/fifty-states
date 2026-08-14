@@ -10,13 +10,13 @@ set.seed(2020)
 
 constr <- redist_constr(map_shd) %>%
     add_constr_total_plan_splits(strength = 1.4, admin = map_shd$county) %>%
-    add_constr_total_plan_splits(strength = 3, admin = map_shd$county_muni)
+    add_constr_total_plan_splits(strength = 2.8, admin = map_shd$county_muni)
 
-mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3) + 630
+mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3) + 850
 
 plans <- redist_smc(
     map_shd,
-    nsims = 3e3, runs = 5,
+    nsims = 4e3, runs = 5,
     counties = pseudo_county,
     constraints = constr,
     sampling_space = "linking_edge",
