@@ -20,8 +20,8 @@ Data for Florida comes from the ALARM Project's [2020 Redistricting Data Files](
 Manual adjacency bridges were added to address disconnected components identified in the enacted Senate and House plans under the geometry-derived adjacency graph.
 
 ## Simulation Notes
-We sample 10,000 districting plans for Florida's lower house across 5 independent runs of the SMC algorithm.
-We introduce mild population tempering, impose a county-split constraint and a Polsby-Popper compactness constraint, and increase the number of merge-split proposals per SMC step (390).
+We sample 12,500 districting plans for Florida's lower house across 5 independent runs of the SMC algorithm.
+We introduce mild population tempering, impose a county-split constraint and a Polsby-Popper compactness constraint, and increase the number of merge-split proposals per SMC step (550).
 
 We sample 10,000 districting plans for Florida's upper house across 5 independent runs of the SMC algorithm.
 We introduce mild population tempering, impose a county-split constraint and a Polsby-Popper compactness constraint, and increase the number of merge-split proposals per SMC step (284).

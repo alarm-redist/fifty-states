@@ -11,8 +11,8 @@ set.seed(2020)
 mh_accept_per_smc <- ceiling(n_distinct(map_ssd$ssd_2020)/3) + 270
 
 constr <- redist_constr(map_ssd) |>
-  add_constr_total_splits(strength = 2.62, admin = map_ssd$county) |>
-  add_constr_polsby(strength = 1.1)
+    add_constr_total_splits(strength = 2.62, admin = map_ssd$county) |>
+    add_constr_polsby(strength = 1.1)
 
 plans <- redist_smc(
     map_ssd,
