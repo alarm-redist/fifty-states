@@ -20,4 +20,4 @@ Data for Alabama comes from the ALARM Project's [2020 Redistricting Data Files](
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 20,000 districting plans for Alabama across two independent runs of the SMC algorithm. We set population temperance at 0.05 to avoid bottlenecks. We remove all plans that do not have any district that has BVAP of over 30% and a majority Democratic average vote share, in order to maintain similar standards as the enacted plan. Such plans comprise less than 2% of the original simulation sample. We then thin the sample to down to 5,000 plans.
+We sample 80,000 districting plans for Alabama across two independent runs of 40,000 each using the SMC algorithm. We set population temperance at 0.05 to avoid bottlenecks. We remove all plans that do not have any district that has BVAP of over 30% and a majority Democratic average vote share, in order to maintain similar standards as the enacted plan. Such plans comprise less than 2% of the original simulation sample. We then thin the sample to down to 5,000 plans.

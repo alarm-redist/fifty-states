@@ -19,5 +19,5 @@ Data for Colorado comes from the ALARM Project's [2020 Redistricting Data Files]
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 10,000 districting plans for Colorado across two independent runs of the SMC algorithm, and then thin the sample down to 5,000 plans.
+We sample 320,000 districting plans for Colorado across four independent runs of 80,000 each using the SMC algorithm, and then thin the sample down to 5,000 plans.
 To balance county and municipality splits, we create pseudocounties for use in the county constraint, which leads to fewer municipality splits than using a county constraint. Note that Adams, Arapahoe, El Paso, and Jefferson Counties and the city of Denver must be split due to their large populations, although within the counties, we avoid splitting any municipality.
