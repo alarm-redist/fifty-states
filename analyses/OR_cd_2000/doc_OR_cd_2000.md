@@ -24,6 +24,5 @@ As described above, counties lacking state or federal highway links were manuall
 The full list of these counties can be found in the `01_prep_OR_cd_1990.R` file.
 
 ## Simulation Notes
-We sample 20,000 districting plans for Oregon across 10 independent runs and retain 500 plans from each run, yielding a final sample
-of 5,000 plans.
+We sample 20,000 districting plans for Oregon across 10 independent runs and retain 500 plans from each run, yielding a final sample of 5,000 plans.
 To balance county and municipality splits, we create pseudocounties for use in the county constraint.
