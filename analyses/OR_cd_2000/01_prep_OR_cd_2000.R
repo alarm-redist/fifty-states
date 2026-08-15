@@ -55,16 +55,16 @@ if (!file.exists(here(shp_path))) {
 
     # Remove adjacency between neighboring counties not connected by state or federal highways
     or_shp$adj <- or_shp$adj %>%
-    seam_rip(shp = or_shp, admin = "county", seam = c("015", "033")) %>%  # Curry – Josephine
-    seam_rip(shp = or_shp, admin = "county", seam = c("053", "041")) %>%  # Polk – Lincoln
-    seam_rip(shp = or_shp, admin = "county", seam = c("003", "039")) %>%  # Benton – Lane
-    seam_rip(shp = or_shp, admin = "county", seam = c("047", "031")) %>%  # Marion – Jefferson
-    seam_rip(shp = or_shp, admin = "county", seam = c("047", "065")) %>%  # Marion – Wasco
-    seam_rip(shp = or_shp, admin = "county", seam = c("063", "001")) %>%  # Wallowa – Baker
-    seam_rip(shp = or_shp, admin = "county", seam = c("049", "023")) %>%  # Morrow – Grant
-    seam_rip(shp = or_shp, admin = "county", seam = c("013", "023")) %>%  # Crook – Grant
-    seam_rip(shp = or_shp, admin = "county", seam = c("017", "025")) %>%  # Deschutes – Harney
-    seam_rip(shp = or_shp, admin = "county", seam = c("017", "043"))      # Deschutes – Linn
+        seam_rip(shp = or_shp, admin = "county", seam = c("015", "033")) %>%  # Curry – Josephine
+        seam_rip(shp = or_shp, admin = "county", seam = c("053", "041")) %>%  # Polk – Lincoln
+        seam_rip(shp = or_shp, admin = "county", seam = c("003", "039")) %>%  # Benton – Lane
+        seam_rip(shp = or_shp, admin = "county", seam = c("047", "031")) %>%  # Marion – Jefferson
+        seam_rip(shp = or_shp, admin = "county", seam = c("047", "065")) %>%  # Marion – Wasco
+        seam_rip(shp = or_shp, admin = "county", seam = c("063", "001")) %>%  # Wallowa – Baker
+        seam_rip(shp = or_shp, admin = "county", seam = c("049", "023")) %>%  # Morrow – Grant
+        seam_rip(shp = or_shp, admin = "county", seam = c("013", "023")) %>%  # Crook – Grant
+        seam_rip(shp = or_shp, admin = "county", seam = c("017", "025")) %>%  # Deschutes – Harney
+        seam_rip(shp = or_shp, admin = "county", seam = c("017", "043"))      # Deschutes – Linn
 
     or_shp <- or_shp %>%
         fix_geo_assignment(muni)
