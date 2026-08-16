@@ -8,6 +8,9 @@ In North Dakota, we consult [NCSL Redistricting Law 2020](https://documents.ncsl
 1. be geographically compact [NCSL 186]
 1. House nested in Senate or Congress [NCSL 187]
 
+([N.D. Century Code § 54-03-01.14](https://ndlegis.gov/cencode/t54c03.pdf#nameddest=54-03-01p14): "Each legislative district is entitled to one senator and two representatives. Districts 4 and 9
+are divided into subdistricts, and one representative must be elected from each subdistrict.")
+
 ### Algorithmic Constraints
 We enforce a maximum population deviation of 5.0%.
 

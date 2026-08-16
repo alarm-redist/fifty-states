@@ -32,6 +32,8 @@ map_shd_iterate$row_id <- 1:nrow(map_shd_iterate)
 map_shd_iterate_dummy <- map_shd_iterate
 
 # Assign arbitrary bounds
+# (most districts elect two members, but the subdistricts elect one.
+# Bounds prevent redist from rejecting the combined map)
 attr(map_shd_iterate_dummy, "pop_bounds") <- c(1, 8288, 40000)
 
 # run the nested simulation
@@ -39,10 +41,15 @@ cli_process_start("Running simulations for {.pkg ND_shd_2020}")
 
 set.seed(2020)
 
+# For each sampled Senate plan i, split simulated Senate districts 4 and 9
+# into two House subdistricts each, leave the remaining 45 Senate districts unchanged,
+# and recombine them into one statewide House plan.
 for (i in 1:(nrow(plans[plans$draw != "ssd_2020", ])/n_ssd)) {
+
     # Add senate district assignment from simulation i
     map_shd_iterate$ssd_sim <- as.numeric(sample_ssd_matrix[, i])
 
+    # Completed House plan combines three pieces
     plan_list <- vector("list", 3)
 
     failed <- FALSE
@@ -54,7 +61,7 @@ for (i in 1:(nrow(plans[plans$draw != "ssd_2020", ])/n_ssd)) {
             j == 2 ~ 9,
             TRUE ~ NA)
 
-        m <- map_shd_iterate %>%
+        m <- map_shd_iterate |>
             filter(ssd_sim == dist)
         map_j <- redist_map(m, pop_bounds = attr(map_shd_iterate, "pop_bounds"),
             ndists = 2, adj = m$adj)
@@ -88,7 +95,7 @@ for (i in 1:(nrow(plans[plans$draw != "ssd_2020", ])/n_ssd)) {
             break
         }
 
-        plans_j <- plans_j %>% filter(draw == inner_nsims*inner_runs)
+        plans_j <- plans_j |> filter(draw == inner_nsims*inner_runs)
         plans_j$dist_keep <- TRUE
         plan_list[[j]] <- list(map = map_j, plans = plans_j)
     }
@@ -101,12 +108,13 @@ for (i in 1:(nrow(plans[plans$draw != "ssd_2020", ])/n_ssd)) {
         plans_i <- plans_dummy
     }
 
-    # Create plans object for remaining districts
+    # If both required splits succeeded, create plans object for remaining 45 districts
     if (!failed) {
-        m <- map_shd_iterate %>%
+        m <- map_shd_iterate |>
             filter(ssd_sim %notin% c(4, 9))
 
-        # Custom adjacency edits because remaining adjacency graph is non-contiguous
+        # In some outer simulations, removing districts 4 and 9 disconnects the remaining adjacency graph.
+        # Add temporary edges to keep the adjacency graph connected
         if (i == 10876) {
             m$adj <- m$adj |>
                 geomander::add_edge(383, 278)
@@ -120,22 +128,20 @@ for (i in 1:(nrow(plans[plans$draw != "ssd_2020", ])/n_ssd)) {
         map_j <- redist_map(m, pop_bounds = attr(map_ssd, "pop_bounds"),
             ndists = 45, adj = m$adj)
 
-
         remaining_assignment <- map_shd_iterate$ssd_sim[map_shd_iterate$ssd_sim %notin% c(4, 9)]
         remaining_assignment <- case_when(remaining_assignment == 46 ~ 4,
             remaining_assignment == 47 ~ 9,
             TRUE ~ remaining_assignment)
-
 
         plans_j <- redist_plans(plans = matrix(remaining_assignment),
             map = map_j,
             algorithm = "smc")
 
         plans_j$dist_keep <- TRUE
+
         plan_list[[3]] <- list(map = map_j, plans = plans_j)
 
-
-        # Combine sub plans
+        # Combine the two simulated district splits with the 45 unchanged districts
         prep_mat <- prep_particles(map = map_shd_iterate,
             map_plan_list = plan_list,
             uid = row_id, dist_keep = dist_keep, nsims = 1)
@@ -153,20 +159,21 @@ for (i in 1:(nrow(plans[plans$draw != "ssd_2020", ])/n_ssd)) {
 }
 
 # Survival rate
-survive <- plans_shd %>%
-    as.data.frame() %>%
-    filter(district == 1) %>%
-    mutate(survive = ifelse(draw == 1, TRUE, FALSE)) %>%
+survive <- plans_shd |>
+    as.data.frame() |>
+    filter(district == 1) |>
+    mutate(survive = ifelse(draw == 1, TRUE, FALSE)) |>
     dplyr::select(survive)
 
 # Sample size
 sum(survive$survive)
 
-survive_all <- plans_shd %>%
-    as.data.frame() %>%
-    mutate(survive_all = ifelse(draw == 1, TRUE, FALSE)) %>%
+survive_all <- plans_shd |>
+    as.data.frame() |>
+    mutate(survive_all = ifelse(draw == 1, TRUE, FALSE)) |>
     dplyr::select(survive_all)
 
+# retain successful outer simulations only
 plans_shd_matrix <- get_plans_matrix(plans_shd)
 plans_shd_matrix <- plans_shd_matrix[, survive$survive]
 
