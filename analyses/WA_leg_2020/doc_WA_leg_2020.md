@@ -24,9 +24,6 @@ Data for Washington comes from the ALARM Project's [2020 Redistricting Data File
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 25,000 district plans for Washington's lower house across 5 independent runs of the SMC algorithm. We 
-introduce a Polsby-Popper constraint of strength 3 and increase the number of merge-split proposals per SMC step 
-to 27 total. The ncores argument in redist_smc() was set to 0.
+We sample 25,000 district plans for Washington's lower house across 5 independent runs of the SMC algorithm. We introduce a Polsby-Popper constraint of strength 3 and increase the number of merge-split proposals per SMC step to 27 total. The ncores argument in redist_smc() was set to 0.
 
-Washington uses the same district plans for its upper house, so please note that the
-plans simulated for the State House were copy-and-pasted under "State Senate."
+Washington uses the same district plans for its upper house, so please note that the plans simulated for the State House were copy-and-pasted under "State Senate."

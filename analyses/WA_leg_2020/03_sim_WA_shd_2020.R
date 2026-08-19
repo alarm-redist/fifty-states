@@ -22,9 +22,6 @@ plans <- redist_smc(
     verbose = TRUE
 )
 
-# IF CORES OR OTHER UNITS HAVE BEEN MERGED:
-# make sure to call `pullback()` on this plans object!
-
 plans <- plans |>
     group_by(chain) |>
     filter(as.integer(draw) < min(as.integer(draw)) + 2000) |> # thin samples
