@@ -1,7 +1,7 @@
 # 2020 Minnesota State House/Senate Districts
 
 ## Redistricting requirements
-In Minnesota, we consult [NCSL Redistricting Law 2020](https://documents.ncsl.org/wwwncsl/Redistricting-Census/Redistricting-Law-2020_NCSL%20FINAL.pdf) and impose the following constraints. In our simulations, legislative districts must:
+In Minnesota, we consult [NCSL Redistricting Law 2020](https://documents.ncsl.org/wwwncsl/Redistricting-Census/Redistricting-Law-2020_NCSL%20FINAL.pdf). State legislative districts in Minnesota must:
 
 1. be contiguous [NCSL 184]
 1. have equal populations [NCSL 24]
