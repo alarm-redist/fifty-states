@@ -61,7 +61,7 @@ if (!file.exists(here(shp_path))) {
   # create adjacency graph
   hi_shp$adj <- redist.adjacency(hi_shp)
   
-  # Connect precicnts
+  # Connect precincts
   island_codes <- tribble(
     ~v1,            ~v2,
     "15001000201",  "15001000202",
@@ -139,10 +139,15 @@ if (!file.exists(here(shp_path))) {
     mutate(
       v1 = match(v1, hi_shp$GEOID),
       v2 = match(v2, hi_shp$GEOID)
-    ) |>
-    filter(!is.na(v1), !is.na(v2), v1 != v2)
+    )
   
-  # Enforce symmetry automatically
+  stopifnot(
+    !anyNA(island_codes$v1),
+    !anyNA(island_codes$v2),
+    all(island_codes$v1 != island_codes$v2)
+  )
+  
+  # make adjacency symmetric
   island_codes_sym <- island_codes |>
     bind_rows(island_codes |> transmute(v1 = v2, v2 = v1)) |>
     distinct(v1, v2)
