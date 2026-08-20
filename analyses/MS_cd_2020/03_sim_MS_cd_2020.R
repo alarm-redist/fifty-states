@@ -14,10 +14,14 @@ cons <- redist_constr(map) %>%
 set.seed(2020)
 plans <- redist_smc(
     map,
-    nsims = 2500, runs = 2L,
+    nsims = 20000, runs = 4L,
     counties = county,
-    constraints = cons
-)
+    constraints = cons,
+    seq_alpha = 0.9
+) %>%
+    group_by(chain) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 1250) %>% # thin samples
+    ungroup()
 plans <- match_numbers(plans, "cd_2020")
 
 cli_process_done()

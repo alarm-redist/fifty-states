@@ -6,6 +6,7 @@
 cli_process_start("Running simulations for {.pkg NV_cd_1990}")
 set.seed(1990)
 plans <- redist_smc(map, nsims = 4000, runs = 4,
+                    counties = county,
                     compactness = 1.1, seq_alpha = 0.9)
 plans <- match_numbers(plans, map$cd_1990)
 
