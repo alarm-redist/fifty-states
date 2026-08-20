@@ -16,7 +16,7 @@ constr <- add_constr_total_splits(constr, strength = 1, admin = map_ssd$county)
 constr <- add_constr_grp_hinge(constr, strength = 20, group_pop = map_ssd$vap_black,
                                tgts_group = c(0.52))
 constr <- add_constr_grp_inv_hinge(constr, strength = 10, total_pop = map_ssd$pop, group_pop = map_ssd$vap_black,
-                               tgts_group = c(0.75))
+                               tgts_group = c(0.68))
 
 # custom shd constraint
 constr_shd <- redist_constr(map_shd)
