@@ -65,7 +65,7 @@ nested_smc <- function(plans, map_ssd, map_shd, shp, inner_nsims = 50, inner_run
                             nsims = inner_nsims, runs = inner_runs,
                             counties = county,
                             sampling_space = "linking_edge",
-                            constraints = constr,
+                            #constraints = constr, # Remove comment if constraints used
                             pop_temper = 0.02,
                             #ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
                             split_params = list(splitting_schedule = "any_valid_sizes"),
