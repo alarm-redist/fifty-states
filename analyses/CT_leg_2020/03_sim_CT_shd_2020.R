@@ -36,8 +36,8 @@ plans <- match_numbers(plans, "SHD_BEF")
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
 
-# Output the redist_map object. Do not edit this path. ### DOM TODO UNDO change
-write_rds(plans, here("data-out/CT_2020/CT_shd_2020.rds"), compress = "xz")
+# Output the redist_map object. Do not edit this path.
+write_rds(plans, here("data-out/CT_2020/CT_shd_2020_plans.rds"), compress = "xz")
 cli_process_done()
 
 # Compute summary statistics -----
