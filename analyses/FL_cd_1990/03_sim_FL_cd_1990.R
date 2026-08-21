@@ -31,7 +31,7 @@ constr <- redist_constr(map) |>
 set.seed(1990)
 plans <- redist_smc(
     map,
-    nsims = 2e3,
+    nsims = 4e3,
     runs = 5,
     counties = pseudo_county,
     constraints = constr,
