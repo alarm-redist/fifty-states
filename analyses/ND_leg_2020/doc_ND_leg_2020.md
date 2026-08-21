@@ -1,15 +1,14 @@
 # 2020 North Dakota State House/Senate Districts
 
 ## Redistricting requirements
-In North Dakota, we consult [NCSL Redistricting Law 2020](https://documents.ncsl.org/wwwncsl/Redistricting-Census/Redistricting-Law-2020_NCSL%20FINAL.pdf). State legislative districts in North Dakota must:
+In North Dakota, state legislative districts must, under the [N.D. Century Code §§ 54-03-01.5 and 54-03-01.14](https://ndlegis.gov/cencode/t54c03.pdf):
 
-1. be contiguous [NCSL186]
-1. have equal populations [NCSL 24]
-1. be geographically compact [NCSL 186]
-1. House nested in Senate or Congress [NCSL 187]
-
-([N.D. Century Code § 54-03-01.14](https://ndlegis.gov/cencode/t54c03.pdf#nameddest=54-03-01p14): "Each legislative district is entitled to one senator and two representatives. Districts 4 and 9
-are divided into subdistricts, and one representative must be elected from each subdistrict.")
+1. be contiguous (§ 54-03-01.5(4))
+2. be geographically compact (§ 54-03-01.5(4))
+3. be as nearly equal in population as is practicable (§ 54-03-01.5(5))
+4. provide for one senator and two representatives in each senatorial district, 
+   with the representatives elected at large except in Districts 4 and 9, 
+   which are each divided into two single-member subdistricts (§§ 54-03-01.5(1)-(2) and 54-03-01.14).
 
 ### Algorithmic Constraints
 We enforce a maximum population deviation of 5.0%.
