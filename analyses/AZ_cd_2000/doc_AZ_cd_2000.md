@@ -21,6 +21,6 @@ No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
 We sample 20,000 districting plans for Arizona across 10 independent runs of the SMC algorithm.
-We then thinned the number of samples to 5,000. 
+We then thinned the number of samples to 10,000.
 We add a hinge Gibbs constraint targeting two majority-HVAP districts, but not all plans are guaranteed to have two majority-HVAP districts.
 

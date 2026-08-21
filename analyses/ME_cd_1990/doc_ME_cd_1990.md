@@ -20,7 +20,7 @@ Data for Maine comes from the [ALARM Project's update](https://dataverse.harvard
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Rhode Island (10 independent runs of the SMC algorithm with thinning to 500 plans for each run) to help manage low plan diversity.
+We sample 5,000 districting plans for Maine (10 independent runs of the SMC algorithm with thinning to 500 plans for each run) to help manage low plan diversity.
 We then thinned the number of samples to 5,000. 
 We weaken the compactness parameter to 0.8 due to the relatively small state size and total number of tracts to encourage more diversity in the sample.
 

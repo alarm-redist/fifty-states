@@ -111,7 +111,7 @@ fix_state = function(state, type = "cd", year = 2020, wait = TRUE) {
     path_stats <- str_glue("{path_stage}/{slug}_stats.csv")
     write_rds(plans, path_plans, compress="xz")
     stats |>
-        mutate(across(where(is.numeric), format, digits = 4, scientific = FALSE)) |>
+        mutate(across(where(is.numeric), \(x) format(x, digits = 4, scientific = FALSE))) |>
         write_csv(path_stats)
 
     readable <- paste(year, censable::match_name(state), "Congressional Districts")

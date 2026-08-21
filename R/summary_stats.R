@@ -161,6 +161,6 @@ add_summary_stats <- function(plans, map, ...) {
 #' @export
 save_summary_stats <- function(plans, path) {
     as_tibble(plans) |>
-        mutate(across(where(is.numeric), format, digits = 4, scientific = FALSE)) |>
+        mutate(across(where(is.numeric), \(x) format(x, digits = 4, scientific = FALSE))) |>
         write_csv(here(path))
 }
