@@ -11,7 +11,7 @@ map <- redist_map(
   adj = hi_shp$adj
 )
 
-attr(map, "analysis_name") <- "HI_cd_1990"
+attr(map, "analysis_name") <- "HI_1990"
 
 map$state <- "HI"
 
