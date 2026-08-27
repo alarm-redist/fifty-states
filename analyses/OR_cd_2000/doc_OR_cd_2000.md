@@ -18,7 +18,9 @@ We enforce a maximum population deviation of 0.5%.
 Data for Oregon comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
 
 ## Pre-processing Notes
-No manual pre-processing decisions were necessary.
+Counties not linked by a state or federal highway were manually disconnected in the
+adjacency graph, matching the treatment used in the 1990, 2010, and 2020 Oregon analyses.
+The full list of these county pairs can be found in the `01_prep_OR_cd_2000.R` file.
 
 ## Simulation Notes
 We sample 20,000 districting plans for Oregon across 10 independent runs of the SMC algorithm.

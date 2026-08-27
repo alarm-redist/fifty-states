@@ -17,5 +17,5 @@ Data for Indiana comes from [All About Redistricting](https://redistricting.lls.
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 5,000 districting plans for Indiana via two independent runs of 2,500 each.
+We sample 20,000 districting plans for Indiana via four independent runs of 5,000 each.
 No special techniques were needed to produce the sample.

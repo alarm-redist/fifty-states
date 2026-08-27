@@ -26,8 +26,8 @@ We merge the precincts in all counties which are not split by the enacted plan.
 We merge the cities of Cincinnati and Cleveland.
 
 ## Simulation Notes
-We sample 60,000 districting plans for Ohio across two runs of the SMC algorithm, then filter down to 5,000 total plans.
-We begin by sampling plans in Cuyahoga county to generate a VRA district with BVAP at least 40%. Then we sample the remaining districts.
+We run a two-stage simulation for Ohio across four independent runs at each stage, then filter the statewide sample down to 5,000 total plans.
+We begin by sampling 960,000 partial plans in Cuyahoga county (240,000 per run) to generate a VRA district with BVAP at least 40%. Then we sample 1,920,000 statewide districting plans (480,000 per run).
 We apply a Gibbs constraint to discourage multiple splits (a penalty of 100.0 for 3 splits, and 3.0 for 2 splits)
 We apply a Gibbs constraint to discourage splitting Columbus (a penalty of 0.5 per splitting district)
 We use population tempering of 0.01 to encourage efficiency.
