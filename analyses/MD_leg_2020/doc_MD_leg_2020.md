@@ -29,5 +29,5 @@ Because the Constitution permits delegate districts electing one, two, or three 
 For each of the 32,500 sampled Senate plans, we run 50 inner SMC simulations within each of the 18 Senate districts that are subdivided under the enacted plan and retain one successful split per district. 
 Of these, 6 Senate districts (1, 27, 29, 33, 38, 42) are divided into three single-member House districts, and the other 12 (2, 7, 9, 11, 12, 30, 34, 35, 37, 43, 44, 47) are divided into one single-member pieces, after which a randomly selected adjacent pair is combined to form one two-member district.
 The remaining 29 Senate districts are carried forward as three-member House districts without an additional inner simulation. 
-11,801 districting plans remaining in the surviving sample.
+11,801 districting plans remain in the surviving sample.
 We then thinned the number of samples to 10,000.
