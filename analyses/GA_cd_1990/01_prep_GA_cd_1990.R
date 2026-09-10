@@ -74,7 +74,7 @@ if (!file.exists(here(shp_path))) {
 
     names(ga_shp)
 
-    # 3. For each county, logit-shift ndv/nrv to the 2000 target from MEDSL ----
+    # 3. For each county, logit-shift ndv/nrv to the 1992 target from LEIP ----
     ga_shp <- ga_shp |>
       group_by(county_fips) |>
       group_split() |>

@@ -8,7 +8,7 @@ cli_process_start("Running simulations for {.pkg IA_cd_2010}")
 
 set.seed(2010)
 
-plans <- redist_smc(map, nsims = 4000, runs = 4, compactness = 1.1, seq_alpha = 0.9)
+plans <- redist_smc(map, nsims = 8000, runs = 4, compactness = 1.1, seq_alpha = 0.9)
 plans <- match_numbers(plans, map$cd_2010)
 
 # thin out the runs

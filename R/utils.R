@@ -11,7 +11,21 @@ download <- function(url, path, overwrite = FALSE) {
   dir <- dirname(path)
   if (!dir.exists(dir)) dir.create(dir, recursive = TRUE)
   if (!file.exists(path) || overwrite) {
-    curl::curl_download(url = url, destfile = path)
+    # Many original sources have rotted since these analyses were written
+    # (LLS reorganized, state sites gone, broken certs); fall back to the
+    # Internet Archive's snapshot before giving up. `id_` returns the
+    # original bytes rather than a rewritten page.
+    tryCatch(
+      curl::curl_download(url = url, destfile = path),
+      error = function(e) {
+        cli::cli_alert_warning(paste0(
+          "Direct download failed (", conditionMessage(e),
+          "); retrying via the Wayback Machine"))
+        curl::curl_download(
+          url = paste0("https://web.archive.org/web/2024id_/", url),
+          destfile = path)
+      }
+    )
   } else {
     cli::cli_alert_info(paste0("File already downloaded at ", path, ". Set `overwrite = TRUE` to overwrite."))
     list(status_code = 200)

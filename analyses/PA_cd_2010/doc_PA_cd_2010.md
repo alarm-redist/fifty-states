@@ -20,6 +20,6 @@ Data for Pennsylvania comes from the ALARM Project's [2010 Redistricting Data Fi
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 10,000 districting plans for Pennsylvania over two independent runs of the SMC algorithm, and thin the total 20,000 plans down to 5,000. Pseudo-counties for the county constraint are generated for Allegheny, Montgomery, and Philadelphia counties, as they have more residents than a district's population.
+We sample 320,000 districting plans for Pennsylvania across four independent runs of 80,000 each using the SMC algorithm, and thin the sample down to 5,000 plans. Pseudo-counties for the county constraint are generated for Allegheny, Montgomery, and Philadelphia counties, as they have more residents than a district's population.
 
 No special techniques were needed to produce the sample.

@@ -12,8 +12,8 @@ constr <- redist_constr(map) %>%
     add_constr_grp_inv_hinge(20, vap_black, vap, 0.37)
 
 set.seed(2020)
-plans <- redist_smc(map, nsims = 10e3,
-    runs = 2L,
+plans <- redist_smc(map, nsims = 40e3,
+    runs = 4L,
     compactness = 1,
     counties = pseudo_county,
     constraints = constr,
@@ -21,7 +21,7 @@ plans <- redist_smc(map, nsims = 10e3,
 
 plans_5k <- plans %>%
     group_by(chain) %>%
-    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
+    filter(as.integer(draw) < min(as.integer(draw)) + 1250) %>% # thin samples
     ungroup()
 
 plans_5k <- match_numbers(plans_5k, "cd_2020")
