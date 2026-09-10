@@ -1,22 +1,13 @@
 ###############################################################################
 # Simulate plans for `OR_cd_2000`
-# © ALARM Project, July 2025
+# © ALARM Project, August 2026
 ###############################################################################
 
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg OR_cd_2000}")
 
 set.seed(2000)
-plans <- redist_smc(map, nsims = 2e3, runs = 10, counties = county)
-# IF CORES OR OTHER UNITS HAVE BEEN MERGED:
-# make sure to call `pullback()` on this plans object!
-
-target_plans <- 5000L
-chains <- sort(unique(plans$chain))
-n_keep <- rep(target_plans %/% length(chains), length(chains))
-n_keep[seq_len(target_plans %% length(chains))] <-
-    n_keep[seq_len(target_plans %% length(chains))] + 1L
-names(n_keep) <- as.character(chains)
+plans <- redist_smc(map, nsims = 2e3, runs = 10, counties = pseudo_county)
 
 plans <- plans %>%
     group_by(chain) %>%
@@ -27,7 +18,7 @@ plans <- match_numbers(plans, "cd_2000")
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
 
-# Output the redist_map object. Do not edit this path.
+# Output the redist_plans object. Do not edit this path.
 write_rds(plans, here("data-out/OR_2000/OR_cd_2000_plans.rds"), compress = "xz")
 cli_process_done()
 
@@ -41,7 +32,7 @@ save_summary_stats(plans, "data-out/OR_2000/OR_cd_2000_stats.csv")
 
 cli_process_done()
 
-# Extra validation plots for custom constraints -----
+# Validation plots -----
 if (interactive()) {
     library(ggplot2)
     library(patchwork)
