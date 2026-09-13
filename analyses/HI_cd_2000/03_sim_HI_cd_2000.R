@@ -14,9 +14,11 @@ runs <- 2L
 nsims <- 30000L
 
 plans_raw <- redist_smc(
-    map,
+    map_honolulu,
     nsims = nsims, runs = runs,
-    counties = dplyr::coalesce(as.character(muni), as.character(county))
+    n_steps = 1,
+    counties = dplyr::coalesce(as.character(muni), as.character(county)),
+    ncores = 1
 )
 
 cli_process_done()
@@ -36,10 +38,7 @@ stopifnot(
 mat_sim <- mat_all[, -1, drop = FALSE]
 w_sim <- w_all[-1]
 
-non_hnl <- map$county != "003"
-
-outside_lab <- apply(mat_sim[non_hnl, , drop = FALSE], 2, unique)
-keep <- lengths(outside_lab) == 1L
+keep <- rep(TRUE, ncol(mat_sim))
 
 mat_keep <- mat_sim[, keep, drop = FALSE]
 w_keep <- w_sim[keep]
@@ -64,6 +63,14 @@ cli_process_done()
 
 # Build plans object, add reference, relabel
 cli_process_start("Building redist_plans object")
+
+# Expand Honolulu partial plans to statewide; unassigned units go to district 2
+hnl <- map$county == "003"
+stopifnot(nrow(mat_final) == sum(hnl))
+mat_state <- matrix(0L, nrow = nrow(map), ncol = ncol(mat_final))
+mat_state[hnl, ] <- mat_final
+mat_state[mat_state == 0L] <- 2L
+mat_final <- mat_state
 
 stopifnot(all(mat_final %in% c(1L, 2L)))
 storage.mode(mat_final) <- "integer"
