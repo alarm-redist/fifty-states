@@ -23,7 +23,7 @@ plans_raw <- redist_smc(
 
 cli_process_done()
 
-# Filter: all non-Honolulu units must be in the same district
+# Select draws: partial Honolulu draws are all eligible
 cli_process_start("HI_cd_2000: filter draws")
 
 mat_all <- get_plans_matrix(plans_raw)
