@@ -1,6 +1,6 @@
 ###############################################################################
 # Download and prepare data for `HI_cd_1990` analysis
-# © ALARM Project, December 2025
+# © ALARM Project, September 2026
 ###############################################################################
 
 suppressMessages({
