@@ -48,19 +48,6 @@ cli_process_start("Saving {.cls redist_plans} object")
 write_rds(plans, here("data-out/NC_1990/NC_cd_1990_plans.rds"), compress = "xz")
 cli_process_done()
 
-# Read in from local files -----
-plans <- read_rds(
-    here("data-out/NC_2000/NC_cd_2000_plans.rds")
-)
-
-map <- read_rds(
-    here("data-out/NC_2000/NC_cd_2000_map.rds")
-)
-
-stats <- read_csv(
-    here("data-out/NC_2000/NC_cd_2000_stats.csv")
-)
-
 # Compute summary statistics -----
 cli_process_start("Computing summary statistics for {.pkg NC_cd_1990}")
 
