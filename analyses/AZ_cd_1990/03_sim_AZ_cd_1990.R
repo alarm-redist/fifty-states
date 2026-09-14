@@ -1,6 +1,6 @@
 ###############################################################################
 # Simulate plans for `AZ_cd_1990`
-# © ALARM Project, July 2026
+# © ALARM Project, September 2026
 ###############################################################################
 
 # Run the simulation -----
@@ -10,17 +10,26 @@ set.seed(1990)
 
 constr_az <- redist_constr(map) %>%
   add_constr_grp_hinge(
-    25,
+    20,
     vap_hisp,
     vap,
-    0.32
+    0.40,
+    only_nseats = 1L
+  ) %>%
+  add_constr_grp_hinge(
+    -20,
+    vap_hisp,
+    vap,
+    0.22,
+    only_nseats = 1L
   )
 
 plans <- redist_smc(
   map,
   nsims = 8000,
   runs = 5,
-  constraints = constr_az
+  constraints = constr_az, 
+  diagnostics = "all"
 )
 
 plans <- plans |>
