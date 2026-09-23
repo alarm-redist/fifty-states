@@ -20,7 +20,7 @@ We also use a single Hispanic VAP hinge constraint to encourage the simulation t
 Data for Arizona comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
 
 ## Pre-processing Notes
-No manual pre-processing was required.
+We logit-shift county-level Democratic and Republican vote totals to match the 1992 LEIP Democratic share.
 
 ## Simulation Notes
 We sample 40,000 districting plans for Arizona across five runs of the SMC algorithm.
