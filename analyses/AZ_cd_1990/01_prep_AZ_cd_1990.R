@@ -65,6 +65,35 @@ if (!file.exists(here(shp_path))) {
     # create adjacency graph
     az_shp$adj <- redist.adjacency(az_shp)
 
+    ###############################################################################
+    # Logit-shift ndv/nrv to match 1992 LEIP county results
+    ###############################################################################
+    
+    # 1. Load the LEIP county CSV as `leip_cty` ----
+    leip_cty <- read_csv(
+        here("data-raw/baseline_voteshare_leip_92.csv"),
+        show_col_types = FALSE
+    )
+    
+    # 2. Add county_fips column based on tract GEOID ----
+    az_shp <- az_shp |>
+        mutate(county_fips = stringr::str_sub(GEOID, 1, 5))
+    
+    # 3. For each county, logit-shift ndv/nrv to the 1992 target from LEIP ----
+    az_shp <- az_shp |>
+        group_by(county_fips) |>
+        group_split() |>
+        lapply(function(x) {
+            meds <- leip_cty |>
+                filter(county == x$county_fips[1])
+            target <- meds$dshare_92[1]
+    
+            if (is.na(target)) return(x)
+    
+            logit_shift_baseline(x, ndv = ndv, nrv = nrv, target = target)
+        }) |>
+        bind_rows()
+
     write_rds(az_shp, here(shp_path), compress = "gz")
     cli_process_done()
 } else {
