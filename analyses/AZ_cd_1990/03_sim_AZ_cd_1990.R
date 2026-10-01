@@ -6,11 +6,6 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg AZ_cd_1990}")
 
-sampling_space_val <- tryCatch(
-  getFromNamespace("LINKING_EDGE_SPACE", "redist"),
-  error = function(e) "linking_edge"
-)
-
 set.seed(1990)
 
 constr_az <- redist_constr(map) %>%
