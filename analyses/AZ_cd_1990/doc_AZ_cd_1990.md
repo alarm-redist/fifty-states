@@ -14,7 +14,8 @@ In Arizona, districts should:
 ### Algorithmic Constraints
 We enforce a maximum population deviation of 0.5%.
 We use a pseudo-county constraint to help preserve county and municipality boundaries, as described below.
-We also use a single Hispanic VAP hinge constraint to encourage the simulation to generate a district with a comparatively high Hispanic VAP.
+We use Hispanic VAP hinge constraints to encourage the simulation to generate a district with a comparatively high Hispanic VAP.
+We use linking-edge sampling and merge-split steps to improve mixing.
 
 ## Data Sources
 Data for Arizona comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
@@ -24,5 +25,6 @@ We logit-shift county-level Democratic and Republican vote totals to match the 1
 
 ## Simulation Notes
 We sample 40,000 districting plans for Arizona across five runs of the SMC algorithm.
-We retain 1,000 plans from each run, producing a final ensemble of 5,000 plans.
+We retain 1,000 plans from each run after filtering for at least one district with combined Hispanic and Black VAP above 30% and Democratic vote share above 50%, producing a final ensemble of 5,000 plans.
 We use a pseudo-county constraint to limit the county and municipality splits.
+We also use linking-edge sampling and merge-split steps to improve mixing.
