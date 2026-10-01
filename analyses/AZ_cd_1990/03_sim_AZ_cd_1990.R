@@ -6,6 +6,11 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg AZ_cd_1990}")
 
+sampling_space_val <- tryCatch(
+  getFromNamespace("LINKING_EDGE_SPACE", "redist"),
+  error = function(e) "linking_edge"
+)
+
 set.seed(1990)
 
 constr_az <- redist_constr(map) %>%
@@ -26,10 +31,22 @@ constr_az <- redist_constr(map) %>%
 
 plans <- redist_smc(
   map,
-  nsims = 10000,
+  nsims = 8000,
   runs = 5,
+  counties = pseudo_county,
   constraints = constr_az,
-  diagnostics = "all"
+  sampling_space = sampling_space_val,
+  ms_params = list(
+    frequency = 1L,
+    mh_accept_per_smc = 40
+  ),
+  split_params = list(
+    splitting_schedule = "any_valid_sizes"
+  ),
+  pop_temper = 0.01,
+  seq_alpha = 1,
+  diagnostics = "all",
+  verbose = TRUE
 )
 
 plans <- match_numbers(plans, "cd_1990")
