@@ -51,7 +51,7 @@ plans <- redist_smc(
 
 plans <- match_numbers(plans, "cd_1990")
 
-# Subset plans that are not performing
+# Identify plans without a performing district
 n_perf <- plans |>
   mutate(
     hvap = group_frac(map, vap_hisp, vap),
