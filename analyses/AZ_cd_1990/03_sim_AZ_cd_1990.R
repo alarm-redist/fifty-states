@@ -14,14 +14,14 @@ constr_az <- redist_constr(map) %>%
     vap_hisp,
     vap,
     0.40,
-    only_nseats = 1L
+    only_districts = TRUE
   ) %>%
   add_constr_grp_hinge(
     -20,
     vap_hisp,
     vap,
     0.22,
-    only_nseats = 1L
+    only_districts = TRUE
   )
 
 plans <- redist_smc(
@@ -110,7 +110,10 @@ cli_process_done()
 if (interactive()) {
   library(ggplot2)
   
-  validate_analysis(plans_5k, map)
+  validation_plans <- plans_5k
+  validation_plans$vap <- validation_plans$total_vap
+
+  validate_analysis(validation_plans, map)
   summary(plans_5k)
   
   sampled <- subset_sampled(plans_5k)
