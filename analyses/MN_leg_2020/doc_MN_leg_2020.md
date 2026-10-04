@@ -22,10 +22,12 @@ No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
 We sample 37,500 districting plans for Minnesota's upper house across 5 independent runs of the SMC algorithm.
-We then thinned the number of samples to 10,000.
 We impose a total municipality splits constraint, and increase the number of merge-split proposals per SMC step (153).
 
 We use the top-down nested procedure to sample Minnesota's lower house districts, with 50 inner-simulations for each of the 37,500 upper house districts.
 11,783 districting plans remaining in the surviving sample.
 We then thinned the number of samples to 10,000.
 We impose a total municipality splits constraint on the inner-simulations.
+
+We then filter and thin the Minnesota the upper house samples to match the 10,000 lower house plans. Every upper house plan has a corresponding lower house plan. 
+
