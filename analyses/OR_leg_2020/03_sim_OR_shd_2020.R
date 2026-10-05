@@ -208,7 +208,7 @@ if (interactive()) {
 # Filter SSD plans to match SHD survival
 survive_all <- readRDS("data-out/OR_2020/survive_all.rds")
 
-plans_oversample <- readRDS("data-raw/OR_2020/OR_ssd_2020_plans_oversample.rds")
+plans_oversample <- readRDS("data-raw/OR/OR_ssd_2020_plans_oversample.rds")
 
 # Prepare survival vector
 survive <- survive_all[seq(1, nrow(survive_all), by = max(map_shd$shd_2020)), , drop = FALSE]
