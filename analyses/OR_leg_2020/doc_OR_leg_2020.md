@@ -32,4 +32,4 @@ We use the top-down nested procedure to sample Oregon's lower house districts, w
 11,373 districting plans remain in the surviving sample.
 We then thinned the number of samples to 10,000.
 
-We then filter and thin the Oregon the upper house samples to match the 10,000 lower house plans. Every upper house plan has a corresponding lower house plan.
+We then filter and thin the Oregon upper house samples to match the 10,000 lower house plans. Every upper house plan has a corresponding lower house plan.
