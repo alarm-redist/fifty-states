@@ -208,13 +208,13 @@ if (interactive()) {
 }
 
 # Filter SSD plans to match SHD survival
-survive_all = readRDS("data-out/MN_2020/survive_all.rds")
+survive_all <- readRDS("data-out/MN_2020/survive_all.rds")
 
 plans_oversample <- readRDS("data-raw/MN_2020/MN_ssd_2020_plans_oversample.rds")
 
 # Prepare survival vector
 survive <- survive_all[seq(1, nrow(survive_all), by = max(map_shd$shd_2020)), , drop = FALSE]
-survive$survive = survive$survive_all
+survive$survive <- survive$survive_all
 survive_all_ssd <- survive_all[rep(c(TRUE, FALSE), each = max(map_ssd$ssd_2020), length.out = nrow(survive_all)), ]
 
 # Subset plans matrix
@@ -223,8 +223,8 @@ plans_ssd_matrix <- plans_ssd_matrix[, survive$survive]
 colnames(plans_ssd_matrix) <- NULL
 
 plans_ssd <- redist_plans(plans = plans_ssd_matrix,
-                          map = map_ssd,
-                          algorithm = "smc")
+    map = map_ssd,
+    algorithm = "smc")
 
 # Add draw and chain numbering
 plans_ssd$draw <- as.factor(rep(1:sum(survive$survive), each = n_distinct(map_ssd$ssd_2020)))
@@ -238,9 +238,9 @@ plans_ssd <- add_reference(plans_ssd, ref_plan = map_ssd$ssd_2020, name = "ssd_2
 
 # Trim as usual
 plans <- plans_ssd |>
-  group_by(chain) |>
-  filter(as.integer(draw) < min(as.integer(draw)) + 2000) |> # thin samples
-  ungroup()
+    group_by(chain) |>
+    filter(as.integer(draw) < min(as.integer(draw)) + 2000) |> # thin samples
+    ungroup()
 plans <- match_numbers(plans, "ssd_2020")
 
 cli_process_done()
@@ -261,11 +261,10 @@ save_summary_stats(plans, "data-out/MN_2020/MN_ssd_2020_stats.csv")
 cli_process_done()
 
 if (interactive()) {
-  library(ggplot2)
-  library(patchwork)
+    library(ggplot2)
+    library(patchwork)
 
-  validate_analysis(plans, map_ssd)
-  summary(plans)
+    validate_analysis(plans, map_ssd)
+    summary(plans)
 
 }
-
