@@ -31,4 +31,4 @@ plans <- redist_smc(
 
 plans <- match_numbers(plans, "ssd_2020")
 
-write_rds(plans, here("data-raw/MN_2020/MN_ssd_2020_plans_oversample.rds"), compress = "xz")
+write_rds(plans, here("data-raw/MN/MN_ssd_2020_plans_oversample.rds"), compress = "xz")
