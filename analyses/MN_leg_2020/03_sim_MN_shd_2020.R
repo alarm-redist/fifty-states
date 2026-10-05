@@ -168,7 +168,7 @@ set.seed(2020)
 
 # mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3)
 
-plans <- readRDS("data-raw/MN_2020/MN_ssd_2020_plans_oversample.rds")
+plans <- readRDS("data-raw/MN/MN_ssd_2020_plans_oversample.rds")
 
 plans <- nested_smc(plans, map_ssd, map_shd, shp = mn_shp, state = "MN", ncores = 64)
 
@@ -210,7 +210,7 @@ if (interactive()) {
 # Filter SSD plans to match SHD survival
 survive_all <- readRDS("data-out/MN_2020/survive_all.rds")
 
-plans_oversample <- readRDS("data-raw/MN_2020/MN_ssd_2020_plans_oversample.rds")
+plans_oversample <- readRDS("data-raw/MN/MN_ssd_2020_plans_oversample.rds")
 
 # Prepare survival vector
 survive <- survive_all[seq(1, nrow(survive_all), by = max(map_shd$shd_2020)), , drop = FALSE]
