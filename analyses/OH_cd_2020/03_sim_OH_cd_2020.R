@@ -3,6 +3,8 @@
 # © ALARM Project, December 2021
 ###############################################################################
 
+# This two-stage workflow requires redist 4.3.2.
+
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg OH_cd_2020}")
 
@@ -23,15 +25,16 @@ constr <- redist_constr(map_cleve) %>%
     add_constr_grp_hinge(20.0, vap_black, vap, 0.4) %>%
     add_constr_grp_hinge(-20.0, vap_black, vap, 0.25)
 
-set.seed(2020)
+set.seed(2021)
 
+N <- 240000
 pl_cleve <- redist_smc(map_cleve, N, runs = 4, counties = split_unit,
     constraints = constr, n_steps = 1, pop_temper = 0.05, verbose = TRUE) %>%
     mutate(black = group_frac(map_cleve, vap_black, vap)) %>%
     number_by(black)
 
 # prepare for simulating remainder
-N <- 30000 # simulations
+N <- 480000
 
 m_cleve <- pl_cleve %>%
     group_by(draw) %>%
@@ -57,14 +60,14 @@ constr <- redist_constr(map_2020) %>%
         n_distinct(plan[columbus_idx]) - 1L
     })
 
-set.seed(2020)
+set.seed(2021)
 
-plans <- redist_smc(map_2020, N, runs = 2, counties = split_unit,
+plans <- redist_smc(map_2020, N, runs = 4, counties = split_unit,
     constraints = constr, init_particles = m_init, pop_temper = 0.04,
-    seq_alpha = 0.95, verbose = TRUE) %>%
+    seq_alpha = 0.9, verbose = TRUE) %>%
     pullback(map) %>%
     group_by(chain) %>%
-    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
+    filter(as.integer(draw) < min(as.integer(draw)) + 1250) %>% # thin samples
     ungroup()
 
 plans <- match_numbers(plans, map$cd_2020)

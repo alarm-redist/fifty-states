@@ -14,9 +14,9 @@ In Nevada, we consult [NCSL Redistricting Law 2020](https://documents.ncsl.org/w
 
 ### Algorithmic Constraints
 We enforce a maximum population deviation of 5.0%. For Nevada's upper house,
-convergence required a total county split constraint with strength 3 and an
+convergence required a total county split constraint with strength 3, an
 increase to the target population size of pseudo-counties by a magnitude of
-12.
+12, and a population tempering value of 0.01.
 
 ## Data Sources
 Data for Nevada comes from the ALARM Project's [2020 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).

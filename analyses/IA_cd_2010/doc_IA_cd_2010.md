@@ -23,5 +23,5 @@ Data for Iowa comes from [All About Redistricting](https://redistricting.lls.edu
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 8,000 districting plans for Iowa across four independent runs of the SMC algorithm and randomly select 1,250 of the plans from each of the four runs.
+We sample 32,000 districting plans for Iowa across four independent runs of 8,000 each using the SMC algorithm and randomly select 1,250 of the plans from each run.
 As noted above, we set `compactness=1.1`.

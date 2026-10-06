@@ -21,7 +21,7 @@ We enforce a maximum population deviation of 0.5%.
 Data for North Carolina comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
 
 ## Pre-processing Notes
-No manual pre-processing decisions were necessary.
+We apply a county-level logit shift to recalibrate ndv/nrv so that county-level Democratic two-party vote shares match the 2000 MEDSL presidential results, while preserving total two-party turnout.
 
 ## Simulation Notes
 We sample 18,000 districting plans for North Carolina across 6 independent runs of the SMC algorithm.

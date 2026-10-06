@@ -16,7 +16,7 @@ constr_sc <- redist_constr(map) %>%
 # Sample
 set.seed(2010)
 plans <- redist_smc(map,
-    nsims = 3000,
+    nsims = 6000,
     runs = 2L,
     ncores = 1,
     pop_temper = 0.01,

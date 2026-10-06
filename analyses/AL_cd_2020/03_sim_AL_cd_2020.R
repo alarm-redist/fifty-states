@@ -12,7 +12,7 @@ constr <- redist_constr(map) %>%
     add_constr_grp_inv_hinge(10, vap_black, vap, 0.45)
 
 set.seed(2020)
-plans <- redist_smc(map, nsims = 5e3, runs = 2L,
+plans <- redist_smc(map, nsims = 20e3, runs = 4L,
     counties = county, constr = constr, pop_temper = 0.05)
 plans <- match_numbers(plans, "cd_2020")
 
@@ -28,7 +28,7 @@ plans_5k <- plans %>%
     anti_join(filter(n_perf, n_blk_perf == 0), by = "draw") %>%
     # thin to 5000 draws
     group_by(chain) %>%
-    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>%
+    filter(as.integer(draw) < min(as.integer(draw)) + 1250) %>%
     ungroup()
 
 cli_process_done()

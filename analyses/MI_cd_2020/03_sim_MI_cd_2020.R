@@ -13,10 +13,10 @@ constr <- redist_constr(map) %>%
 
 set.seed(2020)
 
-plans <- redist_smc(map, nsims = 12e3, runs = 4, counties = pseudo_county,
+plans <- redist_smc(map, nsims = 96e3, runs = 4, counties = pseudo_county,
     constraints = constr, pop_temper = 0.02, seq_alpha = 0.9) %>%
     group_by(chain) %>%
-    filter(as.integer(draw) < min(as.integer(draw)) + 1250) %>% # thin samples
+    filter(as.integer(draw) < min(as.integer(draw)) + 2500) %>% # thin samples
     ungroup()
 
 plans <- match_numbers(plans, map$cd_2020)
@@ -24,18 +24,15 @@ plans <- match_numbers(plans, map$cd_2020)
 cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
 
-# filter to ≥ 2 VRA districts
-vra_ok <- redist.group.percent(as.matrix(plans), map$vap - map$vap_white, map$vap) %>%
-    apply(2, function(x) sort(x)[12]) %>%
-    `>`(0.5)
-if (sum(vra_ok) < 5e3) {
-    stop("Not enough VRA-compliant plans")
-} else {
-    vra_idx <- sample(which(vra_ok), 5e3, replace = FALSE)
-    plans <- filter(plans, as.integer(draw) %in% vra_idx) %>%
-        mutate(draw = as.factor(as.integer(draw)))
-}
-
+plans <- plans %>%
+    mutate(vap_minority = group_frac(map, vap - vap_white, vap)) %>%
+    group_by(draw) %>%
+    filter(sum(vap_minority > 0.5) >= 2) %>%
+    ungroup() %>%
+    group_by(chain) %>%
+    slice(1:(1250*attr(map, "ndists"))) %>% # thin samples
+    ungroup() %>%
+    select(-vap_minority)
 
 # Output the redist_map object. Do not edit this path.
 write_rds(plans, here("data-out/MI_2020/MI_cd_2020_plans.rds"), compress = "xz")

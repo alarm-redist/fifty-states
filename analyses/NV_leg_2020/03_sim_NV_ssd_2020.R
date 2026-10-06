@@ -15,7 +15,7 @@ constr <- redist_constr(map_ssd) |>
 
 plans <- redist_smc(
     map_ssd,
-    nsims = 2e3, runs = 5,
+    nsims = 3e3, runs = 5,
     pop_temper = 0.01,
     counties = pseudo_county,
     constraints = constr,
@@ -29,6 +29,10 @@ plans <- redist_smc(
 # IF CORES OR OTHER UNITS HAVE BEEN MERGED:
 # make sure to call `pullback()` on this plans object!
 
+# include an unfiltered plan ensemble for the nested SHD run
+plans_unfiltered <- plans
+plans_unfiltered <- match_numbers(plans_unfiltered, "ssd_2020")
+
 plans <- plans |>
     group_by(chain) |>
     filter(as.integer(draw) < min(as.integer(draw)) + 2000) |> # thin samples
@@ -40,6 +44,7 @@ cli_process_start("Saving {.cls redist_plans} object")
 
 # Output the redist_map object. Do not edit this path.
 write_rds(plans, here("data-out/NV_2020/NV_ssd_2020_plans.rds"), compress = "xz")
+write_rds(plans_unfiltered, here("data-out/NV_2020/NV_ssd_2020_plans_unfiltered.rds"), compress = "xz")
 cli_process_done()
 
 # Compute summary statistics -----

@@ -16,7 +16,7 @@ We enforce a maximum population deviation of 0.5%. We add a hinge Gibbs constrai
 Data for Missouri comes from the [ALARM Project's update](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/ZV5KF3) to [The Record of American Democracy](https://road.hmdc.harvard.edu/).
 
 ## Pre-processing Notes
-No manual pre-processing decisions were necessary.
+We apply a county-level logit shift to recalibrate ndv/nrv so that county-level Democratic two-party vote shares match the 1992 LEIP presidential results, while preserving total two-party turnout.
 
 ## Simulation Notes
 We sample 25,000 districting plans for Missouri across 5 independent runs of the SMC algorithm to aid with convergence.

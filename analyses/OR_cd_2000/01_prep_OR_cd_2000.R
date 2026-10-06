@@ -53,6 +53,29 @@ if (!file.exists(here(shp_path))) {
     # create adjacency graph
     or_shp$adj <- redist.adjacency(or_shp)
 
+    # Disconnect counties not connected by state or federal highways
+    # (counties identified by 3-digit FIPS, matching OR_cd_1990)
+    disconn_cty <- function(adj, cty1, cty2) {
+        v1 <- which(or_shp$county == cty1)
+        if (length(v1) == 0) stop(cty1, " not found")
+        v2 <- which(or_shp$county == cty2)
+        if (length(v2) == 0) stop(cty2, " not found")
+        vs <- tidyr::crossing(v1, v2)
+        remove_edge(adj, vs$v1, vs$v2)
+    }
+
+    or_shp$adj <- or_shp$adj %>%
+        disconn_cty("015", "033") %>%  # Curry – Josephine
+        disconn_cty("053", "041") %>%  # Polk – Lincoln
+        disconn_cty("003", "039") %>%  # Benton – Lane
+        disconn_cty("047", "031") %>%  # Marion – Jefferson
+        disconn_cty("047", "065") %>%  # Marion – Wasco
+        disconn_cty("063", "001") %>%  # Wallowa – Baker
+        disconn_cty("049", "023") %>%  # Morrow – Grant
+        disconn_cty("013", "023") %>%  # Crook – Grant
+        disconn_cty("017", "025") %>%  # Deschutes – Harney
+        disconn_cty("017", "043")      # Deschutes – Linn
+
     or_shp <- or_shp %>%
         fix_geo_assignment(muni)
 
