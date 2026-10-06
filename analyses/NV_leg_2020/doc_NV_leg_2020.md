@@ -25,13 +25,14 @@ Data for Nevada comes from the ALARM Project's [2020 Redistricting Data Files](h
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample districting plans for Nevada's lower house using theTop-Down Nested State House District technique 
+We sample districting plans for Nevada's lower house using the Top-Down Nested State House District technique 
 for the SMC algorithm across 5 outer runs with 2,000 inner simulations each, with each house-district
 plan simulated within an already-sampled upper house plan to enforce
 nesting of house districts within senate districts. No additional
-constraints were used. The final sample contains 9,460 successfully
+constraints were used. The final sample contains 10,000 successfully
 sampled plans.
 
 
-We sample 10,000 districting plans for Nevada's upper house across 5
-independent runs of the SMC algorithm, using the constraints described above.
+We sample 15,000 districting plans for Nevada's upper house across 5
+independent runs of the SMC algorithm to provide additional plans for the later lower house simulations, 
+before filtering down to 10,000 simulations, using the constraints described above.
