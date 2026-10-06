@@ -343,7 +343,7 @@ finalize_analysis = function(state, type = "cd", year = 2020, overwrite = TRUE) 
             }
 
             # ensure unshifted election data from ROAD
-            road_rejoin_exceptions <- c("HI")
+            road_rejoin_exceptions <- c("HI", "TX")
             
             if (type == "cd" && state %in% road_rejoin_exceptions) {
                 if (!all(c("ndv", "nrv") %in% names(map_in)) ||
