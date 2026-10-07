@@ -16,15 +16,8 @@ R package.
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 12,500 statewide candidate districting plans for Texas across five
-independent linking-edge merge-split SMC runs, then keep the first 1,000 plans
-from each run for a 5,000-plan ensemble. This replaces the prior Greater
-Houston, Austin/San Antonio, and Dallas-Fort Worth partial-SMC workflow with a
-statewide workflow matching the newer convergent Texas simulations used for
-1990, 2000, and the Callais 2020 run.
-
-The simulation keeps the statewide VRA hinge constraints from the prior
-recombination stage: Hispanic and Black CVAP opportunity constraints that nudge
-opportunity districts above 45%, discourage districts below 35%, and discourage
-packing above 70%. To balance county and municipality splits, we use
-pseudocounties for the county constraint.
+We sample 12,500 districting plans for Texas across 5 independent runs of the SMC algorithm.
+We then thin the sample to 5,000 plans by keeping the first 1,000 plans from each run.
+We use merge-split steps after each SMC step to improve mixing.
+We add VRA constraints for Hispanic CVAP and Black CVAP that nudge opportunity districts above 45%, discourage districts below 35%, and discourage packing above 70%.
+To balance county and municipality splits, we create pseudocounties for use in the county constraint.

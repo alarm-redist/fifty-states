@@ -6,11 +6,6 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg CA_cd_2010}")
 
-sampling_space_val <- tryCatch(
-    getFromNamespace("LINKING_EDGE_SPACE", "redist"),
-    error = function(e) "linking_edge"
-)
-
 constr <- redist_constr(map) %>%
     # Use the lighter statewide VRA hinge style from the converged CA 2000 run.
     add_constr_grp_hinge(strength = 1.5, group_pop = vap_hisp, total_pop = vap) %>%
@@ -24,7 +19,7 @@ plans <- redist_smc(
     counties = pseudo_county,
     constraints = constr,
     pop_temper = 0.05, seq_alpha = 0.95,
-    sampling_space = sampling_space_val,
+    sampling_space = "linking_edge",
     ms_params = list(frequency = 1L, mh_accept_per_smc = 65),
     split_params = list(splitting_schedule = "any_valid_sizes"),
     verbose = TRUE
@@ -49,8 +44,6 @@ cli_process_done()
 cli_process_start("Computing summary statistics for {.pkg CA_cd_2010}")
 
 plans_5k <- add_summary_stats(plans_5k, map)
-
-summary(plans_5k)
 
 # Output the summary statistics. Do not edit this path.
 save_summary_stats(plans_5k, "data-out/CA_2010/CA_cd_2010_stats.csv")

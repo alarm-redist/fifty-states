@@ -21,19 +21,8 @@ Data for California comes from the ALARM Project's [2020 Redistricting Data File
 Islands were connected to their nearest point within county on the mainland.
 
 ## Simulation Notes
-We sample 20,000 statewide candidate districting plans for California across
-eight independent linking-edge merge-split SMC runs, then keep the first 625
-plans from each run for a 5,000-plan ensemble. This replaces the prior South
-California / Bay Area partial-SMC workflow with a statewide workflow matching
-the newer convergent California simulations used for 1990, 2000, and 2020.
-
-The simulation uses the lighter statewide VRA hinge style from the converged
-California 2000 run: one Hispanic VAP concentration constraint and one Asian VAP
-concentration constraint. This avoids stacking the separate Southern California
-and Bay Area VRA bundles from the prior regional workflow. To balance county and
-municipality splits, we continue to create pseudocounties for use in the county
-constraint. These are Alameda County, Contra Costa County, Fresno County, Kern
-County, Los Angeles County, Orange County, Riverside County, Sacramento County,
-San Bernardino County, San Diego County, San Francisco County, San Joaquin
-County, San Mateo County, Santa Clara County, and Ventura County, which are
-larger than a congressional district in population.
+We sample 20,000 districting plans for California across 8 independent runs of the SMC algorithm.
+We then thin the sample to 5,000 plans by keeping the first 625 plans from each run.
+We use merge-split steps after each SMC step to improve mixing.
+We add VRA constraints encouraging Hispanic VAP and Asian VAP concentrations in districts.
+To balance county and municipality splits, we create pseudocounties for use in the county constraint. These are Alameda County, Contra Costa County, Fresno County, Kern County, Los Angeles County, Orange County, Riverside County, Sacramento County, San Bernardino County, San Diego County, San Francisco County, San Joaquin County, San Mateo County, Santa Clara County, and Ventura County, which are larger than a congressional district in population.

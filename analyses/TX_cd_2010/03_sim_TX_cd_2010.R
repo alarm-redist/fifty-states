@@ -6,11 +6,6 @@
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg TX_cd_2010}")
 
-sampling_space_val <- tryCatch(
-    getFromNamespace("LINKING_EDGE_SPACE", "redist"),
-    error = function(e) "linking_edge"
-)
-
 constraints <- redist_constr(map) %>%
     #########################################################
     # HISPANIC
@@ -51,7 +46,7 @@ plans <- redist_smc(
     ncores = max(1, parallel::detectCores() - 1),
     counties = pseudo_county,
     constraints = constraints,
-    sampling_space = sampling_space_val,
+    sampling_space = "linking_edge",
     ms_params = list(frequency = 1L, mh_accept_per_smc = 65),
     split_params = list(splitting_schedule = "any_valid_sizes"),
     verbose = TRUE,

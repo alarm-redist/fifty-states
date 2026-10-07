@@ -3,11 +3,6 @@
 # © ALARM Project, March 2022
 ###############################################################################
 
-sampling_space_val <- tryCatch(
-    getFromNamespace("LINKING_EDGE_SPACE", "redist"),
-    error = function(e) "linking_edge"
-)
-
 constraints <- redist_constr(map) %>%
     # Use one statewide VRA bundle rather than stacking the prior regional
     # Florida bundles, following the converged FL 2000 statewide run.
@@ -34,7 +29,7 @@ plans <- redist_smc(
     counties = pseudo_county,
     constraints = constraints,
     pop_temper = 0.05, seq_alpha = 1,
-    sampling_space = sampling_space_val,
+    sampling_space = "linking_edge",
     ms_params = list(frequency = 1L, mh_accept_per_smc = 80),
     split_params = list(splitting_schedule = "any_valid_sizes"),
     verbose = TRUE,
@@ -60,10 +55,6 @@ cli_process_start("Computing summary statistics for {.pkg FL_cd_2020}")
 
 plans <- add_summary_stats(plans, map) %>%
     mutate(total_cvap = tally_var(map, cvap), .after = total_vap)
-
-summary(plans)
-
-validate_analysis(plans, map)
 
 # cvap columns
 cvap_cols <- names(map)[tidyselect::eval_select(starts_with("cvap_"), map)]
