@@ -152,8 +152,10 @@ cli_process_start("Running simulations for {.pkg NV_shd_2020}")
 
 set.seed(2020)
 
+plans_ssd_unfiltered <- read_rds(here("data-out/NV_2020/NV_ssd_2020_plans_unfiltered.rds"))
+
 plans_shd <- nested_smc(
-    plans = plans,
+    plans = plans_ssd_unfiltered,
     map_ssd = map_ssd,
     map_shd = map_shd,
     shp = nv_shp,
