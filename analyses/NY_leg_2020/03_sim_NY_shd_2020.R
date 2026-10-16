@@ -8,21 +8,22 @@ cli_process_start("Running simulations for {.pkg NY_shd_2020}")
 
 set.seed(2020)
 
-mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3) + 150
+mh_accept_per_smc <- ceiling(n_distinct(map_shd$shd_2020)/3) + 600
 
 constr <- redist_constr(map_shd) |>
-    add_constr_total_splits(strength = 1.6, admin = map_shd$county)
+  add_constr_total_splits(strength = 0.6, admin = county_muni)
+
 
 plans <- redist_smc(
-    map_shd,
-    nsims = 2e3, runs = 5,
-    # ncores = as.integer(Sys.getenv("SLURM_CPUS_PER_TASK")),
-    constraints = constr,
-    counties = map_shd$shd_2010,
-    sampling_space = "linking_edge",
-    ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
-    split_params = list(splitting_schedule = "any_valid_sizes"),
-    verbose = TRUE
+  map_shd,
+  nsims = 8000, runs = 5,
+  ncores = as.integer(Sys.getenv("SLURM_CPUS_PER_TASK")),
+  counties = shd_2010,
+  constraints = constr,
+  sampling_space = "linking_edge",
+  ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
+  split_params = list(splitting_schedule = "any_valid_sizes"),
+  verbose = TRUE
 )
 
 plans <- plans |>

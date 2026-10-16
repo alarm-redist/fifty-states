@@ -8,24 +8,24 @@ cli_process_start("Running simulations for {.pkg NY_ssd_2020}")
 
 set.seed(2020)
 
-mh_accept_per_smc <- ceiling(n_distinct(map_ssd$ssd_2020)/3) + 180
+mh_accept_per_smc <- ceiling(n_distinct(map_cores_ssd$ssd_2020)/3) + 370
 
 constr <- redist_constr(map_cores_ssd) |>
-    add_constr_total_plan_splits(strength = 2.2, admin = map_cores_ssd$county) |>
-    add_constr_plan_splits(strength = 0.8, admin = map_cores_ssd$county) |>
-    add_constr_total_plan_splits(strength = 0.3, admin = map_cores_ssd$county_muni)
+  add_constr_total_splits(1.8, map_cores_ssd$county) |>
+  add_constr_total_splits(0.7, map_cores_ssd$county_muni)
 
 plans <- redist_smc(
-    map_cores_ssd,
-    nsims = 2e3, runs = 5,
-    # ncores = as.integer(Sys.getenv("SLURM_CPUS_PER_TASK")),
-    counties = pseudo_county,
-    constraints = constr,
-    sampling_space = "linking_edge",
-    ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
-    split_params = list(splitting_schedule = "any_valid_sizes"),
-    verbose = TRUE
+  map_cores_ssd,
+  nsims = 2000, runs = 5,
+  ncores = 0,
+  counties = pseudo_county,
+  constraints = constr,
+  sampling_space = "linking_edge",
+  ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
+  split_params = list(splitting_schedule = "any_valid_sizes"),
+  verbose = TRUE
 ) |> pullback(map_ssd)
+
 
 plans <- plans |>
     group_by(chain) |>
@@ -43,7 +43,7 @@ cli_process_done()
 
 # Compute summary statistics -----
 cli_process_start("Computing summary statistics for {.pkg NY_ssd_2020}")
-
+plans <- read_rds("/Users/jieunoh/Downloads/NY_ssd_2020_plans_0911.rds")
 plans <- add_summary_stats(plans, map_ssd)
 
 # Output the summary statistics. Do not edit this path.
