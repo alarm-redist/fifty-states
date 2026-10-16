@@ -78,19 +78,19 @@ if (!file.exists(here(shp_path))) {
     ny_shp$adj <- geomander::add_edge(ny_shp$adj, nbr$x, nbr$y)
 
     ssd_add <- geomander::suggest_component_connection(
-      ny_shp, ny_shp$adj, ny_shp$ssd_2020
-      )
+        ny_shp, ny_shp$adj, ny_shp$ssd_2020
+    )
 
     ny_shp$adj <- geomander::add_edge(
-      ny_shp$adj, ssd_add$x, ssd_add$y
+        ny_shp$adj, ssd_add$x, ssd_add$y
     )
 
     shd_add <- geomander::suggest_component_connection(
-      ny_shp, ny_shp$adj, ny_shp$shd_2020
+        ny_shp, ny_shp$adj, ny_shp$shd_2020
     )
 
     ny_shp$adj <- geomander::add_edge(
-      ny_shp$adj, shd_add$x, shd_add$y
+        ny_shp$adj, shd_add$x, shd_add$y
     )
 
     # check max number of connected components
@@ -107,4 +107,3 @@ if (!file.exists(here(shp_path))) {
     ny_shp <- read_rds(here(shp_path))
     cli_alert_success("Loaded {.strong NY} shapefile")
 }
-

@@ -25,17 +25,17 @@ map_ssd <- mutate(map_ssd,
     core_id = redist.identify.cores(map_ssd$adj, map_ssd$ssd_2010, boundary = 1),
     core_id_lump = forcats::fct_lump_n(as.character(core_id), max(ssd_2010)),
     core_id = if_else(as.logical(is_county_split(core_id_lump, pseudo_county)),
-                      str_c(pseudo_county, "_", core_id),
-                      as.character(core_id))) |>
-  select(-core_id_lump)
+        str_c(pseudo_county, "_", core_id),
+        as.character(core_id))) |>
+    select(-core_id_lump)
 
 map_shd <- mutate(map_shd,
-                  core_id = redist.identify.cores(map_shd$adj, map_shd$shd_2010, boundary = 1),
-                  core_id_lump = forcats::fct_lump_n(as.character(core_id), max(shd_2010)),
-                  core_id = if_else(as.logical(is_county_split(core_id_lump, pseudo_county)),
-                                    str_c(pseudo_county, "_", core_id),
-                                    as.character(core_id))) |>
-  select(-core_id_lump)
+    core_id = redist.identify.cores(map_shd$adj, map_shd$shd_2010, boundary = 1),
+    core_id_lump = forcats::fct_lump_n(as.character(core_id), max(shd_2010)),
+    core_id = if_else(as.logical(is_county_split(core_id_lump, pseudo_county)),
+        str_c(pseudo_county, "_", core_id),
+        as.character(core_id))) |>
+    select(-core_id_lump)
 
 # merge by cores and county
 map_cores_ssd <- merge_by(map_ssd, core_id, drop_geom = TRUE)
