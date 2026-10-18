@@ -2,7 +2,7 @@
 # Simulate plans for `MD_shd_2020` SHD
 # © ALARM Project, August 2026
 ###############################################################################
-plans <- read_rds(here("data-out/MD_2020/MD_ssd_2020_plans_full.rds"))
+plans <- readRDS("data-raw/MD/MD_ssd_2020_plans_oversample.rds")
 
 n_ssd <- n_distinct(md_shp$ssd_2020)
 inner_nsims <- 50
@@ -261,6 +261,8 @@ survive_all <- plans_shd |>
     as.data.frame() |>
     mutate(survive_all = ifelse(draw == 1, TRUE, FALSE)) |>
     dplyr::select(survive_all)
+
+saveRDS(survive_all, "data-out/MD_2020/survive_all.rds")
 
 # retain successful outer simulations only
 plans_shd_matrix <- get_plans_matrix(plans_shd)
