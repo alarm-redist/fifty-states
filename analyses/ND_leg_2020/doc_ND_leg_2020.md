@@ -22,10 +22,12 @@ We also divide VTDs along the Fort Berthold Reservation boundary and merge the r
 
 ## Simulation Notes
 We sample 25,000 districting plans for North Dakota's upper house across 5 independent runs of the SMC algorithm.
-We then thinned the number of samples to 10,000.
 We impose total county- and municipality- constraints, Polsby-Popper compactness constraint, and increase the number of merge-split proposals per SMC step (136).
 
 We use the top-down nested procedure to sample North Dakota's lower house districts.
 For each of the 25,000 sampled Senate plans, we run 50 inner SMC simulations within simulated Senate District 4 and another 50 within simulated Senate District 9. One successful split is retained for each district. The remaining 45 simulated Senate districts are carried forward as two-member House districts without an additional inner simulation.
 17,636 districting plans remaining in the surviving sample.
 We then thinned the number of samples to 10,000.
+
+We then filter and thin the North Dakota the upper house samples to match the 10,000 lower house plans. Every upper house plan has a corresponding lower house plan. 
+
