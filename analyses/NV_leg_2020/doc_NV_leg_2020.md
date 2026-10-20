@@ -9,7 +9,7 @@ In Nevada, we consult [NCSL Redistricting Law 2020](https://documents.ncsl.org/w
 4. preserve county and municipality boundaries as much as possible (preserve political subdivisions)
 5. preserve communities of interest (p. 186)
 6. avoid pairing incumbents (p. 187)
-7. nest state House districts inside state Senate districts or Congressional districts (p.187)
+7. nest state House districts inside state Senate districts or Congressional districts (p. 187)
 
 
 ### Algorithmic Constraints
