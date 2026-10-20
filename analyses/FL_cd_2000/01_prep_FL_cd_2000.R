@@ -87,18 +87,6 @@ if (!file.exists(here(shp_path))) {
         cli::cli_warn("CVAP join looks low: {round(100*mean(!is.na(fl_shp$cvap)), 1)}% matched. Check GEOID format.")
     }
 
-    # Create perimeters in case shapes are simplified
-    redistmetrics::prep_perims(shp = fl_shp,
-        perim_path = here(perim_path)) %>%
-        invisible()
-
-    # simplifies geometry for faster processing, plotting, and smaller shapefiles
-    if (requireNamespace("rmapshaper", quietly = TRUE)) {
-        fl_shp <- rmapshaper::ms_simplify(fl_shp, keep = 0.05,
-            keep_shapes = TRUE) %>%
-            suppressWarnings()
-    }
-
     # create adjacency graph
     fl_shp$adj <- redist.adjacency(fl_shp)
 

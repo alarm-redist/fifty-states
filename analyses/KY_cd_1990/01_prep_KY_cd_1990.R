@@ -39,7 +39,7 @@ if (!file.exists(here(shp_path))) {
     # manually set state to KY
     ky_shp = mutate(ky_shp, state = "KY") |>
       st_as_sf()
-    ky_shp = st_transform(ky_shp, EPSG$ID)
+    ky_shp = st_transform(ky_shp, EPSG$KY)
 
     ky_shp <- ky_shp |>
       mutate(county = coalesce(county.x, county.y)) |>

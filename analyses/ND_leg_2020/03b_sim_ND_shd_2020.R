@@ -2,8 +2,7 @@
 # Simulate plans for `ND_shd_2020` SHD
 # © ALARM Project, July 2026
 ###############################################################################
-
-plans <- read_rds(here("data-out/ND_2020/ND_ssd_2020_plans5000.rds"))
+plans <- readRDS("data-raw/ND/ND_ssd_2020_plans_oversample.rds")
 
 `%notin%` <- Negate(`%in%`)
 
@@ -45,7 +44,6 @@ set.seed(2020)
 # into two House subdistricts each, leave the remaining 45 Senate districts unchanged,
 # and recombine them into one statewide House plan.
 for (i in 1:(nrow(plans[plans$draw != "ssd_2020", ])/n_ssd)) {
-
     # Add senate district assignment from simulation i
     map_shd_iterate$ssd_sim <- as.numeric(sample_ssd_matrix[, i])
 
@@ -173,6 +171,8 @@ survive_all <- plans_shd |>
     mutate(survive_all = ifelse(draw == 1, TRUE, FALSE)) |>
     dplyr::select(survive_all)
 
+saveRDS(survive_all, "data-out/ND_2020/survive_all.rds")
+
 # retain successful outer simulations only
 plans_shd_matrix <- get_plans_matrix(plans_shd)
 plans_shd_matrix <- plans_shd_matrix[, survive$survive]
@@ -189,8 +189,6 @@ full_chain <- rep(1:outer_runs, each = n_distinct(map_shd[[shd_col]])*final_sims
 plans_shd$chain <- full_chain[survive_all$survive_all]
 
 # Add enacted plan
-map_shd[[shd_col]]
-
 plans_shd <- add_reference(plans_shd, ref_plan = as.integer(factor(map_shd[[shd_col]])), name = shd_col)
 
 plans <- plans_shd |>
