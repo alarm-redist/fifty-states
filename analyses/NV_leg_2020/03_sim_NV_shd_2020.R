@@ -9,7 +9,7 @@ library(doRNG)
 
 # Nested SMC function -----
 nested_smc <- function(plans, map_ssd, map_shd, shp,
-                       inner_nsims = 2000, inner_runs = 1, outer_runs = 5,
+                       inner_nsims = 50, inner_runs = 1, outer_runs = 5,
                        year = 2020, state, max_split_tries = 100000,
                        ncores = 60) {
 
@@ -71,7 +71,7 @@ nested_smc <- function(plans, map_ssd, map_shd, shp,
                             redist_smc(
                                 map_j,
                                 nsims = inner_nsims, runs = inner_runs,
-                                counties = ssd_sim,
+                                counties = county,
                                 sampling_space = "linking_edge",
                                 ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
                                 split_params = list(splitting_schedule = "any_valid_sizes"),
@@ -130,6 +130,10 @@ nested_smc <- function(plans, map_ssd, map_shd, shp,
         mutate(survive_all = ifelse(draw != 99999, TRUE, FALSE)) %>%
         dplyr::select(survive_all)
 
+
+    # Save per-district survival flags so the SSD plans can be filtered to match
+    saveRDS(survive_all, sprintf("data-out/%s_%s/survive_all.rds", state, year))
+
     plans_shd_matrix <- get_plans_matrix(plans_shd)
     plans_shd_matrix <- plans_shd_matrix[, survive$survive]
 
@@ -152,12 +156,14 @@ cli_process_start("Running simulations for {.pkg NV_shd_2020}")
 
 set.seed(2020)
 
+plans_ssd_unfiltered <- read_rds(here("data-out/NV_2020/NV_ssd_2020_plans_unfiltered.rds"))
+
 plans_shd <- nested_smc(
-    plans = plans,
+    plans = plans_ssd_unfiltered,
     map_ssd = map_ssd,
     map_shd = map_shd,
     shp = nv_shp,
-    inner_nsims = 2000,
+    inner_nsims = 50,
     inner_runs = 1,
     outer_runs = 5,
     year = 2020,
@@ -197,6 +203,8 @@ if (interactive()) {
 
     validate_analysis(plans, map_shd)
     summary(plans)
+
+    # Extra validation plots for custom constraints -----
 
     redist.plot.distr_qtys(plans, vap_hisp/total_vap,
         color_thresh = NULL,
