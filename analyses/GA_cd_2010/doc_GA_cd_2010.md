@@ -21,6 +21,6 @@ Data for Georgia comes from the ALARM Project's [2010 Redistricting Data Files](
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 60,000 districting plans for Georgia across two independent runs of the SMC algorithm. We then thin the sample to exactly 5,000 plans.
+We sample 240,000 districting plans for Georgia across two independent runs of 120,000 each using the SMC algorithm. We then thin the sample to exactly 5,000 plans.
 
 We impose a hinge constraint on the Black Voting Age Population so that it encourages districts with BVAP above 43%, but districts with BVAP of 34% or less are not penalized as much. In addition, we impose an inverse hinge constraint on the Black Voting Age Population to penalize districts with BVAP above 61% to prevent packing. 

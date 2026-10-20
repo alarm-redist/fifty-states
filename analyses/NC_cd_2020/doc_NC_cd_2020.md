@@ -20,4 +20,4 @@ Data for North Carolina comes from the ALARM Project's [2020 Redistricting Data 
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 20,000 districting plans for North Carolina across two independent runs of the SMC algorithm, and then thin the sample to down to 5,000 plans.
+We sample 160,000 districting plans for North Carolina across four independent runs of 40,000 each using the SMC algorithm, and then thin the sample to down to 5,000 plans.

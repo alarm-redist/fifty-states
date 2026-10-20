@@ -18,5 +18,5 @@ Data for Ohio comes from the ALARM Project's [2020 Redistricting Data Files](htt
 No manual pre-processing decisions were necessary.
 
 ## Simulation Notes
-We sample 13,000 districting plans for Ohio  over two runs. We then thinned the number of samples to 5,000. 
+We sample 104,000 districting plans for Ohio over two runs of 52,000 each. We then thinned the number of samples to 5,000.
 To balance county and municipality splits, we create pseudocounties for use in the county constraint, which leads to fewer municipality splits than using a county constraint. Note that Cuyahoga County, Franklin County, and Hamilton Counrt must be split due to their large population, although within the county, we avoid splitting any municipality.

@@ -17,6 +17,14 @@ map <- map %>%
     )
   )
 
+# Add a stronger county constraint
+constr <- redist_constr(map)
+constr <- add_constr_splits(
+  constr,
+  strength = 2,
+  admin = county
+)
+
 # Add an analysis name attribute
 attr(map, "analysis_name") <- "TN_1990"
 

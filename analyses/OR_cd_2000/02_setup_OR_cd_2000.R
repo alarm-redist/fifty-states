@@ -1,6 +1,6 @@
 ###############################################################################
 # Set up redistricting simulation for `OR_cd_2000`
-# © ALARM Project, July 2025
+# © ALARM Project, August 2026
 ###############################################################################
 cli_process_start("Creating {.cls redist_map} object for {.pkg OR_cd_2000}")
 

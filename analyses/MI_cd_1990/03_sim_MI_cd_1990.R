@@ -22,18 +22,6 @@ cli_process_start("Saving {.cls redist_plans} object")
 write_rds(plans, here("data-out/MI_1990/MI_cd_1990_plans.rds"), compress = "xz")
 cli_process_done()
 
-# read in from FASRC
-map <- readRDS(
-  here("data-out/MI_1990/MI_cd_1990_map.rds")
-)
-plans <- readRDS(
-  here("data-out/MI_1990/MI_cd_1990_plans.rds")
-)
-stats <- read_csv(
-  here("data-out/MI_1990/MI_cd_1990_stats.csv"),
-  show_col_types = FALSE
-)
-
 # Compute summary statistics -----
 cli_process_start("Computing summary statistics for {.pkg MI_cd_1990}")
 

@@ -1,17 +1,17 @@
 ###############################################################################
 # Simulate plans for `ID_cd_2000`
-# © ALARM Project, July 2025
+# © ALARM Project, July 2026
 ###############################################################################
 
 # Run the simulation -----
 cli_process_start("Running simulations for {.pkg ID_cd_2000}")
 
 set.seed(2000)
-plans <- redist_smc(map, nsims = 2000, runs = 10, counties = county, verbose = TRUE, pop_temper = 0.05)
+plans <- redist_smc(map, nsims = 2000, runs = 10, counties = pseudo_county, verbose = TRUE, pop_temper = 0.05)
 
 plans <- plans %>%
     group_by(chain) %>%
-    filter(as.integer(draw) < min(as.integer(draw)) + 1000) %>% # thin samples
+    filter(as.integer(draw) < min(as.integer(draw)) + 500) %>% # thin samples
     ungroup()
 plans <- match_numbers(plans, "cd_2000")
 

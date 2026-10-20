@@ -17,10 +17,10 @@ We enforce a maximum population deviation of 0.5%.
 Data for Idaho comes from the ALARM Project's [2000 Redistricting Data Files](https://alarm-redist.github.io/posts/2021-08-10-census-2020/).
 
 ## Pre-processing Notes
-No manual pre-processing decisions were necessary.
+Borders between counties which are not connected by highways were removed.
 
 ## Simulation Notes
-We sample 20000 redistricting plans for Idaho across 10 independent runs of the SMC algorithm.
-We then thinned the number of samples to 10,000.
+We sample 20,000 redistricting plans for Idaho across 10 independent runs of the SMC algorithm.
+We then thinned the number of samples to 5,000.
 We use a pseudo-county constraint to limit the county and municipality (i.e., city and township) splits.
 No special techniques were needed to produce the sample.
