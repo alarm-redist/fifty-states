@@ -11,22 +11,22 @@ set.seed(2020)
 mh_accept_per_smc <- ceiling(n_distinct(map_ssd$ssd_2020)/3) + 550
 
 constr <- redist_constr(map_ssd) |>
-  add_constr_grp_hinge(-1, vap_black, vap, 0.50) |>
-  add_constr_grp_hinge(8,  vap_black, vap, 0.55) |>
-  add_constr_grp_hinge(6,  vap_black, vap, 0.60) |>
-  add_constr_grp_inv_hinge(1.5, vap_black, vap, 0.78)
+    add_constr_grp_hinge(-1, vap_black, vap, 0.50) |>
+    add_constr_grp_hinge(8,  vap_black, vap, 0.55) |>
+    add_constr_grp_hinge(6,  vap_black, vap, 0.60) |>
+    add_constr_grp_inv_hinge(1.5, vap_black, vap, 0.78)
 
 plans <- redist_smc(
-  map_ssd,
-  nsims = 2e3, runs = 5,
-  ncores = as.integer(Sys.getenv("SLURM_CPUS_PER_TASK")),
-  counties = ssd_2010,
-  constraints = constr,
-  pop_temper = 0.05,
-  sampling_space = "linking_edge",
-  ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
-  split_params = list(splitting_schedule = "any_valid_sizes"),
-  verbose = TRUE
+    map_ssd,
+    nsims = 2e3, runs = 5,
+    ncores = 0,
+    counties = ssd_2010,
+    constraints = constr,
+    pop_temper = 0.05,
+    sampling_space = "linking_edge",
+    ms_params = list(frequency = 1L, mh_accept_per_smc = mh_accept_per_smc),
+    split_params = list(splitting_schedule = "any_valid_sizes"),
+    verbose = TRUE
 )
 
 plans <- plans |>
@@ -61,44 +61,44 @@ if (interactive()) {
 
     # core preservation
     p_core <- plans |>
-      match_numbers(map_ssd$ssd_2010) |>
-      hist(pop_overlap)
+        match_numbers(map_ssd$ssd_2010) |>
+        hist(pop_overlap)
 
     print(p_core)
 
     # enacted black VAP performance
     enacted_perf <- plans |>
-      filter(draw == "ssd_2020") |>
-      summarize(enacted_black_perf = sum(vap_black / total_vap > 0.3 & ndshare > 0.5))
+        filter(draw == "ssd_2020") |>
+        summarize(enacted_black_perf = sum(vap_black/total_vap > 0.3 & ndshare > 0.5))
 
     print(enacted_perf)
 
     # simulated black VAP performance
     simulated_perf <- plans |>
-      subset_sampled() |>
-      group_by(draw) |>
-      summarize(n_black_perf = sum(vap_black / total_vap > 0.3 & ndshare > 0.5)) |>
-      count(n_black_perf)
+        subset_sampled() |>
+        group_by(draw) |>
+        summarize(n_black_perf = sum(vap_black/total_vap > 0.3 & ndshare > 0.5)) |>
+        count(n_black_perf)
 
     print(simulated_perf)
 
     # Black VAP performance plot
     p_bvap <- redist.plot.distr_qtys(
-      plans,
-      vap_black / total_vap,
-      color_thresh = NULL,
-      color = ifelse(
-        subset_sampled(plans)$ndv > subset_sampled(plans)$nrv,
-        "#3D77BB",
-        "#B25D4C"
-      ),
-      size = 0.5,
-      alpha = 0.5
+        plans,
+        vap_black/total_vap,
+        color_thresh = NULL,
+        color = ifelse(
+            subset_sampled(plans)$ndv > subset_sampled(plans)$nrv,
+            "#3D77BB",
+            "#B25D4C"
+        ),
+        size = 0.5,
+        alpha = 0.5
     ) +
-      scale_y_continuous("Percent Black by VAP") +
-      labs(title = "Louisiana Enacted Senate Plan versus Simulations") +
-      scale_color_manual(values = c(ssd_2020 = "black")) +
-      theme_bw()
+        scale_y_continuous("Percent Black by VAP") +
+        labs(title = "Louisiana Enacted Senate Plan versus Simulations") +
+        scale_color_manual(values = c(ssd_2020 = "black")) +
+        theme_bw()
 
     print(p_bvap)
 

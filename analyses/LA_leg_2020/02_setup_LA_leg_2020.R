@@ -13,17 +13,22 @@ map_shd <- redist_map(la_shp, pop_tol = 0.05,
 # Fill missing 2010 assignments for zero-population placeholder VTDs
 # using their corresponding 2020 enacted district assignments
 map_ssd <- map_ssd |>
-  mutate(ssd_2010 = if_else(is.na(ssd_2010), ssd_2020, ssd_2010))
+    mutate(ssd_2010 = if_else(is.na(ssd_2010), ssd_2020, ssd_2010))
 map_shd <- map_shd |>
-  mutate(shd_2010 = if_else(is.na(shd_2010), shd_2020, shd_2010))
+    mutate(shd_2010 = if_else(is.na(shd_2010), shd_2020, shd_2010))
 
-# make pseudo counties with default settings
-map_ssd <- map_ssd |>
-    mutate(pseudo_county = pick_county_muni(map_ssd, counties = county, munis = muni,
-                                            pop_muni = get_target(map_ssd)))
+# create grouping units for SHD simulations:
+# use shd_2010 as the baseline and treat counties spanning
+# two previous districts as single units.
 map_shd <- map_shd |>
-    mutate(pseudo_county = pick_county_muni(map_shd, counties = county, munis = muni,
-                                            pop_muni = get_target(map_shd)))
+    group_by(county) |>
+    mutate(county_group = if (n_distinct(shd_2010) == 2L) {
+        paste0("new_", county)
+    } else {
+        paste0("old_", shd_2010)
+    }) |>
+    ungroup() |>
+    mutate(county_group = as.integer(factor(county_group)))
 
 # Add an analysis name attribute
 attr(map_ssd, "analysis_name") <- "LA_SSD_2020"
