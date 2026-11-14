@@ -20,6 +20,8 @@ plans_raw <- redist_smc(
     counties = dplyr::coalesce(as.character(muni), as.character(county)),
     ncores = 1
 )
+raw_resampled <- attr(plans_raw, "resampled", exact = TRUE)
+stopifnot(isTRUE(raw_resampled))
 
 cli_process_done()
 
@@ -48,11 +50,11 @@ cli_alert_info("Kept {ncol(mat_keep)} / {ncol(mat_sim)}")
 chain_all  <- rep(seq_len(runs), each = nsims)
 chain_keep <- chain_all[keep]
 
-# take first `target_per_chain` kept per chain
+# randomly sample `target_per_chain` kept draws per chain, without replacement
 pick <- unlist(lapply(seq_len(runs), function(ch) {
     idx <- which(chain_keep == ch)
     if (length(idx) < target_per_chain) cli_abort("need more draws (chain {ch})")
-    idx[seq_len(target_per_chain)]
+    sort(sample(idx, size = target_per_chain, replace = FALSE))
 }))
 
 mat_final <- mat_keep[, pick, drop = FALSE]
@@ -83,6 +85,7 @@ plans <- redist_plans(
     algorithm = "smc",
     wgt       = w_final
 )
+attr(plans, "resampled") <- raw_resampled
 
 # Add chain labels
 stopifnot(nrow(plans) == 2L*length(chain_cols))
