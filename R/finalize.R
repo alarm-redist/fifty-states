@@ -4,13 +4,13 @@
 #' the ALARM website.
 #'
 #' @param state the state abbreviation for the analysis, e.g. `WA`.
-#' @param type the type of districts: `cd`, `ssd`, or `shd`.
+#' @param type the type of districts: `cd` or `leg` (both `ssd` and `shd`).
 #' @param year the analysis year
 #' @param overwrite should automatic revisions be made and saved to files
 #'
 #' @returns nothing
 #' @export
-finalize_analysis = function(state, type = "cd", year = 2020, overwrite = TRUE) {
+finalize_analysis <- function(state, type = "cd", year = 2020, overwrite = TRUE) {
     withr::with_options(list(warn = 1), {
 
 
@@ -19,21 +19,26 @@ finalize_analysis = function(state, type = "cd", year = 2020, overwrite = TRUE) 
         slug <- str_glue("{state}_{type}_{year}")
 
         # CHECK files
-        path_map <- str_glue("data-out/{state}_{year}/{slug}_map.rds")
-        path_plans <- str_glue("data-out/{state}_{year}/{slug}_plans.rds")
-        path_stats <- str_glue("data-out/{state}_{year}/{slug}_stats.csv")
-        if (!file.exists(here(path_map))) {
-            cli::cli_abort(c("Map file missing for {.pkg {slug}}.",
-                        "x" = "{.path {path_map}} not found."))
-        }
+        if (type == "leg") {
+            paths <- leg_paths(state, year)
+        } else {
+            path_map <- str_glue("data-out/{state}_{year}/{slug}_map.rds")
+            path_plans <- str_glue("data-out/{state}_{year}/{slug}_plans.rds")
+            path_stats <- str_glue("data-out/{state}_{year}/{slug}_stats.csv")
+            if (!file.exists(here(path_map))) {
+                cli::cli_abort(c("Map file missing for {.pkg {slug}}.",
+                            "x" = "{.path {path_map}} not found."))
+            }
 
-        if (!file.exists(here(path_plans))) {
-            cli::cli_abort(c("Plans file missing for {.pkg {slug}}.",
-                        "x" = "{.path {path_plans}} not found."))
-        }
-        if (!file.exists(here(path_stats))) {
-            cli::cli_abort(c("Summary statistics file missing for {.pkg {slug}}.",
-                        "x" = "{.path {path_stats}} not found."))
+            if (!file.exists(here(path_plans))) {
+                cli::cli_abort(c("Plans file missing for {.pkg {slug}}.",
+                            "x" = "{.path {path_plans}} not found."))
+            }
+            if (!file.exists(here(path_stats))) {
+                cli::cli_abort(c("Summary statistics file missing for {.pkg {slug}}.",
+                            "x" = "{.path {path_stats}} not found."))
+            }
+            paths <- c(path_map, path_plans, path_stats)
         }
 
         # 2010 checks!
@@ -221,7 +226,7 @@ finalize_analysis = function(state, type = "cd", year = 2020, overwrite = TRUE) 
                 warns <- TRUE
                 overwrite <- TRUE
             }
-            
+
             if (warns && overwrite) {
                 cli::cli_alert_warning("Updating {.cls redist_map} file.")
                 readr::write_rds(map_in, path_map, compress = "xz")
@@ -344,7 +349,7 @@ finalize_analysis = function(state, type = "cd", year = 2020, overwrite = TRUE) 
 
             # ensure unshifted election data from ROAD
             road_rejoin_exceptions <- c("HI", "TX")
-            
+
             if (type == "cd" && state %in% road_rejoin_exceptions) {
                 if (!all(c("ndv", "nrv") %in% names(map_in)) ||
                     anyNA(map_in$ndv) || anyNA(map_in$nrv)) {
@@ -352,7 +357,7 @@ finalize_analysis = function(state, type = "cd", year = 2020, overwrite = TRUE) 
                         "{.pkg {slug}} is a ROAD rejoin exception but does not have complete {.val ndv}/{.val nrv}."
                     )
                 }
-                
+
                 cli::cli_alert_info(
                     "Skipping ROAD {.val ndv}/{.val nrv} rejoin for {.pkg {slug}}."
                 )
@@ -360,18 +365,18 @@ finalize_analysis = function(state, type = "cd", year = 2020, overwrite = TRUE) 
                 road_path <- str_glue(
                     "https://raw.githubusercontent.com/alarm-redist/census-2020/road/road-1990/{state}_{year}.csv"
                 )
-            
+
                 road_dat <- readr::read_csv(
                     road_path,
                     col_types = readr::cols(GEOID = readr::col_character()),
                     show_col_types = FALSE
                 ) |>
                     dplyr::select(GEOID, ndv, nrv)
-            
+
                 map_in <- map_in |>
                     dplyr::select(-dplyr::any_of(c("ndv", "nrv"))) |>
                     dplyr::left_join(road_dat, by = "GEOID")
-            
+
                 warns <- TRUE
                 overwrite <- TRUE
             }
@@ -472,7 +477,7 @@ finalize_analysis = function(state, type = "cd", year = 2020, overwrite = TRUE) 
     }) # end withr
     if (utils::askYesNo('After reading any warnings in the console, do you want to continue?')) {
         cli::cli_process_start("Uploading {.pkg {slug}} to the dataverse")
-        pub_dataverse(slug, path_map, path_plans, path_stats)
+        pub_dataverse(slug, paths)
         cli::cli_process_done()
         cli::cli_alert_info("Ask a maintainer to publish the dataverse updates.")
     } else {
@@ -482,22 +487,32 @@ finalize_analysis = function(state, type = "cd", year = 2020, overwrite = TRUE) 
     invisible(TRUE)
 }
 
-pub_dataverse = function(slug, path_map, path_plans, path_stats) {
+pub_dataverse <- function(slug, paths) {
     library(dataverse)
+    is_leg <- grepl("_leg_", slug)
 
     # SET UP zip
-    path_stage = file.path(tempdir(), slug)
+    path_stage <- file.path(tempdir(), slug)
     if (dir.exists(path_stage)) unlink(path_stage, recursive=TRUE)
     dir.create(path_stage)
-    file.copy(here(path_map), file.path(path_stage, basename(path_map)))
-    file.copy(here(path_plans), file.path(path_stage, basename(path_plans)))
-    file.copy(here(path_stats), file.path(path_stage, basename(path_stats)))
+    for (path in paths) {
+        file.copy(here(path), file.path(path_stage, basename(path)))
+    }
 
     doc1 <- read_lines(here(str_glue("analyses/{slug}/doc_{slug}.md")))
     readable <- str_trim(str_sub(doc1[1], 2))
-    doc2 <- read_lines(here("R/template/dataverse_addendum.md")) |>
-        str_replace_all("``SLUG``", slug)
-    path_doc = file.path(path_stage, str_glue("{slug}_doc.md"))
+    doc2 <- read_lines(here("R/template/dataverse_addendum.md"))
+    if (is_leg) {
+        # leg files are named by chamber, so list them directly
+        files <- basename(paths)
+        doc2 <- str_replace_all(doc2, c(
+            "``SLUG``_map.rds" = str_flatten(str_subset(files, "_map_"), "`, `"),
+            "``SLUG``_plans.rds" = str_flatten(str_subset(files, "_plans"), "`, `"),
+            "``SLUG``_stats.csv" = str_flatten(str_subset(files, "_stats"), "`, `")
+        ))
+    }
+    doc2 <- str_replace_all(doc2, "``SLUG``", slug)
+    path_doc <- file.path(path_stage, str_glue("{slug}_doc.md"))
     write_lines(c(doc1, "", doc2), path_doc)
     knitr::pandoc(path_doc, "html")
     file.remove(path_doc)
@@ -509,20 +524,26 @@ pub_dataverse = function(slug, path_map, path_plans, path_stats) {
     setwd(cur_dir)
 
     year <- as.integer(stringr::str_extract(slug, "\\d{4}"))
-    dv_id <- if (year == 1990) {
-        "doi:10.7910/DVN/ETICVW"
+    if (year == 1990) {
+        dv_id <- "doi:10.7910/DVN/ETICVW"
     } else if (year == 2000) {
-        "doi:10.7910/DVN/LV7VIX"
+        dv_id <- "doi:10.7910/DVN/LV7VIX"
+    } else if (year == 2010) {
+        dv_id <- "doi:10.7910/DVN/IIRJBO"
     } else {
-        "doi:10.7910/DVN/SLCD3E"
+        if (is_leg) {
+            dv_id <- "doi:10.7910/DVN/19EI8N"
+        } else {
+            dv_id <- "doi:10.7910/DVN/SLCD3E"
+        }
     }
-    
+
     dv_set <- get_dataset(dv_id)
     if (length(dv_set$files) > 0) {
         existing <- dv_set$files[grepl(slug, dv_set$files$filename), ]
         existing <- existing[order(existing$filename), ]
     } else {
-        existing = data.frame()
+        existing <- data.frame()
     }
 
     if (nrow(existing) > 0)
@@ -544,6 +565,32 @@ doc_render <- function(slug) {
     out <- knitr::pandoc(path_doc, "html")
     file.remove(path_doc)
     out
+}
+
+leg_paths <- function(state, year) {
+    if (year != 2020) {
+        cli::cli_abort("{.val leg} analyses are only available for 2020.")
+    }
+
+    # only include chambers that were simulated (e.g., NE has no `shd`)
+    ch <- c("ssd", "shd")
+    ch <- ch[file.exists(here(str_glue("data-out/{state}_{year}/{state}_{ch}_{year}_plans.rds")))]
+    if (length(ch) == 0) {
+        cli::cli_abort("No plans files found for {.pkg {state}_leg_{year}}.")
+    }
+
+    paths <- c(
+        str_glue("data-out/{state}_{year}/{state}_leg_{year}_map_{ch}.rds"),
+        str_glue("data-out/{state}_{year}/{state}_{ch}_{year}_plans.rds"),
+        str_glue("data-out/{state}_{year}/{state}_{ch}_{year}_stats.csv")
+    )
+    missing <- paths[!file.exists(here(paths))]
+    if (length(missing) > 0) {
+        cli::cli_abort(c("Files missing for {.pkg {state}_leg_{year}}.",
+                    "x" = "{.path {missing}} not found."))
+    }
+
+    paths
 }
 
 #' Quality Control for an analysis
