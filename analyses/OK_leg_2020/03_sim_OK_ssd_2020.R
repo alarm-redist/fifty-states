@@ -30,7 +30,7 @@ cli_process_done()
 cli_process_start("Saving {.cls redist_plans} object")
 
 # Output the redist_map object. Do not edit this path.
-write_rds(plans, here("data-out/OK_2020/OK_ssd_2020_ssd_plans.rds"), compress = "xz")
+write_rds(plans, here("data-out/OK_2020/OK_ssd_2020_plans.rds"), compress = "xz")
 cli_process_done()
 
 # Compute summary statistics -----
