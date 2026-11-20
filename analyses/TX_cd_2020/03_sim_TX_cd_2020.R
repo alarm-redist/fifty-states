@@ -58,7 +58,7 @@ plans <- plans %>% filter(draw != "cd_2020")
 
 plans <- plans %>%
     mutate(district = as.numeric(district)) %>%
-    add_reference(ref_plan = as.numeric(map$cd_2020))
+    add_reference(ref_plan = as.numeric(map$cd_2020), name = "cd_2020")
 
 plans <- plans %>%
     group_by(chain) %>%
