@@ -21,4 +21,4 @@ Data for Hawaii comes from the [ALARM Project's update](https://dataverse.harvar
 Precincts, including islands, are manually connected in the adjacency graph.
 
 ## Simulation Notes
-We use partial SMC on the Honolulu County sub-map with the statewide population bounds to draw one district entirely within Honolulu. The remaining Honolulu units and all non-Honolulu units form the other district. We run two SMC runs with 30,000 draws each and, after resampling, randomly select 2,500 draws from each run, yielding 5,000 statewide plans.
+We use partial SMC on the Honolulu County sub-map with the statewide population bounds to draw one district entirely within Honolulu. The remaining Honolulu units and all non-Honolulu units form the other district. We run two SMC runs with 30,000 draws each and, after resampling, retain the first 2,500 draws from each run, yielding 5,000 statewide plans.
