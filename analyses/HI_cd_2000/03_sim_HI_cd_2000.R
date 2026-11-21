@@ -52,9 +52,9 @@ chain_keep <- chain_all[keep]
 
 # take first `target_per_chain` kept per chain
 pick <- unlist(lapply(seq_len(runs), function(ch) {
-  idx <- which(chain_keep == ch)
-  if (length(idx) < target_per_chain) cli_abort("need more draws (chain {ch})")
-  idx[seq_len(target_per_chain)]
+    idx <- which(chain_keep == ch)
+    if (length(idx) < target_per_chain) cli_abort("need more draws (chain {ch})")
+    idx[seq_len(target_per_chain)]
 }))
 
 mat_final <- mat_keep[, pick, drop = FALSE]
