@@ -343,7 +343,7 @@ finalize_analysis = function(state, type = "cd", year = 2020, overwrite = TRUE) 
             }
 
             # ensure unshifted election data from ROAD
-            road_rejoin_exceptions <- c("HI", "TX")
+            road_rejoin_exceptions <- c("HI", "TX", "MA", "NY")
             
             if (type == "cd" && state %in% road_rejoin_exceptions) {
                 if (!all(c("ndv", "nrv") %in% names(map_in)) ||
@@ -365,12 +365,25 @@ finalize_analysis = function(state, type = "cd", year = 2020, overwrite = TRUE) 
                     road_path,
                     col_types = readr::cols(GEOID = readr::col_character()),
                     show_col_types = FALSE
-                ) |>
-                    dplyr::select(GEOID, ndv, nrv)
-            
-                map_in <- map_in |>
-                    dplyr::select(-dplyr::any_of(c("ndv", "nrv"))) |>
-                    dplyr::left_join(road_dat, by = "GEOID")
+                )
+
+                if (type == "cd" && state == "SC") {
+                    idx <- match(
+                        paste(map_in$GEOID, map_in$pop),
+                        paste(road_dat$GEOID, road_dat$pop)
+                    )
+
+                    map_in <- dplyr::select(map_in, -dplyr::any_of(c("ndv", "nrv")))
+                    map_in$ndv <- road_dat$ndv[idx]
+                    map_in$nrv <- road_dat$nrv[idx]
+                } else {
+                    map_in <- map_in |>
+                        dplyr::select(-dplyr::any_of(c("ndv", "nrv"))) |>
+                        dplyr::left_join(
+                            dplyr::select(road_dat, GEOID, ndv, nrv),
+                            by = "GEOID"
+                        )
+                }
             
                 warns <- TRUE
                 overwrite <- TRUE
