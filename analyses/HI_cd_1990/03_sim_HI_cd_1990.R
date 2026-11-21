@@ -50,11 +50,11 @@ cli_alert_info("Kept {ncol(mat_keep)} / {ncol(mat_sim)}")
 chain_all <- rep(seq_len(runs), each = nsims)
 chain_keep <- chain_all[keep]
 
-# randomly sample `target_per_chain` kept draws per chain, without replacement
+# take first `target_per_chain` kept per chain
 pick <- unlist(lapply(seq_len(runs), function(ch) {
   idx <- which(chain_keep == ch)
   if (length(idx) < target_per_chain) cli_abort("need more draws (chain {ch})")
-  sort(sample(idx, size = target_per_chain, replace = FALSE))
+  idx[seq_len(target_per_chain)]
 }))
 
 mat_final <- mat_keep[, pick, drop = FALSE]
