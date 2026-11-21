@@ -20,6 +20,8 @@ plans_raw <- redist_smc(
   counties = dplyr::coalesce(as.character(muni), as.character(county)),
   ncores = 1
 )
+raw_resampled <- attr(plans_raw, "resampled", exact = TRUE)
+stopifnot(isTRUE(raw_resampled))
 
 cli_process_done()
 
@@ -82,6 +84,7 @@ plans <- redist_plans(
   algorithm = "smc",
   wgt       = w_final
 )
+attr(plans, "resampled") <- raw_resampled
 
 # Add chain labels
 stopifnot(nrow(plans) == 2L * length(chain_cols))
