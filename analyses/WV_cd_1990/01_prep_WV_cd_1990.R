@@ -46,7 +46,8 @@ if (!file.exists(here(shp_path))) {
   cnty_sf <- tigris::counties(state = "WV", year = 1990, cb = TRUE) %>%
     st_as_sf() %>%
     st_transform(EPSG$WV) %>%
-    transmute(county = sprintf("%03s", COUNTYFP), geometry)
+    transmute(county = sprintf("%03s", COUNTYFP), geometry) %>%
+    mutate(GEOID = paste0("54", county), .before = everything())
 
   wv_shp <- cnty_sf %>%
     left_join(wv_df_cnty %>% mutate(county = sprintf("%03s", county)),
