@@ -75,6 +75,8 @@ if (!file.exists(here(shp_path))) {
             suppressWarnings()
     }
 
+    mn_shp <- st_make_valid(mn_shp)
+
     # create adjacency graph
     mn_shp$adj <- redist.adjacency(mn_shp)
 

@@ -45,7 +45,11 @@ if (!file.exists(here(shp_path))) {
         summarize(cd_1980 = cd_1980[1],
             cd_1990 = cd_1990[1],
             across(pop:nrv, sum)) %>%
-        ungroup()
+        ungroup() %>%
+        mutate(
+            GEOID = paste0("19", stringr::str_pad(county, 3, pad = "0")),
+            .before = everything()
+        )
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = ia_shp,

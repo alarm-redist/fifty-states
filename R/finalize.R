@@ -371,11 +371,15 @@ finalize_analysis <- function(state, type = "cd", year = 2020, overwrite = TRUE)
                     col_types = readr::cols(GEOID = readr::col_character()),
                     show_col_types = FALSE
                 ) |>
-                    dplyr::select(GEOID, ndv, nrv)
+                    dplyr::select(GEOID, pop, ndv, nrv)
 
-                map_in <- map_in |>
-                    dplyr::select(-dplyr::any_of(c("ndv", "nrv"))) |>
-                    dplyr::left_join(road_dat, by = "GEOID")
+                stopifnot(
+                    nrow(map_in) == nrow(get_plans_matrix(readr::read_rds(path_plans))),
+                    identical(map_in$GEOID, road_dat$GEOID),
+                    identical(map_in$pop, road_dat$pop)
+                )
+                map_in$ndv <- road_dat$ndv
+                map_in$nrv <- road_dat$nrv
 
                 warns <- TRUE
                 overwrite <- TRUE

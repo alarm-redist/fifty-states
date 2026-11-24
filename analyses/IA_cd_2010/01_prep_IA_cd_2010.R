@@ -66,7 +66,8 @@ if (!file.exists(here(shp_path))) {
         group_by(state, county) %>%
         summarize(cd_2010 = cd_2010[1],
             across(pop:nrv, sum)) %>%
-        ungroup()
+        ungroup() %>%
+        mutate(GEOID = county, .before = everything())
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = ia_shp,
