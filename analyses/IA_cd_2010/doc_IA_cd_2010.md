@@ -1,7 +1,7 @@
 # 2010 Iowa Congressional Districts
 
 ## Redistricting requirements
-In Iowa, districts must:
+In Iowa, under the [2011 redistricting standards](https://www.legis.iowa.gov/docs/publications/REDST/2011/2011-03-31/Plan1_Report.pdf), districts must:
 
 1. be contiguous
 1. have equal populations
