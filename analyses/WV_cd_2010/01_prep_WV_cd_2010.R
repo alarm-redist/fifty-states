@@ -73,7 +73,8 @@ if (!file.exists(here(shp_path))) {
     merged_county_sf <- wv_shp %>% group_by(county) %>%  summarize(across(any_of(summable_col_names), sum))
 
     # merge non-summed columns
-    wv_shp <- merge(merged_county_sf, cols_to_merge, by = "county")
+    wv_shp <- merge(merged_county_sf, cols_to_merge, by = "county") %>%
+        mutate(GEOID = county, .before = everything())
 
     # Create perimeters in case shapes are simplified
     redistmetrics::prep_perims(shp = wv_shp,
