@@ -81,7 +81,7 @@ attr(plans, "resampled") <- raw_resampled
 
 plans <- plans |>
   dplyr::mutate(chain = rep(chain_all[pick], each = 2L), .after = draw) |>
-  add_reference(ref_plan = map$cd_1990, name = "cd_2000") |>
+  add_reference(ref_plan = map$cd_2000, name = "cd_2000") |>
   match_numbers("cd_2000")
 
 cli_process_done()
