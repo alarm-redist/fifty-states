@@ -22,6 +22,11 @@ adj_h <- lapply(hnl_rows, function(i) {
     as.integer(sort(newidx[nb]))
 })
 
+# Remove self entries only from the working subgraph.
+adj_h <- lapply(seq_along(adj_h), function(i) {
+    adj_h[[i]][adj_h[[i]] != (i - 1L)]
+})
+
 for (i in seq_along(adj_h)) {
     for (j in adj_h[[i]]) stopifnot((i - 1L) %in% adj_h[[j + 1L]])
 }
