@@ -12,7 +12,8 @@ attr(map, "analysis_name") <- "HI_2000"
 map$state <- "HI"
 
 # Create a two-region sub-map for Honolulu County
-hnl_rows <- which(map$county == "003")
+hnl_rows <- which(map$county == "003" &
+    !map$GEOID %in% c("15003ZZZZZZ", "15003005107"))
 newidx <- rep(NA_integer_, nrow(map))
 newidx[hnl_rows] <- seq_along(hnl_rows) - 1L
 
