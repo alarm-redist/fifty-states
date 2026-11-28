@@ -61,11 +61,47 @@ if (!file.exists(here(shp_path))) {
     # create adjacency graph
     hi_shp$adj <- redist.adjacency(hi_shp)
 
+    # Remove Honolulu edges without land contact in the coastal audit.
+    drop_edges <- tribble(
+        ~v1, ~v2,
+        "15003001503", "15003001603",
+        "15003001605", "15003001703",
+        "15003003001", "15003003201",
+        "15003003203", "15003003402",
+        "15003003203", "15003003603",
+        "15003003203", "15003003604",
+        "15003003203", "15003004104",
+        "15003003604", "15003004104",
+        "15003004101", "15003004104",
+        "15003004603", "15003004604",
+        "15003004801", "15003004902",
+        "15003004801", "15003005006",
+        "15003004802", "15003005006"
+    )
+    stopifnot(!anyDuplicated(hi_shp$GEOID))
+    for (r in seq_len(nrow(drop_edges))) {
+        p <- match(c(drop_edges$v1[r], drop_edges$v2[r]), hi_shp$GEOID)
+        stopifnot(!anyNA(p))
+        hi_shp$adj[[p[1]]] <- setdiff(hi_shp$adj[[p[1]]], p[2] - 1L)
+        hi_shp$adj[[p[2]]] <- setdiff(hi_shp$adj[[p[2]]], p[1] - 1L)
+    }
+
     # connect islands
+    island_codes <- tribble(
+        ~v1,           ~v2,
+        "15007001305", "15003ZZZZZZ",
+        "15003ZZZZZZ", "15005ZZZZZZ"
+    )
+    v1 <- match(island_codes$v1, hi_shp$GEOID)
+    v2 <- match(island_codes$v2, hi_shp$GEOID)
+    stopifnot(!anyNA(c(v1, v2)),
+        identical(as.character(hi_shp$county[v1]), c("007", "003")),
+        identical(as.character(hi_shp$county[v2]), c("003", "005")))
+    hi_shp$adj <- add_edge(hi_shp$adj, v1, v2, zero = TRUE)
+    hi_shp$adj <- add_edge(hi_shp$adj, v2, v1, zero = TRUE)
+    
     county_chain <- tribble(
         ~c1,   ~c2,
-        "007", "003",
-        "003", "005",
         "005", "009",
         "009", "001"
     )
@@ -107,6 +143,10 @@ if (!file.exists(here(shp_path))) {
         hi_shp$adj <- add_edge(hi_shp$adj, p[1], p[2], zero = TRUE)
         hi_shp$adj <- add_edge(hi_shp$adj, p[2], p[1], zero = TRUE)
     }
+
+    hi_shp$adj <- lapply(seq_along(hi_shp$adj), function(i) {
+        as.integer(sort(setdiff(hi_shp$adj[[i]], i - 1L)))
+    })
 
     write_rds(hi_shp, here(shp_path), compress = "gz")
     cli_process_done()
