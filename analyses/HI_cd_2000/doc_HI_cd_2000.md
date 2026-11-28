@@ -18,4 +18,4 @@ Data for ``Hawaii`` comes from the [ALARM Project's update](https://dataverse.ha
 Islands are manually connected in the adjacency graph.
 
 ## Simulation Notes
-We use SMC to split the Honolulu County sub-map into two regions with relaxed population bounds and a custom constraint ensuring that one region and its statewide complement satisfy the original statewide population bounds. The remaining Honolulu units and all non-Honolulu units form the other district. We run two SMC runs with 30,000 draws each and, after resampling, retain the first 2,500 draws from each run, yielding 5,000 statewide plans.
+We use SMC to split the Honolulu County sub-map, excluding two VTDs, into two regions with relaxed population bounds and a custom constraint ensuring that one region and its statewide complement satisfy the original statewide population bounds. The remaining Honolulu units (including the two excluded VTDs) and all non-Honolulu units form the other district. We run two SMC runs with 30,000 draws each and, after resampling, retain the first 2,500 draws from each run, yielding 5,000 statewide plans.
