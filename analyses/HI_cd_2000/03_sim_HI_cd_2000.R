@@ -13,87 +13,76 @@ target_per_chain <- 2500L
 runs <- 2L
 nsims <- 30000L
 
+# Population bounds for the Honolulu-only district
+hpop <- map_honolulu[[attr(map_honolulu, "pop_col")]]
+state_pop <- sum(map[[attr(map, "pop_col")]])
+L <- attr(map, "pop_bounds")[1]
+U <- attr(map, "pop_bounds")[3]
+lo <- max(L, state_pop - U)
+hi <- min(U, state_pop - L)
+
+honolulu_population_constraint <- function(plan, distr) {
+  if (all(plan == plan[1L])) return(0)
+  p <- sum(hpop[plan == distr])
+  q <- sum(hpop) - p
+  ok <- (p >= lo && p <= hi) || (q >= lo && q <= hi)
+  as.numeric(!ok)
+}
+
+constraints <- redist::add_constr_custom(
+  redist::redist_constr(map_honolulu),
+  strength = 1,
+  fn = honolulu_population_constraint,
+  thresh = 1
+)
+
 plans_raw <- redist_smc(
-    map_honolulu,
-    nsims = nsims, runs = runs,
-    n_steps = 1,
-    counties = dplyr::coalesce(as.character(muni), as.character(county)),
-    ncores = 1
+  map_honolulu,
+  nsims = nsims, runs = runs,
+  counties = dplyr::coalesce(as.character(muni), as.character(county)),
+  compactness = 1,
+  constraints = constraints,
+  resample = TRUE,
+  init_particles = NULL,
+  sampling_space = "linking_edge",
+  split_method = "constraint",
+  ref_name = FALSE,
+  ncores = 1L,
+  verbose = TRUE
 )
+raw_resampled <- attr(plans_raw, "resampled", exact = TRUE)
+stopifnot(isTRUE(raw_resampled))
 
 cli_process_done()
 
-# Select draws: partial Honolulu draws are all eligible
-cli_process_start("HI_cd_2000: filter draws")
-
-mat_all <- get_plans_matrix(plans_raw)
-w_all <- get_plans_weights(plans_raw)
-
-stopifnot(
-    ncol(mat_all) == nsims*runs + 1L,
-    identical(colnames(mat_all)[1], "cd_2000"),
-    length(w_all) == ncol(mat_all)
-)
-
-mat_sim <- mat_all[, -1, drop = FALSE]
-w_sim <- w_all[-1]
-
-keep <- rep(TRUE, ncol(mat_sim))
-
-mat_keep <- mat_sim[, keep, drop = FALSE]
-w_keep <- w_sim[keep]
-
-cli_alert_info("Kept {ncol(mat_keep)} / {ncol(mat_sim)}")
-
-chain_all  <- rep(seq_len(runs), each = nsims)
-chain_keep <- chain_all[keep]
-
-# take first `target_per_chain` kept per chain
-pick <- unlist(lapply(seq_len(runs), function(ch) {
-    idx <- which(chain_keep == ch)
-    if (length(idx) < target_per_chain) cli_abort("need more draws (chain {ch})")
-    idx[seq_len(target_per_chain)]
-}))
-
-mat_final <- mat_keep[, pick, drop = FALSE]
-w_final   <- w_keep[pick]
-chain_cols <- chain_keep[pick]
-
-cli_process_done()
-
-# Build plans object, add reference, relabel
+# Build plans object, retaining the first draws from each run
 cli_process_start("Building redist_plans object")
 
-# Expand Honolulu partial plans to statewide; unassigned units go to district 2
-hnl <- map$county == "003"
-stopifnot(nrow(mat_final) == sum(hnl))
-mat_state <- matrix(0L, nrow = nrow(map), ncol = ncol(mat_final))
-mat_state[hnl, ] <- mat_final
-mat_state[mat_state == 0L] <- 2L
-mat_final <- mat_state
+chain_all <- rep(seq_len(runs), each = nsims)
+pick <- unlist(lapply(seq_len(runs), function(ch) {
+  which(chain_all == ch)[seq_len(target_per_chain)]
+}))
+mat_h <- get_plans_matrix(plans_raw)[, pick, drop = FALSE]
 
-stopifnot(all(mat_final %in% c(1L, 2L)))
-storage.mode(mat_final) <- "integer"
-
-colnames(mat_final) <- NULL
+# Expand the Honolulu split to a statewide plan
+mat_final <- matrix(2L, nrow = nrow(map), ncol = ncol(mat_h))
+for (j in seq_len(ncol(mat_h))) {
+  labs <- sort(unique(mat_h[, j]))
+  pops <- vapply(labs, function(l) sum(hpop[mat_h[, j] == l]), numeric(1))
+  fits <- pops >= lo & pops <= hi
+  stopifnot(length(labs) == 2L, sum(fits) == 1L)
+  mat_final[hnl_rows[mat_h[, j] == labs[fits]], j] <- 1L
+}
 
 plans <- redist_plans(
-    plans     = mat_final,
-    map       = map,
-    algorithm = "smc",
-    wgt       = w_final
+  plans = mat_final, map = map, algorithm = "smc", wgt = get_plans_weights(plans_raw)[pick]
 )
-
-# Add chain labels
-stopifnot(nrow(plans) == 2L*length(chain_cols))
-plans <- plans |>
-    dplyr::mutate(chain = rep(chain_cols, each = 2L), .after = draw)
+attr(plans, "resampled") <- raw_resampled
 
 plans <- plans |>
-    add_reference(ref_plan = map$cd_2000, name = "cd_2000")
-
-# relabel to match the enacted plan
-plans <- match_numbers(plans, "cd_2000")
+  dplyr::mutate(chain = rep(chain_all[pick], each = 2L), .after = draw) |>
+  add_reference(ref_plan = map$cd_2000, name = "cd_2000") |>
+  match_numbers("cd_2000")
 
 cli_process_done()
 
